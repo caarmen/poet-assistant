@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2016 Carmen Alvarez
+ *
+ * This file is part of Poet Assistant.
+ *
+ * Poet Assistant is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Poet Assistant is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 apply plugin: 'com.android.application'
 
 android {
@@ -5,8 +24,8 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "ca.rmen.poetassistant"
-        minSdkVersion 15
+        applicationId "ca.rmen.android.poetassistant"
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -19,9 +38,29 @@ android {
     }
 }
 
+android.applicationVariants.all { variant ->
+    variant.mergeAssets.doLast {
+        copy {
+            from project.rootDir
+            into "${project.buildDir}/intermediates/assets/${variant.buildType.name}"
+            include 'LICENSE.txt'
+            include 'LICENSE-rhyming-dictionary.txt'
+            include 'LICENSE-thesaurus-wordnet.txt'
+        }
+    }
+}
+
+repositories {
+    mavenLocal();
+    maven {
+        url "https://dl.bintray.com/caarmen/maven/"
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
+    compile 'ca.rmen:rhymer:1.0.0'
 }

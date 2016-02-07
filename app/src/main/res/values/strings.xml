@@ -1,5 +1,45 @@
+<!--
+  ~ Copyright (c) 2016 Carmen Alvarez
+  ~
+  ~ This file is part of Poet Assistant.
+  ~
+  ~ Poet Assistant is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Poet Assistant is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
 <resources>
     <string name="app_name">Poet Assistant</string>
-    <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="action_search">Search</string>
+    <string name="action_clear_search_history">Clear search history</string>
+    <string name="action_about">About</string>
+    <string name="search_hint">Lookup a word</string>
+    <string name="tab_rhymer">Rhymer</string>
+    <string name="tab_thesaurus">Thesaurus</string>
+    <string name="rhyme_section_one_syllable">One syllable matches:</string>
+    <string name="rhyme_section_two_syllables">Two syllable matches:</string>
+    <string name="rhyme_section_three_syllables">Three syllable matches:</string>
+    <string name="thesaurus_section_synonyms">Synonyms:</string>
+    <string name="thesaurus_section_antonyms">Antonyms:</string>
+    <string name="empty_list">No results</string>
+    <string name="about_title">About %s</string>
+    <string name="about_app_version">%1$s v%2$s</string>
+    <string name="about_copyright">Copyright &#169; 2016 Carmen Alvarez\nc@rmen.ca\nhttp://rmen.ca</string>
+    <string name="about_projectUrl">Source code:\nhttp://github.com/caarmen/poet-assistant</string>
+    <string name="about_issuesUrl">Report bugs:\nhttp://github.com/caarmen/poet-assistant/issues</string>
+    <string name="about_rateUrl">Rate the app on the Play Store:\nhttps://play.google.com/store/apps/details?id=ca.rmen.android.poetassistant</string>
+    <string name="about_legal">Legal:</string>
+    <string name="about_license_app">Poet Assistant License</string>
+    <string name="about_license_rhyming_dictionary">Carnegie Mellon Pronunciation Dictionary License</string>
+    <string name="about_license_thesaurus">WordNet Thesaurus License</string>
+    <string name="license_title">Licensing Information</string>
 </resources>

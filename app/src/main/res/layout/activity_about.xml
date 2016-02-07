@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2016 Carmen Alvarez
+  ~
+  ~ This file is part of Poet Assistant.
+  ~
+  ~ Poet Assistant is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Poet Assistant is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".about.AboutActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.2"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitEnd"
+        android:src="@mipmap/ic_launcher" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/txtVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:autoLink="all"
+                android:gravity="center_vertical"
+                android:text="@string/about_copyright"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColorLink="@color/colorPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:autoLink="all"
+                android:drawableLeft="@drawable/ic_source_code"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_source_code"
+                android:gravity="center_vertical"
+                android:text="@string/about_projectUrl"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColorLink="@color/colorPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:autoLink="all"
+                android:drawableLeft="@drawable/ic_bug_report_24dp"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_bug_report_24dp"
+                android:gravity="center_vertical"
+                android:text="@string/about_issuesUrl"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColorLink="@color/colorPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:autoLink="all"
+                android:drawableLeft="@drawable/ic_rate"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_rate"
+                android:gravity="center_vertical"
+                android:text="@string/about_rateUrl"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColorLink="@color/colorPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:autoLink="all"
+                android:drawableLeft="@drawable/ic_legal"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_legal"
+                android:gravity="center_vertical"
+                android:text="@string/about_legal"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColorLink="@color/colorPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:autoLink="all"
+                android:drawableLeft="@drawable/ic_bullet"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_bullet"
+                android:gravity="center_vertical"
+                android:onClick="onClickAppLicense"
+                android:text="@string/about_license_app"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/colorPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:autoLink="all"
+                android:drawableLeft="@drawable/ic_bullet"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_bullet"
+                android:gravity="center_vertical"
+                android:onClick="onClickRhymerLicense"
+                android:text="@string/about_license_rhyming_dictionary"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/colorPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:autoLink="all"
+                android:drawableLeft="@drawable/ic_bullet"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_bullet"
+                android:gravity="center_vertical"
+                android:onClick="onClickThesaurusLicense"
+                android:text="@string/about_license_thesaurus"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/colorPrimary" />
+
+
+        </LinearLayout>
+    </ScrollView>
+</merge>
