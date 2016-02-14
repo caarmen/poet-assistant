@@ -26,12 +26,15 @@
     <string name="search_hint">Lookup a word</string>
     <string name="tab_rhymer">Rhymer</string>
     <string name="tab_thesaurus">Thesaurus</string>
+    <string name="tab_reader">Reader</string>
     <string name="rhyme_section_one_syllable">One syllable matches:</string>
     <string name="rhyme_section_two_syllables">Two syllable matches:</string>
     <string name="rhyme_section_three_syllables">Three syllable matches:</string>
     <string name="thesaurus_section_synonyms">Synonyms:</string>
     <string name="thesaurus_section_antonyms">Antonyms:</string>
     <string name="empty_list">No results</string>
+    <string name="tts_play">Play</string>
+    <string name="tts_hint">Paste your poem here and press the play icon to listen to it.</string>
     <string name="about_title">About %s</string>
     <string name="about_app_version">%1$s v%2$s</string>
     <string name="about_copyright">Copyright &#169; 2016 Carmen Alvarez\nc@rmen.ca\nhttp://rmen.ca</string>
