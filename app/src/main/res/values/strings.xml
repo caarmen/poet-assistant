@@ -21,6 +21,7 @@
     <string name="app_name">Poet Assistant</string>
     <string name="action_search">Search</string>
     <string name="action_clear_search_history">Clear search history</string>
+    <string name="search_history_cleared">Search history cleared.</string>
     <string name="action_about">About</string>
     <string name="search_hint">Lookup a word</string>
     <string name="tab_rhymer">Rhymer</string>

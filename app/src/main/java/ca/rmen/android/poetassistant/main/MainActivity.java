@@ -23,6 +23,7 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -108,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
             return true;
         } else if (item.getItemId() == R.id.action_clear_search_history) {
             mSearch.clearSearchHistory();
+            Snackbar.make(mViewPager.getRootView(), R.string.search_history_cleared, Snackbar.LENGTH_SHORT).show();
             return true;
         }
 
