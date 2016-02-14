@@ -42,5 +42,6 @@
     <string name="about_license_app">Poet Assistant License</string>
     <string name="about_license_rhyming_dictionary">Carnegie Mellon Pronunciation Dictionary License</string>
     <string name="about_license_thesaurus">WordNet Thesaurus License</string>
+    <string name="about_app_icon">App icon based on Dictionary Pictogram by libberry: https://openclipart.org/detail/185246/dictionary-pictogram</string>
     <string name="license_title">Licensing Information</string>
 </resources>
