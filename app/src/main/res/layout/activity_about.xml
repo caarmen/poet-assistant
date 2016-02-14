@@ -57,7 +57,7 @@
                 android:gravity="center_vertical"
                 android:text="@string/about_copyright"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColorLink="@color/colorPrimary" />
+                android:textColorLink="@color/primary" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -70,7 +70,7 @@
                 android:gravity="center_vertical"
                 android:text="@string/about_projectUrl"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColorLink="@color/colorPrimary" />
+                android:textColorLink="@color/primary" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -83,7 +83,7 @@
                 android:gravity="center_vertical"
                 android:text="@string/about_issuesUrl"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColorLink="@color/colorPrimary" />
+                android:textColorLink="@color/primary" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -96,7 +96,7 @@
                 android:gravity="center_vertical"
                 android:text="@string/about_rateUrl"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColorLink="@color/colorPrimary" />
+                android:textColorLink="@color/primary" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -109,7 +109,7 @@
                 android:gravity="center_vertical"
                 android:text="@string/about_legal"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColorLink="@color/colorPrimary" />
+                android:textColorLink="@color/primary" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -125,7 +125,7 @@
                 android:onClick="onClickAppLicense"
                 android:text="@string/about_license_app"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/primary" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -141,7 +141,7 @@
                 android:onClick="onClickRhymerLicense"
                 android:text="@string/about_license_rhyming_dictionary"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/primary" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -157,7 +157,7 @@
                 android:onClick="onClickThesaurusLicense"
                 android:text="@string/about_license_thesaurus"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/primary" />
 
 
         </LinearLayout>

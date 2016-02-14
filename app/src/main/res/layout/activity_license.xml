@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:autoLink="web"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColorLink="@color/colorPrimary" />
+                android:textColorLink="@color/primary" />
 
         </LinearLayout>
 
