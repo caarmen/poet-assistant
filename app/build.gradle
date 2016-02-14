@@ -52,9 +52,7 @@ android.applicationVariants.all { variant ->
 
 repositories {
     mavenLocal();
-    maven {
-        url "https://dl.bintray.com/caarmen/maven/"
-    }
+    jcenter();
 }
 
 dependencies {
