@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         Uri data = getIntent().getData();
         mPagerAdapter = new ResultListPagerAdapter(this, getSupportFragmentManager(), data);
 
