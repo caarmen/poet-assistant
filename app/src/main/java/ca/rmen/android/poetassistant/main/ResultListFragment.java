@@ -44,6 +44,7 @@ public class ResultListFragment extends ListFragment implements LoaderManager.Lo
     private ResultListAdapter mAdapter;
     private Dictionary mDictionary;
     private TextView mListHeaderView;
+    private View mDivider;
 
 
     public static ResultListFragment newInstance(Dictionary dictionary, @Nullable String initialQuery) {
@@ -62,6 +63,7 @@ public class ResultListFragment extends ListFragment implements LoaderManager.Lo
         mDictionary = (Dictionary) getArguments().getSerializable(EXTRA_DICTIONARY);
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         mListHeaderView = (TextView) view.findViewById(R.id.tv_list_header);
+        mDivider = view.findViewById(R.id.divider);
         if (savedInstanceState != null) {
             String query = savedInstanceState.getString(EXTRA_QUERY);
             mListHeaderView.setText(query);
@@ -110,6 +112,9 @@ public class ResultListFragment extends ListFragment implements LoaderManager.Lo
     public void onLoadFinished(Loader<List<ResultListEntry>> loader, List<ResultListEntry> data) {
         Log.d(TAG, "onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
         mAdapter.setData(data);
+        int headerVisible = mAdapter.getCount() > 0? View.VISIBLE : View.GONE;
+        mListHeaderView.setVisibility(headerVisible);
+        mDivider.setVisibility(headerVisible);
     }
 
     @Override
