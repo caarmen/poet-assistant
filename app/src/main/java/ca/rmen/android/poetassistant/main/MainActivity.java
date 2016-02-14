@@ -126,24 +126,28 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
     }
 
     /**
-     * Search for the given word in the given dictionary.
+     * Search for the given word in the given dictionary, and set the current tab
+     * to that dictionary (if it's not already the case).
      */
     private void search(String word, Dictionary dictionary) {
         Log.d(TAG, "search() called with: " + "word = [" + word + "], dictionary = [" + dictionary + "]");
-        mViewPager.setCurrentItem(dictionary.ordinal());
-        search(word);
-    }
-
-    /**
-     * Search for the given word in the currently open dictionary
-     */
-    private void search(String word) {
-        Log.d(TAG, "search() called with: " + "word = [" + word + "]");
-        int currentTab = mViewPager.getCurrentItem();
+        int tab = dictionary.ordinal();
+        mViewPager.setCurrentItem(tab);
         word = word.trim().toLowerCase(Locale.US);
         // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
         // We want to retrieve the existing fragment.
-        ((ResultListFragment) mPagerAdapter.instantiateItem(mViewPager, currentTab)).query(word);
+        ((ResultListFragment) mPagerAdapter.instantiateItem(mViewPager, tab)).query(word);
     }
 
+    /**
+     * Search for the given word in both dictionaries
+     */
+    private void search(String word) {
+        Log.d(TAG, "search() called with: " + "word = [" + word + "]");
+        word = word.trim().toLowerCase(Locale.US);
+        // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
+        // We want to retrieve the existing fragment.
+        ((ResultListFragment) mPagerAdapter.instantiateItem(mViewPager, Dictionary.RHYMER.ordinal())).query(word);
+        ((ResultListFragment) mPagerAdapter.instantiateItem(mViewPager, Dictionary.THESAURUS.ordinal())).query(word);
+    }
 }
