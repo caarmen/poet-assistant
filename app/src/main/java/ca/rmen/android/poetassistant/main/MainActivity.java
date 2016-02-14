@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
     private static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
 
     private Search mSearch;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,21 +55,24 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Uri data = getIntent().getData();
-        PagerAdapter pagerAdapter = new PagerAdapter(this, getSupportFragmentManager(), data);
+        Intent intent = getIntent();
+        Uri data = intent.getData();
+        PagerAdapter pagerAdapter = new PagerAdapter(this, getSupportFragmentManager(), intent);
 
         // Set up the ViewPager with the sections adapter.
-        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
-        viewPager.setAdapter(pagerAdapter);
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(pagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setupWithViewPager(mViewPager);
 
         // If the app was launched with a query for the thesaurus, focus on that tab.
         if (data != null && data.getHost().equalsIgnoreCase(Dictionary.THESAURUS.name()))
-            viewPager.setCurrentItem(Dictionary.THESAURUS.ordinal());
+            mViewPager.setCurrentItem(Dictionary.THESAURUS.ordinal());
+        else if (Intent.ACTION_SEND.equals(intent.getAction()))
+            mViewPager.setCurrentItem(2);
 
-        mSearch = new Search(this, viewPager);
+        mSearch = new Search(this, mViewPager);
     }
 
     @Override
@@ -89,6 +93,13 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
                 Dictionary dictionary = Dictionary.parse(data.getHost());
                 if (dictionary != null) mSearch.search(data.getLastPathSegment(), dictionary);
             }
+        }
+        // Play some text in the tts tab
+        else if (Intent.ACTION_SEND.equals(intent.getAction())) {
+            mViewPager.setCurrentItem(2);
+            String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+            TtsFragment ttsFragment = (TtsFragment) mViewPager.getAdapter().instantiateItem(mViewPager, 2);
+            ttsFragment.speak(sharedText);
         }
     }
 

@@ -46,6 +46,7 @@ import ca.rmen.android.poetassistant.R;
 public class TtsFragment extends Fragment {
     private static final String TAG = Constants.TAG + TtsFragment.class.getSimpleName();
     private static final String PREF_POEM_TEXT = "poem_text";
+    private static final String EXTRA_INITIAL_TEXT = "initial_text";
 
     private ImageView mPlayButton;
     private EditText mTextView;
@@ -54,10 +55,13 @@ public class TtsFragment extends Fragment {
     private SharedPreferences mSharedPreferences;
     private Handler mHandler;
 
-    public static TtsFragment newInstance() {
-        Log.d(TAG, "newInstance() called with: " + "");
+    public static TtsFragment newInstance(String initialText) {
+        Log.d(TAG, "newInstance() called with: " + "initialText = [" + initialText + "]");
         TtsFragment fragment = new TtsFragment();
         fragment.setRetainInstance(true);
+        Bundle bundle = new Bundle(1);
+        bundle.putString(EXTRA_INITIAL_TEXT, initialText);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -101,6 +105,12 @@ public class TtsFragment extends Fragment {
         super.onDestroy();
     }
 
+    public void speak(String text) {
+        Log.d(TAG, "speak() called with: " + "text = [" + text + "]");
+        mTextView.setText(text);
+        mPlayButton.callOnClick();
+    }
+
     /**
      * The button shall be disabled if TTS isn't initialized, or if there is no text to play.
      * The button should display a "Play" icon if TTS isn't running but can be started.
@@ -128,18 +138,22 @@ public class TtsFragment extends Fragment {
         @Override
         public void onClick(View v) {
             Log.v(TAG, "Play button clicked");
-            if (mTextToSpeech.isSpeaking()) {
-                mTextToSpeech.stop();
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                    speak21();
-                else
-                    speak4();
-            }
+            if (mTextToSpeech.isSpeaking()) mTextToSpeech.stop();
+            else speak();
 
             updatePlayButton();
         }
     };
+
+    /**
+     * Read the text in our text view.
+     */
+    private void speak() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            speak21();
+        else
+            speak4();
+    }
 
     @SuppressWarnings("deprecation")
     private void speak4() {
@@ -172,6 +186,16 @@ public class TtsFragment extends Fragment {
         public void onInit(int status) {
             mTtsStatus = status;
             updatePlayButton();
+            if(mTtsStatus == TextToSpeech.SUCCESS) {
+                Bundle arguments = getArguments();
+                if (arguments != null) {
+                    String initialText = arguments.getString(EXTRA_INITIAL_TEXT);
+                    if (!TextUtils.isEmpty(initialText)) {
+                        mTextView.setText(initialText);
+                        speak();
+                    }
+                }
+            }
         }
     };
 
