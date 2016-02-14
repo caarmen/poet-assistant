@@ -19,12 +19,13 @@
 
 package ca.rmen.android.poetassistant.main;
 
-public enum Dictionary {
-    RHYMER, THESAURUS;
+public enum Tab {
+    RHYMER, THESAURUS, READER;
 
-    public static Dictionary parse(String value) {
+    public static Tab parse(String value) {
         if(RHYMER.name().equalsIgnoreCase(value)) return RHYMER;
         if(THESAURUS.name().equalsIgnoreCase(value)) return THESAURUS;
+        if(READER.name().equalsIgnoreCase(value)) return READER;
         return null;
     }
 }

@@ -31,8 +31,8 @@ import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ThesaurusLoader
 public abstract class ResultListLoader extends AsyncTaskLoader<List<ResultListEntry>> {
     private static final String TAG = Constants.TAG + ResultListLoader.class.getSimpleName();
 
-    static ResultListLoader getLoader(Dictionary dictionary, Context context, String query) {
-        switch (dictionary) {
+    static ResultListLoader getLoader(Tab tab, Context context, String query) {
+        switch (tab) {
             case RHYMER:
                 return new RhymerLoader(context, query);
             case THESAURUS:

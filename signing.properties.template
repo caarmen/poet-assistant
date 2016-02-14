@@ -1,0 +1,4 @@
+KeyAlias=my-key-alias
+KeyPassword=my-key-password
+StoreFile=/path/to/signing/certificate
+StorePassword=my-store-password

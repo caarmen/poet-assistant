@@ -68,14 +68,13 @@ class Search {
      * Search for the given word in the given dictionary, and set the current tab
      * to that dictionary (if it's not already the case).
      */
-    void search(String word, Dictionary dictionary) {
-        Log.d(TAG, "search() called with: " + "word = [" + word + "], dictionary = [" + dictionary + "]");
-        int tab = dictionary.ordinal();
-        mViewPager.setCurrentItem(tab);
+    void search(String word, Tab tab) {
+        Log.d(TAG, "search() called with: " + "word = [" + word + "], tab = [" + tab + "]");
+        mViewPager.setCurrentItem(tab.ordinal());
         word = word.trim().toLowerCase(Locale.US);
         // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
         // We want to retrieve the existing fragment.
-        ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, tab)).query(word);
+        ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, tab.ordinal())).query(word);
     }
 
     /**
@@ -86,8 +85,9 @@ class Search {
         word = word.trim().toLowerCase(Locale.US);
         // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
         // We want to retrieve the existing fragment.
-        ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Dictionary.RHYMER.ordinal())).query(word);
-        ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Dictionary.THESAURUS.ordinal())).query(word);
+        ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.RHYMER.ordinal())).query(word);
+        ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.THESAURUS.ordinal())).query(word);
+        if(mViewPager.getCurrentItem() == Tab.READER.ordinal()) mViewPager.setCurrentItem(0);
     }
 
     public void clearSearchHistory() {

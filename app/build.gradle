@@ -36,6 +36,23 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    File signFile = rootProject.file('signing.properties')
+    if (signFile.exists()) {
+        Properties p = new Properties();
+        p.load(new FileInputStream(signFile))
+
+        signingConfigs {
+            release {
+                keyAlias p.KeyAlias
+                keyPassword p.KeyPassword
+                storeFile file(p.StoreFile)
+                storePassword p.StorePassword
+            }
+        }
+        android.buildTypes.release.signingConfig =signingConfigs.release
+    } else  {
+        android.buildTypes.release.signingConfig = null
+    }
 }
 
 android.applicationVariants.all { variant ->

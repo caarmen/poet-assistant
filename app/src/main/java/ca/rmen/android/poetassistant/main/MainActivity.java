@@ -68,10 +68,10 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         tabLayout.setupWithViewPager(mViewPager);
 
         // If the app was launched with a query for the thesaurus, focus on that tab.
-        if (data != null && data.getHost().equalsIgnoreCase(Dictionary.THESAURUS.name()))
-            mViewPager.setCurrentItem(Dictionary.THESAURUS.ordinal());
+        if (data != null && data.getHost().equalsIgnoreCase(Tab.THESAURUS.name()))
+            mViewPager.setCurrentItem(Tab.THESAURUS.ordinal());
         else if (Intent.ACTION_SEND.equals(intent.getAction()))
-            mViewPager.setCurrentItem(2);
+            mViewPager.setCurrentItem(Tab.READER.ordinal());
 
         mSearch = new Search(this, mViewPager);
     }
@@ -91,15 +91,15 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri data = getIntent().getData();
             if (data != null) {
-                Dictionary dictionary = Dictionary.parse(data.getHost());
-                if (dictionary != null) mSearch.search(data.getLastPathSegment(), dictionary);
+                Tab tab = Tab.parse(data.getHost());
+                if (tab != null) mSearch.search(data.getLastPathSegment(), tab);
             }
         }
         // Play some text in the tts tab
         else if (Intent.ACTION_SEND.equals(intent.getAction())) {
-            mViewPager.setCurrentItem(2);
+            mViewPager.setCurrentItem(Tab.READER.ordinal());
             String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            TtsFragment ttsFragment = (TtsFragment) mViewPager.getAdapter().instantiateItem(mViewPager, 2);
+            TtsFragment ttsFragment = (TtsFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.RHYMER.ordinal());
             ttsFragment.speak(sharedText);
         }
     }
@@ -130,9 +130,9 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
     }
 
     @Override
-    public void onWordClicked(String word, Dictionary dictionary) {
-        Log.d(TAG, "onWordClicked() called with: " + "word = [" + word + "], dictionary = [" + dictionary + "]");
-        mSearch.search(word, dictionary);
+    public void onWordClicked(String word, Tab tab) {
+        Log.d(TAG, "onWordClicked() called with: " + "word = [" + word + "], tab = [" + tab + "]");
+        mSearch.search(word, tab);
     }
 
 }

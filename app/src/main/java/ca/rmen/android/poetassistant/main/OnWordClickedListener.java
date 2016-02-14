@@ -20,5 +20,5 @@
 package ca.rmen.android.poetassistant.main;
 
 interface OnWordClickedListener {
-    void onWordClicked(String word, Dictionary dictionary);
+    void onWordClicked(String word, Tab tab);
 }

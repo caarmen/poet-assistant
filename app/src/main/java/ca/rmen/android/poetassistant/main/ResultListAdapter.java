@@ -131,9 +131,9 @@ class ResultListAdapter extends BaseAdapter {
             String word = (String) text1.getText();
 
             if (v.getId() == R.id.btn_rhymer) {
-                mListener.onWordClicked(word, Dictionary.RHYMER);
+                mListener.onWordClicked(word, Tab.RHYMER);
             } else if (v.getId() == R.id.btn_thesaurus) {
-                mListener.onWordClicked(word, Dictionary.THESAURUS);
+                mListener.onWordClicked(word, Tab.THESAURUS);
             }
         }
     };

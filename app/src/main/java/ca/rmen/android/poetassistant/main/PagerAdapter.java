@@ -45,11 +45,11 @@ class PagerAdapter extends FragmentPagerAdapter {
     private String mInitialPoemText;
 
     public static class Query {
-        public final Dictionary dictionary;
+        public final Tab tab;
         public final String word;
 
-        public Query(Dictionary dictionary, String word) {
-            this.dictionary = dictionary;
+        public Query(Tab tab, String word) {
+            this.tab = tab;
             this.word = word;
         }
     }
@@ -59,12 +59,12 @@ class PagerAdapter extends FragmentPagerAdapter {
         Log.v(TAG, "Constructor: intent = " + intent);
         mContext = context;
         Uri initialQuery = intent.getData();
-        // Deep link to query a dictionary
+        // Deep link to query in a specific tab
         if (initialQuery != null) {
-            Dictionary dictionary = Dictionary.parse(initialQuery.getHost());
-            if (dictionary == Dictionary.RHYMER) {
+            Tab tab = Tab.parse(initialQuery.getHost());
+            if (tab == Tab.RHYMER) {
                 mInitialRhymeQuery = initialQuery.getLastPathSegment();
-            } else if (dictionary == Dictionary.THESAURUS) {
+            } else if (tab == Tab.THESAURUS) {
                 mInitialThesaurusQuery= initialQuery.getLastPathSegment();
             }
         }
@@ -77,10 +77,10 @@ class PagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         Log.v(TAG, "SectionsPagerAdapter getItem " + position);
-        if (position == Dictionary.RHYMER.ordinal()) {
-            return ResultListFragment.newInstance(Dictionary.RHYMER, mInitialRhymeQuery);
-        } else if (position == Dictionary.THESAURUS.ordinal()) {
-            return ResultListFragment.newInstance(Dictionary.THESAURUS, mInitialThesaurusQuery);
+        if (position == Tab.RHYMER.ordinal()) {
+            return ResultListFragment.newInstance(Tab.RHYMER, mInitialRhymeQuery);
+        } else if (position == Tab.THESAURUS.ordinal()) {
+            return ResultListFragment.newInstance(Tab.THESAURUS, mInitialThesaurusQuery);
         } else {
             return TtsFragment.newInstance(mInitialPoemText);
         }
@@ -93,9 +93,9 @@ class PagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        if (position == Dictionary.RHYMER.ordinal())
+        if (position == Tab.RHYMER.ordinal())
             return mContext.getString(R.string.tab_rhymer).toUpperCase(Locale.getDefault());
-        else if (position == Dictionary.THESAURUS.ordinal())
+        else if (position == Tab.THESAURUS.ordinal())
             return mContext.getString(R.string.tab_thesaurus).toUpperCase(Locale.getDefault());
         else
             return mContext.getString(R.string.tab_reader).toUpperCase(Locale.getDefault());

@@ -39,18 +39,18 @@ import ca.rmen.android.poetassistant.R;
 
 public class ResultListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<List<ResultListEntry>> {
     private static final String TAG = Constants.TAG + ResultListFragment.class.getSimpleName();
-    private static final String EXTRA_DICTIONARY = "dictionary";
+    private static final String EXTRA_TAB = "tab";
     private static final String EXTRA_QUERY = "query";
     private ResultListAdapter mAdapter;
-    private Dictionary mDictionary;
+    private Tab mTab;
     private TextView mListHeaderView;
     private View mDivider;
 
-    public static ResultListFragment newInstance(Dictionary dictionary, @Nullable String initialQuery) {
-        Log.d(TAG, "newInstance() called with: " + "dictionary = [" + dictionary + "], initialQuery = [" + initialQuery + "]");
+    public static ResultListFragment newInstance(Tab tab, @Nullable String initialQuery) {
+        Log.d(TAG, "newInstance() called with: " + "tab= [" + tab + "], initialQuery = [" + initialQuery + "]");
         ResultListFragment fragment = new ResultListFragment();
         Bundle bundle = new Bundle(2);
-        bundle.putSerializable(EXTRA_DICTIONARY, dictionary);
+        bundle.putSerializable(EXTRA_TAB, tab);
         if (initialQuery != null) {
             bundle.putString(EXTRA_QUERY, initialQuery);
         }
@@ -60,8 +60,8 @@ public class ResultListFragment extends ListFragment implements LoaderManager.Lo
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mDictionary = (Dictionary) getArguments().getSerializable(EXTRA_DICTIONARY);
-        Log.v(TAG, "onCreateView: dictionary = " + mDictionary);
+        mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
+        Log.v(TAG, "onCreateView: tab = " + mTab);
         View view = inflater.inflate(R.layout.fragment_result_list, container, false);
         mListHeaderView = (TextView) view.findViewById(R.id.tv_list_header);
         mDivider = view.findViewById(R.id.divider);
@@ -106,7 +106,7 @@ public class ResultListFragment extends ListFragment implements LoaderManager.Lo
         Log.d(TAG, "onCreateLoader() called with: " + "id = [" + id + "], args = [" + args + "]");
         String query = "";
         if (args != null) query = args.getString("query");
-        ResultListLoader loader = ResultListLoader.getLoader(mDictionary, getActivity(), query);
+        ResultListLoader loader = ResultListLoader.getLoader(mTab, getActivity(), query);
         loader.forceLoad();
         return loader;
     }
