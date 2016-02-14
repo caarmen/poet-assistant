@@ -57,8 +57,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         Uri data = getIntent().getData();
         mPagerAdapter = new ResultListPagerAdapter(this, getSupportFragmentManager(), data);
 
@@ -81,8 +79,8 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         setIntent(intent);
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            if(TextUtils.isEmpty(query)) query = intent.getStringExtra(SearchManager.USER_QUERY);
-            if(TextUtils.isEmpty(query)) return;
+            if (TextUtils.isEmpty(query)) query = intent.getStringExtra(SearchManager.USER_QUERY);
+            if (TextUtils.isEmpty(query)) return;
             search(query);
         } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri data = getIntent().getData();

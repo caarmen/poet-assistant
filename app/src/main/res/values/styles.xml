@@ -27,6 +27,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTabView">
+        <item name="tabBackground">@color/colorPrimary</item>
+        <item name="tabTextColor">#cccccc</item>
+        <item name="tabSelectedTextColor">#ffffff</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
