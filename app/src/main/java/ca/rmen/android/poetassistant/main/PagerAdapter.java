@@ -35,8 +35,8 @@ import ca.rmen.android.poetassistant.R;
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-class ResultListPagerAdapter extends FragmentPagerAdapter {
-    private static final String TAG = Constants.TAG + ResultListPagerAdapter.class.getSimpleName();
+class PagerAdapter extends FragmentPagerAdapter {
+    private static final String TAG = Constants.TAG + PagerAdapter.class.getSimpleName();
 
     private final Context mContext;
     private String mInitialRhymeQuery;
@@ -52,7 +52,7 @@ class ResultListPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    public ResultListPagerAdapter(Context context, FragmentManager fm, Uri initialQuery) {
+    public PagerAdapter(Context context, FragmentManager fm, Uri initialQuery) {
         super(fm);
         Log.v(TAG, "Constructor: initialQuery = " + initialQuery);
         mContext = context;

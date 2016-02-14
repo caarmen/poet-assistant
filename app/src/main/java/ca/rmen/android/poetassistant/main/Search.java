@@ -23,17 +23,34 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 
 import java.util.Locale;
 
+import ca.rmen.android.poetassistant.Constants;
+
+/**
+ * Glue between the fragments, activity, and view pager, for executing searches.
+ *
+ * The activity calls this class to perform searches.  This class retrieves the fragments from
+ * the Viewpager, and calls the fragments (which call the adapters) to perform the search and
+ * display the search results.
+ *
+ * This class also configures the SearchView widget, and intercepts searches to add them to
+ * the list of suggested words.
+ */
 class Search {
+    private static final String TAG = Constants.TAG + Search.class.getSimpleName();
     private SearchView mSearchView;
+    private final ViewPager mViewPager;
     private final Suggestions.SuggestionsCursorAdapter mSuggestionsCursorAdapter;
     private final Activity mSearchableActivity;
 
-    public Search(Activity searchableActivity) {
+    public Search(Activity searchableActivity, ViewPager viewPager) {
         mSearchableActivity = searchableActivity;
+        mViewPager = viewPager;
         mSuggestionsCursorAdapter = new Suggestions.SuggestionsCursorAdapter(mSearchableActivity);
     }
 
@@ -47,7 +64,33 @@ class Search {
         mSearchView.setOnSuggestionListener(mOnSuggestionListener);
     }
 
-    public void clearSearchHistory(){
+    /**
+     * Search for the given word in the given dictionary, and set the current tab
+     * to that dictionary (if it's not already the case).
+     */
+    void search(String word, Dictionary dictionary) {
+        Log.d(TAG, "search() called with: " + "word = [" + word + "], dictionary = [" + dictionary + "]");
+        int tab = dictionary.ordinal();
+        mViewPager.setCurrentItem(tab);
+        word = word.trim().toLowerCase(Locale.US);
+        // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
+        // We want to retrieve the existing fragment.
+        ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, tab)).query(word);
+    }
+
+    /**
+     * Search for the given word in both dictionaries
+     */
+    void search(String word) {
+        Log.d(TAG, "search() called with: " + "word = [" + word + "]");
+        word = word.trim().toLowerCase(Locale.US);
+        // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
+        // We want to retrieve the existing fragment.
+        ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Dictionary.RHYMER.ordinal())).query(word);
+        ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Dictionary.THESAURUS.ordinal())).query(word);
+    }
+
+    public void clearSearchHistory() {
         mSuggestionsCursorAdapter.clear();
     }
 

@@ -33,8 +33,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import java.util.Locale;
+import android.view.View;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
@@ -45,11 +44,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
 
     private static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private ViewPager mViewPager;
-    private ResultListPagerAdapter mPagerAdapter;
     private Search mSearch;
 
     @Override
@@ -61,36 +55,39 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Uri data = getIntent().getData();
-        mPagerAdapter = new ResultListPagerAdapter(this, getSupportFragmentManager(), data);
+        PagerAdapter pagerAdapter = new PagerAdapter(this, getSupportFragmentManager(), data);
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mPagerAdapter);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.container);
+        viewPager.setAdapter(pagerAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setupWithViewPager(viewPager);
 
         // If the app was launched with a query for the thesaurus, focus on that tab.
         if (data != null && data.getHost().equalsIgnoreCase(Dictionary.THESAURUS.name()))
-            mViewPager.setCurrentItem(Dictionary.THESAURUS.ordinal());
+            viewPager.setCurrentItem(Dictionary.THESAURUS.ordinal());
 
-        mSearch = new Search(this);
+        mSearch = new Search(this, viewPager);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         Log.d(TAG, "onNewIntent() called with: " + "intent = [" + intent + "]");
         setIntent(intent);
+        // The user entered a search term either by typing or by voice
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             if (TextUtils.isEmpty(query)) query = intent.getStringExtra(SearchManager.USER_QUERY);
             if (TextUtils.isEmpty(query)) return;
-            search(query);
-        } else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+            mSearch.search(query);
+        }
+        // We got here from a deep link
+        else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri data = getIntent().getData();
             if (data != null) {
                 Dictionary dictionary = Dictionary.parse(data.getHost());
-                if (dictionary != null) search(data.getLastPathSegment(), dictionary);
+                if (dictionary != null) mSearch.search(data.getLastPathSegment(), dictionary);
             }
         }
     }
@@ -112,7 +109,8 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
             return true;
         } else if (item.getItemId() == R.id.action_clear_search_history) {
             mSearch.clearSearchHistory();
-            Snackbar.make(mViewPager.getRootView(), R.string.search_history_cleared, Snackbar.LENGTH_SHORT).show();
+            View rootView = findViewById(android.R.id.content);
+            Snackbar.make(rootView, R.string.search_history_cleared, Snackbar.LENGTH_SHORT).show();
             return true;
         }
 
@@ -122,32 +120,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
     @Override
     public void onWordClicked(String word, Dictionary dictionary) {
         Log.d(TAG, "onWordClicked() called with: " + "word = [" + word + "], dictionary = [" + dictionary + "]");
-        search(word, dictionary);
+        mSearch.search(word, dictionary);
     }
 
-    /**
-     * Search for the given word in the given dictionary, and set the current tab
-     * to that dictionary (if it's not already the case).
-     */
-    private void search(String word, Dictionary dictionary) {
-        Log.d(TAG, "search() called with: " + "word = [" + word + "], dictionary = [" + dictionary + "]");
-        int tab = dictionary.ordinal();
-        mViewPager.setCurrentItem(tab);
-        word = word.trim().toLowerCase(Locale.US);
-        // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
-        // We want to retrieve the existing fragment.
-        ((ResultListFragment) mPagerAdapter.instantiateItem(mViewPager, tab)).query(word);
-    }
-
-    /**
-     * Search for the given word in both dictionaries
-     */
-    private void search(String word) {
-        Log.d(TAG, "search() called with: " + "word = [" + word + "]");
-        word = word.trim().toLowerCase(Locale.US);
-        // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
-        // We want to retrieve the existing fragment.
-        ((ResultListFragment) mPagerAdapter.instantiateItem(mViewPager, Dictionary.RHYMER.ordinal())).query(word);
-        ((ResultListFragment) mPagerAdapter.instantiateItem(mViewPager, Dictionary.THESAURUS.ordinal())).query(word);
-    }
 }
