@@ -25,7 +25,7 @@
     android:layout_alignParentLeft="true"
     android:layout_alignParentStart="true"
     android:layout_centerVertical="true"
-    android:padding="2dp"
+    android:padding="8dp"
     android:textSize="24sp"
     android:theme="@style/AppTheme.AppBarOverlay"
     tools:text="happy" />
