@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
 
     @Override
     protected void onNewIntent(Intent intent) {
+        Log.d(TAG, "onNewIntent() called with: " + "intent = [" + intent + "]");
         setIntent(intent);
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
@@ -95,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu() called with: " + "menu = [" + menu + "]");
         getMenuInflater().inflate(R.menu.menu_main, menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         mSearch.setSearchView(searchView);
@@ -126,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
      * Search for the given word in the given dictionary.
      */
     private void search(String word, Dictionary dictionary) {
+        Log.d(TAG, "search() called with: " + "word = [" + word + "], dictionary = [" + dictionary + "]");
         mViewPager.setCurrentItem(dictionary.ordinal());
         search(word);
     }
@@ -134,9 +138,12 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
      * Search for the given word in the currently open dictionary
      */
     private void search(String word) {
+        Log.d(TAG, "search() called with: " + "word = [" + word + "]");
         int currentTab = mViewPager.getCurrentItem();
         word = word.trim().toLowerCase(Locale.US);
-        ((ResultListFragment) mPagerAdapter.getItem(currentTab)).query(word);
+        // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
+        // We want to retrieve the existing fragment.
+        ((ResultListFragment) mPagerAdapter.instantiateItem(mViewPager, currentTab)).query(word);
     }
 
 }

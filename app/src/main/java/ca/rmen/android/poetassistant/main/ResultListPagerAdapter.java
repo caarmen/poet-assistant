@@ -39,8 +39,8 @@ class ResultListPagerAdapter extends FragmentPagerAdapter {
     private static final String TAG = Constants.TAG + ResultListPagerAdapter.class.getSimpleName();
 
     private final Context mContext;
-    private final ResultListFragment mRhymerFragment;
-    private final ResultListFragment mThesaurusFragment;
+    private String mInitialRhymeQuery;
+    private String mInitialThesaurusQuery;
 
     public static class Query {
         public final Dictionary dictionary;
@@ -54,30 +54,25 @@ class ResultListPagerAdapter extends FragmentPagerAdapter {
 
     public ResultListPagerAdapter(Context context, FragmentManager fm, Uri initialQuery) {
         super(fm);
+        Log.v(TAG, "Constructor: initialQuery = " + initialQuery);
         mContext = context;
-        String initialRhymeQuery = null;
-        String initialThesaurusQuery = null;
         if (initialQuery != null) {
-            String host = initialQuery.getHost();
-            Dictionary dictionary = Dictionary.parse(host);
-            String queryWord = initialQuery.getLastPathSegment();
+            Dictionary dictionary = Dictionary.parse(initialQuery.getHost());
             if (dictionary == Dictionary.RHYMER) {
-                initialRhymeQuery = queryWord;
+                mInitialRhymeQuery = initialQuery.getLastPathSegment();
             } else if (dictionary == Dictionary.THESAURUS) {
-                initialThesaurusQuery = queryWord;
+                mInitialThesaurusQuery= initialQuery.getLastPathSegment();
             }
         }
-        mRhymerFragment = ResultListFragment.newInstance(Dictionary.RHYMER, initialRhymeQuery);
-        mThesaurusFragment = ResultListFragment.newInstance(Dictionary.THESAURUS, initialThesaurusQuery);
     }
 
     @Override
     public Fragment getItem(int position) {
         Log.v(TAG, "SectionsPagerAdapter getItem " + position);
         if (position == Dictionary.RHYMER.ordinal()) {
-            return mRhymerFragment;
+            return ResultListFragment.newInstance(Dictionary.RHYMER, mInitialRhymeQuery);
         } else /*if (position == TAB_THESAURUS)*/ {
-            return mThesaurusFragment;
+            return ResultListFragment.newInstance(Dictionary.THESAURUS, mInitialThesaurusQuery);
         }
     }
 
