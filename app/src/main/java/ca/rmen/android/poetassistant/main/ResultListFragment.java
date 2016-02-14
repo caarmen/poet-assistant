@@ -46,8 +46,8 @@ public class ResultListFragment extends ListFragment implements LoaderManager.Lo
     private TextView mListHeaderView;
     private View mDivider;
 
-
     public static ResultListFragment newInstance(Dictionary dictionary, @Nullable String initialQuery) {
+        Log.d(TAG, "newInstance() called with: " + "dictionary = [" + dictionary + "], initialQuery = [" + initialQuery + "]");
         ResultListFragment fragment = new ResultListFragment();
         Bundle bundle = new Bundle(2);
         bundle.putSerializable(EXTRA_DICTIONARY, dictionary);
@@ -61,6 +61,7 @@ public class ResultListFragment extends ListFragment implements LoaderManager.Lo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mDictionary = (Dictionary) getArguments().getSerializable(EXTRA_DICTIONARY);
+        Log.v(TAG, "onCreateView: dictionary = " + mDictionary);
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         mListHeaderView = (TextView) view.findViewById(R.id.tv_list_header);
         mDivider = view.findViewById(R.id.divider);
@@ -74,6 +75,7 @@ public class ResultListFragment extends ListFragment implements LoaderManager.Lo
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         mAdapter = new ResultListAdapter(getActivity(), (OnWordClickedListener) getActivity());
         setListAdapter(mAdapter);
         getLoaderManager().initLoader(0, null, this);
@@ -87,6 +89,7 @@ public class ResultListFragment extends ListFragment implements LoaderManager.Lo
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState() called with: " + "outState = [" + outState + "]");
         outState.putString(EXTRA_QUERY, (String) mListHeaderView.getText());
     }
 
@@ -112,7 +115,7 @@ public class ResultListFragment extends ListFragment implements LoaderManager.Lo
     public void onLoadFinished(Loader<List<ResultListEntry>> loader, List<ResultListEntry> data) {
         Log.d(TAG, "onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
         mAdapter.setData(data);
-        int headerVisible = mAdapter.getCount() > 0? View.VISIBLE : View.GONE;
+        int headerVisible = mAdapter.getCount() > 0 ? View.VISIBLE : View.GONE;
         mListHeaderView.setVisibility(headerVisible);
         mDivider.setVisibility(headerVisible);
     }
