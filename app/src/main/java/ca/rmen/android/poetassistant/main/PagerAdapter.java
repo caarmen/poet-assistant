@@ -71,14 +71,16 @@ class PagerAdapter extends FragmentPagerAdapter {
         Log.v(TAG, "SectionsPagerAdapter getItem " + position);
         if (position == Dictionary.RHYMER.ordinal()) {
             return ResultListFragment.newInstance(Dictionary.RHYMER, mInitialRhymeQuery);
-        } else /*if (position == TAB_THESAURUS)*/ {
+        } else if (position == Dictionary.THESAURUS.ordinal()) {
             return ResultListFragment.newInstance(Dictionary.THESAURUS, mInitialThesaurusQuery);
+        } else {
+            return TtsFragment.newInstance();
         }
     }
 
     @Override
-    public int getCount() {
-        return 2;
+    public int getCount(){
+        return 3;
     }
 
     @Override
@@ -87,6 +89,7 @@ class PagerAdapter extends FragmentPagerAdapter {
             return mContext.getString(R.string.tab_rhymer).toUpperCase(Locale.getDefault());
         else if (position == Dictionary.THESAURUS.ordinal())
             return mContext.getString(R.string.tab_thesaurus).toUpperCase(Locale.getDefault());
-        return null;
+        else
+            return mContext.getString(R.string.tab_reader).toUpperCase(Locale.getDefault());
     }
 }

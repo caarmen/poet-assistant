@@ -62,7 +62,7 @@ public class ResultListFragment extends ListFragment implements LoaderManager.Lo
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mDictionary = (Dictionary) getArguments().getSerializable(EXTRA_DICTIONARY);
         Log.v(TAG, "onCreateView: dictionary = " + mDictionary);
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_result_list, container, false);
         mListHeaderView = (TextView) view.findViewById(R.id.tv_list_header);
         mDivider = view.findViewById(R.id.divider);
         if (savedInstanceState != null) {
