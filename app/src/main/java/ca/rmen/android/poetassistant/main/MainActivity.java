@@ -38,6 +38,7 @@ import android.view.View;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.about.AboutActivity;
+import ca.rmen.android.poetassistant.main.reader.TtsFragment;
 
 
 public class MainActivity extends AppCompatActivity implements OnWordClickedListener {
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         getMenuInflater().inflate(R.menu.menu_main, menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         mSearch.setSearchView(searchView);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
