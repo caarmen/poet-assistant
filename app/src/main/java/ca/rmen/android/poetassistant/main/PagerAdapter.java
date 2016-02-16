@@ -66,7 +66,7 @@ class PagerAdapter extends FragmentPagerAdapter {
             if (tab == Tab.RHYMER) {
                 mInitialRhymeQuery = initialQuery.getLastPathSegment();
             } else if (tab == Tab.THESAURUS) {
-                mInitialThesaurusQuery= initialQuery.getLastPathSegment();
+                mInitialThesaurusQuery = initialQuery.getLastPathSegment();
             }
         }
         // Text shared from another app:
@@ -88,7 +88,7 @@ class PagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public int getCount(){
+    public int getCount() {
         return 3;
     }
 

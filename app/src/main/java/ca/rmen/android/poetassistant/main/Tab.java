@@ -23,9 +23,9 @@ public enum Tab {
     RHYMER, THESAURUS, READER;
 
     public static Tab parse(String value) {
-        if(RHYMER.name().equalsIgnoreCase(value)) return RHYMER;
-        if(THESAURUS.name().equalsIgnoreCase(value)) return THESAURUS;
-        if(READER.name().equalsIgnoreCase(value)) return READER;
+        if (RHYMER.name().equalsIgnoreCase(value)) return RHYMER;
+        if (THESAURUS.name().equalsIgnoreCase(value)) return THESAURUS;
+        if (READER.name().equalsIgnoreCase(value)) return READER;
         return null;
     }
 }

@@ -129,7 +129,6 @@ public class TtsFragment extends Fragment implements
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void open() {
-        // TODO set initial folder
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         PoemFile poemFile = mPoemPrefs.getSavedPoem();
         if (poemFile != null) intent.setData(poemFile.uri);
@@ -140,7 +139,6 @@ public class TtsFragment extends Fragment implements
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void saveAs() {
-        // TODO set initial folder
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/plain");

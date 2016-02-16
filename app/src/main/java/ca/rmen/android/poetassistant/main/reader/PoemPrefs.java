@@ -26,7 +26,6 @@ import android.preference.PreferenceManager;
 
 import ca.rmen.android.poetassistant.Constants;
 
-
 class PoemPrefs {
     private static final String TAG = Constants.TAG + PoemPrefs.class.getSimpleName();
     private final SharedPreferences mSharedPreferences;
