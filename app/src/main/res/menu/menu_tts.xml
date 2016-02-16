@@ -33,4 +33,8 @@
         android:id="@+id/action_save_as"
         android:title="@string/file_save_as"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_share"
+        android:title="@string/file_share"
+        app:showAsAction="never" />
 </menu>

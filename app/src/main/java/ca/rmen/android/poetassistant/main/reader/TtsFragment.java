@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main.reader;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -115,6 +116,11 @@ public class TtsFragment extends Fragment implements
             mPoemFile.save(mPoemPrefs.getSavedPoemFile(), mTextView.getText().toString());
         } else if (item.getItemId() == R.id.action_save_as) {
             FileChooserDialogFragment.show(this, mPoemPrefs.getSavedPoemFile(), false, true, ACTION_FILE_SAVE_AS);
+        } else if (item.getItemId() == R.id.action_share) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, mTextView.getText());
+            intent.setType("text/plain");
+            startActivity(Intent.createChooser(intent, getString(R.string.file_share)));
         }
         return true;
     }
