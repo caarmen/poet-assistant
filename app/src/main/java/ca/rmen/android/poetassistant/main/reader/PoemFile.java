@@ -19,45 +19,55 @@
 
 package ca.rmen.android.poetassistant.main.reader;
 
+import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 import ca.rmen.android.poetassistant.Constants;
 
 
 class PoemFile {
     private static final String TAG = Constants.TAG + PoemFile.class.getSimpleName();
+    private final Context mContext;
     private final PoemFileCallback mCallback;
 
     public interface PoemFileCallback {
-        void onPoemLoaded(File file, String text);
+        void onPoemLoaded(Uri uri, String text);
 
-        void onPoemSaved(File file, String text);
+        void onPoemSaved(Uri uri, String text);
     }
 
-    public PoemFile(PoemFileCallback callback) {
+    public PoemFile(Context context, PoemFileCallback callback) {
+        mContext = context;
         mCallback = callback;
     }
 
-    public void open(final File file) {
-        Log.d(TAG, "open() called with: " + "file = [" + file + "]");
-        new AsyncTask<File, Void, String>() {
+    public void open(final Uri uri) {
+        Log.d(TAG, "open() called with: " + "uri = [" + uri + "]");
+        new AsyncTask<Uri, Void, String>() {
             @Override
-            protected String doInBackground(File... params) {
+            protected String doInBackground(Uri... params) {
                 try {
-                    FileReader reader = new FileReader(params[0]);
-                    StringBuilder builder = new StringBuilder();
-                    char[] buffer = new char[1024];
-                    for (int read = reader.read(buffer); read > 0; read = reader.read(buffer)) {
-                        builder.append(buffer, 0, read);
+                    InputStream inputStream = mContext.getContentResolver().openInputStream(uri);
+                    if (inputStream == null) return null;
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        stringBuilder.append(line).append('\n');
                     }
                     reader.close();
-                    return builder.toString();
+                    return stringBuilder.toString();
+
                 } catch (IOException e) {
                     Log.w(TAG, "Couldn't open file", e);
                 }
@@ -66,19 +76,21 @@ class PoemFile {
 
             @Override
             protected void onPostExecute(String text) {
-                mCallback.onPoemLoaded(file, text);
+                mCallback.onPoemLoaded(uri, text);
             }
-        }.execute(file);
+        }.execute(uri);
     }
 
-    public void save(final File file, final String text) {
-        Log.d(TAG, "save() called with: " + "file = [" + file + "], text = [" + text + "]");
+    public void save(final Uri uri, final String text) {
+        Log.d(TAG, "save() called with: " + "uri = [" + uri + "], text = [" + text + "]");
         new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
                 try {
-                    FileWriter writer = new FileWriter(file);
+                    OutputStream outputStream = mContext.getContentResolver().openOutputStream(uri, "w");
+                    if (outputStream == null) return null;
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
                     writer.write(text);
                     writer.close();
                 } catch (IOException e) {
@@ -89,11 +101,9 @@ class PoemFile {
 
             @Override
             protected void onPostExecute(Void result) {
-                if (file != null) mCallback.onPoemSaved(file, text);
+                if (uri != null) mCallback.onPoemSaved(uri, text);
             }
 
         }.execute();
     }
-
-
 }
