@@ -32,6 +32,7 @@ class PoemPrefs {
     private final SharedPreferences mSharedPreferences;
     private static final String PREF_POEM_TEXT = "poem_text";
     private static final String PREF_POEM_URI = "poem_uri";
+    private static final String PREF_POEM_NAME = "poem_name";
 
     public PoemPrefs(Context context) {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -41,32 +42,30 @@ class PoemPrefs {
         return mSharedPreferences.contains(PREF_POEM_URI);
     }
 
-    public void setSavedPoem(String text) {
+    public void setSavedPoem(PoemFile poemFile) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.remove(PREF_POEM_URI);
-        editor.putString(PREF_POEM_TEXT, text);
+        if (poemFile.uri != null)
+            editor.putString(PREF_POEM_URI, poemFile.uri.toString());
+        else
+            editor.remove(PREF_POEM_URI);
+        editor.putString(PREF_POEM_TEXT, poemFile.text);
+        editor.putString(PREF_POEM_NAME, poemFile.name);
         editor.apply();
     }
 
-    public Uri getSavedPoemUri() {
+    public void updatePoemText(String text) {
+        mSharedPreferences.edit().putString(PREF_POEM_TEXT, text).apply();
+    }
+
+    public PoemFile getSavedPoem() {
         String uri = mSharedPreferences.getString(PREF_POEM_URI, null);
-        if (uri != null) return Uri.parse(uri);
+        if (uri != null) {
+            String text = mSharedPreferences.getString(PREF_POEM_TEXT, null);
+            String name = mSharedPreferences.getString(PREF_POEM_NAME, null);
+            return new PoemFile(Uri.parse(uri), name, text);
+        }
         return null;
     }
 
-    public void setSavedPoemUri(Uri uri, String text) {
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putString(PREF_POEM_URI, uri.toString());
-        editor.putString(PREF_POEM_TEXT, text);
-        editor.apply();
-    }
-
-    public String getSavedPoemText() {
-        return mSharedPreferences.getString(PREF_POEM_TEXT, null);
-    }
-
-    public void setSavedPoemText(String text) {
-        mSharedPreferences.edit().putString(PREF_POEM_TEXT, text).apply();
-    }
 }
 
