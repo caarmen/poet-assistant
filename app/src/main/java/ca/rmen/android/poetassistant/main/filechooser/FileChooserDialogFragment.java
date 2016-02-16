@@ -32,7 +32,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.util.Log;
+import android.widget.EditText;
 
 import java.io.File;
 
@@ -47,6 +49,7 @@ public class FileChooserDialogFragment extends DialogFragment {
 
     private static final String TAG = Constants.TAG + FileChooserDialogFragment.class.getSimpleName();
     private static final String EXTRA_ACTION_ID = "action_id";
+    private static final String EXTRA_SAVE_AS = "save_as";
 
     /**
      * Optional.  Must be a folder. If provided, the file browser will open at this folder. If
@@ -69,28 +72,31 @@ public class FileChooserDialogFragment extends DialogFragment {
 
     /**
      * Show a visible dialog fragment to choose a folder or file
+     * @param saveAs if true, an EditText allows specifying a filename in the current folder
      */
-    public static void show(FragmentActivity activity, File initialFolder, boolean foldersOnly, int actionId) {
+    public static void show(FragmentActivity activity, File initialFolder, boolean foldersOnly, boolean saveAs, int actionId) {
         Log.d(TAG, "show() called with: " + "activity = [" + activity + "], initialFolder = [" + initialFolder + "], foldersOnly = [" + foldersOnly + "], actionId = [" + actionId + "]");
-        FileChooserDialogFragment result = create(initialFolder, foldersOnly, actionId);
+        FileChooserDialogFragment result = create(initialFolder, foldersOnly, saveAs, actionId);
         result.show(activity.getSupportFragmentManager(), FileChooserDialogFragment.class.getSimpleName());
     }
 
     /**
      * Show a visible dialog fragment to choose a folder or file
+     * @param saveAs if true, an EditText allows specifying a filename in the current folder
      */
-    public static void show(Fragment fragment, File initialFolder, @SuppressWarnings("SameParameterValue") boolean foldersOnly, int actionId) {
+    public static void show(Fragment fragment, File initialFolder, @SuppressWarnings("SameParameterValue") boolean foldersOnly, boolean saveAs, int actionId) {
         Log.d(TAG, "show() called with: " + "fragment = [" + fragment + "], initialFolder = [" + initialFolder + "], foldersOnly = [" + foldersOnly + "], actionId = [" + actionId + "]");
-        FileChooserDialogFragment result = create(initialFolder, foldersOnly, actionId);
+        FileChooserDialogFragment result = create(initialFolder, foldersOnly, saveAs, actionId);
         result.show(fragment.getChildFragmentManager(), FileChooserDialogFragment.class.getSimpleName());
     }
 
-    private static FileChooserDialogFragment create(File initialFolder, boolean foldersOnly, int actionId) {
+    private static FileChooserDialogFragment create(File initialFolder, boolean foldersOnly, boolean saveAs, int actionId) {
         Bundle arguments = new Bundle(3);
         arguments.putInt(EXTRA_ACTION_ID, actionId);
         if (initialFolder != null)
-            arguments.putSerializable(FileChooserDialogFragment.EXTRA_FILE_CHOOSER_INITIAL_FOLDER, initialFolder);
-        arguments.putBoolean(FileChooserDialogFragment.EXTRA_FILE_CHOOSER_FOLDERS_ONLY, foldersOnly);
+            arguments.putSerializable(EXTRA_FILE_CHOOSER_INITIAL_FOLDER, initialFolder);
+        arguments.putBoolean(EXTRA_FILE_CHOOSER_FOLDERS_ONLY, foldersOnly);
+        arguments.putBoolean(EXTRA_SAVE_AS, saveAs);
         FileChooserDialogFragment result = new FileChooserDialogFragment();
         result.setArguments(arguments);
         return result;
@@ -110,7 +116,7 @@ public class FileChooserDialogFragment extends DialogFragment {
      * Then we look in the arguments given when creating this dialog.
      * Then we fall back to the SD card folder.
      */
-    private File getInitialFolder(Bundle savedInstanceState) {
+    private File getInitialFile(Bundle savedInstanceState) {
         File initialFolder = null;
 
         if (savedInstanceState != null) {
@@ -121,14 +127,10 @@ public class FileChooserDialogFragment extends DialogFragment {
             initialFolder = (File) getArguments().getSerializable(EXTRA_FILE_CHOOSER_INITIAL_FOLDER);
         }
 
-        if (initialFolder == null) {
+        if (initialFolder == null || !initialFolder.exists()) {
             initialFolder = Environment.getExternalStorageDirectory();
         }
 
-        // We need a folder to start with.
-        if (!initialFolder.isDirectory()) {
-            initialFolder = initialFolder.getParentFile();
-        }
         return initialFolder;
     }
 
@@ -142,12 +144,24 @@ public class FileChooserDialogFragment extends DialogFragment {
 
         Bundle arguments = getArguments();
         final int actionId = arguments.getInt(EXTRA_ACTION_ID);
-        boolean foldersOnly = arguments.getBoolean(FileChooserDialogFragment.EXTRA_FILE_CHOOSER_FOLDERS_ONLY);
+        boolean foldersOnly = arguments.getBoolean(EXTRA_FILE_CHOOSER_FOLDERS_ONLY);
+        final boolean saveAs = arguments.getBoolean(EXTRA_SAVE_AS);
 
-        mSelectedFile = getInitialFolder(savedInstanceState);
+        mSelectedFile = getInitialFile(savedInstanceState);
+        File initialFolder;
+
+        // We need a folder to start with.
+        if (mSelectedFile.isDirectory()) {
+            initialFolder = mSelectedFile;
+        } else {
+            initialFolder = mSelectedFile.getParentFile();
+        }
 
         final Context context = getActivity();
-        final FileAdapter adapter = new FileAdapter(context, mSelectedFile, foldersOnly);
+        final EditText editText = new EditText(getActivity());
+        editText.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
+        final FileAdapter adapter = new FileAdapter(context, initialFolder, foldersOnly);
+        if (mSelectedFile.isFile() && saveAs) editText.setText(mSelectedFile.getName());
 
         // Save the file the user selected. Reload the dialog with the new folder
         // contents.
@@ -161,6 +175,8 @@ public class FileChooserDialogFragment extends DialogFragment {
                     dialog.setTitle(FileChooser.getFullDisplayName(context, mSelectedFile));
                     dialog.getListView().clearChoices();
                     dialog.getListView().setSelectionAfterHeaderView();
+                } else if (saveAs) {
+                    editText.setText(mSelectedFile.getName());
                 }
             }
         };
@@ -170,10 +186,18 @@ public class FileChooserDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 FileChooserDialogListener listener = getListener();
-                if (listener == null)
+                if (listener == null) {
                     Log.w(TAG, "User clicked on dialog after it was detached from activity. Monkey?");
-                else
+                } else {
+                    if (saveAs) {
+                        String fileName = editText.getText().toString();
+                        if (mSelectedFile.isDirectory())
+                            mSelectedFile = new File(mSelectedFile, fileName);
+                        else
+                            mSelectedFile = new File(mSelectedFile.getParentFile(), fileName);
+                    }
                     listener.onFileSelected(actionId, mSelectedFile);
+                }
             }
         };
 
@@ -196,13 +220,17 @@ public class FileChooserDialogFragment extends DialogFragment {
                 getListener().onDismiss(actionId);
             }
         };
-        AlertDialog dialog = new AlertDialog.Builder(context)
-                .setTitle(FileChooser.getFullDisplayName(context, mSelectedFile))
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                .setTitle(FileChooser.getFullDisplayName(context, initialFolder))
                 .setSingleChoiceItems(adapter, -1, fileSelectionListener)
                 .setPositiveButton(R.string.file_chooser_choose, positiveListener)
                 .setNegativeButton(android.R.string.cancel, negativeListener)
-                .setOnCancelListener(cancelListener)
-                .create();
+                .setOnCancelListener(cancelListener);
+        AlertDialog dialog = builder.create();
+        if (saveAs) {
+            dialog.setView(editText);
+        }
         dialog.setOnDismissListener(dismissListener);
         return dialog;
     }

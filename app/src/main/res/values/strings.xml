@@ -50,7 +50,6 @@
     <string name="file_open">Open poem file</string>
     <string name="file_save">Save</string>
     <string name="file_save_as">Save as &#8230;</string>
-    <string name="file_save_as_message">Enter the new location for the file</string>
     <string name="file_opened">Opened %s</string>
     <string name="file_saved">Saved poem to %s</string>
     <string name="file_chooser_sdcard">SD card</string>

@@ -46,12 +46,10 @@ import java.io.File;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.filechooser.FileChooserDialogFragment;
-import ca.rmen.android.poetassistant.main.filechooser.InputDialogFragment;
 
 
 public class TtsFragment extends Fragment implements
         FileChooserDialogFragment.FileChooserDialogListener,
-        InputDialogFragment.InputDialogListener,
         PoemFile.PoemFileCallback {
     private static final String TAG = Constants.TAG + TtsFragment.class.getSimpleName();
     private static final String EXTRA_INITIAL_TEXT = "initial_text";
@@ -112,11 +110,11 @@ public class TtsFragment extends Fragment implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_open) {
-            FileChooserDialogFragment.show(this, mPoemPrefs.getSavedPoemFolder(), false, ACTION_FILE_OPEN);
+            FileChooserDialogFragment.show(this, mPoemPrefs.getSavedPoemFolder(), false, false, ACTION_FILE_OPEN);
         } else if (item.getItemId() == R.id.action_save) {
             mPoemFile.save(mPoemPrefs.getSavedPoemFile(), mTextView.getText().toString());
         } else if (item.getItemId() == R.id.action_save_as) {
-            InputDialogFragment.show(this, getString(R.string.file_save_as), getString(R.string.file_save_as_message), mPoemPrefs.getSavedPoemFile().getAbsolutePath(), ACTION_FILE_SAVE_AS);
+            FileChooserDialogFragment.show(this, mPoemPrefs.getSavedPoemFile(), false, true, ACTION_FILE_SAVE_AS);
         }
         return true;
     }
@@ -151,13 +149,6 @@ public class TtsFragment extends Fragment implements
             mPoemFile.open(file);
         } else if (actionId == ACTION_FILE_SAVE_AS) {
             mPoemFile.save(file, mTextView.getText().toString());
-        }
-    }
-
-    @Override
-    public void onDialogInput(int actionId, String text) {
-        if (actionId == ACTION_FILE_SAVE_AS) {
-           mPoemFile.save(new File(text), mTextView.getText().toString());
         }
     }
 
