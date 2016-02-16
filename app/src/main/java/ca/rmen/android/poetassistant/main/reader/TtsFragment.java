@@ -17,43 +17,53 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.main.reader;
 
 import android.annotation.TargetApi;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import java.io.File;
+
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.filechooser.FileChooserDialogFragment;
 
 
-public class TtsFragment extends Fragment {
+public class TtsFragment extends Fragment implements
+        FileChooserDialogFragment.FileChooserDialogListener,
+        PoemFile.PoemFileCallback {
     private static final String TAG = Constants.TAG + TtsFragment.class.getSimpleName();
-    private static final String PREF_POEM_TEXT = "poem_text";
     private static final String EXTRA_INITIAL_TEXT = "initial_text";
+    private static final int ACTION_FILE_OPEN = 0;
+    private static final int ACTION_FILE_SAVE_AS = 1;
 
     private ImageView mPlayButton;
     private EditText mTextView;
     private TextToSpeech mTextToSpeech;
     private int mTtsStatus = TextToSpeech.ERROR;
-    private SharedPreferences mSharedPreferences;
     private Handler mHandler;
+    private PoemFile mPoemFile;
+    private PoemPrefs mPoemPrefs;
 
     public static TtsFragment newInstance(String initialText) {
         Log.d(TAG, "newInstance() called with: " + "initialText = [" + initialText + "]");
@@ -69,8 +79,10 @@ public class TtsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         mTextToSpeech = new TextToSpeech(getActivity().getApplicationContext(), mOnInitListener);
         mTextToSpeech.setOnUtteranceProgressListener(mUtteranceProgressListener);
+        mPoemPrefs = new PoemPrefs(getActivity());
     }
 
     @Override
@@ -82,16 +94,41 @@ public class TtsFragment extends Fragment {
         mPlayButton.setOnClickListener(mOnClickListener);
         mTextView.addTextChangedListener(mTextWatcher);
         mHandler = new Handler();
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String poemText = mSharedPreferences.getString(PREF_POEM_TEXT, null);
-        mTextView.setText(poemText);
+        mPoemFile = new PoemFile(this);
+        mTextView.setText(mPoemPrefs.getSavedPoemText());
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        Log.d(TAG, "onCreateOptionsMenu() called with: " + "menu = [" + menu + "], inflater = [" + inflater + "]");
+        inflater.inflate(R.menu.menu_tts, menu);
+        MenuItem saveMenuItem = menu.findItem(R.id.action_save);
+        saveMenuItem.setEnabled(mPoemPrefs.hasSavedPoem());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_open) {
+            FileChooserDialogFragment.show(this, mPoemPrefs.getSavedPoemFolder(), false, false, ACTION_FILE_OPEN);
+        } else if (item.getItemId() == R.id.action_save) {
+            mPoemFile.save(mPoemPrefs.getSavedPoemFile(), mTextView.getText().toString());
+        } else if (item.getItemId() == R.id.action_save_as) {
+            FileChooserDialogFragment.show(this, mPoemPrefs.getSavedPoemFile(), false, true, ACTION_FILE_SAVE_AS);
+        } else if (item.getItemId() == R.id.action_share) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.putExtra(Intent.EXTRA_TEXT, mTextView.getText());
+            intent.setType("text/plain");
+            startActivity(Intent.createChooser(intent, getString(R.string.file_share)));
+        }
+        return true;
     }
 
     @Override
     public void onDestroyView() {
         Log.d(TAG, "onDestroyView() called with: " + "");
-        mSharedPreferences.edit().putString(PREF_POEM_TEXT, mTextView.getText().toString()).apply();
+        mPoemPrefs.setSavedPoemText(mTextView.getText().toString());
         super.onDestroyView();
     }
 
@@ -109,6 +146,35 @@ public class TtsFragment extends Fragment {
         Log.d(TAG, "speak() called with: " + "text = [" + text + "]");
         mTextView.setText(text);
         mPlayButton.callOnClick();
+    }
+
+    @Override
+    public void onFileSelected(int actionId, File file) {
+        Log.d(TAG, "onFileSelected() called with: " + "actionId = [" + actionId + "], file = [" + file + "]");
+        if (actionId == ACTION_FILE_OPEN) {
+            mPoemFile.open(file);
+        } else if (actionId == ACTION_FILE_SAVE_AS) {
+            mPoemFile.save(file, mTextView.getText().toString());
+        }
+    }
+
+    @Override
+    public void onDismiss(int actionId) {
+        Log.d(TAG, "onDismiss() called with: " + "actionId = [" + actionId + "]");
+    }
+
+    @Override
+    public void onPoemLoaded(File file, String text) {
+        mTextView.setText(text);
+        mPoemPrefs.setSavedPoemFile(file, text);
+        getActivity().supportInvalidateOptionsMenu();
+        Snackbar.make(mTextView, getString(R.string.file_opened, file.getAbsolutePath()), Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onPoemSaved(File file, String text) {
+        mPoemPrefs.setSavedPoemFile(file, text);
+        Snackbar.make(mTextView, getString(R.string.file_saved, file.getAbsolutePath()), Snackbar.LENGTH_LONG).show();
     }
 
     /**
@@ -186,13 +252,17 @@ public class TtsFragment extends Fragment {
         public void onInit(int status) {
             mTtsStatus = status;
             updatePlayButton();
-            if(mTtsStatus == TextToSpeech.SUCCESS) {
+            if (mTtsStatus == TextToSpeech.SUCCESS) {
                 Bundle arguments = getArguments();
                 if (arguments != null) {
                     String initialText = arguments.getString(EXTRA_INITIAL_TEXT);
                     if (!TextUtils.isEmpty(initialText)) {
                         mTextView.setText(initialText);
+                        mPoemPrefs.setSavedPoem(initialText);
                         speak();
+                        getActivity().supportInvalidateOptionsMenu();
+                    } else if (mPoemPrefs.hasSavedPoem()) {
+                        mPoemFile.open(mPoemPrefs.getSavedPoemFile());
                     }
                 }
             }

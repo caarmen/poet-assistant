@@ -31,6 +31,7 @@ import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.reader.TtsFragment;
 
 /**
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to

@@ -47,4 +47,13 @@
     <string name="about_license_thesaurus">WordNet Thesaurus License</string>
     <string name="about_app_icon">App icon based on Dictionary Pictogram by libberry: https://openclipart.org/detail/185246/dictionary-pictogram</string>
     <string name="license_title">Licensing Information</string>
+    <string name="file_open">Open</string>
+    <string name="file_save">Save</string>
+    <string name="file_save_as">Save as</string>
+    <string name="file_share">Share</string>
+    <string name="file_opened">Opened %s</string>
+    <string name="file_saved">Saved poem to %s</string>
+    <string name="file_chooser_sdcard">SD card</string>
+    <string name="file_chooser_root">/</string>
+    <string name="file_chooser_choose">Choose</string>
 </resources>
