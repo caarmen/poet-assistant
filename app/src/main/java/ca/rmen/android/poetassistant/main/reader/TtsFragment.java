@@ -20,7 +20,9 @@
 package ca.rmen.android.poetassistant.main.reader;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,15 +44,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import java.io.File;
-
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.filechooser.FileChooserDialogFragment;
 
 
 public class TtsFragment extends Fragment implements
-        FileChooserDialogFragment.FileChooserDialogListener,
         PoemFile.PoemFileCallback {
     private static final String TAG = Constants.TAG + TtsFragment.class.getSimpleName();
     private static final String EXTRA_INITIAL_TEXT = "initial_text";
@@ -62,7 +60,6 @@ public class TtsFragment extends Fragment implements
     private TextToSpeech mTextToSpeech;
     private int mTtsStatus = TextToSpeech.ERROR;
     private Handler mHandler;
-    private PoemFile mPoemFile;
     private PoemPrefs mPoemPrefs;
 
     public static TtsFragment newInstance(String initialText) {
@@ -94,8 +91,8 @@ public class TtsFragment extends Fragment implements
         mPlayButton.setOnClickListener(mOnClickListener);
         mTextView.addTextChangedListener(mTextWatcher);
         mHandler = new Handler();
-        mPoemFile = new PoemFile(this);
-        mTextView.setText(mPoemPrefs.getSavedPoemText());
+        PoemFile poemFile = mPoemPrefs.getSavedPoem();
+        if (poemFile != null) mTextView.setText(poemFile.text);
         return view;
     }
 
@@ -104,31 +101,56 @@ public class TtsFragment extends Fragment implements
         super.onCreateOptionsMenu(menu, inflater);
         Log.d(TAG, "onCreateOptionsMenu() called with: " + "menu = [" + menu + "], inflater = [" + inflater + "]");
         inflater.inflate(R.menu.menu_tts, menu);
-        MenuItem saveMenuItem = menu.findItem(R.id.action_save);
-        saveMenuItem.setEnabled(mPoemPrefs.hasSavedPoem());
+        menu.findItem(R.id.action_save).setEnabled(mPoemPrefs.hasSavedPoem());
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            menu.findItem(R.id.action_open).setVisible(false);
+            menu.findItem(R.id.action_save).setVisible(false);
+            menu.findItem(R.id.action_save_as).setVisible(false);
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_open) {
-            FileChooserDialogFragment.show(this, mPoemPrefs.getSavedPoemFolder(), false, false, ACTION_FILE_OPEN);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) open();
         } else if (item.getItemId() == R.id.action_save) {
-            mPoemFile.save(mPoemPrefs.getSavedPoemFile(), mTextView.getText().toString());
+            PoemFile poemFile = mPoemPrefs.getSavedPoem();
+            PoemFile.save(getActivity(), poemFile.uri, mTextView.getText().toString(), this);
         } else if (item.getItemId() == R.id.action_save_as) {
-            FileChooserDialogFragment.show(this, mPoemPrefs.getSavedPoemFile(), false, true, ACTION_FILE_SAVE_AS);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) saveAs();
         } else if (item.getItemId() == R.id.action_share) {
             Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_TEXT, mTextView.getText());
+            intent.putExtra(Intent.EXTRA_TEXT, mTextView.getText().toString());
             intent.setType("text/plain");
             startActivity(Intent.createChooser(intent, getString(R.string.file_share)));
         }
         return true;
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    private void open() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        PoemFile poemFile = mPoemPrefs.getSavedPoem();
+        if (poemFile != null) intent.setData(poemFile.uri);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/plain");
+        startActivityForResult(intent, ACTION_FILE_OPEN);
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    private void saveAs() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/plain");
+        PoemFile poemFile = mPoemPrefs.getSavedPoem();
+        if (poemFile != null) intent.putExtra(Intent.EXTRA_TITLE, poemFile.name);
+        startActivityForResult(intent, ACTION_FILE_SAVE_AS);
+    }
+
     @Override
     public void onDestroyView() {
         Log.d(TAG, "onDestroyView() called with: " + "");
-        mPoemPrefs.setSavedPoemText(mTextView.getText().toString());
+        mPoemPrefs.updatePoemText(mTextView.getText().toString());
         super.onDestroyView();
     }
 
@@ -142,6 +164,23 @@ public class TtsFragment extends Fragment implements
         super.onDestroy();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult() called with: " + "requestCode = [" + requestCode + "], resultCode = [" + resultCode + "], data = [" + data + "]");
+        if (requestCode == ACTION_FILE_OPEN && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                Uri uri = data.getData();
+                PoemFile.open(getActivity(), uri, this);
+            }
+        } else if (requestCode == ACTION_FILE_SAVE_AS && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                Uri uri = data.getData();
+                PoemFile.save(getActivity(), uri, mTextView.getText().toString(), this);
+            }
+        }
+    }
+
     public void speak(String text) {
         Log.d(TAG, "speak() called with: " + "text = [" + text + "]");
         mTextView.setText(text);
@@ -149,32 +188,17 @@ public class TtsFragment extends Fragment implements
     }
 
     @Override
-    public void onFileSelected(int actionId, File file) {
-        Log.d(TAG, "onFileSelected() called with: " + "actionId = [" + actionId + "], file = [" + file + "]");
-        if (actionId == ACTION_FILE_OPEN) {
-            mPoemFile.open(file);
-        } else if (actionId == ACTION_FILE_SAVE_AS) {
-            mPoemFile.save(file, mTextView.getText().toString());
-        }
-    }
-
-    @Override
-    public void onDismiss(int actionId) {
-        Log.d(TAG, "onDismiss() called with: " + "actionId = [" + actionId + "]");
-    }
-
-    @Override
-    public void onPoemLoaded(File file, String text) {
-        mTextView.setText(text);
-        mPoemPrefs.setSavedPoemFile(file, text);
+    public void onPoemLoaded(PoemFile poemFile) {
+        mTextView.setText(poemFile.text);
+        mPoemPrefs.setSavedPoem(poemFile);
         getActivity().supportInvalidateOptionsMenu();
-        Snackbar.make(mTextView, getString(R.string.file_opened, file.getAbsolutePath()), Snackbar.LENGTH_LONG).show();
+        Snackbar.make(mTextView, getString(R.string.file_opened, poemFile.name), Snackbar.LENGTH_LONG).show();
     }
 
     @Override
-    public void onPoemSaved(File file, String text) {
-        mPoemPrefs.setSavedPoemFile(file, text);
-        Snackbar.make(mTextView, getString(R.string.file_saved, file.getAbsolutePath()), Snackbar.LENGTH_LONG).show();
+    public void onPoemSaved(PoemFile poemFile) {
+        mPoemPrefs.setSavedPoem(poemFile);
+        Snackbar.make(mTextView, getString(R.string.file_saved, poemFile.name), Snackbar.LENGTH_LONG).show();
     }
 
     /**
@@ -234,7 +258,6 @@ public class TtsFragment extends Fragment implements
     private final TextWatcher mTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
         }
 
         @Override
@@ -258,11 +281,13 @@ public class TtsFragment extends Fragment implements
                     String initialText = arguments.getString(EXTRA_INITIAL_TEXT);
                     if (!TextUtils.isEmpty(initialText)) {
                         mTextView.setText(initialText);
-                        mPoemPrefs.setSavedPoem(initialText);
+                        PoemFile poemFile = new PoemFile(null, null, initialText);
+                        mPoemPrefs.setSavedPoem(poemFile);
                         speak();
                         getActivity().supportInvalidateOptionsMenu();
                     } else if (mPoemPrefs.hasSavedPoem()) {
-                        mPoemFile.open(mPoemPrefs.getSavedPoemFile());
+                        PoemFile poemFile = mPoemPrefs.getSavedPoem();
+                        PoemFile.open(getActivity(), poemFile.uri, TtsFragment.this);
                     }
                 }
             }

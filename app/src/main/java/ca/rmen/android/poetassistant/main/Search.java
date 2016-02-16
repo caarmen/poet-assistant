@@ -33,11 +33,11 @@ import ca.rmen.android.poetassistant.Constants;
 
 /**
  * Glue between the fragments, activity, and view pager, for executing searches.
- *
+ * <p/>
  * The activity calls this class to perform searches.  This class retrieves the fragments from
  * the Viewpager, and calls the fragments (which call the adapters) to perform the search and
  * display the search results.
- *
+ * <p/>
  * This class also configures the SearchView widget, and intercepts searches to add them to
  * the list of suggested words.
  */
@@ -87,7 +87,7 @@ class Search {
         // We want to retrieve the existing fragment.
         ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.RHYMER.ordinal())).query(word);
         ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.THESAURUS.ordinal())).query(word);
-        if(mViewPager.getCurrentItem() == Tab.READER.ordinal()) mViewPager.setCurrentItem(0);
+        if (mViewPager.getCurrentItem() == Tab.READER.ordinal()) mViewPager.setCurrentItem(0);
     }
 
     public void clearSearchHistory() {

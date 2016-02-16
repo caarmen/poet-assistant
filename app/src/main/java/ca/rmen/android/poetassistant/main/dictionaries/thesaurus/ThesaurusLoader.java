@@ -53,7 +53,7 @@ public class ThesaurusLoader extends ResultListLoader {
         if (entries.length == 0) return data;
 
         for (Thesaurus.ThesaurusEntry entry : entries) {
-            data.add(new ResultListEntry(ResultListEntry.Type.HEADING, entry.wordType.name().toLowerCase(Locale.US)) );
+            data.add(new ResultListEntry(ResultListEntry.Type.HEADING, entry.wordType.name().toLowerCase(Locale.US)));
             if (entry.synonyms.length > 0) {
                 data.add(new ResultListEntry(ResultListEntry.Type.SUBHEADING, getContext().getString(R.string.thesaurus_section_synonyms)));
                 for (String synonym : entry.synonyms) {

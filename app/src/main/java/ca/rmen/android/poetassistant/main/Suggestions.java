@@ -115,7 +115,7 @@ class Suggestions {
 
             public void addSuggestion(String suggestion) {
                 Set<String> suggestionsReadOnly = mSharedPreferences.getStringSet(PREF_SUGGESTIONS, new TreeSet<String>());
-                if(!suggestionsReadOnly.contains(suggestion)) {
+                if (!suggestionsReadOnly.contains(suggestion)) {
                     addRow(new Object[]{getCount(), suggestion});
                     TreeSet<String> suggestions = new TreeSet<>();
                     suggestions.addAll(suggestionsReadOnly);

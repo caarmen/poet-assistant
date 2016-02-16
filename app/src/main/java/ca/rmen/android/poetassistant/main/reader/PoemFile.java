@@ -19,45 +19,62 @@
 
 package ca.rmen.android.poetassistant.main.reader;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.OpenableColumns;
 import android.util.Log;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 import ca.rmen.android.poetassistant.Constants;
 
 
 class PoemFile {
     private static final String TAG = Constants.TAG + PoemFile.class.getSimpleName();
-    private final PoemFileCallback mCallback;
 
     public interface PoemFileCallback {
-        void onPoemLoaded(File file, String text);
+        void onPoemLoaded(PoemFile poemFile);
 
-        void onPoemSaved(File file, String text);
+        void onPoemSaved(PoemFile poemFile);
     }
 
-    public PoemFile(PoemFileCallback callback) {
-        mCallback = callback;
+    public final Uri uri;
+    public final String name;
+    public final String text;
+
+    public PoemFile(Uri uri, String name, String text) {
+        this.uri = uri;
+        this.name = name;
+        this.text = text;
     }
 
-    public void open(final File file) {
-        Log.d(TAG, "open() called with: " + "file = [" + file + "]");
-        new AsyncTask<File, Void, String>() {
+    public static void open(final Context context, final Uri uri, final PoemFileCallback callback) {
+        Log.d(TAG, "open() called with: " + "uri = [" + uri + "]");
+        new AsyncTask<Void, Void, PoemFile>() {
             @Override
-            protected String doInBackground(File... params) {
+            protected PoemFile doInBackground(Void... params) {
                 try {
-                    FileReader reader = new FileReader(params[0]);
-                    StringBuilder builder = new StringBuilder();
-                    char[] buffer = new char[1024];
-                    for (int read = reader.read(buffer); read > 0; read = reader.read(buffer)) {
-                        builder.append(buffer, 0, read);
+                    InputStream inputStream = context.getContentResolver().openInputStream(uri);
+                    if (inputStream == null) return null;
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        stringBuilder.append(line).append('\n');
                     }
+                    String text = stringBuilder.toString();
                     reader.close();
-                    return builder.toString();
+                    String displayName = readDisplayName(context, uri);
+                    return new PoemFile(uri, displayName, text);
+
                 } catch (IOException e) {
                     Log.w(TAG, "Couldn't open file", e);
                 }
@@ -65,22 +82,26 @@ class PoemFile {
             }
 
             @Override
-            protected void onPostExecute(String text) {
-                mCallback.onPoemLoaded(file, text);
+            protected void onPostExecute(PoemFile poemFile) {
+                callback.onPoemLoaded(poemFile);
             }
-        }.execute(file);
+        }.execute();
     }
 
-    public void save(final File file, final String text) {
-        Log.d(TAG, "save() called with: " + "file = [" + file + "], text = [" + text + "]");
-        new AsyncTask<Void, Void, Void>() {
+    public static void save(final Context context, final Uri uri, final String text, final PoemFileCallback callback) {
+        Log.d(TAG, "save() called with: " + "uri = [" + uri + "], text = [" + text + "]");
+        new AsyncTask<Void, Void, PoemFile>() {
 
             @Override
-            protected Void doInBackground(Void... params) {
+            protected PoemFile doInBackground(Void... params) {
                 try {
-                    FileWriter writer = new FileWriter(file);
+                    OutputStream outputStream = context.getContentResolver().openOutputStream(uri, "w");
+                    if (outputStream == null) return null;
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
                     writer.write(text);
                     writer.close();
+                    String displayName = readDisplayName(context, uri);
+                    return new PoemFile(uri, displayName, text);
                 } catch (IOException e) {
                     Log.w(TAG, "Couldn't save file", e);
                 }
@@ -88,12 +109,23 @@ class PoemFile {
             }
 
             @Override
-            protected void onPostExecute(Void result) {
-                if (file != null) mCallback.onPoemSaved(file, text);
+            protected void onPostExecute(PoemFile poemFile) {
+                if (uri != null) callback.onPoemSaved(poemFile);
             }
 
         }.execute();
     }
 
-
+    private static String readDisplayName(Context context, Uri uri) {
+        Cursor cursor = null;
+        try {
+            cursor = context.getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                return cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+            }
+        } finally {
+            if (cursor != null) cursor.close();
+        }
+        return null;
+    }
 }
