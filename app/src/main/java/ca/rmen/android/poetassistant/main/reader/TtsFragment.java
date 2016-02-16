@@ -44,6 +44,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import java.util.HashMap;
+
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 
@@ -61,6 +63,7 @@ public class TtsFragment extends Fragment implements
     private int mTtsStatus = TextToSpeech.ERROR;
     private Handler mHandler;
     private PoemPrefs mPoemPrefs;
+    private final UtteranceListener mUtteranceListener = new UtteranceListener();
 
     public static TtsFragment newInstance(String initialText) {
         Log.d(TAG, "newInstance() called with: " + "initialText = [" + initialText + "]");
@@ -78,7 +81,8 @@ public class TtsFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         mTextToSpeech = new TextToSpeech(getActivity().getApplicationContext(), mOnInitListener);
-        mTextToSpeech.setOnUtteranceProgressListener(mUtteranceProgressListener);
+        mTextToSpeech.setOnUtteranceProgressListener(mUtteranceListener);
+        mTextToSpeech.setOnUtteranceCompletedListener(mUtteranceListener);
         mPoemPrefs = new PoemPrefs(getActivity());
     }
 
@@ -247,12 +251,14 @@ public class TtsFragment extends Fragment implements
 
     @SuppressWarnings("deprecation")
     private void speak4() {
-        mTextToSpeech.speak(mTextView.getText().toString(), TextToSpeech.QUEUE_FLUSH, null);
+        HashMap<String, String> map = new HashMap<>();
+        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, TAG);
+        mTextToSpeech.speak(mTextView.getText().toString(), TextToSpeech.QUEUE_FLUSH, map);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void speak21() {
-        mTextToSpeech.speak(mTextView.getText().toString(), TextToSpeech.QUEUE_FLUSH, null, mTextView.getText().toString());
+        mTextToSpeech.speak(mTextView.getText().toString(), TextToSpeech.QUEUE_FLUSH, null, TAG);
     }
 
     private final TextWatcher mTextWatcher = new TextWatcher() {
@@ -294,7 +300,9 @@ public class TtsFragment extends Fragment implements
         }
     };
 
-    private final UtteranceProgressListener mUtteranceProgressListener = new UtteranceProgressListener() {
+    private class UtteranceListener extends UtteranceProgressListener
+            implements TextToSpeech.OnUtteranceCompletedListener {
+
         @Override
         public void onStart(String utteranceId) {
             updatePlayButton();
@@ -319,6 +327,11 @@ public class TtsFragment extends Fragment implements
         @Override
         public void onStop(String utteranceId, boolean interrupted) {
             super.onStop(utteranceId, interrupted);
+            updatePlayButton();
+        }
+
+        @Override
+        public void onUtteranceCompleted(String utteranceId) {
             updatePlayButton();
         }
     };
