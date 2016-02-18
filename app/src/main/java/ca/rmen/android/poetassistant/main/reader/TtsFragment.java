@@ -243,22 +243,27 @@ public class TtsFragment extends Fragment implements
      * Read the text in our text view.
      */
     private void speak() {
+        String text = mTextView.getText().toString();
+        int startPosition = mTextView.getSelectionStart();
+        int endPosition = mTextView.getSelectionEnd();
+        if (startPosition == endPosition) endPosition = text.length();
+        text = text.substring(startPosition, endPosition);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            speak21();
+            speak21(text);
         else
-            speak4();
+            speak4(text);
     }
 
     @SuppressWarnings("deprecation")
-    private void speak4() {
+    private void speak4(String text) {
         HashMap<String, String> map = new HashMap<>();
         map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, TAG);
-        mTextToSpeech.speak(mTextView.getText().toString(), TextToSpeech.QUEUE_FLUSH, map);
+        mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, map);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void speak21() {
-        mTextToSpeech.speak(mTextView.getText().toString(), TextToSpeech.QUEUE_FLUSH, null, TAG);
+    private void speak21(String text) {
+        mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, TAG);
     }
 
     private final TextWatcher mTextWatcher = new TextWatcher() {
