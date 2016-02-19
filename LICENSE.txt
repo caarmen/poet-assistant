@@ -1,7 +1,7 @@
 This is the license for the Poet Assistant software.
 
-The licenses for the rhyming dictionary and thesaurus data are provided
-separately.
+The licenses for the rhyming dictionary, thesaurus and dictionary data
+are provided separately.
 
  ========================================================================
                     GNU GENERAL PUBLIC LICENSE
