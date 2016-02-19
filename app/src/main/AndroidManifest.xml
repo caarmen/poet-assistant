@@ -51,6 +51,9 @@
                 <data
                     android:host="thesaurus"
                     android:scheme="poetassistant" />
+                <data
+                    android:host="dictionary"
+                    android:scheme="poetassistant" />
             </intent-filter>
 
             <!-- Searches performed with the search widget -->

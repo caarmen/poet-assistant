@@ -48,7 +48,7 @@ import android.view.View;
  * A class implementing the View Holder pattern.<br/>
  * This class is useful because of this issue: <a href="http://b.android.com/18273">http://b.android.com/18273</a>.
  */
-class ViewHolder {
+public class ViewHolder {
     @SuppressWarnings("unchecked")
     public static <T extends View> T get(View view, int id) {
         SparseArray<View> viewHolder = (SparseArray<View>) view.getTag();

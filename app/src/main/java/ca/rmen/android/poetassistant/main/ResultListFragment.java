@@ -37,7 +37,9 @@ import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 
 
-public class ResultListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<List<ResultListEntry>> {
+public class ResultListFragment extends ListFragment
+        implements SearchableListFragment,
+        LoaderManager.LoaderCallbacks<List<ResultListEntry>> {
     private static final String TAG = Constants.TAG + ResultListFragment.class.getSimpleName();
     private static final String EXTRA_TAB = "tab";
     private static final String EXTRA_QUERY = "query";
@@ -93,6 +95,7 @@ public class ResultListFragment extends ListFragment implements LoaderManager.Lo
         outState.putString(EXTRA_QUERY, (String) mListHeaderView.getText());
     }
 
+    @Override
     public void query(String query) {
         Log.d(TAG, "query() called with: " + "query = [" + query + "]");
         mListHeaderView.setText(query);

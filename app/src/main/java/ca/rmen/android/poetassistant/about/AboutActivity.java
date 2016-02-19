@@ -67,5 +67,9 @@ public class AboutActivity extends AppCompatActivity {
     public void onClickThesaurusLicense(@SuppressWarnings("UnusedParameters") View view) {
         LicenseActivity.start(this, getString(R.string.about_license_thesaurus), "LICENSE-thesaurus-wordnet.txt");
     }
+
+    public void onClickDictionaryLicense(@SuppressWarnings("UnusedParameters") View view) {
+        LicenseActivity.start(this, getString(R.string.about_license_dictionary), "LICENSE-dictionary-wordnet.txt");
+    }
 }
 

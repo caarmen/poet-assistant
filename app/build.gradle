@@ -63,6 +63,7 @@ android.applicationVariants.all { variant ->
             include 'LICENSE.txt'
             include 'LICENSE-rhyming-dictionary.txt'
             include 'LICENSE-thesaurus-wordnet.txt'
+            include 'LICENSE-dictionary-wordnet.txt'
         }
     }
 }

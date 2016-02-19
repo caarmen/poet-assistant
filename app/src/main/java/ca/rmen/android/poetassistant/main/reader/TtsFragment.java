@@ -82,6 +82,7 @@ public class TtsFragment extends Fragment implements
         setHasOptionsMenu(true);
         mTextToSpeech = new TextToSpeech(getActivity().getApplicationContext(), mOnInitListener);
         mTextToSpeech.setOnUtteranceProgressListener(mUtteranceListener);
+        //noinspection deprecation
         mTextToSpeech.setOnUtteranceCompletedListener(mUtteranceListener);
         mPoemPrefs = new PoemPrefs(getActivity());
     }
@@ -305,6 +306,7 @@ public class TtsFragment extends Fragment implements
         }
     };
 
+    @SuppressWarnings("deprecation")
     private class UtteranceListener extends UtteranceProgressListener
             implements TextToSpeech.OnUtteranceCompletedListener {
 
@@ -339,7 +341,7 @@ public class TtsFragment extends Fragment implements
         public void onUtteranceCompleted(String utteranceId) {
             updatePlayButton();
         }
-    };
+    }
 
 
 }

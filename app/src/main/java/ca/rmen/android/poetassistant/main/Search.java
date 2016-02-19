@@ -30,6 +30,7 @@ import android.util.Log;
 import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListFragment;
 
 /**
  * Glue between the fragments, activity, and view pager, for executing searches.
@@ -74,7 +75,7 @@ class Search {
         word = word.trim().toLowerCase(Locale.US);
         // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
         // We want to retrieve the existing fragment.
-        ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, tab.ordinal())).query(word);
+        ((SearchableListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, tab.ordinal())).query(word);
     }
 
     /**
@@ -87,6 +88,7 @@ class Search {
         // We want to retrieve the existing fragment.
         ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.RHYMER.ordinal())).query(word);
         ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.THESAURUS.ordinal())).query(word);
+        ((DictionaryListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.DICTIONARY.ordinal())).query(word);
         if (mViewPager.getCurrentItem() == Tab.READER.ordinal()) mViewPager.setCurrentItem(0);
     }
 
