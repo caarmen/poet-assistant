@@ -55,6 +55,19 @@
         android:id="@id/btn_thesaurus"
         android:layout_width="44dp"
         android:layout_height="44dp"
+        android:layout_toLeftOf="@+id/btn_dictionary"
+        android:layout_toStartOf="@+id/btn_dictionary"
+        android:layout_centerVertical="true"
+        android:background="?android:attr/listChoiceBackgroundIndicator"
+        android:clickable="true"
+        android:contentDescription="@string/tab_thesaurus"
+        android:padding="4dp"
+        android:src="@drawable/ic_thesaurus" />
+
+    <ImageView
+        android:id="@id/btn_dictionary"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
@@ -62,8 +75,8 @@
         android:layout_marginRight="16dp"
         android:background="?android:attr/listChoiceBackgroundIndicator"
         android:clickable="true"
-        android:contentDescription="@string/tab_thesaurus"
+        android:contentDescription="@string/tab_dictionary"
         android:padding="4dp"
-        android:src="@drawable/ic_thesaurus" />
+        android:src="@drawable/ic_dictionary" />
 
 </RelativeLayout>

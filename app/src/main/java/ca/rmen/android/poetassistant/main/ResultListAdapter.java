@@ -118,8 +118,10 @@ class ResultListAdapter extends BaseAdapter {
         text1.setText(entry.text);
         ImageView btnRhymer = ViewHolder.get(convertView, R.id.btn_rhymer);
         ImageView btnThesaurus = ViewHolder.get(convertView, R.id.btn_thesaurus);
+        ImageView btnDictionary = ViewHolder.get(convertView, R.id.btn_dictionary);
         btnRhymer.setOnClickListener(mOnClickListener);
         btnThesaurus.setOnClickListener(mOnClickListener);
+        btnDictionary.setOnClickListener(mOnClickListener);
         return convertView;
     }
 
@@ -134,6 +136,8 @@ class ResultListAdapter extends BaseAdapter {
                 mListener.onWordClicked(word, Tab.RHYMER);
             } else if (v.getId() == R.id.btn_thesaurus) {
                 mListener.onWordClicked(word, Tab.THESAURUS);
+            } else if (v.getId() == R.id.btn_dictionary) {
+                mListener.onWordClicked(word, Tab.DICTIONARY);
             }
         }
     };

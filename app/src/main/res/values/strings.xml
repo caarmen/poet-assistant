@@ -26,6 +26,7 @@
     <string name="search_hint">Lookup a word</string>
     <string name="tab_rhymer">Rhymer</string>
     <string name="tab_thesaurus">Thesaurus</string>
+    <string name="tab_dictionary">Dictionary</string>
     <string name="tab_reader">Reader</string>
     <string name="rhyme_section_one_syllable">One syllable matches:</string>
     <string name="rhyme_section_two_syllables">Two syllable matches:</string>
@@ -45,6 +46,7 @@
     <string name="about_license_app">Poet Assistant License</string>
     <string name="about_license_rhyming_dictionary">Carnegie Mellon Pronunciation Dictionary License</string>
     <string name="about_license_thesaurus">WordNet Thesaurus License</string>
+    <string name="about_license_dictionary">WordNet Dictionary License</string>
     <string name="about_app_icon">App icon based on Dictionary Pictogram by libberry: https://openclipart.org/detail/185246/dictionary-pictogram</string>
     <string name="license_title">Licensing Information</string>
     <string name="file_open">Open</string>

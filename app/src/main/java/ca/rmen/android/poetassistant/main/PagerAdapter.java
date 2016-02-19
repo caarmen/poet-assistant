@@ -31,6 +31,7 @@ import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListFragment;
 import ca.rmen.android.poetassistant.main.reader.TtsFragment;
 
 /**
@@ -43,6 +44,7 @@ class PagerAdapter extends FragmentPagerAdapter {
     private final Context mContext;
     private String mInitialRhymeQuery;
     private String mInitialThesaurusQuery;
+    private String mInitialDictionaryQuery;
     private String mInitialPoemText;
 
     public static class Query {
@@ -67,6 +69,8 @@ class PagerAdapter extends FragmentPagerAdapter {
                 mInitialRhymeQuery = initialQuery.getLastPathSegment();
             } else if (tab == Tab.THESAURUS) {
                 mInitialThesaurusQuery = initialQuery.getLastPathSegment();
+            } else if (tab == Tab.DICTIONARY) {
+                mInitialDictionaryQuery = initialQuery.getLastPathSegment();
             }
         }
         // Text shared from another app:
@@ -82,6 +86,8 @@ class PagerAdapter extends FragmentPagerAdapter {
             return ResultListFragment.newInstance(Tab.RHYMER, mInitialRhymeQuery);
         } else if (position == Tab.THESAURUS.ordinal()) {
             return ResultListFragment.newInstance(Tab.THESAURUS, mInitialThesaurusQuery);
+        } else if (position == Tab.DICTIONARY.ordinal()) {
+            return DictionaryListFragment.newInstance(mInitialDictionaryQuery);
         } else {
             return TtsFragment.newInstance(mInitialPoemText);
         }
@@ -89,7 +95,7 @@ class PagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -98,6 +104,8 @@ class PagerAdapter extends FragmentPagerAdapter {
             return mContext.getString(R.string.tab_rhymer).toUpperCase(Locale.getDefault());
         else if (position == Tab.THESAURUS.ordinal())
             return mContext.getString(R.string.tab_thesaurus).toUpperCase(Locale.getDefault());
+        else if (position == Tab.DICTIONARY.ordinal())
+            return mContext.getString(R.string.tab_dictionary).toUpperCase(Locale.getDefault());
         else
             return mContext.getString(R.string.tab_reader).toUpperCase(Locale.getDefault());
     }
