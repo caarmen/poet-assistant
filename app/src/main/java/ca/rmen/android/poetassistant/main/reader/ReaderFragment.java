@@ -93,8 +93,7 @@ public class ReaderFragment extends Fragment implements
         mPlayButton.setOnClickListener(mOnClickListener);
         mTextView.addTextChangedListener(mTextWatcher);
         mHandler = new Handler();
-        PoemFile poemFile = mPoemPrefs.getSavedPoem();
-        if (poemFile != null) mTextView.setText(poemFile.text);
+        loadPoem();
         return view;
     }
 
@@ -192,6 +191,7 @@ public class ReaderFragment extends Fragment implements
 
     @Override
     public void onPoemLoaded(PoemFile poemFile) {
+        Log.d(TAG, "onPoemLoaded() called with: " + "poemFile = [" + poemFile + "]");
         mTextView.setText(poemFile.text);
         mPoemPrefs.setSavedPoem(poemFile);
         getActivity().supportInvalidateOptionsMenu();
@@ -200,6 +200,7 @@ public class ReaderFragment extends Fragment implements
 
     @Override
     public void onPoemSaved(PoemFile poemFile) {
+        Log.d(TAG, "onPoemSaved() called with: " + "poemFile = [" + poemFile + "]");
         mPoemPrefs.setSavedPoem(poemFile);
         Snackbar.make(mTextView, getString(R.string.file_saved, poemFile.name), Snackbar.LENGTH_LONG).show();
     }
@@ -250,6 +251,31 @@ public class ReaderFragment extends Fragment implements
         mTts.speak(text);
     }
 
+    private void loadPoem() {
+        Log.d(TAG, "loadPoem() called with: " + "");
+        // First see if we have poem in the arguments
+        // (the user chose to share some text with our app)
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            String initialText = arguments.getString(EXTRA_INITIAL_TEXT);
+            if (!TextUtils.isEmpty(initialText)) {
+                mTextView.setText(initialText);
+                PoemFile poemFile = new PoemFile(null, null, initialText);
+                mPoemPrefs.setSavedPoem(poemFile);
+                if (mTts.getStatus() == TextToSpeech.SUCCESS) {
+                    speak();
+                }
+                getActivity().supportInvalidateOptionsMenu();
+                return;
+            }
+        }
+        // Load the poem we previously saved
+        if (mPoemPrefs.hasSavedPoem()) {
+            PoemFile poemFile = mPoemPrefs.getSavedPoem();
+            PoemFile.open(getActivity(), poemFile.uri, this);
+        }
+    }
+
     private final TextWatcher mTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -270,20 +296,7 @@ public class ReaderFragment extends Fragment implements
         Log.d(TAG, "onTtsInitialized() called with: " + "event = [" + event + "]");
         updatePlayButton();
         if (event.status == TextToSpeech.SUCCESS) {
-            Bundle arguments = getArguments();
-            if (arguments != null) {
-                String initialText = arguments.getString(EXTRA_INITIAL_TEXT);
-                if (!TextUtils.isEmpty(initialText)) {
-                    mTextView.setText(initialText);
-                    PoemFile poemFile = new PoemFile(null, null, initialText);
-                    mPoemPrefs.setSavedPoem(poemFile);
-                    speak();
-                    getActivity().supportInvalidateOptionsMenu();
-                } else if (mPoemPrefs.hasSavedPoem()) {
-                    PoemFile poemFile = mPoemPrefs.getSavedPoem();
-                    PoemFile.open(getActivity(), poemFile.uri, ReaderFragment.this);
-                }
-            }
+            loadPoem();
         }
     }
 
