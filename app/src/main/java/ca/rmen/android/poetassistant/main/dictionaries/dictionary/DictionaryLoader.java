@@ -23,9 +23,13 @@ import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import ca.rmen.android.poetassistant.Constants;
 
-class DictionaryLoader extends AsyncTaskLoader<Dictionary.DictionaryEntry[]> {
+public class DictionaryLoader extends AsyncTaskLoader<List<DictionaryEntry>> {
 
     private static final String TAG = Constants.TAG + DictionaryLoader.class.getSimpleName();
 
@@ -37,10 +41,13 @@ class DictionaryLoader extends AsyncTaskLoader<Dictionary.DictionaryEntry[]> {
     }
 
     @Override
-    public Dictionary.DictionaryEntry[] loadInBackground() {
+    public List<DictionaryEntry> loadInBackground() {
         Log.d(TAG, "loadInBackground() called with: " + "");
         Dictionary dictionary = Dictionary.getInstance(getContext());
-        return dictionary.getEntries(mQuery);
+        DictionaryEntry[] entries = dictionary.getEntries(mQuery);
+        List<DictionaryEntry> result = new ArrayList<>();
+        Collections.addAll(result, entries);
+        return result;
     }
 
 

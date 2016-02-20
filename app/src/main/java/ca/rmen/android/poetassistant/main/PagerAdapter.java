@@ -31,7 +31,7 @@ import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListFragment;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory;
 import ca.rmen.android.poetassistant.main.reader.TtsFragment;
 
 /**
@@ -83,11 +83,11 @@ class PagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         Log.v(TAG, "SectionsPagerAdapter getItem " + position);
         if (position == Tab.RHYMER.ordinal()) {
-            return ResultListFragment.newInstance(Tab.RHYMER, mInitialRhymeQuery);
+            return ResultListFactory.createListFragment(Tab.RHYMER, mInitialRhymeQuery);
         } else if (position == Tab.THESAURUS.ordinal()) {
-            return ResultListFragment.newInstance(Tab.THESAURUS, mInitialThesaurusQuery);
+            return ResultListFactory.createListFragment(Tab.THESAURUS, mInitialRhymeQuery);
         } else if (position == Tab.DICTIONARY.ordinal()) {
-            return DictionaryListFragment.newInstance(mInitialDictionaryQuery);
+            return ResultListFactory.createListFragment(Tab.DICTIONARY, mInitialRhymeQuery);
         } else {
             return TtsFragment.newInstance(mInitialPoemText);
         }

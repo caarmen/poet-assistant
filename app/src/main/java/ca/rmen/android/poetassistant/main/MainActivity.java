@@ -38,9 +38,11 @@ import android.view.View;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.about.AboutActivity;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickedListener;
+import ca.rmen.android.poetassistant.main.dictionaries.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
-import ca.rmen.android.poetassistant.main.dictionaries.rhymer.Rhymer;
-import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.Thesaurus;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.rhymer.Rhymer;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.thesaurus.Thesaurus;
 import ca.rmen.android.poetassistant.main.reader.TtsFragment;
 
 
