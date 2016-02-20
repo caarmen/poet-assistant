@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
     }
 
     // Hide the keyboard when we navigate to any tab other than the reader tab.
-    private ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener(){
+    private final ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener(){
         @Override
         public void onPageSelected(int position) {
             super.onPageSelected(position);

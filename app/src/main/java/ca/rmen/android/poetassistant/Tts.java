@@ -52,7 +52,7 @@ public class Tts {
     }
 
     private Tts(Context context) {
-        mTextToSpeech = new TextToSpeech(context.getApplicationContext(), mOnInitListener);
+        mTextToSpeech = new TextToSpeech(context.getApplicationContext(), new OnInitListener());
         UtteranceListener utteranceListener = new UtteranceListener();
         mTextToSpeech.setOnUtteranceProgressListener(utteranceListener);
         //noinspection deprecation
@@ -97,13 +97,13 @@ public class Tts {
         }
     }
 
-    private final TextToSpeech.OnInitListener mOnInitListener = new TextToSpeech.OnInitListener() {
+    private class OnInitListener implements TextToSpeech.OnInitListener {
         @Override
         public void onInit(int status) {
             mTtsStatus = status;
             EventBus.getDefault().post(new OnTtsInitialized(status));
         }
-    };
+    }
 
     @SuppressWarnings("deprecation")
     public static class UtteranceListener extends UtteranceProgressListener
