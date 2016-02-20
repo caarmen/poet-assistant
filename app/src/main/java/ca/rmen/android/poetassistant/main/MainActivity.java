@@ -43,7 +43,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.rhymer.Rhymer;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.thesaurus.Thesaurus;
-import ca.rmen.android.poetassistant.main.reader.TtsFragment;
+import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
 
 
 public class MainActivity extends AppCompatActivity implements OnWordClickedListener {
@@ -121,8 +121,8 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         else if (Intent.ACTION_SEND.equals(intent.getAction())) {
             mViewPager.setCurrentItem(Tab.READER.ordinal());
             String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            TtsFragment ttsFragment = (TtsFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.RHYMER.ordinal());
-            ttsFragment.speak(sharedText);
+            ReaderFragment readerFragment = (ReaderFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.RHYMER.ordinal());
+            readerFragment.speak(sharedText);
         }
     }
 

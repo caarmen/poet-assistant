@@ -51,9 +51,9 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 
 
-public class TtsFragment extends Fragment implements
+public class ReaderFragment extends Fragment implements
         PoemFile.PoemFileCallback {
-    private static final String TAG = Constants.TAG + TtsFragment.class.getSimpleName();
+    private static final String TAG = Constants.TAG + ReaderFragment.class.getSimpleName();
     private static final String EXTRA_INITIAL_TEXT = "initial_text";
     private static final int ACTION_FILE_OPEN = 0;
     private static final int ACTION_FILE_SAVE_AS = 1;
@@ -64,9 +64,9 @@ public class TtsFragment extends Fragment implements
     private Handler mHandler;
     private PoemPrefs mPoemPrefs;
 
-    public static TtsFragment newInstance(String initialText) {
+    public static ReaderFragment newInstance(String initialText) {
         Log.d(TAG, "newInstance() called with: " + "initialText = [" + initialText + "]");
-        TtsFragment fragment = new TtsFragment();
+        ReaderFragment fragment = new ReaderFragment();
         fragment.setRetainInstance(true);
         Bundle bundle = new Bundle(1);
         bundle.putString(EXTRA_INITIAL_TEXT, initialText);
@@ -281,7 +281,7 @@ public class TtsFragment extends Fragment implements
                     getActivity().supportInvalidateOptionsMenu();
                 } else if (mPoemPrefs.hasSavedPoem()) {
                     PoemFile poemFile = mPoemPrefs.getSavedPoem();
-                    PoemFile.open(getActivity(), poemFile.uri, TtsFragment.this);
+                    PoemFile.open(getActivity(), poemFile.uri, ReaderFragment.this);
                 }
             }
         }

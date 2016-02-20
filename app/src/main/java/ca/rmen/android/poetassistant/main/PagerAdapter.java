@@ -32,7 +32,7 @@ import java.util.Locale;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory;
-import ca.rmen.android.poetassistant.main.reader.TtsFragment;
+import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
 
 /**
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -89,7 +89,7 @@ class PagerAdapter extends FragmentPagerAdapter {
         } else if (position == Tab.DICTIONARY.ordinal()) {
             return ResultListFactory.createListFragment(Tab.DICTIONARY, mInitialRhymeQuery);
         } else {
-            return TtsFragment.newInstance(mInitialPoemText);
+            return ReaderFragment.newInstance(mInitialPoemText);
         }
     }
 
