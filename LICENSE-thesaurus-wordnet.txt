@@ -1,4 +1,4 @@
-The thesaurus library uses the WordNet thesaurus.
+The app uses the WordNet thesaurus.
 
 The WordNet thesaurus is used in LibreOffice and OpenOffice,
 in conjunction with other English-language dictionaries and thesauruses.

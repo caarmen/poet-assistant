@@ -1,3 +1,5 @@
+This app uses the rhymer library: https://github.com/caarmen/rhymer
+
 The rhymer library uses the Carnegie Mellon University Pronunciation Dictionary.
 
 The CMU pronunciation dictionary website is http://www.speech.cs.cmu.edu/cgi-bin/cmudict
