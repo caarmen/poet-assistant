@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.app.Activity;
 import android.app.SearchManager;
@@ -30,7 +30,7 @@ import android.util.Log;
 import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListFragment;
+import ca.rmen.android.poetassistant.main.Tab;
 
 /**
  * Glue between the fragments, activity, and view pager, for executing searches.
@@ -42,7 +42,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryList
  * This class also configures the SearchView widget, and intercepts searches to add them to
  * the list of suggested words.
  */
-class Search {
+public class Search {
     private static final String TAG = Constants.TAG + Search.class.getSimpleName();
     private SearchView mSearchView;
     private final ViewPager mViewPager;
@@ -69,26 +69,26 @@ class Search {
      * Search for the given word in the given dictionary, and set the current tab
      * to that dictionary (if it's not already the case).
      */
-    void search(String word, Tab tab) {
+    public void search(String word, Tab tab) {
         Log.d(TAG, "search() called with: " + "word = [" + word + "], tab = [" + tab + "]");
         mViewPager.setCurrentItem(tab.ordinal());
         word = word.trim().toLowerCase(Locale.US);
         // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
         // We want to retrieve the existing fragment.
-        ((SearchableListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, tab.ordinal())).query(word);
+        ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, tab.ordinal())).query(word);
     }
 
     /**
      * Search for the given word in both dictionaries
      */
-    void search(String word) {
+    public void search(String word) {
         Log.d(TAG, "search() called with: " + "word = [" + word + "]");
         word = word.trim().toLowerCase(Locale.US);
         // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
         // We want to retrieve the existing fragment.
         ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.RHYMER.ordinal())).query(word);
         ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.THESAURUS.ordinal())).query(word);
-        ((DictionaryListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.DICTIONARY.ordinal())).query(word);
+        ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.DICTIONARY.ordinal())).query(word);
         if (mViewPager.getCurrentItem() == Tab.READER.ordinal()) mViewPager.setCurrentItem(0);
     }
 

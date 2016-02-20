@@ -17,51 +17,37 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
+import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.Tab;
+import ca.rmen.android.poetassistant.main.dictionaries.ViewHolder;
 
 
-class ResultListAdapter extends BaseAdapter {
-    private static final String TAG = Constants.TAG + ResultListAdapter.class.getSimpleName();
+public class RTListAdapter extends ArrayAdapter<RTEntry> {
+    private static final String TAG = Constants.TAG + RTListAdapter.class.getSimpleName();
 
     private final Context mContext;
     private final OnWordClickedListener mListener;
-    private final List<ResultListEntry> mData = new ArrayList<>();
 
-    public ResultListAdapter(Context context, OnWordClickedListener listener) {
-        super();
-        mContext = context;
-        mListener = listener;
-    }
-
-    public void setData(List<ResultListEntry> data) {
-        Log.d(TAG, "setData() called with: " + "data = [" + data + "]");
-        mData.clear();
-        if (data != null) mData.addAll(data);
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public int getCount() {
-        return mData.size();
+    public RTListAdapter(Activity activity) {
+        super(activity, 0);
+        mContext = activity;
+        mListener = (OnWordClickedListener) activity;
     }
 
     @Override
     public int getItemViewType(int position) {
-        ResultListEntry entry = mData.get(position);
+        RTEntry entry = getItem(position);
         return entry.type.ordinal();
     }
 
@@ -71,27 +57,17 @@ class ResultListAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
-        return mData.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ResultListEntry entry = mData.get(position);
-        if (entry.type == ResultListEntry.Type.HEADING)
+        RTEntry entry = getItem(position);
+        if (entry.type == RTEntry.Type.HEADING)
             return getHeadingView(entry, convertView);
-        else if (entry.type == ResultListEntry.Type.SUBHEADING)
+        else if (entry.type == RTEntry.Type.SUBHEADING)
             return getSubHeadingView(entry, convertView);
         else
             return getWordView(entry, convertView);
     }
 
-    private View getHeadingView(ResultListEntry entry, View convertView) {
+    private View getHeadingView(RTEntry entry, View convertView) {
         if (convertView == null) {
             convertView = View.inflate(mContext, R.layout.list_item_heading, null);
         }
@@ -101,7 +77,7 @@ class ResultListAdapter extends BaseAdapter {
     }
 
 
-    private View getSubHeadingView(ResultListEntry entry, View convertView) {
+    private View getSubHeadingView(RTEntry entry, View convertView) {
         if (convertView == null) {
             convertView = View.inflate(mContext, R.layout.list_item_subheading, null);
         }
@@ -110,7 +86,7 @@ class ResultListAdapter extends BaseAdapter {
         return convertView;
     }
 
-    private View getWordView(ResultListEntry entry, View convertView) {
+    private View getWordView(RTEntry entry, View convertView) {
         if (convertView == null) {
             convertView = View.inflate(mContext, R.layout.list_item_word, null);
         }

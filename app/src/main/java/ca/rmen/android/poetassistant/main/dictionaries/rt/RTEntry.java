@@ -17,8 +17,20 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
-interface OnWordClickedListener {
-    void onWordClicked(String word, Tab tab);
+public class RTEntry {
+    public enum Type {
+        HEADING,
+        SUBHEADING,
+        WORD
+    }
+
+    public final Type type;
+    public final String text;
+
+    public RTEntry(Type type, String text) {
+        this.type = type;
+        this.text = text;
+    }
 }

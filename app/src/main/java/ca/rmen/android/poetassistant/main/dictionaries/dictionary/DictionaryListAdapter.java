@@ -21,65 +21,29 @@ package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
-import java.util.Arrays;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.ViewHolder;
+import ca.rmen.android.poetassistant.main.dictionaries.ViewHolder;
 
 
-class DictionaryListAdapter extends BaseAdapter {
+public class DictionaryListAdapter extends ArrayAdapter<DictionaryEntry> {
     private static final String TAG = Constants.TAG + DictionaryListAdapter.class.getSimpleName();
 
     private final Context mContext;
-    private Dictionary.DictionaryEntry[] mData = new Dictionary.DictionaryEntry[0];
 
     public DictionaryListAdapter(Activity activity) {
-        super();
+        super(activity, 0);
         mContext = activity;
-    }
-
-    public void setData(Dictionary.DictionaryEntry[] data) {
-        Log.d(TAG, "setData() called with: " + "data = [" + Arrays.toString(data) + "]");
-        if (data != null) mData = data;
-        else mData = new Dictionary.DictionaryEntry[0];
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public int getCount() {
-        return mData.length;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return 0;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return 1;
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return mData[position];
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Dictionary.DictionaryEntry entry = mData[position];
+        DictionaryEntry entry = getItem(position);
         if (convertView == null) {
             convertView = View.inflate(mContext, R.layout.list_item_dictionary_entry, null);
         }

@@ -17,20 +17,10 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
-public class ResultListEntry {
-    public enum Type {
-        HEADING,
-        SUBHEADING,
-        WORD
-    }
+import ca.rmen.android.poetassistant.main.Tab;
 
-    public final Type type;
-    public final String text;
-
-    public ResultListEntry(Type type, String text) {
-        this.type = type;
-        this.text = text;
-    }
+public interface OnWordClickedListener {
+    void onWordClicked(String word, Tab tab);
 }

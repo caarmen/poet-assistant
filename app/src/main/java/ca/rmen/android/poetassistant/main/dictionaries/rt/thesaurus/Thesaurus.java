@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.thesaurus;
+package ca.rmen.android.poetassistant.main.dictionaries.rt.thesaurus;
 
 import android.content.Context;
 import android.database.Cursor;

@@ -17,9 +17,10 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.rhymer;
+package ca.rmen.android.poetassistant.main.dictionaries.rt.rhymer;
 
 import android.content.Context;
+import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -27,11 +28,10 @@ import java.util.List;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.ResultListEntry;
-import ca.rmen.android.poetassistant.main.ResultListLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
 import ca.rmen.rhymer.RhymeResult;
 
-public class RhymerLoader extends ResultListLoader {
+public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
 
     private static final String TAG = Constants.TAG + RhymerLoader.class.getSimpleName();
 
@@ -43,12 +43,12 @@ public class RhymerLoader extends ResultListLoader {
     }
 
     @Override
-    public List<ResultListEntry> loadInBackground() {
+    public List<RTEntry> loadInBackground() {
         Log.d(TAG, "loadInBackground() called with: " + "");
 
         Rhymer rhymer = Rhymer.getInstance(getContext());
         List<RhymeResult> rhymeResults = rhymer.getRhymingWords(mQuery);
-        List<ResultListEntry> data = new ArrayList<>();
+        List<RTEntry> data = new ArrayList<>();
         if (rhymeResults == null) {
             return data;
         }
@@ -56,25 +56,25 @@ public class RhymerLoader extends ResultListLoader {
             // Add the word variant, if there are multiple pronunciations.
             if (rhymeResults.size() > 1) {
                 String heading = mQuery + " (" + (rhymeResult.variantNumber + 1) + ")";
-                data.add(new ResultListEntry(ResultListEntry.Type.HEADING, heading));
+                data.add(new RTEntry(RTEntry.Type.HEADING, heading));
             }
 
             if (rhymeResult.oneSyllableRhymes.length > 0) {
-                data.add(new ResultListEntry(ResultListEntry.Type.SUBHEADING, getContext().getString(R.string.rhyme_section_one_syllable)));
+                data.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(R.string.rhyme_section_one_syllable)));
                 for (String word : rhymeResult.oneSyllableRhymes) {
-                    data.add(new ResultListEntry(ResultListEntry.Type.WORD, word));
+                    data.add(new RTEntry(RTEntry.Type.WORD, word));
                 }
             }
             if (rhymeResult.twoSyllableRhymes.length > 0) {
-                data.add(new ResultListEntry(ResultListEntry.Type.SUBHEADING, getContext().getString(R.string.rhyme_section_two_syllables)));
+                data.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(R.string.rhyme_section_two_syllables)));
                 for (String word : rhymeResult.twoSyllableRhymes) {
-                    data.add(new ResultListEntry(ResultListEntry.Type.WORD, word));
+                    data.add(new RTEntry(RTEntry.Type.WORD, word));
                 }
             }
             if (rhymeResult.threeSyllableRhymes.length > 0) {
-                data.add(new ResultListEntry(ResultListEntry.Type.SUBHEADING, getContext().getString(R.string.rhyme_section_three_syllables)));
+                data.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(R.string.rhyme_section_three_syllables)));
                 for (String word : rhymeResult.threeSyllableRhymes) {
-                    data.add(new ResultListEntry(ResultListEntry.Type.WORD, word));
+                    data.add(new RTEntry(RTEntry.Type.WORD, word));
                 }
             }
         }

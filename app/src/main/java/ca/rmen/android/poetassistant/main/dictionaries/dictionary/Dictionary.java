@@ -32,16 +32,6 @@ public class Dictionary {
 
     private final SQLiteDatabase mDb;
 
-    public static class DictionaryEntry {
-        public final String wordType;
-        public final String definition;
-
-        public DictionaryEntry(String wordType, String definition) {
-            this.wordType = wordType;
-            this.definition = definition;
-        }
-    }
-
     public static synchronized Dictionary getInstance(Context context) {
         if (sInstance == null) sInstance = new Dictionary(context);
         return sInstance;

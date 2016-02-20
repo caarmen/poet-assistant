@@ -17,8 +17,14 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
 
-public interface SearchableListFragment {
-    void query(String query);
+public class DictionaryEntry {
+    public final String wordType;
+    public final String definition;
+
+    public DictionaryEntry(String wordType, String definition) {
+        this.wordType = wordType;
+        this.definition = definition;
+    }
 }
