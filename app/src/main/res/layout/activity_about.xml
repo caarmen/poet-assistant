@@ -190,6 +190,20 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColorLink="@color/primary" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:autoLink="all"
+                android:drawableLeft="@drawable/ic_bullet"
+                android:drawablePadding="8dp"
+                android:drawableStart="@drawable/ic_bullet"
+                android:gravity="center_vertical"
+                android:text="@string/about_license_event_bus"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColorLink="@color/primary" />
         </LinearLayout>
     </ScrollView>
 </merge>

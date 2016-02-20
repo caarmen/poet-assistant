@@ -27,7 +27,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.UtteranceProgressListener;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -44,30 +43,30 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import java.util.HashMap;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.Tts;
 
 
-public class TtsFragment extends Fragment implements
+public class ReaderFragment extends Fragment implements
         PoemFile.PoemFileCallback {
-    private static final String TAG = Constants.TAG + TtsFragment.class.getSimpleName();
+    private static final String TAG = Constants.TAG + ReaderFragment.class.getSimpleName();
     private static final String EXTRA_INITIAL_TEXT = "initial_text";
     private static final int ACTION_FILE_OPEN = 0;
     private static final int ACTION_FILE_SAVE_AS = 1;
 
+    private Tts mTts;
     private ImageView mPlayButton;
     private EditText mTextView;
-    private TextToSpeech mTextToSpeech;
-    private int mTtsStatus = TextToSpeech.ERROR;
     private Handler mHandler;
     private PoemPrefs mPoemPrefs;
-    private final UtteranceListener mUtteranceListener = new UtteranceListener();
 
-    public static TtsFragment newInstance(String initialText) {
+    public static ReaderFragment newInstance(String initialText) {
         Log.d(TAG, "newInstance() called with: " + "initialText = [" + initialText + "]");
-        TtsFragment fragment = new TtsFragment();
+        ReaderFragment fragment = new ReaderFragment();
         fragment.setRetainInstance(true);
         Bundle bundle = new Bundle(1);
         bundle.putString(EXTRA_INITIAL_TEXT, initialText);
@@ -80,24 +79,27 @@ public class TtsFragment extends Fragment implements
         Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        mTextToSpeech = new TextToSpeech(getActivity().getApplicationContext(), mOnInitListener);
-        mTextToSpeech.setOnUtteranceProgressListener(mUtteranceListener);
-        //noinspection deprecation
-        mTextToSpeech.setOnUtteranceCompletedListener(mUtteranceListener);
         mPoemPrefs = new PoemPrefs(getActivity());
+        mTts = Tts.getInstance(getActivity());
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView() called with: " + "inflater = [" + inflater + "], container = [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
-        View view = inflater.inflate(R.layout.fragment_tts, container, false);
+        View view = inflater.inflate(R.layout.fragment_reader, container, false);
         mPlayButton = (ImageView) view.findViewById(R.id.btn_play);
         mTextView = (EditText) view.findViewById(R.id.tv_text);
         mPlayButton.setOnClickListener(mOnClickListener);
         mTextView.addTextChangedListener(mTextWatcher);
         mHandler = new Handler();
-        PoemFile poemFile = mPoemPrefs.getSavedPoem();
-        if (poemFile != null) mTextView.setText(poemFile.text);
+        loadPoem();
         return view;
     }
 
@@ -166,10 +168,7 @@ public class TtsFragment extends Fragment implements
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy() called with: " + "");
-        if (mTextToSpeech != null) {
-            mTextToSpeech.shutdown();
-            mTextToSpeech = null;
-        }
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -198,6 +197,7 @@ public class TtsFragment extends Fragment implements
 
     @Override
     public void onPoemLoaded(PoemFile poemFile) {
+        Log.d(TAG, "onPoemLoaded() called with: " + "poemFile = [" + poemFile + "]");
         mTextView.setText(poemFile.text);
         mPoemPrefs.setSavedPoem(poemFile);
         getActivity().supportInvalidateOptionsMenu();
@@ -206,6 +206,7 @@ public class TtsFragment extends Fragment implements
 
     @Override
     public void onPoemSaved(PoemFile poemFile) {
+        Log.d(TAG, "onPoemSaved() called with: " + "poemFile = [" + poemFile + "]");
         mPoemPrefs.setSavedPoem(poemFile);
         Snackbar.make(mTextView, getString(R.string.file_saved, poemFile.name), Snackbar.LENGTH_LONG).show();
     }
@@ -222,9 +223,9 @@ public class TtsFragment extends Fragment implements
             @Override
             public void run() {
                 boolean enabled = !TextUtils.isEmpty(mTextView.getText())
-                        && mTtsStatus == TextToSpeech.SUCCESS;
+                        && mTts.getStatus() == TextToSpeech.SUCCESS;
                 mPlayButton.setEnabled(enabled);
-                if (mTextToSpeech.isSpeaking()) {
+                if (mTts.isSpeaking()) {
                     mPlayButton.setImageResource(R.drawable.ic_stop);
                 } else {
                     mPlayButton.setImageResource(R.drawable.ic_play);
@@ -237,7 +238,7 @@ public class TtsFragment extends Fragment implements
         @Override
         public void onClick(View v) {
             Log.v(TAG, "Play button clicked");
-            if (mTextToSpeech.isSpeaking()) mTextToSpeech.stop();
+            if (mTts.isSpeaking()) mTts.stop();
             else speak();
 
             updatePlayButton();
@@ -253,22 +254,32 @@ public class TtsFragment extends Fragment implements
         int endPosition = mTextView.getSelectionEnd();
         if (startPosition == endPosition) endPosition = text.length();
         text = text.substring(startPosition, endPosition);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            speak21(text);
-        else
-            speak4(text);
+        mTts.speak(text);
     }
 
-    @SuppressWarnings("deprecation")
-    private void speak4(String text) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, TAG);
-        mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, map);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void speak21(String text) {
-        mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, TAG);
+    private void loadPoem() {
+        Log.d(TAG, "loadPoem() called with: " + "");
+        // First see if we have poem in the arguments
+        // (the user chose to share some text with our app)
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            String initialText = arguments.getString(EXTRA_INITIAL_TEXT);
+            if (!TextUtils.isEmpty(initialText)) {
+                mTextView.setText(initialText);
+                PoemFile poemFile = new PoemFile(null, null, initialText);
+                mPoemPrefs.setSavedPoem(poemFile);
+                if (mTts.getStatus() == TextToSpeech.SUCCESS) {
+                    speak();
+                }
+                getActivity().supportInvalidateOptionsMenu();
+                return;
+            }
+        }
+        // Load the poem we previously saved
+        if (mPoemPrefs.hasSavedPoem()) {
+            PoemFile poemFile = mPoemPrefs.getSavedPoem();
+            PoemFile.open(getActivity(), poemFile.uri, this);
+        }
     }
 
     private final TextWatcher mTextWatcher = new TextWatcher() {
@@ -286,66 +297,19 @@ public class TtsFragment extends Fragment implements
         }
     };
 
-    private final TextToSpeech.OnInitListener mOnInitListener = new TextToSpeech.OnInitListener() {
-        @Override
-        public void onInit(int status) {
-            mTtsStatus = status;
-            updatePlayButton();
-            if (mTtsStatus == TextToSpeech.SUCCESS) {
-                Bundle arguments = getArguments();
-                if (arguments != null) {
-                    String initialText = arguments.getString(EXTRA_INITIAL_TEXT);
-                    if (!TextUtils.isEmpty(initialText)) {
-                        mTextView.setText(initialText);
-                        PoemFile poemFile = new PoemFile(null, null, initialText);
-                        mPoemPrefs.setSavedPoem(poemFile);
-                        speak();
-                        getActivity().supportInvalidateOptionsMenu();
-                    } else if (mPoemPrefs.hasSavedPoem()) {
-                        PoemFile poemFile = mPoemPrefs.getSavedPoem();
-                        PoemFile.open(getActivity(), poemFile.uri, TtsFragment.this);
-                    }
-                }
-            }
-        }
-    };
-
-    @SuppressWarnings("deprecation")
-    private class UtteranceListener extends UtteranceProgressListener
-            implements TextToSpeech.OnUtteranceCompletedListener {
-
-        @Override
-        public void onStart(String utteranceId) {
-            updatePlayButton();
-        }
-
-        @Override
-        public void onDone(String utteranceId) {
-            updatePlayButton();
-        }
-
-        @Override
-        public void onError(String utteranceId) {
-            updatePlayButton();
-        }
-
-        @Override
-        public void onError(String utteranceId, int errorCode) {
-            super.onError(utteranceId, errorCode);
-            updatePlayButton();
-        }
-
-        @Override
-        public void onStop(String utteranceId, boolean interrupted) {
-            super.onStop(utteranceId, interrupted);
-            updatePlayButton();
-        }
-
-        @Override
-        public void onUtteranceCompleted(String utteranceId) {
-            updatePlayButton();
+    @Subscribe
+    public void onTtsInitialized(Tts.OnTtsInitialized event) {
+        Log.d(TAG, "onTtsInitialized() called with: " + "event = [" + event + "]");
+        updatePlayButton();
+        if (event.status == TextToSpeech.SUCCESS) {
+            loadPoem();
         }
     }
 
+    @Subscribe
+    public void onTtsUtteranceCompleted(Tts.OnUtteranceCompleted event) {
+        Log.d(TAG, "onTtsUtteranceCompleted() called with: " + "event = [" + event + "]");
+        updatePlayButton();
+    }
 
 }

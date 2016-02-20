@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
@@ -43,7 +45,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.rhymer.Rhymer;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.thesaurus.Thesaurus;
-import ca.rmen.android.poetassistant.main.reader.TtsFragment;
+import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
 
 
 public class MainActivity extends AppCompatActivity implements OnWordClickedListener {
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(pagerAdapter);
         mViewPager.setOffscreenPageLimit(3);
+        mViewPager.addOnPageChangeListener(mOnPageChangeListener);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
@@ -121,8 +124,8 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         else if (Intent.ACTION_SEND.equals(intent.getAction())) {
             mViewPager.setCurrentItem(Tab.READER.ordinal());
             String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            TtsFragment ttsFragment = (TtsFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.RHYMER.ordinal());
-            ttsFragment.speak(sharedText);
+            ReaderFragment readerFragment = (ReaderFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.RHYMER.ordinal());
+            readerFragment.speak(sharedText);
         }
     }
 
@@ -156,5 +159,17 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         Log.d(TAG, "onWordClicked() called with: " + "word = [" + word + "], tab = [" + tab + "]");
         mSearch.search(word, tab);
     }
+
+    // Hide the keyboard when we navigate to any tab other than the reader tab.
+    private final ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener(){
+        @Override
+        public void onPageSelected(int position) {
+            super.onPageSelected(position);
+            if(position != Tab.READER.ordinal()) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mViewPager.getWindowToken(), 0);
+            }
+        }
+    };
 
 }
