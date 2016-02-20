@@ -20,11 +20,11 @@
 package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
 
 public class DictionaryEntry {
-    public final String wordType;
+    public final String partOfSpeech;
     public final String definition;
 
-    public DictionaryEntry(String wordType, String definition) {
-        this.wordType = wordType;
+    public DictionaryEntry(String partOfSpeech, String definition) {
+        this.partOfSpeech = partOfSpeech;
         this.definition = definition;
     }
 }

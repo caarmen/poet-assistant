@@ -48,7 +48,7 @@ public class DictionaryListAdapter extends ArrayAdapter<DictionaryEntry> {
             convertView = View.inflate(mContext, R.layout.list_item_dictionary_entry, null);
         }
         TextView wordType = ViewHolder.get(convertView, R.id.word_type);
-        wordType.setText(entry.wordType);
+        wordType.setText(entry.partOfSpeech);
 
         TextView definition = ViewHolder.get(convertView, R.id.definition);
         definition.setText(entry.definition);

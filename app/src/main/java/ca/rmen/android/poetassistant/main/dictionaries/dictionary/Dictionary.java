@@ -42,17 +42,17 @@ public class Dictionary {
     }
 
     public DictionaryEntry[] getEntries(String word) {
-        String[] projection = new String[]{"lexdomainid", "definition"};
-        String selection = "lemma=?";
+        String[] projection = new String[]{"part_of_speech", "definition"};
+        String selection = "word=?";
         String[] selectionArgs = new String[]{word};
-        Cursor cursor = mDb.query("dict", projection, selection, selectionArgs, null, null, null);
+        Cursor cursor = mDb.query("dictionary", projection, selection, selectionArgs, null, null, null);
         if (cursor != null) {
             DictionaryEntry[] result = new DictionaryEntry[cursor.getCount()];
             try {
                 while (cursor.moveToNext()) {
-                    String wordType = cursor.getString(0);
+                    String partOfSpeech = cursor.getString(0);
                     String definition = cursor.getString(1);
-                    result[cursor.getPosition()] = new DictionaryEntry(wordType, definition);
+                    result[cursor.getPosition()] = new DictionaryEntry(partOfSpeech, definition);
                 }
                 return result;
             } finally {

@@ -47,7 +47,7 @@ public class ResultListFactory {
     }
 
     public static ResultListFragment createListFragment(Tab tab, @Nullable String initialQuery) {
-        Log.d(TAG, "newInstance() called with: " + "tab= [" + tab + "], initialQuery = [" + initialQuery + "]");
+        Log.d(TAG, "createListFragment() called with: " + "tab= [" + tab + "], initialQuery = [" + initialQuery + "]");
         ResultListFragment<?> fragment;
         switch(tab) {
             case RHYMER:
