@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -33,6 +34,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 
@@ -52,6 +56,7 @@ public class ResultListFragment<T> extends ListFragment
     private ArrayAdapter<T> mAdapter;
     private TextView mListHeaderTextView;
     private View mHeaderView;
+    private View mPlayButton;
     private Tts mTts;
 
 
@@ -61,12 +66,14 @@ public class ResultListFragment<T> extends ListFragment
         View view = inflater.inflate(R.layout.fragment_result_list, container, false);
         mListHeaderTextView = (TextView) view.findViewById(R.id.tv_list_header);
         mHeaderView = view.findViewById(R.id.list_header);
-        view.findViewById(R.id.btn_play).setOnClickListener(mPlayButtonListener);
+        mPlayButton = view.findViewById(R.id.btn_play);
+        mPlayButton.setOnClickListener(mPlayButtonListener);
         view.findViewById(R.id.btn_web_search).setOnClickListener(mWebSearchButtonListener);
         if (savedInstanceState != null) {
             String query = savedInstanceState.getString(EXTRA_QUERY);
             mListHeaderTextView.setText(query);
         }
+        EventBus.getDefault().register(this);
         return view;
     }
 
@@ -86,6 +93,13 @@ public class ResultListFragment<T> extends ListFragment
             String initialQuery = arguments.getString(EXTRA_QUERY);
             if (!TextUtils.isEmpty(initialQuery)) query(initialQuery);
         }
+        updatePlayButton();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -101,6 +115,12 @@ public class ResultListFragment<T> extends ListFragment
         Bundle args = new Bundle(1);
         args.putString("query", query);
         getLoaderManager().restartLoader(0, args, this);
+    }
+
+    private void updatePlayButton() {
+        int ttsStatus = mTts.getStatus();
+        int playButtonVisibility = ttsStatus == TextToSpeech.SUCCESS ? View.VISIBLE : View.GONE;
+        mPlayButton.setVisibility(playButtonVisibility);
     }
 
     @Override
@@ -152,6 +172,12 @@ public class ResultListFragment<T> extends ListFragment
             startActivity(Intent.createChooser(searchIntent, getString(R.string.action_web_search, word)));
         }
     };
+
+    @Subscribe
+    public void onTtsInitialized(Tts.OnTtsInitialized event) {
+        Log.d(TAG, "onTtsInitialized() called with: " + "event = [" + event + "]");
+        updatePlayButton();
+    }
 
 
 }
