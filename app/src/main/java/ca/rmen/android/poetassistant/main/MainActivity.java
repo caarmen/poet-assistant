@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
 
         mSearch = new Search(this, mViewPager);
         loadDictionaries();
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     /**
