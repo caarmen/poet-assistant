@@ -19,6 +19,8 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries;
 
+import android.app.SearchManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
@@ -36,6 +38,7 @@ import java.util.List;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.main.Tab;
 
 
@@ -47,19 +50,22 @@ public class ResultListFragment<T> extends ListFragment
     static final String EXTRA_QUERY = "query";
     private Tab mTab;
     private ArrayAdapter<T> mAdapter;
-    private TextView mListHeaderView;
-    private View mDivider;
+    private TextView mListHeaderTextView;
+    private View mHeaderView;
+    private Tts mTts;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_result_list, container, false);
-        mListHeaderView = (TextView) view.findViewById(R.id.tv_list_header);
-        mDivider = view.findViewById(R.id.divider);
+        mListHeaderTextView = (TextView) view.findViewById(R.id.tv_list_header);
+        mHeaderView = view.findViewById(R.id.list_header);
+        view.findViewById(R.id.btn_play).setOnClickListener(mPlayButtonListener);
+        view.findViewById(R.id.btn_web_search).setOnClickListener(mWebSearchButtonListener);
         if (savedInstanceState != null) {
             String query = savedInstanceState.getString(EXTRA_QUERY);
-            mListHeaderView.setText(query);
+            mListHeaderTextView.setText(query);
         }
         return view;
     }
@@ -70,6 +76,7 @@ public class ResultListFragment<T> extends ListFragment
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "onActivityCreated() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
+        mTts = Tts.getInstance(getActivity());
         //noinspection unchecked
         mAdapter = (ArrayAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
         setListAdapter(mAdapter);
@@ -85,12 +92,12 @@ public class ResultListFragment<T> extends ListFragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d(TAG, "onSaveInstanceState() called with: " + "outState = [" + outState + "]");
-        outState.putString(EXTRA_QUERY, (String) mListHeaderView.getText());
+        outState.putString(EXTRA_QUERY, (String) mListHeaderTextView.getText());
     }
 
     public void query(String query) {
         Log.d(TAG, "query() called with: " + "query = [" + query + "]");
-        mListHeaderView.setText(query);
+        mListHeaderTextView.setText(query);
         Bundle args = new Bundle(1);
         args.putString("query", query);
         getLoaderManager().restartLoader(0, args, this);
@@ -113,8 +120,7 @@ public class ResultListFragment<T> extends ListFragment
         mAdapter.clear();
         mAdapter.addAll(data);
         int headerVisible = mAdapter.getCount() > 0 ? View.VISIBLE : View.GONE;
-        mListHeaderView.setVisibility(headerVisible);
-        mDivider.setVisibility(headerVisible);
+        mHeaderView.setVisibility(headerVisible);
     }
 
     @Override
@@ -122,6 +128,30 @@ public class ResultListFragment<T> extends ListFragment
         Log.d(TAG, "onLoaderReset() called with: " + "loader = [" + loader + "]");
         mAdapter.clear();
     }
+
+    private final View.OnClickListener mPlayButtonListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            mTts.speak(mListHeaderTextView.getText().toString());
+        }
+    };
+
+    private final View.OnClickListener mWebSearchButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent searchIntent = new Intent(Intent.ACTION_WEB_SEARCH);
+            String word = mListHeaderTextView.getText().toString();
+            searchIntent.putExtra(SearchManager.QUERY, word);
+            // No apps can handle ACTION_WEB_SEARCH.  We'll try a more generic intent instead
+            if(getActivity().getPackageManager().queryIntentActivities(searchIntent, 0).isEmpty()) {
+                searchIntent = new Intent(Intent.ACTION_SEND);
+                searchIntent.setType("text/plain");
+                searchIntent.putExtra(Intent.EXTRA_TEXT, word);
+            }
+            startActivity(Intent.createChooser(searchIntent, getString(R.string.action_web_search, word)));
+        }
+    };
 
 
 }

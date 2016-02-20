@@ -35,7 +35,6 @@ public class Tts {
     private TextToSpeech mTextToSpeech;
     private int mTtsStatus = TextToSpeech.ERROR;
     private static Tts sInstance;
-    private final UtteranceListener mUtteranceListener = new UtteranceListener();
 
     public static class OnTtsInitialized {
         public final int status;
@@ -54,9 +53,10 @@ public class Tts {
 
     private Tts(Context context) {
         mTextToSpeech = new TextToSpeech(context.getApplicationContext(), mOnInitListener);
-        mTextToSpeech.setOnUtteranceProgressListener(mUtteranceListener);
+        UtteranceListener utteranceListener = new UtteranceListener();
+        mTextToSpeech.setOnUtteranceProgressListener(utteranceListener);
         //noinspection deprecation
-        mTextToSpeech.setOnUtteranceCompletedListener(mUtteranceListener);
+        mTextToSpeech.setOnUtteranceCompletedListener(utteranceListener);
     }
 
     public int getStatus() {

@@ -85,9 +85,15 @@ public class ReaderFragment extends Fragment implements
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView() called with: " + "inflater = [" + inflater + "], container = [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
-        View view = inflater.inflate(R.layout.fragment_tts, container, false);
+        View view = inflater.inflate(R.layout.fragment_reader, container, false);
         mPlayButton = (ImageView) view.findViewById(R.id.btn_play);
         mTextView = (EditText) view.findViewById(R.id.tv_text);
         mPlayButton.setOnClickListener(mOnClickListener);

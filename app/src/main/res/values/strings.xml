@@ -30,6 +30,7 @@
     <string name="thesaurus_section_synonyms">Synonyms:</string>
     <string name="thesaurus_section_antonyms">Antonyms:</string>
     <string name="empty_list">No results</string>
+    <string name="action_web_search">Look up %s</string>
     <string name="tts_play">Play</string>
     <string name="tts_hint">Paste your poem here and press the play icon to listen to it.</string>
     <string name="about_title">About %s</string>
