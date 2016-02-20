@@ -88,6 +88,7 @@ public class ReaderFragment extends Fragment implements
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "onActivityCreated() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
+        loadPoem();
     }
 
     @Override
@@ -99,7 +100,6 @@ public class ReaderFragment extends Fragment implements
         mPlayButton.setOnClickListener(mOnClickListener);
         mTextView.addTextChangedListener(mTextWatcher);
         mHandler = new Handler();
-        loadPoem();
         return view;
     }
 
@@ -191,6 +191,8 @@ public class ReaderFragment extends Fragment implements
 
     public void speak(String text) {
         Log.d(TAG, "speak() called with: " + "text = [" + text + "]");
+        PoemFile poemFile = new PoemFile(null, null, text);
+        mPoemPrefs.setSavedPoem(poemFile);
         mTextView.setText(text);
         mPlayButton.callOnClick();
     }
@@ -288,7 +290,7 @@ public class ReaderFragment extends Fragment implements
         // Load the poem we previously saved
         if (mPoemPrefs.hasSavedPoem()) {
             PoemFile poemFile = mPoemPrefs.getSavedPoem();
-            PoemFile.open(getActivity(), poemFile.uri, this);
+            mTextView.setText(poemFile.text);
         } else if (mPoemPrefs.hasTempPoem()) {
             String tempPoemText = mPoemPrefs.getTempPoem();
             mTextView.setText(tempPoemText);

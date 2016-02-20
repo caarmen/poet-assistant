@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         else if (Intent.ACTION_SEND.equals(intent.getAction())) {
             mViewPager.setCurrentItem(Tab.READER.ordinal());
             String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            ReaderFragment readerFragment = (ReaderFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.RHYMER.ordinal());
+            ReaderFragment readerFragment = (ReaderFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.READER.ordinal());
             readerFragment.speak(sharedText);
         }
     }
