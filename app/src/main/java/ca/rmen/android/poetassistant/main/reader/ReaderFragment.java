@@ -159,10 +159,10 @@ public class ReaderFragment extends Fragment implements
     }
 
     @Override
-    public void onDestroyView() {
-        Log.d(TAG, "onDestroyView() called with: " + "");
+    public void onPause() {
+        Log.d(TAG, "onPause() called with: " + "");
         mPoemPrefs.updatePoemText(mTextView.getText().toString());
-        super.onDestroyView();
+        super.onPause();
     }
 
     @Override
@@ -251,6 +251,7 @@ public class ReaderFragment extends Fragment implements
     private void speak() {
         String text = mTextView.getText().toString();
         int startPosition = mTextView.getSelectionStart();
+        if (startPosition == text.length()) startPosition = 0;
         int endPosition = mTextView.getSelectionEnd();
         if (startPosition == endPosition) endPosition = text.length();
         text = text.substring(startPosition, endPosition);
