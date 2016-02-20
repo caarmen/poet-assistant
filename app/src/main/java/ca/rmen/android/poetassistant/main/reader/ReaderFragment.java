@@ -282,6 +282,8 @@ public class ReaderFragment extends Fragment implements
                 mPoemPrefs.setSavedPoem(poemFile);
                 if (mTts.getStatus() == TextToSpeech.SUCCESS) {
                     speak();
+                    arguments.remove(EXTRA_INITIAL_TEXT);
+                    setArguments(arguments);
                 }
                 getActivity().supportInvalidateOptionsMenu();
                 return;
