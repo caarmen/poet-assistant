@@ -43,7 +43,8 @@
 
             android:id="@+id/list_header"
             android:layout_width="match_parent"
-            android:layout_height="48dp">
+            android:layout_height="48dp"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tv_list_header"
@@ -63,8 +64,8 @@
                 android:id="@id/btn_web_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
                 android:layout_alignWithParentIfMissing="true"
+                android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/btn_play"
                 android:layout_toStartOf="@id/btn_play"
                 android:background="?selectableItemBackgroundBorderless"
