@@ -198,17 +198,26 @@ public class ReaderFragment extends Fragment implements
     @Override
     public void onPoemLoaded(PoemFile poemFile) {
         Log.d(TAG, "onPoemLoaded() called with: " + "poemFile = [" + poemFile + "]");
-        mTextView.setText(poemFile.text);
-        mPoemPrefs.setSavedPoem(poemFile);
-        getActivity().supportInvalidateOptionsMenu();
-        Snackbar.make(mTextView, getString(R.string.file_opened, poemFile.name), Snackbar.LENGTH_LONG).show();
+        if (poemFile == null) {
+            mPoemPrefs.clear();
+            Snackbar.make(mTextView, getString(R.string.file_opened_error), Snackbar.LENGTH_LONG).show();
+        } else {
+            mTextView.setText(poemFile.text);
+            mPoemPrefs.setSavedPoem(poemFile);
+            getActivity().supportInvalidateOptionsMenu();
+            Snackbar.make(mTextView, getString(R.string.file_opened, poemFile.name), Snackbar.LENGTH_LONG).show();
+        }
     }
 
     @Override
     public void onPoemSaved(PoemFile poemFile) {
-        Log.d(TAG, "onPoemSaved() called with: " + "poemFile = [" + poemFile + "]");
-        mPoemPrefs.setSavedPoem(poemFile);
-        Snackbar.make(mTextView, getString(R.string.file_saved, poemFile.name), Snackbar.LENGTH_LONG).show();
+        if (poemFile == null) {
+            Snackbar.make(mTextView, getString(R.string.file_saved_error), Snackbar.LENGTH_LONG).show();
+        } else {
+            Log.d(TAG, "onPoemSaved() called with: " + "poemFile = [" + poemFile + "]");
+            mPoemPrefs.setSavedPoem(poemFile);
+            Snackbar.make(mTextView, getString(R.string.file_saved, poemFile.name), Snackbar.LENGTH_LONG).show();
+        }
     }
 
     /**
