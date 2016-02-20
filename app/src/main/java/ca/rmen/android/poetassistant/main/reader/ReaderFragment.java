@@ -189,12 +189,11 @@ public class ReaderFragment extends Fragment implements
         }
     }
 
-    public void speak(String text) {
+    public void setText(String text) {
         Log.d(TAG, "speak() called with: " + "text = [" + text + "]");
         PoemFile poemFile = new PoemFile(null, null, text);
         mPoemPrefs.setSavedPoem(poemFile);
         mTextView.setText(text);
-        mPlayButton.callOnClick();
     }
 
     @Override
@@ -280,11 +279,6 @@ public class ReaderFragment extends Fragment implements
                 mTextView.setText(initialText);
                 PoemFile poemFile = new PoemFile(null, null, initialText);
                 mPoemPrefs.setSavedPoem(poemFile);
-                if (mTts.getStatus() == TextToSpeech.SUCCESS) {
-                    speak();
-                    arguments.remove(EXTRA_INITIAL_TEXT);
-                    setArguments(arguments);
-                }
                 getActivity().supportInvalidateOptionsMenu();
                 return;
             }
@@ -318,9 +312,6 @@ public class ReaderFragment extends Fragment implements
     public void onTtsInitialized(Tts.OnTtsInitialized event) {
         Log.d(TAG, "onTtsInitialized() called with: " + "event = [" + event + "]");
         updatePlayButton();
-        if (event.status == TextToSpeech.SUCCESS) {
-            loadPoem();
-        }
     }
 
     @Subscribe
