@@ -279,6 +279,9 @@ public class ReaderFragment extends Fragment implements
         if (mPoemPrefs.hasSavedPoem()) {
             PoemFile poemFile = mPoemPrefs.getSavedPoem();
             PoemFile.open(getActivity(), poemFile.uri, this);
+        } else if (mPoemPrefs.hasTempPoem()) {
+            String tempPoemText = mPoemPrefs.getTempPoem();
+            mTextView.setText(tempPoemText);
         }
     }
 

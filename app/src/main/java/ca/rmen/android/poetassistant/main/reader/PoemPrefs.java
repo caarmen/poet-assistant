@@ -37,6 +37,15 @@ class PoemPrefs {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
     }
 
+    public boolean hasTempPoem() {
+        return !mSharedPreferences.contains(PREF_POEM_URI)
+                && mSharedPreferences.contains(PREF_POEM_TEXT);
+    }
+
+    public String getTempPoem() {
+        return mSharedPreferences.getString(PREF_POEM_TEXT, null);
+    }
+
     public boolean hasSavedPoem() {
         return mSharedPreferences.contains(PREF_POEM_URI);
     }
