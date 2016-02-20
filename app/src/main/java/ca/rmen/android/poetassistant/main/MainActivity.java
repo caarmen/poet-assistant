@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(pagerAdapter);
         mViewPager.setOffscreenPageLimit(3);
+        mViewPager.addOnPageChangeListener(mOnPageChangeListener);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
@@ -156,5 +159,17 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         Log.d(TAG, "onWordClicked() called with: " + "word = [" + word + "], tab = [" + tab + "]");
         mSearch.search(word, tab);
     }
+
+    // Hide the keyboard when we navigate to any tab other than the reader tab.
+    private ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener(){
+        @Override
+        public void onPageSelected(int position) {
+            super.onPageSelected(position);
+            if(position != Tab.READER.ordinal()) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mViewPager.getWindowToken(), 0);
+            }
+        }
+    };
 
 }
