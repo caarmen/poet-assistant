@@ -38,6 +38,9 @@ import android.view.View;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.about.AboutActivity;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
+import ca.rmen.android.poetassistant.main.dictionaries.rhymer.Rhymer;
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.Thesaurus;
 import ca.rmen.android.poetassistant.main.reader.TtsFragment;
 
 
@@ -75,6 +78,22 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
             mViewPager.setCurrentItem(Tab.READER.ordinal());
 
         mSearch = new Search(this, mViewPager);
+        loadDictionaries();
+    }
+
+    /**
+     * Load our dictionaries when the activity starts, so that the first search
+     * can already be fast.
+     */
+    private void loadDictionaries() {
+        new Thread() {
+            @Override
+            public void run() {
+                Rhymer.getInstance(getApplicationContext());
+                Thesaurus.getInstance(getApplicationContext());
+                Dictionary.getInstance(getApplicationContext());
+            }
+        }.start();
     }
 
     @Override
