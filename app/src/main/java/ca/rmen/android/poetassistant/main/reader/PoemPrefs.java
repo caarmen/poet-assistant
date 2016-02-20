@@ -66,5 +66,13 @@ class PoemPrefs {
         return null;
     }
 
+    public void clear() {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.remove(PREF_POEM_TEXT);
+        editor.remove(PREF_POEM_URI);
+        editor.remove(PREF_POEM_NAME);
+        editor.apply();
+    }
+
 }
 

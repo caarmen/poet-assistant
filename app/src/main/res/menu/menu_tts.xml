@@ -22,6 +22,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".main.MainActivity">
     <item
+        android:id="@+id/action_new"
+        android:title="@string/file_new"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_open"
         android:title="@string/file_open"
         app:showAsAction="never" />

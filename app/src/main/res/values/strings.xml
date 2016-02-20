@@ -45,6 +45,8 @@
     <string name="about_license_dictionary">WordNet Dictionary License</string>
     <string name="about_app_icon">App icon based on Dictionary Pictogram by libberry: https://openclipart.org/detail/185246/dictionary-pictogram</string>
     <string name="license_title">Licensing Information</string>
+    <string name="file_clear">Clear text</string>
+    <string name="file_new">New</string>
     <string name="file_open">Open</string>
     <string name="file_save">Save</string>
     <string name="file_save_as">Save as</string>

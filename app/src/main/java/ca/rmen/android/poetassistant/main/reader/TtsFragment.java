@@ -108,6 +108,7 @@ public class TtsFragment extends Fragment implements
         inflater.inflate(R.menu.menu_tts, menu);
         menu.findItem(R.id.action_save).setEnabled(mPoemPrefs.hasSavedPoem());
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            menu.findItem(R.id.action_new).setTitle(R.string.file_clear);
             menu.findItem(R.id.action_open).setVisible(false);
             menu.findItem(R.id.action_save).setVisible(false);
             menu.findItem(R.id.action_save_as).setVisible(false);
@@ -116,7 +117,10 @@ public class TtsFragment extends Fragment implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_open) {
+        if (item.getItemId() == R.id.action_new) {
+            mPoemPrefs.clear();
+            mTextView.setText("");
+        } else if (item.getItemId() == R.id.action_open) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) open();
         } else if (item.getItemId() == R.id.action_save) {
             PoemFile poemFile = mPoemPrefs.getSavedPoem();
