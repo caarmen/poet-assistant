@@ -45,7 +45,6 @@
     <string name="about_license_thesaurus">WordNet Thesaurus License</string>
     <string name="about_license_dictionary">WordNet Dictionary License</string>
     <string name="about_license_event_bus">Green Robot Event Bus License: http://greenrobot.org/eventbus/license/</string>
-    <string name="about_app_icon">App icon based on Dictionary Pictogram by libberry: https://openclipart.org/detail/185246/dictionary-pictogram</string>
     <string name="license_title">Licensing Information</string>
     <string name="file_clear">Clear text</string>
     <string name="file_new">New</string>
