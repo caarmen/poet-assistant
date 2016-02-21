@@ -27,7 +27,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,12 +61,14 @@ public class ResultListFragment<T> extends ListFragment
     private View mHeaderView;
     private View mPlayButton;
     private Tts mTts;
+    private TextView mEmptyView;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_result_list, container, false);
+        mEmptyView = (TextView) view.findViewById(android.R.id.empty);
         mListHeaderTextView = (TextView) view.findViewById(R.id.tv_list_header);
         mHeaderView = view.findViewById(R.id.list_header);
         mPlayButton = view.findViewById(R.id.btn_play);
@@ -141,6 +146,25 @@ public class ResultListFragment<T> extends ListFragment
         mAdapter.addAll(data);
         int headerVisible = mAdapter.getCount() > 0 ? View.VISIBLE : View.GONE;
         mHeaderView.setVisibility(headerVisible);
+        updateEmptyText();
+    }
+
+    private void updateEmptyText(){
+        String query = mListHeaderTextView.getText().toString();
+        // If we have an empty list because the user didn't enter any search term,
+        // we'll show a text to tell them to search.
+        if (TextUtils.isEmpty(query)) {
+            String emptySearch = getString(R.string.empty_list_without_query);
+            ImageSpan imageSpan = new ImageSpan(getActivity(), R.drawable.ic_action_search_dark);
+            SpannableStringBuilder ssb = new SpannableStringBuilder(emptySearch);
+            int iconIndex = emptySearch.indexOf("%s");
+            ssb.setSpan(imageSpan, iconIndex, iconIndex + 2, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+            mEmptyView.setText(ssb, TextView.BufferType.SPANNABLE);
+        }
+        // If the user entered a query and there are no matches, show the normal "no results" text.
+        else {
+            mEmptyView.setText(R.string.empty_list_with_query);
+        }
     }
 
     @Override
@@ -164,7 +188,7 @@ public class ResultListFragment<T> extends ListFragment
             String word = mListHeaderTextView.getText().toString();
             searchIntent.putExtra(SearchManager.QUERY, word);
             // No apps can handle ACTION_WEB_SEARCH.  We'll try a more generic intent instead
-            if(getActivity().getPackageManager().queryIntentActivities(searchIntent, 0).isEmpty()) {
+            if (getActivity().getPackageManager().queryIntentActivities(searchIntent, 0).isEmpty()) {
                 searchIntent = new Intent(Intent.ACTION_SEND);
                 searchIntent.setType("text/plain");
                 searchIntent.putExtra(Intent.EXTRA_TEXT, word);
