@@ -122,6 +122,7 @@ public class ReaderFragment extends Fragment implements
         if (item.getItemId() == R.id.action_new) {
             mPoemPrefs.clear();
             mTextView.setText("");
+            getActivity().supportInvalidateOptionsMenu();
         } else if (item.getItemId() == R.id.action_open) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) open();
         } else if (item.getItemId() == R.id.action_save) {
