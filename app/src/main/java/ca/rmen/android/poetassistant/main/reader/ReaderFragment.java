@@ -209,6 +209,7 @@ public class ReaderFragment extends Fragment implements
             getActivity().supportInvalidateOptionsMenu();
             Snackbar.make(mTextView, getString(R.string.file_opened, poemFile.name), Snackbar.LENGTH_LONG).show();
         }
+        getActivity().supportInvalidateOptionsMenu();
     }
 
     @Override
@@ -220,6 +221,7 @@ public class ReaderFragment extends Fragment implements
             mPoemPrefs.setSavedPoem(poemFile);
             Snackbar.make(mTextView, getString(R.string.file_saved, poemFile.name), Snackbar.LENGTH_LONG).show();
         }
+        getActivity().supportInvalidateOptionsMenu();
     }
 
     /**
