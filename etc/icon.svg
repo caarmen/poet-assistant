@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg5931"
+   viewBox="0 0 256 256"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   width="100%"
+   height="100%"
+   sodipodi:docname="dict.svg"
+   inkscape:export-filename="/Users/calvarez/Downloads/dict512.png"
+   inkscape:export-xdpi="180"
+   inkscape:export-ydpi="180">
+  <defs
+     id="defs3067" />
+  <sodipodi:namedview
+     pagecolor="#000000"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="1"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1436"
+     inkscape:window-height="855"
+     id="namedview3065"
+     showgrid="false"
+     inkscape:zoom="1.3037281"
+     inkscape:cx="11.35289"
+     inkscape:cy="139.6113"
+     inkscape:window-x="4"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg5931" />
+  <path
+     id="rect3019-1-5"
+     d="m84.094 0-84.094 161.12 0.375 0.04-0.375 0.68v75.1l171.94 19.06 84.06-161.12-15.656-1.7188v-43.969l15.66-30.13-171.91-19.062zm26.125 53.156 13.938 1.5312-6.3125 65.125-14.344-1.5938 1.6562-14.75-26.094-2.9062-12.781 13.562-14-1.5625 57.938-59.406zm126.62 2.75v53.281l-69.312 131.88v-61.344l4.4062 0.46875 64.906-124.28zm-127.41 12.5-20.875 22.125 17.844 1.9688 3.0312-24.094zm62.375 8.8125c1.4161 0.01804 2.9003 0.11142 4.4375 0.28125 5.5842 0.61706 9.393 1.7201 11.469 3.2812 2.0757 1.5612 3.1786 3.3761 3.2812 5.4375 0.1025 2.0615-1.2045 5.6653-3.9062 10.844l-7.4062 13.906c-2.067 3.9616-3.388 6.9177-3.9688 8.8438-0.58085 1.9261-0.88327 4.0092-0.90625 6.2812l-12.375-1.375c0.0866-0.82844 0.2882-2.0474 0.625-3.6562 0.16114-0.7304 0.25222-1.2013 0.28125-1.4375-3.1722 1.7445-6.2351 2.9662-9.1875 3.6875-2.9525 0.72128-5.8001 0.93023-8.5625 0.625-4.8714-0.53825-8.0382-2.2026-9.5312-5.0312s-1.2579-6.1828 0.75-10.031c1.3288-2.5468 3.1506-4.7399 5.4688-6.5938 2.3181-1.8538 4.9255-3.1932 7.7812-4 2.8557-0.80677 6.6561-1.3431 11.406-1.6562 6.3979-0.40042 10.958-0.93764 13.688-1.5938l0.625-1.1875c1.1958-2.2921 1.46-3.9862 0.78125-5.0938-0.67884-1.1075-2.6717-1.8544-5.9688-2.2188-2.2278-0.24612-4.1919-0.0094-5.875 0.6875-1.6831 0.69696-3.4477 2.0539-5.3125 4.0625l-10.32-3.221c3.5509-4.2166 7.4135-7.1881 11.625-8.9375 3.1586-1.312 6.8767-1.9604 11.125-1.9062zm-0.71875 25.562c-1.8698 0.33214-4.7181 0.67658-8.5625 1-3.8445 0.32346-6.4826 0.75153-7.9062 1.3125-2.2095 0.92311-3.7392 2.2397-4.625 3.9375-0.8711 1.6696-0.98465 3.2013-0.3125 4.5625 0.67208 1.3612 2.0114 2.1518 4.0312 2.375 2.2575 0.24944 4.7747-0.21783 7.5625-1.4062 2.0759-0.90791 3.7752-2.1211 5.0625-3.625 0.85821-0.98259 2.04-2.8919 3.5312-5.75l1.2188-2.4062zm-159 59.688 151 16.75v64.656l-151-16.594v-64.813z"
+     style="fill:#607d88;fill-opacity:1" />
+  <rect
+     id="rect3761"
+     y="161.12"
+     width="1.0307"
+     x=".09375"
+     height="1.6677" />
+  <metadata
+     id="metadata3063">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2013-10-21T03:19:42</dc:date>
+        <dc:description>This is a modified version.</dc:description>
+        <dc:source>https://openclipart.org/detail/185246/dictionary-pictogram-by-libberry-185246</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>libberry</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>book</rdf:li>
+            <rdf:li>dictionary</rdf:li>
+            <rdf:li>library</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <path
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     d="m 168.35254,209.10283 c 0,-26.97825 0.10023,-28.38419 2.02347,-28.38419 1.57363,0 9.10954,-13.58479 33.89831,-61.1076 l 31.87483,-61.107594 0.29124,24.79217 0.29124,24.792174 -33.77252,64.24762 c -18.57488,35.3362 -33.96017,64.45103 -34.18954,64.69962 -0.22936,0.24858 -0.41703,-12.32091 -0.41703,-27.9322 z"
+     id="path3866"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     d="m 165.90934,124.61941 c -2.55159,-0.38641 -2.88927,-0.83582 -2.32308,-3.09171 0.79911,-3.1839 0.78258,-3.18549 -5.14916,-0.4939 -5.66182,2.56912 -13.93752,2.81589 -18.3261,0.54647 -5.47091,-2.82912 -5.62581,-9.4246 -0.36809,-15.67305 4.5707,-5.43196 9.99804,-7.53286 22.90139,-8.865024 6.42089,-0.662905 12.28451,-1.692086 13.03028,-2.287069 1.94735,-1.553637 1.69623,-6.961923 -0.35991,-7.750936 -3.70457,-1.421579 -11.03087,-0.640859 -13.70184,1.460124 -2.32942,1.832325 -3.22852,1.954291 -6.65476,0.902746 -2.1788,-0.668694 -3.96146,-1.597201 -3.96146,-2.063348 0,-1.442825 7.37592,-6.55984 11.65881,-8.088252 5.04322,-1.799746 10.42871,-1.905837 17.69036,-0.348492 6.39842,1.372216 9.70168,4.105762 9.70168,8.028436 0,1.495524 -3.41695,9.445395 -7.59322,17.666375 -4.17627,8.22099 -7.59322,16.27196 -7.59322,17.89104 0,3.10967 -1.04853,3.36345 -8.95168,2.16659 z m -1.98969,-10.90046 c 1.54317,-1.14062 3.98226,-4.1806 5.42018,-6.75552 l 2.6144,-4.68167 -7.11806,0.72926 c -12.09347,1.23901 -16.00905,3.49982 -16.00905,9.24343 0,1.20279 0.85424,2.71128 1.8983,3.35219 2.64434,1.62326 9.83622,0.59431 13.19423,-1.88769 z"
+     id="path3868"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     d="m 107.23372,118.10135 -3.08492,-0.46172 0.73789,-7.34754 0.73788,-7.34753 -10.979977,-1.24855 C 78.474802,99.857316 79.283249,99.666352 72.185735,107.00106 l -6.341667,6.5536 -6.190592,-0.73136 -6.190592,-0.73136 28.42788,-29.166134 28.427876,-29.166134 6.50848,0.68621 c 3.57966,0.377416 6.56335,0.753354 6.63042,0.835418 0.0671,0.08207 -1.25637,14.061073 -2.94099,31.064463 -1.68461,17.003387 -3.08186,31.281357 -3.105,31.728817 -0.0431,0.83447 -4.69949,0.84672 -10.17783,0.0268 l 0,0 z m 1.09336,-35.552197 c 2.17235,-16.796026 2.67207,-16.591948 -9.407456,-3.841842 -5.911367,6.239529 -10.494245,11.598293 -10.184174,11.908365 0.762221,0.762221 11.035589,2.015159 15.07472,1.83851 l 3.25424,-0.142322 1.26267,-9.762711 z"
+     id="path3870"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     d="m 86.99661,235.09584 -74.305085,-8.27787 -0.287571,-31.72763 c -0.234452,-25.86703 -0.0203,-31.72763 1.159375,-31.72763 0.795821,0 34.328933,3.66102 74.518027,8.1356 40.189094,4.47457 73.470764,8.13559 73.959264,8.13559 0.48851,0 0.88819,14.4 0.88819,32 0,17.6 -0.3661,31.94146 -0.81356,31.8699 -0.44745,-0.0716 -34.25084,-3.85513 -75.11864,-8.40796 l 0,0 z"
+     id="path3872"
+     inkscape:connector-curvature="0" />
+  <rect
+     style="fill:#607d88;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     id="rect3896"
+     width="143.18645"
+     height="66.169487"
+     x="53.152542"
+     y="41.220341"
+     ry="33.084743" />
+  <rect
+     style="fill:#607d88;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+     id="rect3898"
+     width="145.35593"
+     height="34.711864"
+     x="50.983051"
+     y="94.372879"
+     ry="17.355932" />
+  <flowRoot
+     xml:space="preserve"
+     id="flowRoot3900"
+     style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Sans;font-style:normal;font-weight:normal;font-size:40px;line-height:125%;letter-spacing:0px;word-spacing:0px"><flowRegion
+       id="flowRegion3902"><rect
+         id="rect3904"
+         width="174.11606"
+         height="109.68545"
+         x="-283.03448"
+         y="-3.2565067" /></flowRegion><flowPara
+       id="flowPara3906" /></flowRoot>  <text
+     xml:space="preserve"
+     style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+     x="116.54047"
+     y="93.139725"
+     id="text3908"
+     sodipodi:linespacing="125%"
+     transform="matrix(0.93510299,0.12788589,-0.56750005,0.99178889,0,0)"><tspan
+       sodipodi:role="line"
+       id="tspan3910"
+       x="116.54047"
+       y="93.139725"
+       style="font-size:90px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#ffffff;fill-opacity:1;font-family:American Typewriter;-inkscape-font-specification:American Typewriter">PA</tspan></text>
+</svg>
