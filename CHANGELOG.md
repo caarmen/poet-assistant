@@ -1,5 +1,9 @@
 Change Log
 ==========
+1.0.7 *(2016-02-22)*
+--------------------
+
+* Update the suggestions list as the user types in a search query.
 
 1.0.6 *(2016-02-21)*
 --------------------
