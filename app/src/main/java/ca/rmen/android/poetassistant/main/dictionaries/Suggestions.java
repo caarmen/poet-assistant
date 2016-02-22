@@ -27,10 +27,12 @@ import android.database.MatrixCursor;
 import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.support.v4.widget.CursorAdapter;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -62,8 +64,16 @@ class Suggestions {
         }
 
         public void addSuggestion(String suggestion) {
-            mCursor.addSuggestion(suggestion);
+            mCursor.addSuggestion(suggestion.toLowerCase(Locale.getDefault()));
             reload();
+        }
+
+        public void filterSuggestions(String filter) {
+            mCursor = new SuggestionsCursor(mContext);
+            mCursor.setFilter(filter);
+            mCursor.load();
+            changeCursor(mCursor);
+            notifyDataSetChanged();
         }
 
         public String getSuggestion(int position) {
@@ -93,10 +103,15 @@ class Suggestions {
             private static final String PREF_SUGGESTIONS = "pref_suggestions";
 
             private final SharedPreferences mSharedPreferences;
+            private String mFilter;
 
             public SuggestionsCursor(Context context) {
                 super(COLUMNS);
                 mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            }
+
+            public void setFilter(String filter) {
+                mFilter = filter;
             }
 
             public void load() {
@@ -105,11 +120,13 @@ class Suggestions {
                 sortedSuggestions.addAll(suggestions);
                 int i = 0;
                 for (String suggestion : sortedSuggestions) {
-                    addRow(new Object[]{i++, suggestion});
+                    if (TextUtils.isEmpty(mFilter)|| suggestion.contains(mFilter))
+                        addRow(new Object[]{i++, suggestion});
                 }
             }
 
             public void clear() {
+                mFilter = null;
                 mSharedPreferences.edit().remove(PREF_SUGGESTIONS).apply();
             }
 

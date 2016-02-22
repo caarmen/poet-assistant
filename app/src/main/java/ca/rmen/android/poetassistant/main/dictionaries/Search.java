@@ -105,6 +105,7 @@ public class Search {
 
         @Override
         public boolean onQueryTextChange(String newText) {
+            mSuggestionsCursorAdapter.filterSuggestions(newText);
             return false;
         }
     };
