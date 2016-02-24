@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -35,6 +36,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -42,6 +44,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
+import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
@@ -51,13 +54,19 @@ import ca.rmen.android.poetassistant.main.Tab;
 
 public class ResultListFragment<T> extends ListFragment
         implements
-        LoaderManager.LoaderCallbacks<List<T>> {
+        LoaderManager.LoaderCallbacks<List<T>>,
+        InputDialogFragment.InputDialogListener {
     private static final String TAG = Constants.TAG + ResultListFragment.class.getSimpleName();
+    private static final int ACTION_FILTER = 0;
+    private static final String DIALOG_TAG = "dialog";
+    private static final String EXTRA_FILTER = "filter";
     static final String EXTRA_TAB = "tab";
     static final String EXTRA_QUERY = "query";
     private Tab mTab;
     private ArrayAdapter<T> mAdapter;
     private TextView mListHeaderTextView;
+    private View mFilterView;
+    private TextView mFilterTextView;
     private View mHeaderView;
     private View mPlayButton;
     private Tts mTts;
@@ -67,17 +76,33 @@ public class ResultListFragment<T> extends ListFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
+        mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
         View view = inflater.inflate(R.layout.fragment_result_list, container, false);
         mEmptyView = (TextView) view.findViewById(android.R.id.empty);
         mListHeaderTextView = (TextView) view.findViewById(R.id.tv_list_header);
         mHeaderView = view.findViewById(R.id.list_header);
+        mFilterView = view.findViewById(R.id.filter);
+        mFilterTextView = (TextView) view.findViewById(R.id.tv_filter);
         mPlayButton = view.findViewById(R.id.btn_play);
         mPlayButton.setOnClickListener(mPlayButtonListener);
+
+        View filterButton = view.findViewById(R.id.btn_filter);
+        filterButton.setOnClickListener(mFilterButtonListener);
+        TextView filterTextView = (TextView) view.findViewById(R.id.tv_filter_label);
+        filterTextView.setText(ResultListFactory.getFilterLabel(getActivity(), mTab));
+
+        view.findViewById(R.id.btn_clear).setOnClickListener(mClearButtonListener);
+
         view.findViewById(R.id.btn_web_search).setOnClickListener(mWebSearchButtonListener);
+        filterButton.setOnClickListener(mFilterButtonListener);
         if (savedInstanceState != null) {
             String query = savedInstanceState.getString(EXTRA_QUERY);
+            String filter = savedInstanceState.getString(EXTRA_FILTER);
             mListHeaderTextView.setText(query);
+            mFilterTextView.setText(filter);
+            mFilterView.setVisibility(TextUtils.isEmpty(filter) ? View.GONE : View.VISIBLE);
         }
+        if (mTab == Tab.RHYMER || mTab == Tab.THESAURUS) filterButton.setVisibility(View.VISIBLE);
         EventBus.getDefault().register(this);
         return view;
     }
@@ -87,7 +112,6 @@ public class ResultListFragment<T> extends ListFragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "onActivityCreated() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
-        mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
         mTts = Tts.getInstance(getActivity());
         //noinspection unchecked
         mAdapter = (ArrayAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
@@ -112,13 +136,22 @@ public class ResultListFragment<T> extends ListFragment
         super.onSaveInstanceState(outState);
         Log.d(TAG, "onSaveInstanceState() called with: " + "outState = [" + outState + "]");
         outState.putString(EXTRA_QUERY, (String) mListHeaderTextView.getText());
+        outState.putString(EXTRA_FILTER, (String) mFilterTextView.getText());
     }
 
     public void query(String query) {
         Log.d(TAG, "query() called with: " + "query = [" + query + "]");
         mListHeaderTextView.setText(query);
+        mFilterView.setVisibility(View.GONE);
         Bundle args = new Bundle(1);
-        args.putString("query", query);
+        args.putString(EXTRA_QUERY, query);
+        getLoaderManager().restartLoader(0, args, this);
+    }
+
+    private void filter(String filter) {
+        Bundle args = new Bundle(2);
+        args.putString(EXTRA_QUERY, mListHeaderTextView.getText().toString());
+        args.putString(EXTRA_FILTER, filter);
         getLoaderManager().restartLoader(0, args, this);
     }
 
@@ -132,9 +165,13 @@ public class ResultListFragment<T> extends ListFragment
     public Loader<List<T>> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, "onCreateLoader() called with: " + "id = [" + id + "], args = [" + args + "]");
         String query = "";
-        if (args != null) query = args.getString("query");
+        String filter = "";
+        if (args != null) {
+            query = args.getString(EXTRA_QUERY);
+            filter = args.getString(EXTRA_FILTER);
+        }
         //noinspection unchecked
-        Loader<List<T>> loader = (Loader<List<T>>) ResultListFactory.createLoader(mTab, getActivity(), query);
+        Loader<List<T>> loader = (Loader<List<T>>) ResultListFactory.createLoader(mTab, getActivity(), query, filter);
         loader.forceLoad();
         return loader;
     }
@@ -144,12 +181,18 @@ public class ResultListFragment<T> extends ListFragment
         Log.d(TAG, "onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
         mAdapter.clear();
         mAdapter.addAll(data);
-        int headerVisible = mAdapter.getCount() > 0 ? View.VISIBLE : View.GONE;
+        int headerVisible = mAdapter.getCount() == 0 && TextUtils.isEmpty(mListHeaderTextView.getText().toString()) ?
+                View.GONE : View.VISIBLE;
         mHeaderView.setVisibility(headerVisible);
         updateEmptyText();
+
+        // Hide the keyboard
+        getListView().requestFocus();
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getListView().getWindowToken(), 0);
     }
 
-    private void updateEmptyText(){
+    private void updateEmptyText() {
         String query = mListHeaderTextView.getText().toString();
         // If we have an empty list because the user didn't enter any search term,
         // we'll show a text to tell them to search.
@@ -171,6 +214,15 @@ public class ResultListFragment<T> extends ListFragment
     public void onLoaderReset(Loader<List<T>> loader) {
         Log.d(TAG, "onLoaderReset() called with: " + "loader = [" + loader + "]");
         mAdapter.clear();
+    }
+
+    @Override
+    public void onInputSubmitted(int actionId, String input) {
+        if (actionId == ACTION_FILTER) {
+            mFilterView.setVisibility(View.VISIBLE);
+            mFilterTextView.setText(input);
+            filter(input.toLowerCase(Locale.getDefault()).trim());
+        }
     }
 
     private final View.OnClickListener mPlayButtonListener = new View.OnClickListener() {
@@ -197,11 +249,31 @@ public class ResultListFragment<T> extends ListFragment
         }
     };
 
+    private final View.OnClickListener mFilterButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            InputDialogFragment fragment = ResultListFactory.createFilterDialog(
+                    getActivity(),
+                    mTab,
+                    ACTION_FILTER,
+                    mFilterTextView.getText().toString());
+            getChildFragmentManager().beginTransaction().add(fragment, DIALOG_TAG).commit();
+        }
+    };
+
+    private final View.OnClickListener mClearButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mFilterTextView.setText(null);
+            mFilterView.setVisibility(View.GONE);
+            filter(null);
+        }
+    };
+
     @Subscribe
     public void onTtsInitialized(Tts.OnTtsInitialized event) {
         Log.d(TAG, "onTtsInitialized() called with: " + "event = [" + event + "]");
         updatePlayButton();
     }
-
 
 }

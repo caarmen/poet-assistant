@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
@@ -29,14 +30,15 @@ import android.widget.ArrayAdapter;
 import java.util.List;
 
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.rhymer.RhymerLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.thesaurus.ThesaurusLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
 
 
 public class ResultListFactory {
@@ -49,7 +51,7 @@ public class ResultListFactory {
     public static ResultListFragment createListFragment(Tab tab, @Nullable String initialQuery) {
         Log.d(TAG, "createListFragment() called with: " + "tab= [" + tab + "], initialQuery = [" + initialQuery + "]");
         ResultListFragment<?> fragment;
-        switch(tab) {
+        switch (tab) {
             case RHYMER:
             case THESAURUS:
                 fragment = new ResultListFragment<RTEntry>();
@@ -79,16 +81,40 @@ public class ResultListFactory {
         }
     }
 
-    public static AsyncTaskLoader<? extends List> createLoader(Tab tab, Activity activity, String query) {
+    public static AsyncTaskLoader<? extends List> createLoader(Tab tab, Activity activity, String query, String filter) {
         switch (tab) {
             case RHYMER:
-                return new RhymerLoader(activity, query);
+                return new RhymerLoader(activity, query, filter);
             case THESAURUS:
-                return new ThesaurusLoader(activity, query);
+                return new ThesaurusLoader(activity, query, filter);
             case DICTIONARY:
             default:
                 return new DictionaryLoader(activity, query);
 
+        }
+    }
+
+    static InputDialogFragment createFilterDialog(Context context, Tab tab, @SuppressWarnings("SameParameterValue") int actionId, String text) {
+        String dialogMessage;
+        switch (tab) {
+            case RHYMER:
+                dialogMessage = context.getString(R.string.filter_rhymer_message);
+                break;
+            case THESAURUS:
+            default:
+                dialogMessage = context.getString(R.string.filter_thesaurus_message);
+                break;
+        }
+        return InputDialogFragment.create(actionId, context.getString(R.string.filter_title), dialogMessage, text);
+    }
+
+    static String getFilterLabel(Context context, Tab tab) {
+        switch (tab) {
+            case RHYMER:
+                return context.getString(R.string.filter_rhymer_label);
+            case THESAURUS:
+            default:
+                return context.getString(R.string.filter_thesaurus_label);
         }
     }
 }

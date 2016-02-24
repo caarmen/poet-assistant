@@ -17,18 +17,19 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.rt.rhymer;
+package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
 import ca.rmen.rhymer.RhymeResult;
 
 public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
@@ -36,10 +37,12 @@ public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
     private static final String TAG = Constants.TAG + RhymerLoader.class.getSimpleName();
 
     private final String mQuery;
+    private final String mFilter;
 
-    public RhymerLoader(Context context, String query) {
+    public RhymerLoader(Context context, String query, String filter) {
         super(context);
         mQuery = query;
+        mFilter = filter;
     }
 
     @Override
@@ -51,6 +54,11 @@ public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
         List<RTEntry> data = new ArrayList<>();
         if (rhymeResults == null) {
             return data;
+        }
+        if (!TextUtils.isEmpty(mFilter)) {
+            Set<String> synonyms = Thesaurus.getInstance(getContext()).getFlatSynonyms(mFilter);
+            if (synonyms.isEmpty()) return data;
+            rhymeResults = filter(rhymeResults, synonyms);
         }
         for (RhymeResult rhymeResult : rhymeResults) {
             // Add the word variant, if there are multiple pronunciations.
@@ -79,6 +87,30 @@ public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
             }
         }
         return data;
+    }
+
+    private static List<RhymeResult> filter(List<RhymeResult> rhymes, Set<String> filter) {
+        List<RhymeResult> filteredRhymes = new ArrayList<>();
+        for (RhymeResult rhymeResult : rhymes) {
+            RhymeResult filteredRhymeResult = filter(rhymeResult, filter);
+            if (filteredRhymeResult != null) filteredRhymes.add(filteredRhymeResult);
+        }
+        return filteredRhymes;
+    }
+
+    private static RhymeResult filter(RhymeResult rhyme, Set<String> filter) {
+        RhymeResult result = new RhymeResult(rhyme.variantNumber,
+                RTUtils.filter(rhyme.oneSyllableRhymes, filter),
+                RTUtils.filter(rhyme.twoSyllableRhymes, filter),
+                RTUtils.filter(rhyme.threeSyllableRhymes, filter));
+        if (isEmpty(result)) return null;
+        return result;
+    }
+
+    private static boolean isEmpty(RhymeResult rhymeResult) {
+        return rhymeResult.oneSyllableRhymes.length == 0
+                && rhymeResult.twoSyllableRhymes.length == 0
+                && rhymeResult.threeSyllableRhymes.length == 0;
     }
 
 
