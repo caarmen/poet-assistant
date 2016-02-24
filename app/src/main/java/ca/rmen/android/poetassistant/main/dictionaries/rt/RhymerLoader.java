@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.rt.rhymer;
+package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
@@ -28,7 +28,6 @@ import java.util.List;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
 import ca.rmen.rhymer.RhymeResult;
 
 public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {

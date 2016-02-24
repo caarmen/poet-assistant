@@ -33,10 +33,10 @@ import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.rhymer.RhymerLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.thesaurus.ThesaurusLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
 
 
 public class ResultListFactory {
