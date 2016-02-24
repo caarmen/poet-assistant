@@ -121,7 +121,7 @@ public class Search {
         @Override
         public boolean onSuggestionClick(int position) {
             String suggestion = mSuggestionsCursorAdapter.getSuggestion(position);
-            mSearchView.setQuery(suggestion, false);
+            mSearchView.setQuery(suggestion, true);
             return false;
         }
     };

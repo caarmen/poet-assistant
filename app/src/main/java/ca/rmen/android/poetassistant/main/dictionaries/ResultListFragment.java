@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -35,6 +36,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -183,6 +185,11 @@ public class ResultListFragment<T> extends ListFragment
                 View.GONE : View.VISIBLE;
         mHeaderView.setVisibility(headerVisible);
         updateEmptyText();
+
+        // Hide the keyboard
+        getListView().requestFocus();
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getListView().getWindowToken(), 0);
     }
 
     private void updateEmptyText() {
