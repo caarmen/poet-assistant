@@ -120,7 +120,7 @@ class Suggestions {
                 sortedSuggestions.addAll(suggestions);
                 int i = 0;
                 for (String suggestion : sortedSuggestions) {
-                    if (TextUtils.isEmpty(mFilter)|| suggestion.contains(mFilter))
+                    if (TextUtils.isEmpty(mFilter) || suggestion.contains(mFilter))
                         addRow(new Object[]{i++, suggestion});
                 }
             }

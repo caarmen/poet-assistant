@@ -35,65 +35,126 @@
         android:text="@null" />
 
     <LinearLayout
+        android:id="@+id/list_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
-        <RelativeLayout
-
-            android:id="@+id/list_header"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:visibility="gone">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_list_header"
-                style="?android:attr/textAppearanceLarge"
+            <RelativeLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
+
+                <TextView
+                    android:id="@+id/tv_list_header"
+                    style="?android:attr/textAppearanceLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/btn_filter"
+                    android:layout_toStartOf="@id/btn_filter"
+                    android:gravity="start|center_vertical"
+                    android:textStyle="bold"
+                    tools:text="Query" />
+
+                <ImageButton
+                    android:id="@id/btn_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignWithParentIfMissing="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/btn_web_search"
+                    android:layout_toStartOf="@id/btn_web_search"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="@string/filter_hint"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_filter_list"
+                    android:visibility="gone" />
+
+                <ImageButton
+                    android:id="@id/btn_web_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignWithParentIfMissing="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/btn_play"
+                    android:layout_toStartOf="@id/btn_play"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="@string/tts_play"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_web_search" />
+
+                <ImageButton
+                    android:id="@id/btn_play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="@string/tts_play"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_play_circle" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/btn_web_search"
-                android:layout_toStartOf="@id/btn_web_search"
-                android:gravity="start|center_vertical"
-                android:textStyle="bold"
-                tools:text="Query" />
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_rounded_rect"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
-            <ImageButton
-                android:id="@id/btn_web_search"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignWithParentIfMissing="true"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/btn_play"
-                android:layout_toStartOf="@id/btn_play"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="@string/tts_play"
-                android:padding="8dp"
-                android:src="@drawable/ic_web_search" />
+                <TextView
+                    android:id="@+id/tv_filter_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="@null"
+                    android:textColor="#37474f"
+                    tools:text="@string/filter_rhymer_label" />
 
-            <ImageButton
-                android:id="@id/btn_play"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="@string/tts_play"
-                android:padding="8dp"
-                android:src="@drawable/ic_play_circle" />
+                <TextView
+                    android:id="@+id/tv_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center_vertical"
+                    android:textColor="#37474f"
+                    tools:text="yesterday" />
+
+                <ImageButton
+                    android:id="@+id/btn_clear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/ic_clear"
+                    android:contentDescription="@string/filter_clear" />
+            </LinearLayout>
 
             <View
                 android:id="@+id/divider"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:layout_alignParentBottom="true"
                 android:background="@drawable/shadow" />
-        </RelativeLayout>
+
+        </LinearLayout>
 
 
         <ListView

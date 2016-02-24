@@ -24,11 +24,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import ca.rmen.android.poetassistant.main.dictionaries.DbUtil;
+import ca.rmen.rhymer.RhymeResult;
 import ca.rmen.rhymer.WordVariant;
 
 public class Rhymer extends ca.rmen.rhymer.Rhymer {
@@ -69,6 +73,17 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
             }
         }
         return result;
+    }
+
+    Set<String> getFlatRhymes(String word) {
+        List<RhymeResult> rhymeResults = super.getRhymingWords(word);
+        Set<String> flatRhymes = new HashSet<>();
+        for (RhymeResult rhymeResult : rhymeResults) {
+            Collections.addAll(flatRhymes, rhymeResult.oneSyllableRhymes);
+            Collections.addAll(flatRhymes, rhymeResult.twoSyllableRhymes);
+            Collections.addAll(flatRhymes, rhymeResult.threeSyllableRhymes);
+        }
+        return flatRhymes;
     }
 
     @Override

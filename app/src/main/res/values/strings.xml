@@ -32,6 +32,7 @@
     <string name="empty_list_with_query">No results</string>
     <string name="empty_list_without_query">Tap on %s to look up a word.</string>
     <string name="action_web_search">Look up %s</string>
+    <string name="filter_hint">Filter results</string>
     <string name="tts_play">Play</string>
     <string name="tts_hint">Paste your poem here and press the play icon to listen to it.</string>
     <string name="about_title">About %s</string>
@@ -57,4 +58,10 @@
     <string name="file_opened_error">Couldn\'t open file.</string>
     <string name="file_saved">Saved poem to %s</string>
     <string name="file_saved_error">Couldn\'t save file.</string>
+    <string name="filter_title">Filter results</string>
+    <string name="filter_rhymer_message">Only show words which are synonyms of this word:</string>
+    <string name="filter_rhymer_label">"Synonyms of: "</string>
+    <string name="filter_thesaurus_message">Only show words which rhyme with this word:</string>
+    <string name="filter_thesaurus_label">"Rhymes of: "</string>
+    <string name="filter_clear">Clear filter</string>
 </resources>

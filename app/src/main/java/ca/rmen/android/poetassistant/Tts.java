@@ -38,6 +38,7 @@ public class Tts {
 
     public static class OnTtsInitialized {
         public final int status;
+
         public OnTtsInitialized(int status) {
             this.status = status;
         }

@@ -24,6 +24,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import ca.rmen.android.poetassistant.main.dictionaries.DbUtil;
 
 public class Thesaurus {
@@ -85,6 +89,27 @@ public class Thesaurus {
             }
         }
         return new ThesaurusEntry[0];
+    }
+
+    public Set<String> getFlatSynonyms(String word) {
+        Set<String> flatSynonyms = new HashSet<>();
+
+        String[] projection = new String[]{"synonyms"};
+        String selection = "word=?";
+        String[] selectionArgs = new String[]{word};
+        Cursor cursor = mDb.query("thesaurus", projection, selection, selectionArgs, null, null, null);
+        if (cursor != null) {
+            try {
+                while (cursor.moveToNext()) {
+                    String synonymsList = cursor.getString(0);
+                    String[] synonyms = split(synonymsList);
+                    Collections.addAll(flatSynonyms, synonyms);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return flatSynonyms;
     }
 
     private static String[] split(String string) {
