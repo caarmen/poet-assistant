@@ -20,7 +20,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:id="@android:id/text1"
@@ -49,7 +50,7 @@
         android:clickable="true"
         android:contentDescription="@string/tab_rhymer"
         android:padding="4dp"
-        android:src="@drawable/ic_rhymer" />
+        app:srcCompat="@drawable/ic_rhymer" />
 
     <ImageView
         android:id="@id/btn_thesaurus"
@@ -62,7 +63,7 @@
         android:clickable="true"
         android:contentDescription="@string/tab_thesaurus"
         android:padding="4dp"
-        android:src="@drawable/ic_thesaurus" />
+        app:srcCompat="@drawable/ic_thesaurus" />
 
     <ImageView
         android:id="@id/btn_dictionary"
@@ -77,6 +78,6 @@
         android:clickable="true"
         android:contentDescription="@string/tab_dictionary"
         android:padding="4dp"
-        android:src="@drawable/ic_dictionary" />
+        app:srcCompat="@drawable/ic_dictionary" />
 
 </RelativeLayout>

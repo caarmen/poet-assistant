@@ -18,6 +18,7 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -65,8 +66,8 @@
                 android:clickable="true"
                 android:contentDescription="@string/filter_hint"
                 android:padding="8dp"
-                android:src="@drawable/ic_filter_list"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_filter_list" />
 
             <ImageButton
                 android:id="@id/btn_web_search"
@@ -80,7 +81,7 @@
                 android:clickable="true"
                 android:contentDescription="@string/tts_play"
                 android:padding="8dp"
-                android:src="@drawable/ic_web_search" />
+                app:srcCompat="@drawable/ic_web_search" />
 
             <ImageButton
                 android:id="@id/btn_play"
@@ -93,7 +94,7 @@
                 android:clickable="true"
                 android:contentDescription="@string/tts_play"
                 android:padding="8dp"
-                android:src="@drawable/ic_play_circle" />
+                app:srcCompat="@drawable/ic_play_circle" />
         </RelativeLayout>
 
         <LinearLayout
@@ -127,12 +128,12 @@
                 android:textColor="#37474f"
                 tools:text="yesterday" />
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/btn_clear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/ic_clear"
+                app:srcCompat="@drawable/ic_clear"
                 android:contentDescription="@string/filter_clear" />
         </LinearLayout>
 
