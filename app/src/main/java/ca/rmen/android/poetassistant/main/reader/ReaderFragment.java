@@ -31,11 +31,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.view.ActionMode;
-import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -104,7 +104,7 @@ public class ReaderFragment extends Fragment implements
         mTextView = (EditText) view.findViewById(R.id.tv_text);
         mPlayButton.setOnClickListener(mOnClickListener);
         mTextView.addTextChangedListener(mTextWatcher);
-        mTextView.setOnLongClickListener(mOnLongClickListener);
+        registerForContextMenu(mTextView);
         mHandler = new Handler();
         return view;
     }
@@ -122,6 +122,18 @@ public class ReaderFragment extends Fragment implements
             menu.findItem(R.id.action_save_as).setVisible(false);
         }
     }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        String selectedWord = getSelectedWord();
+        if (TextUtils.isEmpty(selectedWord)) return;
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.menu_word_lookup, menu);
+
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -193,6 +205,27 @@ public class ReaderFragment extends Fragment implements
                 Uri uri = data.getData();
                 PoemFile.save(getActivity(), uri, mTextView.getText().toString(), this);
             }
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        OnWordClickedListener listener = (OnWordClickedListener) getActivity();
+        String word = getSelectedWord();
+        if (word == null) return false;
+        switch (item.getItemId()) {
+            case R.id.action_lookup_rhymer:
+                listener.onWordClicked(word, Tab.RHYMER);
+                return true;
+            case R.id.action_lookup_thesaurus:
+                listener.onWordClicked(word, Tab.THESAURUS);
+                return true;
+            case R.id.action_lookup_dictionary:
+                listener.onWordClicked(word, Tab.DICTIONARY);
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -344,20 +377,6 @@ public class ReaderFragment extends Fragment implements
         }
     };
 
-    private final View.OnLongClickListener mOnLongClickListener = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-
-            String selectedWord = getSelectedWord();
-            if (TextUtils.isEmpty(selectedWord)) return false;
-            PopupMenu popup = new PopupMenu(getActivity(), getView());
-            popup.setOnMenuItemClickListener(mPopupMenuClickListener);
-            popup.inflate(R.menu.menu_word_lookup);
-            popup.show();
-            return true;
-        }
-    };
-
     @Subscribe
     public void onTtsInitialized(Tts.OnTtsInitialized event) {
         Log.d(TAG, "onTtsInitialized() called with: " + "event = [" + event + "]");
@@ -370,26 +389,5 @@ public class ReaderFragment extends Fragment implements
         updatePlayButton();
     }
 
-    private final PopupMenu.OnMenuItemClickListener mPopupMenuClickListener = new PopupMenu.OnMenuItemClickListener() {
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
-            OnWordClickedListener listener = (OnWordClickedListener) getActivity();
-            String word = getSelectedWord();
-            if (word == null) return false;
-            switch (item.getItemId()) {
-                case R.id.action_lookup_rhymer:
-                    listener.onWordClicked(word, Tab.RHYMER);
-                    return true;
-                case R.id.action_lookup_thesaurus:
-                    listener.onWordClicked(word, Tab.THESAURUS);
-                    return true;
-                case R.id.action_lookup_dictionary:
-                    listener.onWordClicked(word, Tab.DICTIONARY);
-                    return true;
-                default:
-                    return false;
-            }
-        }
-    };
-
 }
+
