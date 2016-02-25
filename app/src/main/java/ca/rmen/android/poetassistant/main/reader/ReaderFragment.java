@@ -30,8 +30,8 @@ import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -347,14 +347,13 @@ public class ReaderFragment extends Fragment implements
     private final View.OnLongClickListener mOnLongClickListener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            if (mActionMode != null) {
-                return false;
-            }
+
             String selectedWord = getSelectedWord();
             if (TextUtils.isEmpty(selectedWord)) return false;
-
-            mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mActionModeCallback);
-            v.setSelected(true);
+            PopupMenu popup = new PopupMenu(getActivity(), v);
+            popup.setOnMenuItemClickListener(mPopupMenuClickListener);
+            popup.inflate(R.menu.menu_word_lookup);
+            popup.show();
             return true;
         }
     };
@@ -371,47 +370,25 @@ public class ReaderFragment extends Fragment implements
         updatePlayButton();
     }
 
-    private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
-
+    private final PopupMenu.OnMenuItemClickListener mPopupMenuClickListener = new PopupMenu.OnMenuItemClickListener() {
         @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.menu_word_lookup, menu);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        public boolean onMenuItemClick(MenuItem item) {
             OnWordClickedListener listener = (OnWordClickedListener) getActivity();
             String word = getSelectedWord();
             if (word == null) return false;
             switch (item.getItemId()) {
                 case R.id.action_lookup_rhymer:
                     listener.onWordClicked(word, Tab.RHYMER);
-                    mode.finish();
                     return true;
                 case R.id.action_lookup_thesaurus:
                     listener.onWordClicked(word, Tab.THESAURUS);
-                    mode.finish();
                     return true;
                 case R.id.action_lookup_dictionary:
                     listener.onWordClicked(word, Tab.DICTIONARY);
-                    mode.finish();
                     return true;
                 default:
                     return false;
             }
-        }
-
-        // Called when the user exits the action mode
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            mActionMode = null;
         }
     };
 
