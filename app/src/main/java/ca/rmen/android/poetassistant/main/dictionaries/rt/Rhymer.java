@@ -52,7 +52,7 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
 
     @Override
     protected List<WordVariant> getWordVariants(String word) {
-        String[] projection = new String[]{"variant_number", "last_syllable", "last_two_syllables", "last_three_syllables"};
+        String[] projection = new String[]{"variant_number", "stress_syllables", "last_syllable", "last_two_syllables", "last_three_syllables"};
         String selection = "word=?";
         String[] selectionArgs = new String[]{word};
         Cursor cursor = mDb.query("word_variants", projection, selection, selectionArgs, null, null, null);
@@ -62,10 +62,11 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
                 while (cursor.moveToNext()) {
                     int column = 0;
                     int variantNumber = cursor.getInt(column++);
+                    String lastStressSyllable = cursor.getString(column++);
                     String lastSyllable = cursor.getString(column++);
                     String lastTwoSyllables = cursor.getString(column++);
                     String lastThreeSyllables = cursor.getString(column);
-                    WordVariant wordVariant = new WordVariant(variantNumber, lastSyllable, lastTwoSyllables, lastThreeSyllables);
+                    WordVariant wordVariant = new WordVariant(variantNumber, lastStressSyllable, lastSyllable, lastTwoSyllables, lastThreeSyllables);
                     result.add(wordVariant);
                 }
             } finally {
@@ -75,6 +76,7 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
         return result;
     }
 
+
     /**
      * @return the words which rhyme with the given word, in any order, matching one, two or three
      * syllables.
@@ -83,11 +85,17 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
         List<RhymeResult> rhymeResults = super.getRhymingWords(word);
         Set<String> flatRhymes = new HashSet<>();
         for (RhymeResult rhymeResult : rhymeResults) {
+            Collections.addAll(flatRhymes, rhymeResult.strictRhymes);
             Collections.addAll(flatRhymes, rhymeResult.oneSyllableRhymes);
             Collections.addAll(flatRhymes, rhymeResult.twoSyllableRhymes);
             Collections.addAll(flatRhymes, rhymeResult.threeSyllableRhymes);
         }
         return flatRhymes;
+    }
+
+    @Override
+    protected SortedSet<String> getWordsWithLastStressSyllable(String syllable) {
+        return lookupBySyllable(syllable, "stress_syllables");
     }
 
     @Override

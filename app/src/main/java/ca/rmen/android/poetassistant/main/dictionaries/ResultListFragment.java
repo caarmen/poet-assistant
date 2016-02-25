@@ -219,9 +219,15 @@ public class ResultListFragment<T> extends ListFragment
     @Override
     public void onInputSubmitted(int actionId, String input) {
         if (actionId == ACTION_FILTER) {
-            mFilterView.setVisibility(View.VISIBLE);
-            mFilterTextView.setText(input);
-            filter(input.toLowerCase(Locale.getDefault()).trim());
+            if (!TextUtils.isEmpty(input)) {
+                mFilterView.setVisibility(View.VISIBLE);
+                mFilterTextView.setText(input);
+                filter(input.toLowerCase(Locale.getDefault()).trim());
+            } else {
+                mFilterView.setVisibility(View.GONE);
+                mFilterTextView.setText(null);
+                filter(null);
+            }
         }
     }
 
