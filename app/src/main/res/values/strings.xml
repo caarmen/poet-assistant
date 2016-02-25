@@ -64,4 +64,7 @@
     <string name="filter_thesaurus_message">Only show words which rhyme with this word:</string>
     <string name="filter_thesaurus_label">"Rhymes of: "</string>
     <string name="filter_clear">Clear filter</string>
+    <string name="menu_lookup_rhymer">Rhymer</string>
+    <string name="menu_lookup_thesaurus">Thesaurus</string>
+    <string name="menu_lookup_dictionary">Dictionary</string>
 </resources>

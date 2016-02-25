@@ -1,0 +1,39 @@
+<!--
+  ~ Copyright (c) 2016 Carmen Alvarez
+  ~
+  ~ This file is part of Poet Assistant.
+  ~
+  ~ Poet Assistant is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Poet Assistant is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".main.MainActivity">
+    <item
+        android:icon="@drawable/ic_rhymer"
+        android:id="@+id/action_lookup_rhymer"
+        android:title="@string/menu_lookup_rhymer"
+        app:showAsAction="ifRoom" />
+    <item
+        android:icon="@drawable/ic_thesaurus"
+        android:id="@+id/action_lookup_thesaurus"
+        android:title="@string/menu_lookup_thesaurus"
+        app:showAsAction="ifRoom" />
+    <item
+        android:icon="@drawable/ic_dictionary"
+        android:id="@+id/action_lookup_dictionary"
+        android:title="@string/menu_lookup_dictionary"
+        app:showAsAction="ifRoom" />
+</menu>
