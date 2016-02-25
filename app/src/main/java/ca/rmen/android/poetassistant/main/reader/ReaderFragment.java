@@ -30,6 +30,8 @@ import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -49,6 +51,8 @@ import org.greenrobot.eventbus.Subscribe;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.main.Tab;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickedListener;
 
 
 public class ReaderFragment extends Fragment implements
@@ -63,6 +67,7 @@ public class ReaderFragment extends Fragment implements
     private EditText mTextView;
     private Handler mHandler;
     private PoemPrefs mPoemPrefs;
+    private ActionMode mActionMode;
 
     public static ReaderFragment newInstance(String initialText) {
         Log.d(TAG, "newInstance() called with: " + "initialText = [" + initialText + "]");
@@ -99,6 +104,7 @@ public class ReaderFragment extends Fragment implements
         mTextView = (EditText) view.findViewById(R.id.tv_text);
         mPlayButton.setOnClickListener(mOnClickListener);
         mTextView.addTextChangedListener(mTextWatcher);
+        mTextView.setOnLongClickListener(mOnLongClickListener);
         mHandler = new Handler();
         return view;
     }
@@ -296,6 +302,33 @@ public class ReaderFragment extends Fragment implements
         }
     }
 
+    private String getSelectedWord() {
+        int selectionStart = mTextView.getSelectionStart();
+        int selectionEnd = mTextView.getSelectionEnd();
+        String text = mTextView.getText().toString();
+
+        if (selectionStart < selectionEnd) return text.substring(selectionStart, selectionEnd);
+        if (selectionStart == text.length()) return null;
+
+        int wordBegin;
+        for (wordBegin = selectionStart; wordBegin >= 0; wordBegin--) {
+            if (!Character.isLetter(text.charAt(wordBegin))) {
+                break;
+            }
+        }
+        wordBegin++;
+        int wordEnd;
+        for (wordEnd = selectionEnd; wordEnd < text.length(); wordEnd++) {
+            if (!Character.isLetter(text.charAt(wordEnd))) {
+                break;
+            }
+        }
+
+        if (wordBegin < wordEnd) return text.substring(wordBegin, wordEnd);
+        return null;
+    }
+
+
     private final TextWatcher mTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -311,6 +344,21 @@ public class ReaderFragment extends Fragment implements
         }
     };
 
+    private final View.OnLongClickListener mOnLongClickListener = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            if (mActionMode != null) {
+                return false;
+            }
+            String selectedWord = getSelectedWord();
+            if (TextUtils.isEmpty(selectedWord)) return false;
+
+            mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(mActionModeCallback);
+            v.setSelected(true);
+            return true;
+        }
+    };
+
     @Subscribe
     public void onTtsInitialized(Tts.OnTtsInitialized event) {
         Log.d(TAG, "onTtsInitialized() called with: " + "event = [" + event + "]");
@@ -322,5 +370,49 @@ public class ReaderFragment extends Fragment implements
         Log.d(TAG, "onTtsUtteranceCompleted() called with: " + "event = [" + event + "]");
         updatePlayButton();
     }
+
+    private final ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.menu_word_lookup, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            OnWordClickedListener listener = (OnWordClickedListener) getActivity();
+            String word = getSelectedWord();
+            if (word == null) return false;
+            switch (item.getItemId()) {
+                case R.id.action_lookup_rhymer:
+                    listener.onWordClicked(word, Tab.RHYMER);
+                    mode.finish();
+                    return true;
+                case R.id.action_lookup_thesaurus:
+                    listener.onWordClicked(word, Tab.THESAURUS);
+                    mode.finish();
+                    return true;
+                case R.id.action_lookup_dictionary:
+                    listener.onWordClicked(word, Tab.DICTIONARY);
+                    mode.finish();
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        // Called when the user exits the action mode
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mActionMode = null;
+        }
+    };
 
 }
