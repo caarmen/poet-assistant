@@ -116,7 +116,7 @@ public class ResultListFragment<T> extends ListFragment
         //noinspection unchecked
         mAdapter = (ArrayAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
         setListAdapter(mAdapter);
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(mTab.ordinal(), null, this);
         Bundle arguments = getArguments();
         if (savedInstanceState == null) {
             String initialQuery = arguments.getString(EXTRA_QUERY);
@@ -145,7 +145,7 @@ public class ResultListFragment<T> extends ListFragment
         mFilterView.setVisibility(View.GONE);
         Bundle args = new Bundle(1);
         args.putString(EXTRA_QUERY, query);
-        getLoaderManager().restartLoader(0, args, this);
+        getLoaderManager().restartLoader(mTab.ordinal(), args, this);
     }
 
     private void filter(String filter) {

@@ -122,7 +122,7 @@ public class Search {
         public boolean onSuggestionClick(int position) {
             String suggestion = mSuggestionsCursorAdapter.getSuggestion(position);
             mSearchView.setQuery(suggestion, true);
-            return false;
+            return true;
         }
     };
 }
