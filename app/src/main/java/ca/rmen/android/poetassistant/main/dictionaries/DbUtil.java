@@ -36,20 +36,22 @@ public class DbUtil {
     private DbUtil() {
     }
 
-    public static SQLiteDatabase open(Context context, String file) {
-        DbUtil.copyDb(context, file);
-        File dbPath = new File(context.getDir("databases", Context.MODE_PRIVATE), file);
+    public static SQLiteDatabase open(Context context, String dbName, int version) {
+        DbUtil.copyDb(context, dbName, version);
+        String dbFile = getDbFileName(dbName, version);
+        File dbPath = new File(context.getDir("databases", Context.MODE_PRIVATE), dbFile);
         return SQLiteDatabase.openDatabase(dbPath.getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY);
     }
 
-    private static void copyDb(Context context, String dbFile) {
-        File dbPath = context.getDatabasePath(dbFile);
+    private static void copyDb(Context context, String dbName, int version) {
+        String dbFileName = getDbFileName(dbName, version);
+        File dbPath = getDbFile(context, dbFileName);
         if (!dbPath.exists()) {
             Log.v(TAG, dbPath + " not found");
+            if (version > 1) deleteDb(context, dbName, version - 1);
             try {
-                InputStream is = context.getAssets().open(dbFile);
-                File dbDir = context.getDir("databases", Context.MODE_PRIVATE);
-                FileOutputStream os = new FileOutputStream(new File(dbDir, dbFile));
+                InputStream is = context.getAssets().open(dbFileName);
+                FileOutputStream os = new FileOutputStream(dbPath);
                 byte[] buffer = new byte[1024];
                 int read = is.read(buffer);
                 while (read > 0) {
@@ -62,4 +64,24 @@ public class DbUtil {
             Log.v(TAG, "wrote " + dbPath);
         }
     }
+
+    private static String getDbFileName(String dbName, int version) {
+        if (version == 1) return dbName + ".db";
+        return dbName + version + ".db";
+    }
+
+    private static void deleteDb(Context context, String dbName, int version) {
+        String dbFileName = getDbFileName(dbName, version);
+        File dbPath = getDbFile(context, dbFileName);
+        if (dbPath.exists()) {
+            boolean deleted = dbPath.delete();
+            Log.v(TAG, "dbDelete: deletion of " + dbPath.getAbsolutePath() + ": " + deleted);
+        }
+    }
+
+    private static File getDbFile(Context context, String filename) {
+        File dbDir = context.getDir("databases", Context.MODE_PRIVATE);
+        return new File(dbDir, filename);
+    }
+
 }

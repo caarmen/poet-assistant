@@ -31,7 +31,8 @@ import java.util.Set;
 import ca.rmen.android.poetassistant.main.dictionaries.DbUtil;
 
 public class Thesaurus {
-    private static final String DB_FILE = "thesaurus.db";
+    private static final String DB_FILE = "thesaurus";
+    private static final int DB_VERSION = 1;
 
     private static Thesaurus sInstance;
 
@@ -64,7 +65,7 @@ public class Thesaurus {
     }
 
     private Thesaurus(Context context) {
-        mDb = DbUtil.open(context, DB_FILE);
+        mDb = DbUtil.open(context, DB_FILE, DB_VERSION);
     }
 
     public ThesaurusEntry[] getEntries(String word) {

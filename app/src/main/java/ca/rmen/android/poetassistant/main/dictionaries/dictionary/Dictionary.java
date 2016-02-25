@@ -26,7 +26,8 @@ import android.database.sqlite.SQLiteDatabase;
 import ca.rmen.android.poetassistant.main.dictionaries.DbUtil;
 
 public class Dictionary {
-    private static final String DB_FILE = "dictionary.db";
+    private static final String DB_FILE = "dictionary";
+    private static final int DB_VERSION = 1;
 
     private static Dictionary sInstance;
 
@@ -38,7 +39,7 @@ public class Dictionary {
     }
 
     private Dictionary(Context context) {
-        mDb = DbUtil.open(context, DB_FILE);
+        mDb = DbUtil.open(context, DB_FILE, DB_VERSION);
     }
 
     public DictionaryEntry[] getEntries(String word) {

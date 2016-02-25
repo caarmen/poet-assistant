@@ -36,7 +36,8 @@ import ca.rmen.rhymer.RhymeResult;
 import ca.rmen.rhymer.WordVariant;
 
 public class Rhymer extends ca.rmen.rhymer.Rhymer {
-    private static final String DB_FILE = "rhymes.db";
+    private static final String DB_FILE = "rhymes";
+    private static final int DB_VERSION = 2;
     private final SQLiteDatabase mDb;
 
     private static Rhymer sInstance = null;
@@ -47,7 +48,7 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
     }
 
     private Rhymer(Context context) {
-        mDb = DbUtil.open(context, DB_FILE);
+        mDb = DbUtil.open(context, DB_FILE, DB_VERSION);
     }
 
     @Override
