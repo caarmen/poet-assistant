@@ -1,5 +1,13 @@
 Change Log
 ==========
+1.1.0 *(2016-02-25)*
+--------------------
+
+* New features:
+  - Filter the rhyming results based on synonyms of a word
+  - Filter the Thesaurus results based on rhymes of a word
+  - Long press on a word in the Reader to be able to look it up in one of the three dictionaries
+
 1.0.7 *(2016-02-22)*
 --------------------
 
