@@ -33,4 +33,12 @@ public class RTEntry {
         this.type = type;
         this.text = text;
     }
+
+    @Override
+    public String toString() {
+        return "RTEntry{" +
+                "text='" + text + '\'' +
+                ", type=" + type +
+                '}';
+    }
 }

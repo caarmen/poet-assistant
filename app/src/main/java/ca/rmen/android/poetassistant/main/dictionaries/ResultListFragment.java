@@ -111,7 +111,7 @@ public class ResultListFragment<T> extends ListFragment
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, "onActivityCreated() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
+        Log.d(TAG, mTab + ": onActivityCreated() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         mTts = Tts.getInstance(getActivity());
         //noinspection unchecked
         mAdapter = (ArrayAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
@@ -134,15 +134,16 @@ public class ResultListFragment<T> extends ListFragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d(TAG, "onSaveInstanceState() called with: " + "outState = [" + outState + "]");
+        Log.d(TAG, mTab + ": onSaveInstanceState() called with: " + "outState = [" + outState + "]");
         outState.putString(EXTRA_QUERY, (String) mListHeaderTextView.getText());
         outState.putString(EXTRA_FILTER, (String) mFilterTextView.getText());
     }
 
     public void query(String query) {
-        Log.d(TAG, "query() called with: " + "query = [" + query + "]");
+        Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
         mListHeaderTextView.setText(query);
         mFilterView.setVisibility(View.GONE);
+        getListView().setVisibility(View.GONE);
         Bundle args = new Bundle(1);
         args.putString(EXTRA_QUERY, query);
         getLoaderManager().restartLoader(0, args, this);
@@ -152,7 +153,7 @@ public class ResultListFragment<T> extends ListFragment
         Bundle args = new Bundle(2);
         args.putString(EXTRA_QUERY, mListHeaderTextView.getText().toString());
         args.putString(EXTRA_FILTER, filter);
-        getLoaderManager().restartLoader(0, args, this);
+        getLoaderManager().restartLoader(mTab.ordinal(), args, this);
     }
 
     private void updatePlayButton() {
@@ -163,7 +164,7 @@ public class ResultListFragment<T> extends ListFragment
 
     @Override
     public Loader<List<T>> onCreateLoader(int id, Bundle args) {
-        Log.d(TAG, "onCreateLoader() called with: " + "id = [" + id + "], args = [" + args + "]");
+        Log.d(TAG, mTab + ": onCreateLoader() called with: " + "id = [" + id + "], args = [" + args + "]");
         String query = "";
         String filter = "";
         if (args != null) {
@@ -178,7 +179,7 @@ public class ResultListFragment<T> extends ListFragment
 
     @Override
     public void onLoadFinished(Loader<List<T>> loader, List<T> data) {
-        Log.d(TAG, "onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
+        Log.d(TAG, mTab + ": onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
         mAdapter.clear();
         mAdapter.addAll(data);
         int headerVisible = mAdapter.getCount() == 0 && TextUtils.isEmpty(mListHeaderTextView.getText().toString()) ?
@@ -212,7 +213,7 @@ public class ResultListFragment<T> extends ListFragment
 
     @Override
     public void onLoaderReset(Loader<List<T>> loader) {
-        Log.d(TAG, "onLoaderReset() called with: " + "loader = [" + loader + "]");
+        Log.d(TAG, mTab + ": onLoaderReset() called with: " + "loader = [" + loader + "]");
         mAdapter.clear();
     }
 
@@ -278,7 +279,7 @@ public class ResultListFragment<T> extends ListFragment
 
     @Subscribe
     public void onTtsInitialized(Tts.OnTtsInitialized event) {
-        Log.d(TAG, "onTtsInitialized() called with: " + "event = [" + event + "]");
+        Log.d(TAG, mTab + ": onTtsInitialized() called with: " + "event = [" + event + "]");
         updatePlayButton();
     }
 

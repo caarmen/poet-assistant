@@ -47,7 +47,7 @@ public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
 
     @Override
     public List<RTEntry> loadInBackground() {
-        Log.d(TAG, "loadInBackground() called with: " + "");
+        Log.d(TAG, "loadInBackground() called with: query = " + mQuery + ", filter = " + mFilter);
 
         Rhymer rhymer = Rhymer.getInstance(getContext());
         List<RhymeResult> rhymeResults = rhymer.getRhymingWords(mQuery);
