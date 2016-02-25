@@ -59,7 +59,6 @@ public class Search {
         mSearchView = searchView;
         SearchManager searchManager = (SearchManager) mSearchableActivity.getSystemService(Context.SEARCH_SERVICE);
         ComponentName searchableActivityComponentName = new ComponentName(mSearchableActivity, mSearchableActivity.getClass());
-        mSearchView.setIconifiedByDefault(true);
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(searchableActivityComponentName));
         mSearchView.setOnQueryTextListener(mOnQueryTextListener);
         mSearchView.setSuggestionsAdapter(mSuggestionsCursorAdapter);
@@ -72,8 +71,6 @@ public class Search {
      */
     public void search(String word, Tab tab) {
         Log.d(TAG, "search() called with: " + "word = [" + word + "], tab = [" + tab + "]");
-        mSearchView.setIconified(true);
-        mSearchView.clearFocus();
         mViewPager.setCurrentItem(tab.ordinal());
         word = word.trim().toLowerCase(Locale.US);
         // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
@@ -82,12 +79,10 @@ public class Search {
     }
 
     /**
-     * Search for the given word in all dictionaries
+     * Search for the given word in both dictionaries
      */
     public void search(String word) {
         Log.d(TAG, "search() called with: " + "word = [" + word + "]");
-        mSearchView.setIconified(true);
-        mSearchView.clearFocus();
         word = word.trim().toLowerCase(Locale.US);
         // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
         // We want to retrieve the existing fragment.
@@ -127,7 +122,7 @@ public class Search {
         public boolean onSuggestionClick(int position) {
             String suggestion = mSuggestionsCursorAdapter.getSuggestion(position);
             mSearchView.setQuery(suggestion, true);
-            return true;
+            return false;
         }
     };
 }

@@ -143,7 +143,6 @@ public class ResultListFragment<T> extends ListFragment
         Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
         mListHeaderTextView.setText(query);
         mFilterView.setVisibility(View.GONE);
-        getListView().setVisibility(View.GONE);
         Bundle args = new Bundle(1);
         args.putString(EXTRA_QUERY, query);
         getLoaderManager().restartLoader(0, args, this);
