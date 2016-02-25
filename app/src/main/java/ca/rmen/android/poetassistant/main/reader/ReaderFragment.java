@@ -350,7 +350,7 @@ public class ReaderFragment extends Fragment implements
 
             String selectedWord = getSelectedWord();
             if (TextUtils.isEmpty(selectedWord)) return false;
-            PopupMenu popup = new PopupMenu(getActivity(), v);
+            PopupMenu popup = new PopupMenu(getActivity(), getView());
             popup.setOnMenuItemClickListener(mPopupMenuClickListener);
             popup.inflate(R.menu.menu_word_lookup);
             popup.show();
