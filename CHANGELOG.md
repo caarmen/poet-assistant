@@ -1,5 +1,11 @@
 Change Log
 ==========
+1.2.0 *(2016-02-26)*
+--------------------
+
+* Show strict rhymes before other rhymes.
+* Bug fixes.
+
 1.1.0 *(2016-02-25)*
 --------------------
 
