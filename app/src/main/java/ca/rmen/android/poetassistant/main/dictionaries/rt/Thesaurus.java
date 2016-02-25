@@ -91,6 +91,9 @@ public class Thesaurus {
         return new ThesaurusEntry[0];
     }
 
+    /**
+     * @return the synonyms of the given word, in any order.
+     */
     public Set<String> getFlatSynonyms(String word) {
         Set<String> flatSynonyms = new HashSet<>();
 

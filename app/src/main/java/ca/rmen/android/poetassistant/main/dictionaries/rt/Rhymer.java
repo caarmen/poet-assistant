@@ -75,6 +75,10 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
         return result;
     }
 
+    /**
+     * @return the words which rhyme with the given word, in any order, matching one, two or three
+     * syllables.
+     */
     Set<String> getFlatRhymes(String word) {
         List<RhymeResult> rhymeResults = super.getRhymingWords(word);
         Set<String> flatRhymes = new HashSet<>();

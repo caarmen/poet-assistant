@@ -88,13 +88,13 @@ public class ResultListFragment<T> extends ListFragment
 
         View filterButton = view.findViewById(R.id.btn_filter);
         filterButton.setOnClickListener(mFilterButtonListener);
+        if (mTab == Tab.RHYMER || mTab == Tab.THESAURUS) filterButton.setVisibility(View.VISIBLE);
         TextView filterTextView = (TextView) view.findViewById(R.id.tv_filter_label);
         filterTextView.setText(ResultListFactory.getFilterLabel(getActivity(), mTab));
 
         view.findViewById(R.id.btn_clear).setOnClickListener(mClearButtonListener);
-
         view.findViewById(R.id.btn_web_search).setOnClickListener(mWebSearchButtonListener);
-        filterButton.setOnClickListener(mFilterButtonListener);
+
         if (savedInstanceState != null) {
             String query = savedInstanceState.getString(EXTRA_QUERY);
             String filter = savedInstanceState.getString(EXTRA_FILTER);
@@ -102,7 +102,7 @@ public class ResultListFragment<T> extends ListFragment
             mFilterTextView.setText(filter);
             mFilterView.setVisibility(TextUtils.isEmpty(filter) ? View.GONE : View.VISIBLE);
         }
-        if (mTab == Tab.RHYMER || mTab == Tab.THESAURUS) filterButton.setVisibility(View.VISIBLE);
+
         EventBus.getDefault().register(this);
         return view;
     }

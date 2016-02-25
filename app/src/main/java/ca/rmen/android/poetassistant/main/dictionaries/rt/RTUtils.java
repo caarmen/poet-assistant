@@ -33,6 +33,9 @@ class RTUtils {
         // prevent instantiation
     }
 
+    /**
+     * @return all the Strings in the array words which are present in the Set filter
+     */
     static String[] filter(String[] words, Set<String> filter) {
         if (words == null) return new String[0];
         List<String> filteredWords = new ArrayList<>();
