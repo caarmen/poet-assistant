@@ -70,7 +70,6 @@ android.applicationVariants.all { variant ->
 }
 
 repositories {
-    mavenLocal();
     jcenter();
 }
 
@@ -80,5 +79,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.android.support:design:23.2.0'
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'ca.rmen:rhymer:1.0.0'
+    compile 'ca.rmen:rhymer:1.1.0'
 }

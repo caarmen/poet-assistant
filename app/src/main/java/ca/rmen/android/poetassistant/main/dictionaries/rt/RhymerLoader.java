@@ -67,6 +67,12 @@ public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
                 data.add(new RTEntry(RTEntry.Type.HEADING, heading));
             }
 
+            if (rhymeResult.strictRhymes.length > 0) {
+                data.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(R.string.rhyme_section_stress_syllables)));
+                for (String word : rhymeResult.strictRhymes) {
+                    data.add(new RTEntry(RTEntry.Type.WORD, word));
+                }
+            }
             if (rhymeResult.oneSyllableRhymes.length > 0) {
                 data.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(R.string.rhyme_section_one_syllable)));
                 for (String word : rhymeResult.oneSyllableRhymes) {
@@ -100,6 +106,7 @@ public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
 
     private static RhymeResult filter(RhymeResult rhyme, Set<String> filter) {
         RhymeResult result = new RhymeResult(rhyme.variantNumber,
+                RTUtils.filter(rhyme.strictRhymes, filter),
                 RTUtils.filter(rhyme.oneSyllableRhymes, filter),
                 RTUtils.filter(rhyme.twoSyllableRhymes, filter),
                 RTUtils.filter(rhyme.threeSyllableRhymes, filter));
@@ -108,7 +115,8 @@ public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
     }
 
     private static boolean isEmpty(RhymeResult rhymeResult) {
-        return rhymeResult.oneSyllableRhymes.length == 0
+        return rhymeResult.strictRhymes.length == 0
+                && rhymeResult.oneSyllableRhymes.length == 0
                 && rhymeResult.twoSyllableRhymes.length == 0
                 && rhymeResult.threeSyllableRhymes.length == 0;
     }
