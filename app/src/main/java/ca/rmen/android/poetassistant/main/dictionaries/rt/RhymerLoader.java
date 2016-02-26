@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -30,40 +29,36 @@ import java.util.Set;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 import ca.rmen.rhymer.RhymeResult;
 
-public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
+public class RhymerLoader extends ResultListLoader<List<RTEntry>> {
 
     private static final String TAG = Constants.TAG + RhymerLoader.class.getSimpleName();
 
-    private final String mQuery;
-    private final String mFilter;
-
-    public RhymerLoader(Context context, String query, String filter) {
+    public RhymerLoader(Context context) {
         super(context);
-        mQuery = query;
-        mFilter = filter;
     }
 
     @Override
-    public List<RTEntry> loadInBackground() {
-        Log.d(TAG, "loadInBackground() called with: query = " + mQuery + ", filter = " + mFilter);
+    protected List<RTEntry> getEntries(String query, String filter) {
+        Log.d(TAG, "getEntries() called with: " + "query = [" + query + "], filter = [" + filter + "]");
 
         Rhymer rhymer = Rhymer.getInstance(getContext());
-        List<RhymeResult> rhymeResults = rhymer.getRhymingWords(mQuery);
+        List<RhymeResult> rhymeResults = rhymer.getRhymingWords(query);
         List<RTEntry> data = new ArrayList<>();
         if (rhymeResults == null) {
             return data;
         }
-        if (!TextUtils.isEmpty(mFilter)) {
-            Set<String> synonyms = Thesaurus.getInstance(getContext()).getFlatSynonyms(mFilter);
+        if (!TextUtils.isEmpty(filter)) {
+            Set<String> synonyms = Thesaurus.getInstance(getContext()).getFlatSynonyms(filter);
             if (synonyms.isEmpty()) return data;
             rhymeResults = filter(rhymeResults, synonyms);
         }
         for (RhymeResult rhymeResult : rhymeResults) {
             // Add the word variant, if there are multiple pronunciations.
             if (rhymeResults.size() > 1) {
-                String heading = mQuery + " (" + (rhymeResult.variantNumber + 1) + ")";
+                String heading = query + " (" + (rhymeResult.variantNumber + 1) + ")";
                 data.add(new RTEntry(RTEntry.Type.HEADING, heading));
             }
 

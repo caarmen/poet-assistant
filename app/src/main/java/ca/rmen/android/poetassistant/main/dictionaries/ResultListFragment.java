@@ -26,8 +26,6 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -50,11 +48,14 @@ import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.main.Tab;
+import me.tatarka.rxloader.RxLoader2;
+import me.tatarka.rxloader.RxLoaderManagerCompat;
+import me.tatarka.rxloader.RxLoaderObserver;
+import rx.schedulers.Schedulers;
 
 
 public class ResultListFragment<T> extends ListFragment
         implements
-        LoaderManager.LoaderCallbacks<List<T>>,
         InputDialogFragment.InputDialogListener {
     private static final String TAG = Constants.TAG + ResultListFragment.class.getSimpleName();
     private static final int ACTION_FILTER = 0;
@@ -71,6 +72,8 @@ public class ResultListFragment<T> extends ListFragment
     private View mPlayButton;
     private Tts mTts;
     private TextView mEmptyView;
+    private ResultListLoader<List<T>> mLoader;
+    private RxLoader2<String, String, List<T>> mRxLoader;
 
 
     @Override
@@ -116,11 +119,11 @@ public class ResultListFragment<T> extends ListFragment
         //noinspection unchecked
         mAdapter = (ArrayAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
         setListAdapter(mAdapter);
-        getLoaderManager().initLoader(mTab.ordinal(), null, this);
+        createLoader();
         Bundle arguments = getArguments();
         if (savedInstanceState == null) {
             String initialQuery = arguments.getString(EXTRA_QUERY);
-            if (!TextUtils.isEmpty(initialQuery)) query(initialQuery);
+            query(initialQuery);
         }
         updatePlayButton();
     }
@@ -143,16 +146,12 @@ public class ResultListFragment<T> extends ListFragment
         Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
         mListHeaderTextView.setText(query);
         mFilterView.setVisibility(View.GONE);
-        Bundle args = new Bundle(1);
-        args.putString(EXTRA_QUERY, query);
-        getLoaderManager().restartLoader(mTab.ordinal(), args, this);
+        mRxLoader.restart(query, null);
     }
 
     private void filter(String filter) {
-        Bundle args = new Bundle(2);
-        args.putString(EXTRA_QUERY, mListHeaderTextView.getText().toString());
-        args.putString(EXTRA_FILTER, filter);
-        getLoaderManager().restartLoader(mTab.ordinal(), args, this);
+        String query = mListHeaderTextView.getText().toString();
+        mRxLoader.restart(query, filter);
     }
 
     private void updatePlayButton() {
@@ -161,35 +160,36 @@ public class ResultListFragment<T> extends ListFragment
         mPlayButton.setVisibility(playButtonVisibility);
     }
 
-    @Override
-    public Loader<List<T>> onCreateLoader(int id, Bundle args) {
-        Log.d(TAG, mTab + ": onCreateLoader() called with: " + "id = [" + id + "], args = [" + args + "]");
-        String query = "";
-        String filter = "";
-        if (args != null) {
-            query = args.getString(EXTRA_QUERY);
-            filter = args.getString(EXTRA_FILTER);
-        }
+    private void createLoader() {
         //noinspection unchecked
-        Loader<List<T>> loader = (Loader<List<T>>) ResultListFactory.createLoader(mTab, getActivity(), query, filter);
-        loader.forceLoad();
-        return loader;
+        mLoader = (ResultListLoader<List<T>>) ResultListFactory.createLoader(mTab, getActivity());
+        mRxLoader = RxLoaderManagerCompat.get(this).create(
+                (query, filter) -> {
+                    return mLoader.observeEntries(query, filter).subscribeOn(Schedulers.io());
+                },
+                onLoadFinished()
+        );
     }
 
-    @Override
-    public void onLoadFinished(Loader<List<T>> loader, List<T> data) {
-        Log.d(TAG, mTab + ": onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
-        mAdapter.clear();
-        mAdapter.addAll(data);
-        int headerVisible = mAdapter.getCount() == 0 && TextUtils.isEmpty(mListHeaderTextView.getText().toString()) ?
-                View.GONE : View.VISIBLE;
-        mHeaderView.setVisibility(headerVisible);
-        updateEmptyText();
+    private RxLoaderObserver<List<T>> onLoadFinished() {
+        return new RxLoaderObserver<List<T>>() {
+            @Override
+            public void onNext(List<T> data) {
 
-        // Hide the keyboard
-        getListView().requestFocus();
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getListView().getWindowToken(), 0);
+                Log.d(TAG, mTab + ": onLoadFinished() called with: " + "data = [" + data + "]");
+                mAdapter.clear();
+                mAdapter.addAll(data);
+                int headerVisible = mAdapter.getCount() == 0 && TextUtils.isEmpty(mListHeaderTextView.getText().toString()) ?
+                        View.GONE : View.VISIBLE;
+                mHeaderView.setVisibility(headerVisible);
+                updateEmptyText();
+
+                // Hide the keyboard
+                getListView().requestFocus();
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getListView().getWindowToken(), 0);
+            }
+        };
     }
 
     private void updateEmptyText() {
@@ -208,12 +208,6 @@ public class ResultListFragment<T> extends ListFragment
         else {
             mEmptyView.setText(R.string.empty_list_with_query);
         }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<T>> loader) {
-        Log.d(TAG, mTab + ": onLoaderReset() called with: " + "loader = [" + loader + "]");
-        mAdapter.clear();
     }
 
     @Override

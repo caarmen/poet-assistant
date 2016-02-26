@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
 
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -28,27 +27,24 @@ import java.util.Collections;
 import java.util.List;
 
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 
-public class DictionaryLoader extends AsyncTaskLoader<List<DictionaryEntry>> {
+public class DictionaryLoader extends ResultListLoader<List<DictionaryEntry>> {
 
     private static final String TAG = Constants.TAG + DictionaryLoader.class.getSimpleName();
 
-    private final String mQuery;
-
-    public DictionaryLoader(Context context, String query) {
+    public DictionaryLoader(Context context) {
         super(context);
-        mQuery = query;
     }
 
     @Override
-    public List<DictionaryEntry> loadInBackground() {
-        Log.d(TAG, "loadInBackground() called with: " + "");
+    protected List<DictionaryEntry> getEntries(String query, String filter) {
+        Log.d(TAG, "getEntries() called with: " + "query = [" + query + "], filter = [" + filter + "]");
         Dictionary dictionary = Dictionary.getInstance(getContext());
-        DictionaryEntry[] entries = dictionary.getEntries(mQuery);
+        DictionaryEntry[] entries = dictionary.getEntries(query);
         List<DictionaryEntry> result = new ArrayList<>();
         Collections.addAll(result, entries);
         return result;
     }
-
 
 }

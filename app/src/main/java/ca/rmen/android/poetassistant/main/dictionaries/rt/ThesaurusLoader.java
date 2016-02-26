@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -31,32 +30,27 @@ import java.util.Set;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 
-public class ThesaurusLoader extends AsyncTaskLoader<List<RTEntry>> {
+public class ThesaurusLoader extends ResultListLoader<List<RTEntry>> {
 
     private static final String TAG = Constants.TAG + ThesaurusLoader.class.getSimpleName();
 
-    private final String mQuery;
-    private final String mFilter;
-
-
-    public ThesaurusLoader(Context context, String query, String filter) {
+    public ThesaurusLoader(Context context) {
         super(context);
-        mQuery = query;
-        mFilter = filter;
     }
 
     @Override
-    public List<RTEntry> loadInBackground() {
-        Log.d(TAG, "loadInBackground() called with: " + "");
+    protected List<RTEntry> getEntries(String query, String filter) {
+        Log.d(TAG, "getEntries() called with: " + "query = [" + query + "], filter = [" + filter + "]");
 
         Thesaurus thesaurus = Thesaurus.getInstance(getContext());
         List<RTEntry> data = new ArrayList<>();
-        Thesaurus.ThesaurusEntry[] entries = thesaurus.getEntries(mQuery);
+        Thesaurus.ThesaurusEntry[] entries = thesaurus.getEntries(query);
         if (entries.length == 0) return data;
 
-        if (!TextUtils.isEmpty(mFilter)) {
-            Set<String> rhymes = Rhymer.getInstance(getContext()).getFlatRhymes(mFilter);
+        if (!TextUtils.isEmpty(filter)) {
+            Set<String> rhymes = Rhymer.getInstance(getContext()).getFlatRhymes(filter);
             entries = filter(entries, rhymes);
         }
 
