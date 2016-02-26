@@ -23,7 +23,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
 import ca.rmen.android.poetassistant.Constants;
@@ -81,16 +80,15 @@ public class ResultListFactory {
         }
     }
 
-    public static AsyncTaskLoader<? extends ResultListData<?>> createLoader(Tab tab, Activity activity, String query, String filter) {
+    public static ResultListLoader<? extends ResultListData> createLoader(Tab tab, Activity activity) {
         switch (tab) {
             case RHYMER:
-                return new RhymerLoader(activity, query, filter);
+                return new RhymerLoader(activity);
             case THESAURUS:
-                return new ThesaurusLoader(activity, query, filter);
+                return new ThesaurusLoader(activity);
             case DICTIONARY:
             default:
-                return new DictionaryLoader(activity, query);
-
+                return new DictionaryLoader(activity);
         }
     }
 
