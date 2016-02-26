@@ -192,6 +192,7 @@ public class ResultListFragment<T> extends ListFragment
         };
     }
 
+
     private void updateEmptyText() {
         String query = mListHeaderTextView.getText().toString();
         // If we have an empty list because the user didn't enter any search term,
