@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -31,43 +30,38 @@ import java.util.Set;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 import ca.rmen.rhymer.RhymeResult;
 
-public class RhymerLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
+public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
     private static final String TAG = Constants.TAG + RhymerLoader.class.getSimpleName();
 
-    private final String mQuery;
-    private final String mFilter;
-    private ResultListData<RTEntry> mResult;
-
-    public RhymerLoader(Context context, String query, String filter) {
+    public RhymerLoader(Context context) {
         super(context);
-        mQuery = query;
-        mFilter = filter;
     }
 
     @Override
-    public ResultListData<RTEntry> loadInBackground() {
-        Log.d(TAG, "loadInBackground() called with: query = " + mQuery + ", filter = " + mFilter);
+    protected ResultListData<RTEntry> getEntries(String query, String filter) {
+        Log.d(TAG, "getEntries() called with: " + "query = [" + query + "], filter = [" + filter + "]");
 
         List<RTEntry> data = new ArrayList<>();
         Rhymer rhymer = Rhymer.getInstance(getContext());
-        if (TextUtils.isEmpty(mQuery)) return emptyResult();
+        if (TextUtils.isEmpty(query)) return emptyResult(query);
 
-        List<RhymeResult> rhymeResults = rhymer.getRhymingWords(mQuery);
+        List<RhymeResult> rhymeResults = rhymer.getRhymingWords(query);
         if (rhymeResults == null) {
-            return emptyResult();
+            return emptyResult(query);
         }
-        if (!TextUtils.isEmpty(mFilter)) {
-            Set<String> synonyms = Thesaurus.getInstance(getContext()).getFlatSynonyms(mFilter);
-            if (synonyms.isEmpty()) return emptyResult();
+        if (!TextUtils.isEmpty(filter)) {
+            Set<String> synonyms = Thesaurus.getInstance(getContext()).getFlatSynonyms(filter);
+            if (synonyms.isEmpty()) return emptyResult(query);
             rhymeResults = filter(rhymeResults, synonyms);
         }
         for (RhymeResult rhymeResult : rhymeResults) {
             // Add the word variant, if there are multiple pronunciations.
             if (rhymeResults.size() > 1) {
-                String heading = mQuery + " (" + (rhymeResult.variantNumber + 1) + ")";
+                String heading = query + " (" + (rhymeResult.variantNumber + 1) + ")";
                 data.add(new RTEntry(RTEntry.Type.HEADING, heading));
             }
 
@@ -76,26 +70,11 @@ public class RhymerLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
             addResultSection(data, R.string.rhyme_section_two_syllables, rhymeResult.twoSyllableRhymes);
             addResultSection(data, R.string.rhyme_section_three_syllables, rhymeResult.threeSyllableRhymes);
         }
-        return new ResultListData<>(mQuery, data);
+        return new ResultListData<>(query, data);
     }
 
-    private ResultListData<RTEntry> emptyResult() {
-        return new ResultListData<>(mQuery, new ArrayList<RTEntry>());
-    }
-
-    @Override
-    public void deliverResult(ResultListData<RTEntry> data) {
-        Log.d(TAG, "deliverResult() called with: query = " + mQuery + ", filter = " + mFilter + ", data = [" + data + "]");
-        mResult = data;
-        if (isStarted()) super.deliverResult(data);
-    }
-
-    @Override
-    protected void onStartLoading() {
-        super.onStartLoading();
-        Log.d(TAG, "onStartLoading() called with: query = " + mQuery + ", filter = " + mFilter);
-        if (mResult != null) super.deliverResult(mResult);
-        else forceLoad();
+    private ResultListData<RTEntry> emptyResult(String query) {
+        return new ResultListData<>(query, new ArrayList<>());
     }
 
     private void addResultSection(List<RTEntry> results, int sectionHeadingResId, String[] rhymes) {

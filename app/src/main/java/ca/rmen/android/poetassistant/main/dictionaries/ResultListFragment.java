@@ -27,8 +27,6 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -54,11 +52,14 @@ import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.VectorCompat;
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
 import ca.rmen.android.poetassistant.main.Tab;
+import me.tatarka.rxloader.RxLoader2;
+import me.tatarka.rxloader.RxLoaderManagerCompat;
+import me.tatarka.rxloader.RxLoaderObserver;
+import rx.schedulers.Schedulers;
 
 
 public class ResultListFragment<T> extends ListFragment
         implements
-        LoaderManager.LoaderCallbacks<ResultListData<T>>,
         InputDialogFragment.InputDialogListener {
     private static final String TAG = Constants.TAG + ResultListFragment.class.getSimpleName();
     private static final int ACTION_FILTER = 0;
@@ -73,6 +74,8 @@ public class ResultListFragment<T> extends ListFragment
     private ArrayAdapter<T> mAdapter;
     private ResultListData<T> mData;
     private Tts mTts;
+    private ResultListLoader<ResultListData<T>> mLoader;
+    private RxLoader2<String, String, ResultListData<T>> mRxLoader;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -113,8 +116,9 @@ public class ResultListFragment<T> extends ListFragment
         //noinspection unchecked
         mAdapter = (ArrayAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
         setListAdapter(mAdapter);
-        getLoaderManager().initLoader(mTab.ordinal(), getArguments(), this);
+        createLoader();
         updatePlayButton();
+        updateUi();
     }
 
     @Override
@@ -152,16 +156,12 @@ public class ResultListFragment<T> extends ListFragment
         Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
         mBinding.tvListHeader.setText(query);
         mBinding.filter.setVisibility(View.GONE);
-        Bundle args = new Bundle(1);
-        args.putString(EXTRA_QUERY, query);
-        getLoaderManager().restartLoader(mTab.ordinal(), args, this);
+        mRxLoader.restart(query, null);
     }
 
     private void filter(String filter) {
-        Bundle args = new Bundle(2);
-        args.putString(EXTRA_QUERY, mBinding.tvListHeader.getText().toString());
-        args.putString(EXTRA_FILTER, filter);
-        getLoaderManager().restartLoader(mTab.ordinal(), args, this);
+        String query = mBinding.tvListHeader.getText().toString();
+        mRxLoader.restart(query, filter);
     }
 
     private void updatePlayButton() {
@@ -170,33 +170,34 @@ public class ResultListFragment<T> extends ListFragment
         mBinding.btnPlay.setVisibility(playButtonVisibility);
     }
 
-    @Override
-    public Loader<ResultListData<T>> onCreateLoader(int id, Bundle args) {
-        Log.d(TAG, mTab + ": onCreateLoader() called with: " + "id = [" + id + "], args = [" + args + "]");
-        String query = "";
-        String filter = "";
-        if (args != null) {
-            query = args.getString(EXTRA_QUERY);
-            filter = args.getString(EXTRA_FILTER);
-            mBinding.tvListHeader.setText(query);
-        }
+    private void createLoader() {
         //noinspection unchecked
-        return (Loader<ResultListData<T>>) ResultListFactory.createLoader(mTab, getActivity(), query, filter);
+        mLoader = (ResultListLoader<ResultListData<T>>) ResultListFactory.createLoader(mTab, getActivity());
+        mRxLoader = RxLoaderManagerCompat.get(this).create(
+                (query, filter) -> {
+                    return mLoader.observeEntries(query, filter).subscribeOn(Schedulers.io());
+                },
+                onLoadFinished()
+        );
     }
 
-    @Override
-    public void onLoadFinished(Loader<ResultListData<T>> loader, ResultListData<T> data) {
-        Log.d(TAG, mTab + ": onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
-        mAdapter.clear();
-        //noinspection unchecked
-        mAdapter.addAll(data.data);
-        mData = data;
-        updateUi();
+    private RxLoaderObserver<ResultListData<T>> onLoadFinished() {
+        return new RxLoaderObserver<ResultListData<T>>() {
+            @Override
+            public void onNext(ResultListData<T> data) {
 
-        // Hide the keyboard
-        getListView().requestFocus();
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getListView().getWindowToken(), 0);
+                Log.d(TAG, mTab + ": onLoadFinished() called with: " + "data = [" + data + "]");
+                mAdapter.clear();
+                mAdapter.addAll(data.data);
+                mData = data;
+                updateUi();
+
+                // Hide the keyboard
+                getListView().requestFocus();
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getListView().getWindowToken(), 0);
+            }
+        };
     }
 
     private void updateUi() {
@@ -222,14 +223,6 @@ public class ResultListFragment<T> extends ListFragment
             mBinding.empty.setText(R.string.empty_list_with_query);
         }
         getActivity().supportInvalidateOptionsMenu();
-    }
-
-    @Override
-    public void onLoaderReset(Loader<ResultListData<T>> loader) {
-        Log.d(TAG, mTab + ": onLoaderReset() called with: " + "loader = [" + loader + "]");
-        mAdapter.clear();
-        mData = null;
-        updateUi();
     }
 
     @Override

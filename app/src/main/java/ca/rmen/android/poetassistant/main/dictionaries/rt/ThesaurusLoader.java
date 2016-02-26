@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -32,35 +31,29 @@ import java.util.Set;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 
-public class ThesaurusLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
+public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
     private static final String TAG = Constants.TAG + ThesaurusLoader.class.getSimpleName();
 
-    private final String mQuery;
-    private final String mFilter;
-    private ResultListData<RTEntry> mResult;
-
-
-    public ThesaurusLoader(Context context, String query, String filter) {
+    public ThesaurusLoader(Context context) {
         super(context);
-        mQuery = query;
-        mFilter = filter;
     }
 
     @Override
-    public ResultListData<RTEntry> loadInBackground() {
-        Log.d(TAG, "loadInBackground() called with: query = " + mQuery + ", filter = " + mFilter);
+    protected ResultListData<RTEntry> getEntries(String query, String filter) {
+        Log.d(TAG, "getEntries() called with: " + "query = [" + query + "], filter = [" + filter + "]");
 
         Thesaurus thesaurus = Thesaurus.getInstance(getContext());
         List<RTEntry> data = new ArrayList<>();
-        if(TextUtils.isEmpty(mQuery)) return emptyResult();
-        ThesaurusEntry result  = thesaurus.lookup(mQuery);
+        if(TextUtils.isEmpty(query)) return emptyResult(query);
+        ThesaurusEntry result  = thesaurus.lookup(query);
         ThesaurusEntry.ThesaurusEntryDetails[] entries = result.entries;
-        if (entries.length == 0) return emptyResult();
+        if (entries.length == 0) return emptyResult(query);
 
-        if (!TextUtils.isEmpty(mFilter)) {
-            Set<String> rhymes = Rhymer.getInstance(getContext()).getFlatRhymes(mFilter);
+        if (!TextUtils.isEmpty(filter)) {
+            Set<String> rhymes = Rhymer.getInstance(getContext()).getFlatRhymes(filter);
             entries = filter(entries, rhymes);
         }
 
@@ -72,23 +65,8 @@ public class ThesaurusLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
         return new ResultListData<>(result.word, data);
     }
 
-    private ResultListData<RTEntry> emptyResult() {
-        return new ResultListData<>(mQuery, new ArrayList<RTEntry>());
-    }
-
-    @Override
-    public void deliverResult(ResultListData<RTEntry> data) {
-        Log.d(TAG, "deliverResult() called with: query = " + mQuery + ", filter = " + mFilter + ", data = [" + data + "]");
-        mResult = data;
-        if (isStarted()) super.deliverResult(data);
-    }
-
-    @Override
-    protected void onStartLoading() {
-        super.onStartLoading();
-        Log.d(TAG, "onStartLoading() called with: query = " + mQuery + ", filter = " + mFilter);
-        if (mResult != null) super.deliverResult(mResult);
-        else forceLoad();
+    private ResultListData<RTEntry> emptyResult(String query) {
+        return new ResultListData<>(query, new ArrayList<>());
     }
 
     private void addResultSection(List<RTEntry> results, int sectionHeadingResId, String[] words) {
