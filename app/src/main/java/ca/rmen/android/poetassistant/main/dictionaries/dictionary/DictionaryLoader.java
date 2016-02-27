@@ -30,6 +30,7 @@ import java.util.List;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
+import rx.Observable;
 
 public class DictionaryLoader extends ResultListLoader<ResultListData<DictionaryEntry.DictionaryEntryDetails>> {
 
@@ -40,14 +41,15 @@ public class DictionaryLoader extends ResultListLoader<ResultListData<Dictionary
     }
 
     @Override
-    protected ResultListData<DictionaryEntry.DictionaryEntryDetails> getEntries(String query, String filter) {
-        Log.d(TAG, "loadInBackground() called with: " + "");
-        List<DictionaryEntry.DictionaryEntryDetails> result = new ArrayList<>();
-        if(TextUtils.isEmpty(query)) return new ResultListData<>(query, result);
-        Dictionary dictionary = Dictionary.getInstance(getContext());
-        DictionaryEntry entry = dictionary.lookup(query);
-        Collections.addAll(result, entry.details);
-        return new ResultListData<>(entry.word, result);
+    protected Observable<ResultListData<DictionaryEntry.DictionaryEntryDetails>> getEntries(String query, String filter) {
+        Log.d(TAG, "getEntries() called with: " + "query = [" + query + "], filter = [" + filter + "]");
+
+            List<DictionaryEntry.DictionaryEntryDetails> result = new ArrayList<>();
+            if(TextUtils.isEmpty(query)) return Observable.just(new ResultListData<>(query, result));
+            Dictionary dictionary = Dictionary.getInstance(getContext());
+            DictionaryEntry entry = dictionary.lookup(query);
+            Collections.addAll(result, entry.details);
+            return Observable.just(new ResultListData<>(entry.word, result));
     }
 
 }

@@ -25,13 +25,14 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
+import rx.Observable;
+import rx.functions.Func1;
 
 public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
@@ -42,31 +43,30 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
     }
 
     @Override
-    protected ResultListData<RTEntry> getEntries(String query, String filter) {
+    protected Observable<ResultListData<RTEntry>> getEntries(String query, String filter) {
         Log.d(TAG, "getEntries() called with: " + "query = [" + query + "], filter = [" + filter + "]");
 
         Thesaurus thesaurus = Thesaurus.getInstance(getContext());
-        List<RTEntry> data = new ArrayList<>();
         if(TextUtils.isEmpty(query)) return emptyResult(query);
         ThesaurusEntry result  = thesaurus.lookup(query);
         ThesaurusEntry.ThesaurusEntryDetails[] entries = result.entries;
         if (entries.length == 0) return emptyResult(query);
 
+        Set<String> rhymes = null;
         if (!TextUtils.isEmpty(filter)) {
-            Set<String> rhymes = Rhymer.getInstance(getContext()).getFlatRhymes(filter);
-            entries = filter(entries, rhymes);
+            rhymes = Rhymer.getInstance(getContext()).getFlatRhymes(filter);
+            if (rhymes.isEmpty()) return emptyResult(query);
         }
 
-        for (ThesaurusEntry.ThesaurusEntryDetails entry : entries) {
-            data.add(new RTEntry(RTEntry.Type.HEADING, entry.wordType.name().toLowerCase(Locale.US)));
-            addResultSection(data, R.string.thesaurus_section_synonyms, entry.synonyms);
-            addResultSection(data, R.string.thesaurus_section_antonyms, entry.antonyms);
-        }
-        return new ResultListData<>(result.word, data);
+        return Observable
+                .from(entries)
+                .flatMap(filterRhymes(rhymes))
+                .filter(isNotEmpty())
+                .flatMap(toRTEntries(query));
     }
 
-    private ResultListData<RTEntry> emptyResult(String query) {
-        return new ResultListData<>(query, new ArrayList<>());
+    private Observable<ResultListData<RTEntry>> emptyResult(String query) {
+        return Observable.just(new ResultListData<>(query, new ArrayList<>()));
     }
 
     private void addResultSection(List<RTEntry> results, int sectionHeadingResId, String[] words) {
@@ -78,26 +78,26 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
         }
     }
 
-    private static ThesaurusEntry.ThesaurusEntryDetails[] filter(ThesaurusEntry.ThesaurusEntryDetails[] entries, Set<String> filter) {
-        List<ThesaurusEntry.ThesaurusEntryDetails> filteredEntries = new ArrayList<>();
-        for (ThesaurusEntry.ThesaurusEntryDetails entry : entries) {
-            ThesaurusEntry.ThesaurusEntryDetails filteredEntry = filter(entry, filter);
-            if (filteredEntry != null) filteredEntries.add(filteredEntry);
-        }
-        return filteredEntries.toArray(new ThesaurusEntry.ThesaurusEntryDetails[filteredEntries.size()]);
+    private Func1<ThesaurusEntry.ThesaurusEntryDetails, Observable<ResultListData<RTEntry>>> toRTEntries(String query) {
+        return entry -> {
+            List<RTEntry> data = new ArrayList<>();
+            addResultSection(data, R.string.thesaurus_section_synonyms, entry.synonyms);
+            addResultSection(data, R.string.thesaurus_section_antonyms, entry.antonyms);
+            return Observable.just(new ResultListData<>(query, data));
+        };
     }
 
-    private static ThesaurusEntry.ThesaurusEntryDetails filter(ThesaurusEntry.ThesaurusEntryDetails entry, Set<String> filter) {
-        ThesaurusEntry.ThesaurusEntryDetails filteredEntry = new ThesaurusEntry.ThesaurusEntryDetails(entry.wordType,
-                RTUtils.filter(entry.synonyms, filter),
-                RTUtils.filter(entry.antonyms, filter));
-        if (isEmpty(filteredEntry)) return null;
-        return filteredEntry;
+    private Func1<ThesaurusEntry.ThesaurusEntryDetails, Observable<ThesaurusEntry.ThesaurusEntryDetails>> filterRhymes(final Set<String> filter) {
+        return (entry) -> {
+            if (filter == null) return Observable.just(entry);
+            return Observable.just(new ThesaurusEntry.ThesaurusEntryDetails(entry.wordType,
+                    RTUtils.filter(entry.synonyms, filter),
+                    RTUtils.filter(entry.antonyms, filter)));
+        };
     }
 
-    private static boolean isEmpty(ThesaurusEntry.ThesaurusEntryDetails entry) {
-        return entry.synonyms.length == 0 && entry.antonyms.length == 0;
+    private Func1<ThesaurusEntry.ThesaurusEntryDetails, Boolean> isNotEmpty() {
+        return entry -> entry != null && (entry.synonyms.length > 0 || entry.antonyms.length > 0);
     }
-
 
 }
