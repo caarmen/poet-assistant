@@ -39,7 +39,7 @@ public abstract class ResultListLoader<T> {
             //noinspection unchecked
             return Observable.just((T) Collections.emptyList());
         } else {
-            return Observable.defer(() -> Observable.just(getEntries(query, filter)));
+            return Observable.defer(() -> getEntries(query, filter));
         }
     }
 
@@ -47,6 +47,6 @@ public abstract class ResultListLoader<T> {
         return mContext;
     }
 
-    protected abstract T getEntries(String query, String filter);
+    protected abstract Observable<T> getEntries(String query, String filter);
 
 }

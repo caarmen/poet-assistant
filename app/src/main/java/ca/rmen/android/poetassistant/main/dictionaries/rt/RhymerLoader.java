@@ -32,6 +32,8 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 import ca.rmen.rhymer.RhymeResult;
+import rx.Observable;
+import rx.functions.Func1;
 
 public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
@@ -42,10 +44,8 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
     }
 
     @Override
-    protected ResultListData<RTEntry> getEntries(String query, String filter) {
+    protected Observable<ResultListData<RTEntry>> getEntries(String query, String filter) {
         Log.d(TAG, "getEntries() called with: " + "query = [" + query + "], filter = [" + filter + "]");
-
-        List<RTEntry> data = new ArrayList<>();
         Rhymer rhymer = Rhymer.getInstance(getContext());
         if (TextUtils.isEmpty(query)) return emptyResult(query);
 
@@ -53,28 +53,21 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
         if (rhymeResults == null) {
             return emptyResult(query);
         }
+        Set<String> synonyms = null;
         if (!TextUtils.isEmpty(filter)) {
-            Set<String> synonyms = Thesaurus.getInstance(getContext()).getFlatSynonyms(filter);
+            synonyms = Thesaurus.getInstance(getContext()).getFlatSynonyms(filter);
             if (synonyms.isEmpty()) return emptyResult(query);
-            rhymeResults = filter(rhymeResults, synonyms);
         }
-        for (RhymeResult rhymeResult : rhymeResults) {
-            // Add the word variant, if there are multiple pronunciations.
-            if (rhymeResults.size() > 1) {
-                String heading = query + " (" + (rhymeResult.variantNumber + 1) + ")";
-                data.add(new RTEntry(RTEntry.Type.HEADING, heading));
-            }
 
-            addResultSection(data, R.string.rhyme_section_stress_syllables, rhymeResult.strictRhymes);
-            addResultSection(data, R.string.rhyme_section_one_syllable, rhymeResult.oneSyllableRhymes);
-            addResultSection(data, R.string.rhyme_section_two_syllables, rhymeResult.twoSyllableRhymes);
-            addResultSection(data, R.string.rhyme_section_three_syllables, rhymeResult.threeSyllableRhymes);
-        }
-        return new ResultListData<>(query, data);
+        return Observable
+                .from(rhymeResults)
+                .flatMap(filterSynonyms(synonyms))
+                .filter(isNotEmpty())
+                .flatMap(toRTEntries(query, rhymeResults.size() > 1));
     }
 
-    private ResultListData<RTEntry> emptyResult(String query) {
-        return new ResultListData<>(query, new ArrayList<>());
+    private Observable<ResultListData<RTEntry>> emptyResult(String query) {
+        return Observable.just(new ResultListData<>(query, new ArrayList<>()));
     }
 
     private void addResultSection(List<RTEntry> results, int sectionHeadingResId, String[] rhymes) {
@@ -86,31 +79,39 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
         }
     }
 
-    private static List<RhymeResult> filter(List<RhymeResult> rhymes, Set<String> filter) {
-        List<RhymeResult> filteredRhymes = new ArrayList<>();
-        for (RhymeResult rhymeResult : rhymes) {
-            RhymeResult filteredRhymeResult = filter(rhymeResult, filter);
-            if (filteredRhymeResult != null) filteredRhymes.add(filteredRhymeResult);
-        }
-        return filteredRhymes;
+    private Func1<RhymeResult, Observable<ResultListData<RTEntry>>> toRTEntries(final String query, final boolean showWordVariant) {
+        return rhymeResult -> {
+            List<RTEntry> data = new ArrayList<>();
+            if (showWordVariant) {
+                String heading = query + " (" + (rhymeResult.variantNumber + 1) + ")";
+                data.add(new RTEntry(RTEntry.Type.HEADING, heading));
+            }
+            addResultSection(data, R.string.rhyme_section_stress_syllables, rhymeResult.strictRhymes);
+            addResultSection(data, R.string.rhyme_section_one_syllable, rhymeResult.oneSyllableRhymes);
+            addResultSection(data, R.string.rhyme_section_two_syllables, rhymeResult.twoSyllableRhymes);
+            addResultSection(data, R.string.rhyme_section_three_syllables, rhymeResult.threeSyllableRhymes);
+            return Observable.just(new ResultListData<>(query, data));
+        };
     }
 
-    private static RhymeResult filter(RhymeResult rhyme, Set<String> filter) {
-        RhymeResult result = new RhymeResult(rhyme.variantNumber,
-                RTUtils.filter(rhyme.strictRhymes, filter),
-                RTUtils.filter(rhyme.oneSyllableRhymes, filter),
-                RTUtils.filter(rhyme.twoSyllableRhymes, filter),
-                RTUtils.filter(rhyme.threeSyllableRhymes, filter));
-        if (isEmpty(result)) return null;
-        return result;
+    private Func1<RhymeResult, Observable<RhymeResult>> filterSynonyms(final Set<String> filter) {
+        return (rhyme) -> {
+            if (filter == null) return Observable.just(rhyme);
+            return Observable.just(new RhymeResult(rhyme.variantNumber,
+                    RTUtils.filter(rhyme.strictRhymes, filter),
+                    RTUtils.filter(rhyme.oneSyllableRhymes, filter),
+                    RTUtils.filter(rhyme.twoSyllableRhymes, filter),
+                    RTUtils.filter(rhyme.threeSyllableRhymes, filter)));
+        };
     }
 
-    private static boolean isEmpty(RhymeResult rhymeResult) {
-        return rhymeResult.strictRhymes.length == 0
-                && rhymeResult.oneSyllableRhymes.length == 0
-                && rhymeResult.twoSyllableRhymes.length == 0
-                && rhymeResult.threeSyllableRhymes.length == 0;
+    private Func1<RhymeResult, Boolean> isNotEmpty() {
+        return rhymeResult -> rhymeResult != null
+                &&
+                (rhymeResult.strictRhymes.length > 0
+                        || rhymeResult.oneSyllableRhymes.length > 0
+                        || rhymeResult.twoSyllableRhymes.length > 0
+                        || rhymeResult.threeSyllableRhymes.length > 0);
     }
-
 
 }
