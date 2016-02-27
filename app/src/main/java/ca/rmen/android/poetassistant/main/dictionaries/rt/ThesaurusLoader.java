@@ -62,20 +62,19 @@ public class ThesaurusLoader extends AsyncTaskLoader<List<RTEntry>> {
 
         for (Thesaurus.ThesaurusEntry entry : entries) {
             data.add(new RTEntry(RTEntry.Type.HEADING, entry.wordType.name().toLowerCase(Locale.US)));
-            if (entry.synonyms.length > 0) {
-                data.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(R.string.thesaurus_section_synonyms)));
-                for (String synonym : entry.synonyms) {
-                    data.add(new RTEntry(RTEntry.Type.WORD, synonym));
-                }
-            }
-            if (entry.antonyms.length > 0) {
-                data.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(R.string.thesaurus_section_antonyms)));
-                for (String antonym : entry.antonyms) {
-                    data.add(new RTEntry(RTEntry.Type.WORD, antonym));
-                }
-            }
+            addResultSection(data, R.string.thesaurus_section_synonyms, entry.synonyms);
+            addResultSection(data, R.string.thesaurus_section_antonyms, entry.antonyms);
         }
         return data;
+    }
+
+    private void addResultSection(List<RTEntry> results, int sectionHeadingResId, String[] words) {
+        if (words.length > 0) {
+            results.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
+            for (String word : words) {
+                results.add(new RTEntry(RTEntry.Type.WORD, word));
+            }
+        }
     }
 
     private static Thesaurus.ThesaurusEntry[] filter(Thesaurus.ThesaurusEntry[] entries, Set<String> filter) {

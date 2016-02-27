@@ -67,32 +67,21 @@ public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
                 data.add(new RTEntry(RTEntry.Type.HEADING, heading));
             }
 
-            if (rhymeResult.strictRhymes.length > 0) {
-                data.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(R.string.rhyme_section_stress_syllables)));
-                for (String word : rhymeResult.strictRhymes) {
-                    data.add(new RTEntry(RTEntry.Type.WORD, word));
-                }
-            }
-            if (rhymeResult.oneSyllableRhymes.length > 0) {
-                data.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(R.string.rhyme_section_one_syllable)));
-                for (String word : rhymeResult.oneSyllableRhymes) {
-                    data.add(new RTEntry(RTEntry.Type.WORD, word));
-                }
-            }
-            if (rhymeResult.twoSyllableRhymes.length > 0) {
-                data.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(R.string.rhyme_section_two_syllables)));
-                for (String word : rhymeResult.twoSyllableRhymes) {
-                    data.add(new RTEntry(RTEntry.Type.WORD, word));
-                }
-            }
-            if (rhymeResult.threeSyllableRhymes.length > 0) {
-                data.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(R.string.rhyme_section_three_syllables)));
-                for (String word : rhymeResult.threeSyllableRhymes) {
-                    data.add(new RTEntry(RTEntry.Type.WORD, word));
-                }
-            }
+            addResultSection(data, R.string.rhyme_section_stress_syllables, rhymeResult.strictRhymes);
+            addResultSection(data, R.string.rhyme_section_one_syllable, rhymeResult.oneSyllableRhymes);
+            addResultSection(data, R.string.rhyme_section_two_syllables, rhymeResult.twoSyllableRhymes);
+            addResultSection(data, R.string.rhyme_section_three_syllables, rhymeResult.threeSyllableRhymes);
         }
         return data;
+    }
+
+    private void addResultSection(List<RTEntry> results, int sectionHeadingResId, String[] rhymes) {
+        if (rhymes.length > 0) {
+            results.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
+            for (String word : rhymes) {
+                results.add(new RTEntry(RTEntry.Type.WORD, word));
+            }
+        }
     }
 
     private static List<RhymeResult> filter(List<RhymeResult> rhymes, Set<String> filter) {
