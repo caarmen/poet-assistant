@@ -1,5 +1,11 @@
 Change Log
 ==========
+1.3.0  *(2016-02-28)*
+--------------------
+
+* Added dark theme setting (not yet available on Marshmallow)
+* Fixed crash when opening the about screen
+
 1.2.1 *(2016-02-28)*
 --------------------
 
