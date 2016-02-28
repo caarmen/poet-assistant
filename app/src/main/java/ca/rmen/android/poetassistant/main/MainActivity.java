@@ -29,6 +29,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -40,6 +41,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.Theme;
 import ca.rmen.android.poetassistant.about.AboutActivity;
 import ca.rmen.android.poetassistant.main.dictionaries.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
@@ -47,6 +49,9 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickedListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus;
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
+import ca.rmen.android.poetassistant.settings.Settings;
+import ca.rmen.android.poetassistant.settings.SettingsActivity;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 
 public class MainActivity extends AppCompatActivity implements OnWordClickedListener {
@@ -60,8 +65,8 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
+        Theme.checkTheme(this);
         setContentView(R.layout.activity_main);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Intent intent = getIntent();
@@ -150,6 +155,10 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
             mSearch.clearSearchHistory();
             View rootView = findViewById(android.R.id.content);
             Snackbar.make(rootView, R.string.search_history_cleared, Snackbar.LENGTH_SHORT).show();
+            return true;
+        } else if (item.getItemId() == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 
