@@ -1,5 +1,11 @@
 Change Log
 ==========
+1.2.1 *(2016-02-28)*
+--------------------
+
+* Small refactoring
+* Use the android gradle plugin version 2.0.0-beta6
+
 1.2.0 *(2016-02-26)*
 --------------------
 
