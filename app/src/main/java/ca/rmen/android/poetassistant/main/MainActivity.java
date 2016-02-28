@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -142,6 +143,12 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         getMenuInflater().inflate(R.menu.menu_main, menu);
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         mSearch.setSearchView(searchView);
+        // https://code.google.com/p/android/issues/detail?id=201910
+        // https://code.google.com/p/android/issues/detail?id=202021
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            MenuItem settingsMenu = menu.findItem(R.id.action_settings);
+            settingsMenu.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
