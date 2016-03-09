@@ -70,6 +70,10 @@
     <string name="menu_lookup_thesaurus">Thesaurus</string>
     <string name="menu_lookup_dictionary">Dictionary</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="wotd_setting_title">Word of the day</string>
+    <string name="wotd_setting_description">Display a notification once a day with a random word.</string>
+    <string name="wotd_notification_title">Word of the day: %s</string>
+    <string name="wotd_notification_definition"><![CDATA[<b>%1$s.</b> %2$s]]></string>
 
     <!-- Strings related to Settings -->
     <string name="pref_theme_title">Theme</string>

@@ -29,7 +29,7 @@ import java.util.List;
 
 import ca.rmen.android.poetassistant.Constants;
 
-public class DictionaryLoader extends AsyncTaskLoader<List<DictionaryEntry>> {
+public class DictionaryLoader extends AsyncTaskLoader<List<DictionaryEntryDetails>> {
 
     private static final String TAG = Constants.TAG + DictionaryLoader.class.getSimpleName();
 
@@ -41,11 +41,11 @@ public class DictionaryLoader extends AsyncTaskLoader<List<DictionaryEntry>> {
     }
 
     @Override
-    public List<DictionaryEntry> loadInBackground() {
+    public List<DictionaryEntryDetails> loadInBackground() {
         Log.d(TAG, "loadInBackground() called with: " + "");
         Dictionary dictionary = Dictionary.getInstance(getContext());
-        DictionaryEntry[] entries = dictionary.getEntries(mQuery);
-        List<DictionaryEntry> result = new ArrayList<>();
+        DictionaryEntryDetails[] entries = dictionary.getEntries(mQuery);
+        List<DictionaryEntryDetails> result = new ArrayList<>();
         Collections.addAll(result, entries);
         return result;
     }

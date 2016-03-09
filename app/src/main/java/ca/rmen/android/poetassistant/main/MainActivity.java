@@ -49,6 +49,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus;
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
+import ca.rmen.android.poetassistant.wotd.Wotd;
 
 
 public class MainActivity extends AppCompatActivity implements OnWordClickedListener {
@@ -80,14 +81,15 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         tabLayout.setupWithViewPager(mViewPager);
 
         // If the app was launched with a query for the thesaurus, focus on that tab.
-        if (data != null && data.getHost().equalsIgnoreCase(Tab.THESAURUS.name()))
-            mViewPager.setCurrentItem(Tab.THESAURUS.ordinal());
+        if (data != null && data.getHost().equalsIgnoreCase(Constants.DEEP_LINK_QUERY))
+            mViewPager.setCurrentItem(Tab.DICTIONARY.ordinal());
         else if (Intent.ACTION_SEND.equals(intent.getAction()))
             mViewPager.setCurrentItem(Tab.READER.ordinal());
 
         mSearch = new Search(this, mViewPager);
         loadDictionaries();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        Wotd.reschedule(getApplicationContext());
     }
 
     /**
@@ -119,10 +121,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         // We got here from a deep link
         else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
             Uri data = getIntent().getData();
-            if (data != null) {
-                Tab tab = Tab.parse(data.getHost());
-                if (tab != null) mSearch.search(data.getLastPathSegment(), tab);
-            }
+            handleDeepLink(data);
         }
         // Play some text in the tts tab
         else if (Intent.ACTION_SEND.equals(intent.getAction())) {
@@ -130,6 +129,19 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
             String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
             ReaderFragment readerFragment = (ReaderFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.READER.ordinal());
             readerFragment.setText(sharedText);
+        }
+    }
+
+    private void handleDeepLink(Uri uri) {
+        Log.d(TAG, "handleDeepLink() called with: " + "uri = [" + uri + "]");
+        if (uri == null) return;
+        String word = uri.getLastPathSegment();
+        if(Constants.DEEP_LINK_QUERY.equals(uri.getHost())) {
+            mSearch.search(word);
+            mViewPager.setCurrentItem(Tab.DICTIONARY.ordinal());
+        } else {
+            Tab tab = Tab.parse(uri.getHost());
+            if (tab != null) mSearch.search(word, tab);
         }
     }
 

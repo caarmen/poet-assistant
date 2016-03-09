@@ -71,6 +71,10 @@ class PagerAdapter extends FragmentPagerAdapter {
                 mInitialThesaurusQuery = initialQuery.getLastPathSegment();
             } else if (tab == Tab.DICTIONARY) {
                 mInitialDictionaryQuery = initialQuery.getLastPathSegment();
+            } else if (Constants.DEEP_LINK_QUERY.equals(initialQuery.getHost())) {
+                mInitialRhymeQuery = initialQuery.getLastPathSegment();
+                mInitialThesaurusQuery = initialQuery.getLastPathSegment();
+                mInitialDictionaryQuery = initialQuery.getLastPathSegment();
             }
         }
         // Text shared from another app:

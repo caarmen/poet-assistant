@@ -19,12 +19,12 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
 
-public class DictionaryEntry {
-    public final String word;
-    public final DictionaryEntryDetails[] details;
+public class DictionaryEntryDetails {
+    public final String partOfSpeech;
+    public final String definition;
 
-    public DictionaryEntry(String word, DictionaryEntryDetails[] details) {
-        this.word = word;
-        this.details = details;
+    public DictionaryEntryDetails(String partOfSpeech, String definition) {
+        this.partOfSpeech = partOfSpeech;
+        this.definition = definition;
     }
 }

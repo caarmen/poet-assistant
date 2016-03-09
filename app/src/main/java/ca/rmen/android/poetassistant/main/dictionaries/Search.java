@@ -79,7 +79,7 @@ public class Search {
     }
 
     /**
-     * Search for the given word in both dictionaries
+     * Search for the given word in all dictionaries
      */
     public void search(String word) {
         Log.d(TAG, "search() called with: " + "word = [" + word + "]");

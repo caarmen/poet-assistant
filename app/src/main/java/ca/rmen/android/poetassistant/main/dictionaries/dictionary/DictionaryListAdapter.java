@@ -31,7 +31,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ViewHolder;
 
 
-public class DictionaryListAdapter extends ArrayAdapter<DictionaryEntry> {
+public class DictionaryListAdapter extends ArrayAdapter<DictionaryEntryDetails> {
     private static final String TAG = Constants.TAG + DictionaryListAdapter.class.getSimpleName();
 
     private final Context mContext;
@@ -43,7 +43,7 @@ public class DictionaryListAdapter extends ArrayAdapter<DictionaryEntry> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        DictionaryEntry entry = getItem(position);
+        DictionaryEntryDetails entry = getItem(position);
         if (convertView == null) {
             convertView = View.inflate(mContext, R.layout.list_item_dictionary_entry, null);
         }

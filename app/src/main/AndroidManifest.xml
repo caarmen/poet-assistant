@@ -53,6 +53,9 @@
                 <data
                     android:host="dictionary"
                     android:scheme="poetassistant" />
+                <data
+                    android:host="query"
+                    android:scheme="poetassistant" />
             </intent-filter>
 
             <!-- Searches performed with the search widget -->
@@ -89,6 +92,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ca.rmen.android.poetassistant.main.MainActivity" />
         </activity>
+
+        <service
+            android:name=".wotd.WotdJobService"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <receiver
+            android:name=".wotd.WotdBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="action_wotd" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
