@@ -42,6 +42,13 @@ public class Tts {
         public OnTtsInitialized(int status) {
             this.status = status;
         }
+
+        @Override
+        public String toString() {
+            return "OnTtsInitialized{" +
+                    "status=" + status +
+                    '}';
+        }
     }
 
     public static class OnUtteranceCompleted {

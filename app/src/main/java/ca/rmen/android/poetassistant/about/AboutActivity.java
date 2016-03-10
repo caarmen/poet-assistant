@@ -27,13 +27,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 
 
 public class AboutActivity extends AppCompatActivity {
-
-    private static final String TAG = Constants.TAG + AboutActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,18 +53,22 @@ public class AboutActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.txtVersion)).setText(appVersionText);
     }
 
+    @SuppressWarnings("unused")
     public void onClickAppLicense(@SuppressWarnings("UnusedParameters") View view) {
         LicenseActivity.start(this, getString(R.string.app_name), "LICENSE.txt");
     }
 
+    @SuppressWarnings("unused")
     public void onClickRhymerLicense(@SuppressWarnings("UnusedParameters") View view) {
         LicenseActivity.start(this, getString(R.string.about_license_rhyming_dictionary), "LICENSE-rhyming-dictionary.txt");
     }
 
+    @SuppressWarnings("unused")
     public void onClickThesaurusLicense(@SuppressWarnings("UnusedParameters") View view) {
         LicenseActivity.start(this, getString(R.string.about_license_thesaurus), "LICENSE-thesaurus-wordnet.txt");
     }
 
+    @SuppressWarnings("unused")
     public void onClickDictionaryLicense(@SuppressWarnings("UnusedParameters") View view) {
         LicenseActivity.start(this, getString(R.string.about_license_dictionary), "LICENSE-dictionary-wordnet.txt");
     }

@@ -30,7 +30,6 @@ import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.view.ActionMode;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -67,7 +66,6 @@ public class ReaderFragment extends Fragment implements
     private EditText mTextView;
     private Handler mHandler;
     private PoemPrefs mPoemPrefs;
-    private ActionMode mActionMode;
 
     public static ReaderFragment newInstance(String initialText) {
         Log.d(TAG, "newInstance() called with: " + "initialText = [" + initialText + "]");
@@ -377,12 +375,14 @@ public class ReaderFragment extends Fragment implements
         }
     };
 
+    @SuppressWarnings("unused")
     @Subscribe
     public void onTtsInitialized(Tts.OnTtsInitialized event) {
         Log.d(TAG, "onTtsInitialized() called with: " + "event = [" + event + "]");
         updatePlayButton();
     }
 
+    @SuppressWarnings("unused")
     @Subscribe
     public void onTtsUtteranceCompleted(Tts.OnUtteranceCompleted event) {
         Log.d(TAG, "onTtsUtteranceCompleted() called with: " + "event = [" + event + "]");

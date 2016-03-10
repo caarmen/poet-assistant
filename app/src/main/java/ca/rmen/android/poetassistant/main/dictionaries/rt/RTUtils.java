@@ -23,11 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import ca.rmen.android.poetassistant.Constants;
-
 class RTUtils {
-
-    private static final String TAG = Constants.TAG + RTUtils.class.getSimpleName();
 
     private RTUtils() {
         // prevent instantiation

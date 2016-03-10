@@ -26,14 +26,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ViewHolder;
 
 
 public class DictionaryListAdapter extends ArrayAdapter<DictionaryEntryDetails> {
-    private static final String TAG = Constants.TAG + DictionaryListAdapter.class.getSimpleName();
-
     private final Context mContext;
 
     public DictionaryListAdapter(Activity activity) {

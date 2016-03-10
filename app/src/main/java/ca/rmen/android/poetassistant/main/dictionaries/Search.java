@@ -46,13 +46,13 @@ public class Search {
     private static final String TAG = Constants.TAG + Search.class.getSimpleName();
     private SearchView mSearchView;
     private final ViewPager mViewPager;
-    private final Suggestions.SuggestionsCursorAdapter mSuggestionsCursorAdapter;
+    private final SuggestionsAdapter mSuggestionsAdapter;
     private final Activity mSearchableActivity;
 
     public Search(Activity searchableActivity, ViewPager viewPager) {
         mSearchableActivity = searchableActivity;
         mViewPager = viewPager;
-        mSuggestionsCursorAdapter = new Suggestions.SuggestionsCursorAdapter(mSearchableActivity);
+        mSuggestionsAdapter = new SuggestionsAdapter(mSearchableActivity);
     }
 
     public void setSearchView(SearchView searchView) {
@@ -61,7 +61,7 @@ public class Search {
         ComponentName searchableActivityComponentName = new ComponentName(mSearchableActivity, mSearchableActivity.getClass());
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(searchableActivityComponentName));
         mSearchView.setOnQueryTextListener(mOnQueryTextListener);
-        mSearchView.setSuggestionsAdapter(mSuggestionsCursorAdapter);
+        mSearchView.setSuggestionsAdapter(mSuggestionsAdapter);
         mSearchView.setOnSuggestionListener(mOnSuggestionListener);
     }
 
@@ -93,19 +93,19 @@ public class Search {
     }
 
     public void clearSearchHistory() {
-        mSuggestionsCursorAdapter.clear();
+        mSuggestionsAdapter.clear();
     }
 
     private final SearchView.OnQueryTextListener mOnQueryTextListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
-            mSuggestionsCursorAdapter.addSuggestion(query.trim().toLowerCase(Locale.US));
+            mSuggestionsAdapter.addSuggestion(query.trim().toLowerCase(Locale.US));
             return false;
         }
 
         @Override
         public boolean onQueryTextChange(String newText) {
-            mSuggestionsCursorAdapter.filterSuggestions(newText);
+            mSuggestionsAdapter.filterSuggestions(newText);
             return false;
         }
     };
@@ -113,14 +113,14 @@ public class Search {
     private final SearchView.OnSuggestionListener mOnSuggestionListener = new SearchView.OnSuggestionListener() {
         @Override
         public boolean onSuggestionSelect(int position) {
-            String suggestion = mSuggestionsCursorAdapter.getSuggestion(position);
+            String suggestion = mSuggestionsAdapter.getSuggestion(position);
             mSearchView.setQuery(suggestion, false);
             return false;
         }
 
         @Override
         public boolean onSuggestionClick(int position) {
-            String suggestion = mSuggestionsCursorAdapter.getSuggestion(position);
+            String suggestion = mSuggestionsAdapter.getSuggestion(position);
             mSearchView.setQuery(suggestion, true);
             return true;
         }

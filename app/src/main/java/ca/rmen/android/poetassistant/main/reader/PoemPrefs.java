@@ -24,10 +24,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 
-import ca.rmen.android.poetassistant.Constants;
-
 class PoemPrefs {
-    private static final String TAG = Constants.TAG + PoemPrefs.class.getSimpleName();
     private final SharedPreferences mSharedPreferences;
     private static final String PREF_POEM_TEXT = "poem_text";
     private static final String PREF_POEM_URI = "poem_uri";

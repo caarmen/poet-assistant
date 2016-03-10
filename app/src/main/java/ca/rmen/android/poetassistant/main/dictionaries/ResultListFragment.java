@@ -276,6 +276,7 @@ public class ResultListFragment<T> extends ListFragment
         }
     };
 
+    @SuppressWarnings("unused")
     @Subscribe
     public void onTtsInitialized(Tts.OnTtsInitialized event) {
         Log.d(TAG, mTab + ": onTtsInitialized() called with: " + "event = [" + event + "]");
