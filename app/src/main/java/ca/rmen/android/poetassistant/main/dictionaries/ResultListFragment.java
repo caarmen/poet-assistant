@@ -116,12 +116,7 @@ public class ResultListFragment<T> extends ListFragment
         //noinspection unchecked
         mAdapter = (ArrayAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
         setListAdapter(mAdapter);
-        getLoaderManager().initLoader(mTab.ordinal(), null, this);
-        Bundle arguments = getArguments();
-        if (savedInstanceState == null) {
-            String initialQuery = arguments.getString(EXTRA_QUERY);
-            if (!TextUtils.isEmpty(initialQuery)) query(initialQuery);
-        }
+        getLoaderManager().initLoader(mTab.ordinal(), getArguments(), this);
         updatePlayButton();
     }
 
@@ -169,11 +164,10 @@ public class ResultListFragment<T> extends ListFragment
         if (args != null) {
             query = args.getString(EXTRA_QUERY);
             filter = args.getString(EXTRA_FILTER);
+            mListHeaderTextView.setText(query);
         }
         //noinspection unchecked
-        Loader<List<T>> loader = (Loader<List<T>>) ResultListFactory.createLoader(mTab, getActivity(), query, filter);
-        loader.forceLoad();
-        return loader;
+        return (Loader<List<T>>) ResultListFactory.createLoader(mTab, getActivity(), query, filter);
     }
 
     @Override
@@ -181,10 +175,7 @@ public class ResultListFragment<T> extends ListFragment
         Log.d(TAG, mTab + ": onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
         mAdapter.clear();
         mAdapter.addAll(data);
-        int headerVisible = mAdapter.getCount() == 0 && TextUtils.isEmpty(mListHeaderTextView.getText().toString()) ?
-                View.GONE : View.VISIBLE;
-        mHeaderView.setVisibility(headerVisible);
-        updateEmptyText();
+        updateUi();
 
         // Hide the keyboard
         getListView().requestFocus();
@@ -192,7 +183,11 @@ public class ResultListFragment<T> extends ListFragment
         imm.hideSoftInputFromWindow(getListView().getWindowToken(), 0);
     }
 
-    private void updateEmptyText() {
+    private void updateUi() {
+        Log.d(TAG, mTab + ": updateUi() called with: " + "");
+        int headerVisible = mAdapter.getCount() == 0 && TextUtils.isEmpty(mListHeaderTextView.getText().toString()) ?
+                View.GONE : View.VISIBLE;
+        mHeaderView.setVisibility(headerVisible);
         String query = mListHeaderTextView.getText().toString();
         // If we have an empty list because the user didn't enter any search term,
         // we'll show a text to tell them to search.
@@ -214,6 +209,7 @@ public class ResultListFragment<T> extends ListFragment
     public void onLoaderReset(Loader<List<T>> loader) {
         Log.d(TAG, mTab + ": onLoaderReset() called with: " + "loader = [" + loader + "]");
         mAdapter.clear();
+        updateUi();
     }
 
     @Override

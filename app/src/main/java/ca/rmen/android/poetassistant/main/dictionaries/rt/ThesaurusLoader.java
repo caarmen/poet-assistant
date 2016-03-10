@@ -38,6 +38,7 @@ public class ThesaurusLoader extends AsyncTaskLoader<List<RTEntry>> {
 
     private final String mQuery;
     private final String mFilter;
+    private List<RTEntry> mResult;
 
 
     public ThesaurusLoader(Context context, String query, String filter) {
@@ -48,10 +49,11 @@ public class ThesaurusLoader extends AsyncTaskLoader<List<RTEntry>> {
 
     @Override
     public List<RTEntry> loadInBackground() {
-        Log.d(TAG, "loadInBackground() called with: " + "");
+        Log.d(TAG, "loadInBackground() called with: query = " + mQuery + ", filter = " + mFilter);
 
         Thesaurus thesaurus = Thesaurus.getInstance(getContext());
         List<RTEntry> data = new ArrayList<>();
+        if(TextUtils.isEmpty(mQuery)) return data;
         Thesaurus.ThesaurusEntry[] entries = thesaurus.getEntries(mQuery);
         if (entries.length == 0) return data;
 
@@ -66,6 +68,21 @@ public class ThesaurusLoader extends AsyncTaskLoader<List<RTEntry>> {
             addResultSection(data, R.string.thesaurus_section_antonyms, entry.antonyms);
         }
         return data;
+    }
+
+    @Override
+    public void deliverResult(List<RTEntry> data) {
+        Log.d(TAG, "deliverResult() called with: query = " + mQuery + ", filter = " + mFilter + ", data = [" + data + "]");
+        mResult = data;
+        if (isStarted()) super.deliverResult(data);
+    }
+
+    @Override
+    protected void onStartLoading() {
+        super.onStartLoading();
+        Log.d(TAG, "onStartLoading() called with: query = " + mQuery + ", filter = " + mFilter);
+        if (mResult != null) super.deliverResult(mResult);
+        else forceLoad();
     }
 
     private void addResultSection(List<RTEntry> results, int sectionHeadingResId, String[] words) {

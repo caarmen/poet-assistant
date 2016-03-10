@@ -38,6 +38,7 @@ public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
 
     private final String mQuery;
     private final String mFilter;
+    private List<RTEntry> mResult;
 
     public RhymerLoader(Context context, String query, String filter) {
         super(context);
@@ -49,9 +50,11 @@ public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
     public List<RTEntry> loadInBackground() {
         Log.d(TAG, "loadInBackground() called with: query = " + mQuery + ", filter = " + mFilter);
 
-        Rhymer rhymer = Rhymer.getInstance(getContext());
-        List<RhymeResult> rhymeResults = rhymer.getRhymingWords(mQuery);
         List<RTEntry> data = new ArrayList<>();
+        Rhymer rhymer = Rhymer.getInstance(getContext());
+        if (TextUtils.isEmpty(mQuery)) return data;
+
+        List<RhymeResult> rhymeResults = rhymer.getRhymingWords(mQuery);
         if (rhymeResults == null) {
             return data;
         }
@@ -73,6 +76,21 @@ public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
             addResultSection(data, R.string.rhyme_section_three_syllables, rhymeResult.threeSyllableRhymes);
         }
         return data;
+    }
+
+    @Override
+    public void deliverResult(List<RTEntry> data) {
+        Log.d(TAG, "deliverResult() called with: query = " + mQuery + ", filter = " + mFilter + ", data = [" + data + "]");
+        mResult = data;
+        if (isStarted()) super.deliverResult(data);
+    }
+
+    @Override
+    protected void onStartLoading() {
+        super.onStartLoading();
+        Log.d(TAG, "onStartLoading() called with: query = " + mQuery + ", filter = " + mFilter);
+        if (mResult != null) super.deliverResult(mResult);
+        else forceLoad();
     }
 
     private void addResultSection(List<RTEntry> results, int sectionHeadingResId, String[] rhymes) {

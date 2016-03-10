@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class DictionaryLoader extends AsyncTaskLoader<List<DictionaryEntryDetail
     private static final String TAG = Constants.TAG + DictionaryLoader.class.getSimpleName();
 
     private final String mQuery;
+    private List<DictionaryEntryDetails> mResult;
 
     public DictionaryLoader(Context context, String query) {
         super(context);
@@ -43,12 +45,27 @@ public class DictionaryLoader extends AsyncTaskLoader<List<DictionaryEntryDetail
     @Override
     public List<DictionaryEntryDetails> loadInBackground() {
         Log.d(TAG, "loadInBackground() called with: " + "");
+        List<DictionaryEntryDetails> result = new ArrayList<>();
+        if(TextUtils.isEmpty(mQuery)) return result;
         Dictionary dictionary = Dictionary.getInstance(getContext());
         DictionaryEntryDetails[] entries = dictionary.getEntries(mQuery);
-        List<DictionaryEntryDetails> result = new ArrayList<>();
         Collections.addAll(result, entries);
         return result;
     }
 
+    @Override
+    public void deliverResult(List<DictionaryEntryDetails> data) {
+        Log.d(TAG, "deliverResult() called with: query = " + mQuery + ", data = [" + data + "]");
+        mResult = data;
+        if (isStarted()) super.deliverResult(data);
+    }
+
+    @Override
+    protected void onStartLoading() {
+        super.onStartLoading();
+        Log.d(TAG, "onStartLoading() called with: query = " + mQuery);
+        if (mResult != null) super.deliverResult(mResult);
+        else forceLoad();
+    }
 
 }
