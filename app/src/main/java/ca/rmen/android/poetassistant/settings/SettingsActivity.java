@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.settings;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Theme;
+import ca.rmen.android.poetassistant.wotd.Wotd;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -48,16 +50,20 @@ public class SettingsActivity extends AppCompatActivity {
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(mListener);
     }
 
-    private SharedPreferences.OnSharedPreferenceChangeListener mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+    private final SharedPreferences.OnSharedPreferenceChangeListener mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            // When the theme changes, restart the app
+            Context context = getApplicationContext();
             if (Settings.PREF_THEME.equals(key)) {
-                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                // When the theme changes, restart the app
+                Intent intent = new Intent(context, SettingsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
                 stackBuilder.addNextIntentWithParentStack(intent);
                 stackBuilder.startActivities();
+            } else if (Settings.PREF_WOTD_ENABLED.equals(key)) {
+                Wotd.setWotdEnabled(context, SettingsPrefs.get(context).getIsWotdEnabled());
             }
         }
     };

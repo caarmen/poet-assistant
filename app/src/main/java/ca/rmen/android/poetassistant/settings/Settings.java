@@ -19,14 +19,24 @@
 
 package ca.rmen.android.poetassistant.settings;
 
+import org.jraf.android.prefs.DefaultBoolean;
 import org.jraf.android.prefs.Name;
 import org.jraf.android.prefs.Prefs;
 
 @Prefs
 public class Settings {
+    @SuppressWarnings("unused")
     public static final String THEME_LIGHT = "Light";
     public static final String THEME_DARK = "Dark";
     public static final String PREF_THEME = "PREF_THEME";
+    public static final String PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED";
+
+    @SuppressWarnings("unused")
     @Name(PREF_THEME)
     String theme;
+
+    @SuppressWarnings("unused")
+    @Name(PREF_WOTD_ENABLED)
+    @DefaultBoolean(true)
+    Boolean isWotdEnabled;
 }

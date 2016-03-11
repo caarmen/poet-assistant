@@ -29,4 +29,11 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_theme_title" />
 
+    <!--suppress AndroidElementNotAllowed -->
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="PREF_WOTD_ENABLED"
+        android:title="@string/wotd_setting_title"
+        android:summary="@string/wotd_setting_description"/>
+
 </PreferenceScreen>

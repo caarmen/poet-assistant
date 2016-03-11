@@ -32,7 +32,7 @@ import java.util.List;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.Tab;
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntryDetails;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
@@ -58,7 +58,7 @@ public class ResultListFactory {
                 break;
             case DICTIONARY:
             default:
-                fragment = new ResultListFragment<DictionaryEntry>();
+                fragment = new ResultListFragment<DictionaryEntryDetails>();
         }
         Bundle bundle = new Bundle(2);
         bundle.putSerializable(ResultListFragment.EXTRA_TAB, tab);

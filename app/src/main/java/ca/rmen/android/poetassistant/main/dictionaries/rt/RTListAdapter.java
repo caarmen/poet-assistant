@@ -27,14 +27,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.ViewHolder;
 
 
 public class RTListAdapter extends ArrayAdapter<RTEntry> {
-    private static final String TAG = Constants.TAG + RTListAdapter.class.getSimpleName();
 
     private final Context mContext;
     private final OnWordClickedListener mListener;

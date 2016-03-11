@@ -47,16 +47,6 @@ class PagerAdapter extends FragmentPagerAdapter {
     private String mInitialDictionaryQuery;
     private String mInitialPoemText;
 
-    public static class Query {
-        public final Tab tab;
-        public final String word;
-
-        public Query(Tab tab, String word) {
-            this.tab = tab;
-            this.word = word;
-        }
-    }
-
     public PagerAdapter(Context context, FragmentManager fm, Intent intent) {
         super(fm);
         Log.v(TAG, "Constructor: intent = " + intent);
@@ -70,6 +60,10 @@ class PagerAdapter extends FragmentPagerAdapter {
             } else if (tab == Tab.THESAURUS) {
                 mInitialThesaurusQuery = initialQuery.getLastPathSegment();
             } else if (tab == Tab.DICTIONARY) {
+                mInitialDictionaryQuery = initialQuery.getLastPathSegment();
+            } else if (Constants.DEEP_LINK_QUERY.equals(initialQuery.getHost())) {
+                mInitialRhymeQuery = initialQuery.getLastPathSegment();
+                mInitialThesaurusQuery = initialQuery.getLastPathSegment();
                 mInitialDictionaryQuery = initialQuery.getLastPathSegment();
             }
         }
@@ -85,9 +79,9 @@ class PagerAdapter extends FragmentPagerAdapter {
         if (position == Tab.RHYMER.ordinal()) {
             return ResultListFactory.createListFragment(Tab.RHYMER, mInitialRhymeQuery);
         } else if (position == Tab.THESAURUS.ordinal()) {
-            return ResultListFactory.createListFragment(Tab.THESAURUS, mInitialRhymeQuery);
+            return ResultListFactory.createListFragment(Tab.THESAURUS, mInitialThesaurusQuery);
         } else if (position == Tab.DICTIONARY.ordinal()) {
-            return ResultListFactory.createListFragment(Tab.DICTIONARY, mInitialRhymeQuery);
+            return ResultListFactory.createListFragment(Tab.DICTIONARY, mInitialDictionaryQuery);
         } else {
             return ReaderFragment.newInstance(mInitialPoemText);
         }

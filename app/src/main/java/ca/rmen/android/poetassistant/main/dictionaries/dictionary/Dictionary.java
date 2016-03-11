@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 import ca.rmen.android.poetassistant.main.dictionaries.DbUtil;
 
@@ -42,24 +43,48 @@ public class Dictionary {
         mDb = DbUtil.open(context, DB_FILE, DB_VERSION);
     }
 
-    public DictionaryEntry[] getEntries(String word) {
+    public DictionaryEntryDetails[] getEntries(String word) {
         String[] projection = new String[]{"part_of_speech", "definition"};
         String selection = "word=?";
         String[] selectionArgs = new String[]{word};
         Cursor cursor = mDb.query("dictionary", projection, selection, selectionArgs, null, null, null);
         if (cursor != null) {
-            DictionaryEntry[] result = new DictionaryEntry[cursor.getCount()];
+            DictionaryEntryDetails[] result = new DictionaryEntryDetails[cursor.getCount()];
             try {
                 while (cursor.moveToNext()) {
                     String partOfSpeech = cursor.getString(0);
                     String definition = cursor.getString(1);
-                    result[cursor.getPosition()] = new DictionaryEntry(partOfSpeech, definition);
+                    result[cursor.getPosition()] = new DictionaryEntryDetails(partOfSpeech, definition);
                 }
                 return result;
             } finally {
                 cursor.close();
             }
         }
-        return new DictionaryEntry[0];
+        return new DictionaryEntryDetails[0];
+    }
+
+    public DictionaryEntry getRandomEntry() {
+        String[] projection = new String[]{"word"};
+        String orderBy = "RANDOM()";
+        String limit = "1";
+        Cursor cursor = mDb.query(false, "dictionary", projection, null, null, null, null,
+                orderBy, limit);
+        if (cursor != null) {
+            String word = null;
+            try {
+                if (cursor.moveToNext()) {
+                    word = cursor.getString(0);
+                }
+            } finally {
+                cursor.close();
+            }
+
+            if (TextUtils.isEmpty(word)) return null;
+            DictionaryEntryDetails[] entryDetails = getEntries(word);
+            return new DictionaryEntry(word, entryDetails);
+        }
+
+        return null;
     }
 }

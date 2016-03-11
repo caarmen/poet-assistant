@@ -17,27 +17,14 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.rt;
+package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+public class DictionaryEntryDetails {
+    public final String partOfSpeech;
+    public final String definition;
 
-class RTUtils {
-
-    private RTUtils() {
-        // prevent instantiation
-    }
-
-    /**
-     * @return all the Strings in the array words which are present in the Set filter
-     */
-    static String[] filter(String[] words, Set<String> filter) {
-        if (words == null) return new String[0];
-        List<String> filteredWords = new ArrayList<>();
-        for (String word : words) {
-            if (filter.contains(word)) filteredWords.add(word);
-        }
-        return filteredWords.toArray(new String[filteredWords.size()]);
+    public DictionaryEntryDetails(String partOfSpeech, String definition) {
+        this.partOfSpeech = partOfSpeech;
+        this.definition = definition;
     }
 }
