@@ -1,5 +1,12 @@
 Change Log
 ==========
+1.3.1  *(2016-03-11)*
+--------------------
+
+* Support library fixes:
+   - Fixed crash when leaving the app and coming back
+   - Dark theme available on Marshmallow now
+
 1.3.0  *(2016-02-28)*
 --------------------
 
