@@ -34,6 +34,8 @@ import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -64,6 +66,7 @@ public class ResultListFragment<T> extends ListFragment
     static final String EXTRA_QUERY = "query";
     private Tab mTab;
     private ArrayAdapter<T> mAdapter;
+    private List<T> mData;
     private TextView mListHeaderTextView;
     private View mFilterView;
     private TextView mFilterTextView;
@@ -72,6 +75,11 @@ public class ResultListFragment<T> extends ListFragment
     private Tts mTts;
     private TextView mEmptyView;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -134,6 +142,23 @@ public class ResultListFragment<T> extends ListFragment
         outState.putString(EXTRA_FILTER, (String) mFilterTextView.getText());
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_share) {
+            ResultListRenderer renderer = ResultListFactory.createRenderer(getActivity(), mTab,
+                    mListHeaderTextView.getText().toString(),
+                    mData);
+            Share.share(getActivity(), renderer);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.action_share).setEnabled(mData != null && !mData.isEmpty());
+    }
+
     public void query(String query) {
         Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
         mListHeaderTextView.setText(query);
@@ -175,6 +200,7 @@ public class ResultListFragment<T> extends ListFragment
         Log.d(TAG, mTab + ": onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
         mAdapter.clear();
         mAdapter.addAll(data);
+        mData = data;
         updateUi();
 
         // Hide the keyboard
@@ -209,6 +235,7 @@ public class ResultListFragment<T> extends ListFragment
     public void onLoaderReset(Loader<List<T>> loader) {
         Log.d(TAG, mTab + ": onLoaderReset() called with: " + "loader = [" + loader + "]");
         mAdapter.clear();
+        mData = null;
         updateUi();
     }
 

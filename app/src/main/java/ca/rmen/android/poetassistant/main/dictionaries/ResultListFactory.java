@@ -34,9 +34,11 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntryDetails;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListAdapter;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListRenderer;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListRenderer;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
 
@@ -91,6 +93,17 @@ public class ResultListFactory {
             default:
                 return new DictionaryLoader(activity, query);
 
+        }
+    }
+
+    static <T> ResultListRenderer<?> createRenderer(Context context, Tab tab, String word, List<T> data) {
+        if (tab == Tab.DICTIONARY) {
+            return new DictionaryListRenderer(context, word, (List<DictionaryEntryDetails>) data);
+        } else {
+            int titleResId;
+            if (tab == Tab.RHYMER) titleResId = R.string.share_rhymer;
+            else titleResId = R.string.share_thesaurus;
+            return new RTListRenderer(context, titleResId, word, (List<RTEntry>) data);
         }
     }
 
