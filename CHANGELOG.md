@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+1.5.0  *(2016-03-19)*
+--------------------
+
+* Added a "Share" feature from the rhymer, thesaurus, and dictionary tabs, to share the results as text.
+* Added a boot receiver, so that if you enable the "Word of the day" feature, and reboot your phone, the word of the day will still be scheduled.
+
 1.4.0  *(2016-03-11)*
 --------------------
 
