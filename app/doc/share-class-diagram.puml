@@ -1,0 +1,92 @@
+@startuml
+title Rhymer, Thesaurus, Dictionary sharing class diagram
+package "android" {
+  class SQLiteDatabase 
+}
+package "main" {
+  package "dictionaries" {
+    package "dictionary" {
+      class Dictionary  {
+        getEntries(word)
+        getRandomEntry()
+      }
+      class DictionaryEntry {
+        String word
+      }
+      class DictionaryEntryDetails {
+        String partOfSpeech
+        String definition
+      }
+      class DictionaryLookup {
+      }
+      class DictionaryListSharer {
+      }
+      Dictionary *-- "1" SQLiteDatabase
+      Dictionary *-- "*" DictionaryEntryDetails
+      DictionaryEntry *-- "*" DictionaryEntryDetails
+      DictionaryLookup o-- "1" Dictionary
+      DictionaryListSharer o-- "1" DictionaryLookup
+    } 
+    package "rt" {
+      class RTEntry {
+        Type type
+        String text
+      }
+      enum RTEntry.Type {
+        HEADING
+        SUBHEADING
+        WORD
+      }
+      class Rhymer {
+        getRhymingWords(word)
+      }
+      class RhymerLookup {
+      }
+      class RhymerListSharer {
+      }
+
+      class Thesaurus {
+        getEntries(word)
+      }
+      class ThesaurusLookup {
+      }
+      class ThesaurusListSharer {
+      }
+
+      RTEntry *-- "1" RTEntry.Type
+
+      Rhymer *-- "1" SQLiteDatabase
+      RhymerLookup o-- "1" Rhymer
+      RhymerLookup o-- "1" Thesaurus 
+      RhymerLookup o-- "*" RTEntry
+      RhymerListSharer o-- "1" RhymerLookup
+
+      Thesaurus *-- "1" SQLiteDatabase
+      ThesaurusLookup o-- "1" Thesaurus
+      ThesaurusLookup o-- "1" Rhymer
+      ThesaurusListSharer o-- "1" ThesaurusLookup
+      ThesaurusLookup o-- "*" RTEntry
+    }
+    class ResultListFragment {
+    }
+    class ResultListFactory {
+    }
+    class Share {
+    }
+    abstract class ResultListSharer {
+      getHtmlShareInfo(word, filter)
+    }
+    class ShareInfo {
+      String title
+      CharSequence content
+    }
+
+    ResultListFragment ..> Share
+    ResultListSharer *-- "1" ShareInfo
+    ResultListSharer <|-- DictionaryListSharer
+    ResultListSharer <|-- RhymerListSharer
+    ResultListSharer <|-- ThesaurusListSharer
+    Share o-- "1" ResultListSharer
+  }
+}
+@enduml

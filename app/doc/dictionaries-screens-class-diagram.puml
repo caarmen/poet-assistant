@@ -1,0 +1,101 @@
+@startuml
+title Rhymer, Thesaurus, Dictionary screens class diagram
+package "android" {
+  class SQLiteDatabase 
+  class ArrayAdapter
+}
+package "main" {
+  package "dictionaries" {
+    package "dictionary" {
+      class Dictionary  {
+        getEntries(word)
+        getRandomEntry()
+      }
+      class DictionaryEntry {
+        String word
+      }
+      class DictionaryEntryDetails {
+        String partOfSpeech
+        String definition
+      }
+      class DictionaryListAdapter {
+      }
+      class DictionaryLoader {
+      }
+      class DictionaryLookup {
+      }
+      Dictionary *-- "1" SQLiteDatabase
+      Dictionary *-- "*" DictionaryEntryDetails
+      DictionaryEntry *-- "*" DictionaryEntryDetails
+      DictionaryListAdapter *-- "*" DictionaryEntryDetails
+      DictionaryLoader o-- "1" DictionaryLookup
+      DictionaryLoader *-- "*" DictionaryEntryDetails
+      DictionaryLookup o-- "1" Dictionary
+      ArrayAdapter <|-- DictionaryListAdapter
+    } 
+    package "rt" {
+      class RTEntry {
+        Type type
+        String text
+      }
+      enum RTEntry.Type {
+        HEADING
+        SUBHEADING
+        WORD
+      }
+      class RTListAdapter {
+      }
+      class RhymeResult {
+        int variantNumber
+        String[] strictRhymes
+        String[] oneSyllableRhymes
+        String[] twoSyllableRhymes
+        String[] threeSyllableRhymes
+      }
+      class Rhymer {
+        getRhymingWords(word)
+      }
+      class RhymerLoader {
+      }
+      class RhymerLookup {
+      }
+
+      class Thesaurus {
+        getEntries(word)
+      }
+      class ThesaurusEntry {
+        WordType wordType
+        String[] synonyms
+        String[] antonyms
+      }
+      class ThesaurusLoader {
+      }
+      class ThesaurusLookup {
+      }
+
+      RTEntry *-- "1" RTEntry.Type
+      RTListAdapter *-- "*" RTEntry
+      ArrayAdapter <|-- RTListAdapter
+
+      Rhymer *-- "1" SQLiteDatabase
+      Rhymer *-- "*" RhymeResult
+      RhymerLoader o-- "1" RhymerLookup
+      RhymerLoader *-- "*" RTEntry
+      RhymerLookup o-- "1" Rhymer
+      RhymerLookup o-- "1" Thesaurus 
+
+      Thesaurus *-- "1" SQLiteDatabase
+      Thesaurus *-- "*" ThesaurusEntry
+      ThesaurusLoader o-- "1" ThesaurusLookup
+      ThesaurusLoader *-- "*" RTEntry
+      ThesaurusLookup o-- "1" Thesaurus
+      ThesaurusLookup o-- "1" Rhymer
+    }
+    class ResultListFragment {
+    }
+    class ResultListFactory {
+    }
+    ResultListFragment *-- "1" ArrayAdapter
+  }
+}
+@enduml
