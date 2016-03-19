@@ -64,7 +64,9 @@ public class LicenseActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String title = intent.getStringExtra(EXTRA_TITLE);
         String licenseFile = intent.getStringExtra(EXTRA_LICENSE_TEXT_ASSET_FILE);
-        ((TextView) findViewById(R.id.tv_title)).setText(title);
+        TextView titleTextView = (TextView) findViewById(R.id.tv_title);
+        assert titleTextView != null;
+        titleTextView.setText(title);
         loadLicenseFile(licenseFile);
     }
 
@@ -97,7 +99,9 @@ public class LicenseActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(String licenseText) {
-                ((TextView) findViewById(R.id.tv_license_text)).setText(licenseText);
+                TextView licenseTextView = (TextView) findViewById(R.id.tv_license_text);
+                assert licenseTextView != null;
+                licenseTextView.setText(licenseText);
             }
         }.execute(fileName);
 

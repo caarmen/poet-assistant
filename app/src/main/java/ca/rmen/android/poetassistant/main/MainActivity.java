@@ -73,11 +73,13 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
+        assert mViewPager != null;
         mViewPager.setAdapter(pagerAdapter);
         mViewPager.setOffscreenPageLimit(3);
         mViewPager.addOnPageChangeListener(mOnPageChangeListener);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        assert tabLayout != null;
         tabLayout.setupWithViewPager(mViewPager);
 
         // If the app was launched with a query for the thesaurus, focus on that tab.
@@ -163,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         } else if (item.getItemId() == R.id.action_clear_search_history) {
             mSearch.clearSearchHistory();
             View rootView = findViewById(android.R.id.content);
+            assert rootView != null;
             Snackbar.make(rootView, R.string.search_history_cleared, Snackbar.LENGTH_SHORT).show();
             return true;
         } else if (item.getItemId() == R.id.action_settings) {

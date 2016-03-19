@@ -50,7 +50,9 @@ public class AboutActivity extends AppCompatActivity {
             throw new AssertionError(e);
         }
         String appVersionText = getString(R.string.about_app_version, getString(R.string.app_name), versionName);
-        ((TextView) findViewById(R.id.txtVersion)).setText(appVersionText);
+        TextView versionTextView = (TextView) findViewById(R.id.txtVersion);
+        assert versionTextView != null;
+        versionTextView.setText(appVersionText);
     }
 
     @SuppressWarnings("unused")

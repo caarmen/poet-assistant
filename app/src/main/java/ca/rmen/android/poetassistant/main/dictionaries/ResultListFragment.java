@@ -217,8 +217,9 @@ public class ResultListFragment<T> extends ListFragment
         if (actionId == ACTION_FILTER) {
             if (!TextUtils.isEmpty(input)) {
                 mFilterView.setVisibility(View.VISIBLE);
-                mFilterTextView.setText(input);
-                filter(input.toLowerCase(Locale.getDefault()).trim());
+                String normalizedInput = input.toLowerCase(Locale.getDefault()).trim();
+                mFilterTextView.setText(normalizedInput);
+                filter(normalizedInput);
             } else {
                 mFilterView.setVisibility(View.GONE);
                 mFilterTextView.setText(null);
