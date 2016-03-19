@@ -34,10 +34,13 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntryDetails;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListAdapter;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListExporter;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListExporter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusListExporter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
 
 
@@ -91,6 +94,18 @@ public class ResultListFactory {
             default:
                 return new DictionaryLoader(activity, query);
 
+        }
+    }
+
+    static ResultListExporter<?> createExporter(Context context, Tab tab) {
+        switch (tab) {
+            case RHYMER:
+                return new RhymerListExporter(context);
+            case THESAURUS:
+                return new ThesaurusListExporter(context);
+            case DICTIONARY:
+            default:
+                return new DictionaryListExporter(context);
         }
     }
 

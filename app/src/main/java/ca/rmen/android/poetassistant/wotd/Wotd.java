@@ -116,8 +116,7 @@ public final class Wotd {
     private static CharSequence buildWotdContent(Context context, DictionaryEntry entry) {
         StringBuilder builder = new StringBuilder(entry.word);
         for (DictionaryEntryDetails details : entry.details) {
-            builder.append("<br>\n")
-                    .append(context.getString(R.string.wotd_notification_definition, details.partOfSpeech, details.definition));
+            builder.append(context.getString(R.string.wotd_notification_definition, details.partOfSpeech, details.definition));
         }
         String content = builder.toString();
         return Html.fromHtml(content);

@@ -150,7 +150,7 @@ public class ReaderFragment extends Fragment implements
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.putExtra(Intent.EXTRA_TEXT, mTextView.getText().toString());
             intent.setType("text/plain");
-            startActivity(Intent.createChooser(intent, getString(R.string.file_share)));
+            startActivity(Intent.createChooser(intent, getString(R.string.share)));
         }
         return true;
     }
