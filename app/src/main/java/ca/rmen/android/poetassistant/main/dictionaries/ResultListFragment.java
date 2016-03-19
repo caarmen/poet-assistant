@@ -66,7 +66,6 @@ public class ResultListFragment<T> extends ListFragment
     static final String EXTRA_QUERY = "query";
     private Tab mTab;
     private ArrayAdapter<T> mAdapter;
-    private List<T> mData;
     private TextView mListHeaderTextView;
     private View mFilterView;
     private TextView mFilterTextView;
@@ -145,10 +144,7 @@ public class ResultListFragment<T> extends ListFragment
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_share) {
-            ResultListRenderer renderer = ResultListFactory.createRenderer(getActivity(), mTab,
-                    mListHeaderTextView.getText().toString(),
-                    mData);
-            Share.share(getActivity(), renderer);
+            Share.share(getActivity(), mTab, mListHeaderTextView.getText().toString(), mFilterTextView.getText().toString());
         }
         return super.onOptionsItemSelected(item);
     }
@@ -156,7 +152,7 @@ public class ResultListFragment<T> extends ListFragment
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.action_share).setEnabled(mData != null && !mData.isEmpty());
+        menu.findItem(R.id.action_share).setEnabled(!mAdapter.isEmpty());
     }
 
     public void query(String query) {
@@ -200,7 +196,7 @@ public class ResultListFragment<T> extends ListFragment
         Log.d(TAG, mTab + ": onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
         mAdapter.clear();
         mAdapter.addAll(data);
-        mData = data;
+        getActivity().supportInvalidateOptionsMenu();
         updateUi();
 
         // Hide the keyboard
@@ -235,7 +231,7 @@ public class ResultListFragment<T> extends ListFragment
     public void onLoaderReset(Loader<List<T>> loader) {
         Log.d(TAG, mTab + ": onLoaderReset() called with: " + "loader = [" + loader + "]");
         mAdapter.clear();
-        mData = null;
+        getActivity().supportInvalidateOptionsMenu();
         updateUi();
     }
 

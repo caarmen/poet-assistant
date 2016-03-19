@@ -20,28 +20,31 @@
 package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
 
 import android.content.Context;
+import android.support.annotation.WorkerThread;
+import android.text.Html;
 
 import java.util.List;
 
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListRenderer;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListSharer;
 
-public class DictionaryListRenderer extends ResultListRenderer<List<DictionaryEntryDetails>> {
+public class DictionaryListSharer extends ResultListSharer {
     private final Context mContext;
 
-    public DictionaryListRenderer(Context context, String word, List<DictionaryEntryDetails> entries) {
-        super(word, entries);
-        mContext = context;
+    public DictionaryListSharer(Context context) {
+        mContext = context.getApplicationContext();
     }
 
+    @WorkerThread
     @Override
-    public String toHtml() {
-        String title = mContext.getString(R.string.share_dictionary, mWord);
-        StringBuilder builder = new StringBuilder(title);
-        for (DictionaryEntryDetails entry : mData) {
+    public ShareInfo getHtmlShareInfo(String word, String filter) {
+        DictionaryLookup dictionaryLookup = new DictionaryLookup(mContext, word);
+        String title = mContext.getString(R.string.share_dictionary, word);
+        StringBuilder builder = new StringBuilder();
+        List<DictionaryEntryDetails> entries = dictionaryLookup.lookup();
+        for (DictionaryEntryDetails entry : entries) {
             builder.append(mContext.getString(R.string.wotd_notification_definition, entry.partOfSpeech, entry.definition));
         }
-        return builder.toString();
+        return new ShareInfo(title, Html.fromHtml(builder.toString()));
     }
 }

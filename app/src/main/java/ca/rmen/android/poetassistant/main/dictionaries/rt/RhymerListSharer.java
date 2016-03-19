@@ -20,27 +20,29 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.content.Context;
+import android.support.annotation.WorkerThread;
+import android.text.Html;
 
 import java.util.List;
 
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListRenderer;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListSharer;
 
-public class RTListRenderer extends ResultListRenderer<List<RTEntry>> {
+public class RhymerListSharer extends ResultListSharer {
     private final Context mContext;
-    private final int mTitleResId;
 
-    public RTListRenderer(Context context, int titleResId, String word, List<RTEntry> entries) {
-        super(word, entries);
-        mContext = context;
-        mTitleResId = titleResId;
+    public RhymerListSharer(Context context) {
+        mContext = context.getApplicationContext();
     }
 
+    @WorkerThread
     @Override
-    public String toHtml() {
-        String title = mContext.getString(mTitleResId, mWord);
-        StringBuilder builder = new StringBuilder(title);
-        for (RTEntry entry : mData) {
+    public ShareInfo getHtmlShareInfo(String word, String filter) {
+        RhymerLookup rhymerLookup = new RhymerLookup(mContext, word, filter);
+        String title = mContext.getString(R.string.share_rhymer, word);
+        StringBuilder builder = new StringBuilder();
+        List<RTEntry> entries = rhymerLookup.lookup();
+        for (RTEntry entry : entries) {
             int entryResId;
             if (entry.type == RTEntry.Type.HEADING) entryResId = R.string.share_heading;
             else if (entry.type == RTEntry.Type.SUBHEADING)
@@ -48,6 +50,6 @@ public class RTListRenderer extends ResultListRenderer<List<RTEntry>> {
             else entryResId = R.string.share_rt_entry;
             builder.append(mContext.getString(entryResId, entry.text));
         }
-        return builder.toString();
+        return new ShareInfo(title, Html.fromHtml(builder.toString()));
     }
 }

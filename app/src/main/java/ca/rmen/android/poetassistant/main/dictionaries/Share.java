@@ -22,11 +22,11 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.text.Html;
 import android.util.Log;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.Tab;
 
 public final class Share {
     private static final String TAG = Constants.TAG + Share.class.getSimpleName();
@@ -35,18 +35,24 @@ public final class Share {
         // prevent instantiation
     }
 
-    public static final void share(final Context context, final ResultListRenderer renderer) {
-        new AsyncTask<Void, Void, String>() {
+    public static final void share(final Context context, Tab tab, final String word, final String filter) {
+
+        final ResultListSharer sharer = ResultListFactory.createSharer(
+                context,
+                tab);
+
+        new AsyncTask<Void, Void, ResultListSharer.ShareInfo>() {
             @Override
-            protected String doInBackground(Void... params) {
-                return renderer.toHtml();
+            protected ResultListSharer.ShareInfo doInBackground(Void... params) {
+                return sharer.getHtmlShareInfo(word, filter);
             }
 
             @Override
-            protected void onPostExecute(String text) {
-                Log.v(TAG, "Will share " + text);
+            protected void onPostExecute(ResultListSharer.ShareInfo shareInfo) {
+                Log.v(TAG, "Will share " + shareInfo);
                 Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(text));
+                intent.putExtra(Intent.EXTRA_SUBJECT, shareInfo.title);
+                intent.putExtra(Intent.EXTRA_TEXT, shareInfo.content);
                 intent.setType("text/html");
                 context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
             }

@@ -19,14 +19,27 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries;
 
-public abstract class ResultListRenderer<T> {
-    protected final T mData;
-    protected final String mWord;
+import android.support.annotation.WorkerThread;
 
-    protected ResultListRenderer(String word, T data) {
-        mWord = word;
-        mData = data;
+public abstract class ResultListSharer {
+    public static class ShareInfo {
+        public final String title;
+        public final CharSequence content;
+
+        public ShareInfo(String title, CharSequence content) {
+            this.title = title;
+            this.content = content;
+        }
+
+        @Override
+        public String toString() {
+            return "ShareInfo{" +
+                    "title='" + title + '\'' +
+                    ", content=" + content +
+                    '}';
+        }
     }
 
-    public abstract String toHtml();
+    @WorkerThread
+    public abstract ShareInfo getHtmlShareInfo(String word, String filter);
 }

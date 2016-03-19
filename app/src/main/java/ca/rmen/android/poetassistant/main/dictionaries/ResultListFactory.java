@@ -34,12 +34,13 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntryDetails;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListAdapter;
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListRenderer;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListSharer;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListRenderer;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListSharer;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusListSharer;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
 
 
@@ -96,14 +97,13 @@ public class ResultListFactory {
         }
     }
 
-    static <T> ResultListRenderer<?> createRenderer(Context context, Tab tab, String word, List<T> data) {
+    static ResultListSharer createSharer(Context context, Tab tab) {
         if (tab == Tab.DICTIONARY) {
-            return new DictionaryListRenderer(context, word, (List<DictionaryEntryDetails>) data);
+            return new DictionaryListSharer(context);
+        } else if (tab == Tab.RHYMER) {
+            return new RhymerListSharer(context);
         } else {
-            int titleResId;
-            if (tab == Tab.RHYMER) titleResId = R.string.share_rhymer;
-            else titleResId = R.string.share_thesaurus;
-            return new RTListRenderer(context, titleResId, word, (List<RTEntry>) data);
+            return new ThesaurusListSharer(context);
         }
     }
 

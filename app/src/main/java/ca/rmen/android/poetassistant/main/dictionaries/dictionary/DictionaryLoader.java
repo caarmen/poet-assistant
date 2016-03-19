@@ -21,11 +21,8 @@ package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
-import android.text.TextUtils;
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import ca.rmen.android.poetassistant.Constants;
@@ -34,28 +31,23 @@ public class DictionaryLoader extends AsyncTaskLoader<List<DictionaryEntryDetail
 
     private static final String TAG = Constants.TAG + DictionaryLoader.class.getSimpleName();
 
-    private final String mQuery;
+    private final DictionaryLookup mDictionaryLookup;
     private List<DictionaryEntryDetails> mResult;
 
     public DictionaryLoader(Context context, String query) {
         super(context);
-        mQuery = query;
+        mDictionaryLookup = new DictionaryLookup(context, query);
     }
 
     @Override
     public List<DictionaryEntryDetails> loadInBackground() {
-        Log.d(TAG, "loadInBackground() called with: " + "");
-        List<DictionaryEntryDetails> result = new ArrayList<>();
-        if(TextUtils.isEmpty(mQuery)) return result;
-        Dictionary dictionary = Dictionary.getInstance(getContext());
-        DictionaryEntryDetails[] entries = dictionary.getEntries(mQuery);
-        Collections.addAll(result, entries);
-        return result;
+        Log.d(TAG, "loadInBackground() called");
+        return mDictionaryLookup.lookup();
     }
 
     @Override
     public void deliverResult(List<DictionaryEntryDetails> data) {
-        Log.d(TAG, "deliverResult() called with: query = " + mQuery + ", data = [" + data + "]");
+        Log.d(TAG, "deliverResult() called");
         mResult = data;
         if (isStarted()) super.deliverResult(data);
     }
@@ -63,7 +55,7 @@ public class DictionaryLoader extends AsyncTaskLoader<List<DictionaryEntryDetail
     @Override
     protected void onStartLoading() {
         super.onStartLoading();
-        Log.d(TAG, "onStartLoading() called with: query = " + mQuery);
+        Log.d(TAG, "onStartLoading() called");
         if (mResult != null) super.deliverResult(mResult);
         else forceLoad();
     }
