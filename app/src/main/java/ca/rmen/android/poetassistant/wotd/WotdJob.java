@@ -57,7 +57,7 @@ final class WotdJob {
                 .setBackoffCriteria(30, JobInfo.BACKOFF_POLICY_EXPONENTIAL)
                 .setRequiresDeviceIdle(false)
                 .setPeriodic(Wotd.NOTIFICATION_FREQUENCY_MS)
-                .setPersisted(false) // If we want to use this, we need the permission RECEIVE_BOOT_COMPLETED
+                .setPersisted(true)
                 .setRequiresCharging(false)
                 .build();
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
