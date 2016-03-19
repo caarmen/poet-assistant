@@ -19,6 +19,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ca.rmen.android.poetassistant">
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_scheme"
@@ -102,6 +104,11 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="action_wotd" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".wotd.WotdBootReceiver" android:enabled="@bool/wotd_boot_receiver_enabled">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>

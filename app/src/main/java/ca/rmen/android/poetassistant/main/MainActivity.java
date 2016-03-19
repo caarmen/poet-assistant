@@ -91,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         mSearch = new Search(this, mViewPager);
         loadDictionaries();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-        Wotd.reschedule(getApplicationContext());
     }
 
     /**
