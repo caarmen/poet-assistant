@@ -19,11 +19,13 @@
 
 package ca.rmen.android.poetassistant.wotd;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
 import android.text.Html;
@@ -92,7 +94,7 @@ public final class Wotd {
         DictionaryEntry entry = Dictionary.getInstance(context).getRandomEntry();
         if (entry == null) return;
         String title = context.getString(R.string.wotd_notification_title, entry.word);
-        CharSequence content = buildWotdContent(context, entry);
+        CharSequence content = buildWotdNotificationContent(context, entry);
         Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle().bigText(content);
         Uri uri = Uri.parse(String.format("poetassistant://%s/%s", Constants.DEEP_LINK_QUERY, entry.word));
         Intent intent = new Intent(context, MainActivity.class)
@@ -101,25 +103,67 @@ public final class Wotd {
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         int iconId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? R.drawable.ic_book_vector : R.drawable.ic_book;
-        Notification notification = new Notification.Builder(context)
+        Notification.Builder builder = new Notification.Builder(context)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setContentText(content)
                 .setContentTitle(title)
                 .setSmallIcon(iconId)
-                .setStyle(bigTextStyle)
-                .build();
+                .setStyle(bigTextStyle);
+        setShareAction(context, builder, entry);
+        Notification notification = builder.build();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(TAG.hashCode(), notification);
     }
 
-    private static CharSequence buildWotdContent(Context context, DictionaryEntry entry) {
+    private static CharSequence buildWotdNotificationContent(Context context, DictionaryEntry entry) {
         StringBuilder builder = new StringBuilder(entry.word);
         for (DictionaryEntryDetails details : entry.details) {
             builder.append(context.getString(R.string.wotd_notification_definition, details.partOfSpeech, details.definition));
         }
         String content = builder.toString();
         return Html.fromHtml(content);
+    }
+
+    private static CharSequence buildWotdShareContent(Context context, DictionaryEntry entry) {
+        StringBuilder builder = new StringBuilder(context.getString(R.string.share_dictionary_title, entry.word));
+        for (DictionaryEntryDetails details : entry.details) {
+            builder.append(context.getString(R.string.share_dictionary_entry, details.partOfSpeech, details.definition));
+        }
+        return builder.toString();
+    }
+
+    private static void setShareAction(Context context, Notification.Builder builder, DictionaryEntry entry) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            builder.addAction(buildShareAction23(context, entry));
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            builder.addAction(buildShareAction20(context, entry));
+        } else {
+            //noinspection deprecation
+            builder.addAction(getShareIconId(), context.getString(R.string.share), getShareIntent(context, entry));
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
+    private static Notification.Action buildShareAction20(Context context, DictionaryEntry entry) {
+        //noinspection deprecation
+        return new Notification.Action.Builder(getShareIconId(), context.getString(R.string.share), getShareIntent(context, entry)).build();
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private static Notification.Action buildShareAction23(Context context, DictionaryEntry entry) {
+        return new Notification.Action.Builder(Icon.createWithResource(context, R.drawable.ic_share_vector), context.getString(R.string.share), getShareIntent(context, entry)).build();
+    }
+
+    private static int getShareIconId() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? R.drawable.ic_share_vector : R.drawable.ic_share;
+    }
+
+    private static PendingIntent getShareIntent(Context context, DictionaryEntry entry) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, buildWotdShareContent(context, entry));
+        intent.setType("text/plain");
+        return PendingIntent.getActivity(context, 0, intent, 0);
     }
 
 }
