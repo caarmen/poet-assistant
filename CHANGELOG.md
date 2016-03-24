@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.5.1  *(2016-03-24)*
+--------------------
+
+* Added a "Share" action from the "Word of the day" notification
+
 1.5.0  *(2016-03-19)*
 --------------------
 
