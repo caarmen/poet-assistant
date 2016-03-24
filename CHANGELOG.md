@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.5.2  *(2016-03-25)*
+--------------------
+
+* Fixed a big with the "Share" action from the "Word of the day" notification, where the share text was not updated
+
 1.5.1  *(2016-03-24)*
 --------------------
 
