@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.wotd;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import ca.rmen.android.poetassistant.Constants;
@@ -33,7 +32,9 @@ public class WotdBootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive: intent = " + intent);
-        Wotd.reschedule(context);
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
+            Wotd.reschedule(context);
+        }
     }
 
 }

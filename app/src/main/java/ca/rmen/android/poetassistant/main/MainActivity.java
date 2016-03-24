@@ -49,7 +49,6 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus;
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
-import ca.rmen.android.poetassistant.wotd.Wotd;
 
 
 public class MainActivity extends AppCompatActivity implements OnWordClickedListener {
