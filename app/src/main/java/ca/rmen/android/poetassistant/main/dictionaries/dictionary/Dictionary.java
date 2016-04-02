@@ -25,10 +25,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
 import ca.rmen.android.poetassistant.main.dictionaries.DbUtil;
+import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities;
 
 public class Dictionary {
     private static final String DB_FILE = "dictionary";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     private static Dictionary sInstance;
 
@@ -43,11 +44,22 @@ public class Dictionary {
         mDb = DbUtil.open(context, DB_FILE, DB_VERSION);
     }
 
-    public DictionaryEntryDetails[] getEntries(String word) {
+    public DictionaryEntry getEntries(String word) {
         String[] projection = new String[]{"part_of_speech", "definition"};
         String selection = "word=?";
         String[] selectionArgs = new String[]{word};
+        String lookupWord = word;
         Cursor cursor = mDb.query("dictionary", projection, selection, selectionArgs, null, null, null);
+
+        if (cursor != null && cursor.getCount() == 0) {
+            String closestWord = new WordSimilarities().findClosestWord(word, mDb, "stems", "word", "stem");
+            if (closestWord != null) {
+                lookupWord = closestWord;
+                cursor.close();
+                selectionArgs = new String[]{lookupWord};
+                cursor = mDb.query("dictionary", projection, selection, selectionArgs, null, null, null);
+            }
+        }
         if (cursor != null) {
             DictionaryEntryDetails[] result = new DictionaryEntryDetails[cursor.getCount()];
             try {
@@ -56,12 +68,12 @@ public class Dictionary {
                     String definition = cursor.getString(1);
                     result[cursor.getPosition()] = new DictionaryEntryDetails(partOfSpeech, definition);
                 }
-                return result;
+                return new DictionaryEntry(lookupWord, result);
             } finally {
                 cursor.close();
             }
         }
-        return new DictionaryEntryDetails[0];
+        return new DictionaryEntry(word, new DictionaryEntryDetails[0]);
     }
 
     public DictionaryEntry getRandomEntry() {
@@ -81,8 +93,7 @@ public class Dictionary {
             }
 
             if (TextUtils.isEmpty(word)) return null;
-            DictionaryEntryDetails[] entryDetails = getEntries(word);
-            return new DictionaryEntry(word, entryDetails);
+            return getEntries(word);
         }
 
         return null;

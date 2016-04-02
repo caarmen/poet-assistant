@@ -48,7 +48,10 @@ public class DbUtil {
         File dbPath = getDbFile(context, dbFileName);
         if (!dbPath.exists()) {
             Log.v(TAG, dbPath + " not found");
-            if (version > 1) deleteDb(context, dbName, version - 1);
+            for (int i = 0; i < version; i++) {
+                deleteDb(context, dbName, i);
+            }
+
             try {
                 InputStream is = context.getAssets().open(dbFileName);
                 FileOutputStream os = new FileOutputStream(dbPath);

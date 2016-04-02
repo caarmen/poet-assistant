@@ -29,10 +29,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import ca.rmen.android.poetassistant.main.dictionaries.DbUtil;
+import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities;
 
 public class Thesaurus {
     private static final String DB_FILE = "thesaurus";
-    private static final int DB_VERSION = 1;
+    private static final int DB_VERSION = 2;
 
     private static Thesaurus sInstance;
 
@@ -47,6 +48,15 @@ public class Thesaurus {
     }
 
 
+    public static class ThesaurusResults {
+        public final String matchedWord;
+        public final ThesaurusEntry[] entries;
+
+        public ThesaurusResults(String matchedWord, ThesaurusEntry[] entries) {
+            this.matchedWord = matchedWord;
+            this.entries = entries;
+        }
+    }
     public static class ThesaurusEntry {
         public final WordType wordType;
         public final String[] synonyms;
@@ -68,11 +78,24 @@ public class Thesaurus {
         mDb = DbUtil.open(context, DB_FILE, DB_VERSION);
     }
 
-    public ThesaurusEntry[] getEntries(String word) {
+    public ThesaurusResults getEntries(String word) {
         String[] projection = new String[]{"word_type", "synonyms", "antonyms"};
         String selection = "word=?";
         String[] selectionArgs = new String[]{word};
+        String lookupWord = word;
         Cursor cursor = mDb.query("thesaurus", projection, selection, selectionArgs, null, null, null);
+
+
+        if (cursor != null && cursor.getCount() == 0) {
+            String closestWord = new WordSimilarities().findClosestWord(word, mDb, "thesaurus", "word", "stem");
+            if (closestWord != null) {
+                lookupWord = closestWord;
+                cursor.close();
+                selectionArgs = new String[]{lookupWord};
+                cursor = mDb.query("thesaurus", projection, selection, selectionArgs, null, null, null);
+            }
+        }
+
         if (cursor != null) {
             ThesaurusEntry[] result = new ThesaurusEntry[cursor.getCount()];
             try {
@@ -84,12 +107,12 @@ public class Thesaurus {
                     String[] antonyms = split(antonymsList);
                     result[cursor.getPosition()] = new ThesaurusEntry(wordType, synonyms, antonyms);
                 }
-                return result;
+                return new ThesaurusResults(lookupWord, result);
             } finally {
                 cursor.close();
             }
         }
-        return new ThesaurusEntry[0];
+        return new ThesaurusResults(word, new ThesaurusEntry[0]);
     }
 
     /**

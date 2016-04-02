@@ -27,8 +27,6 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
-import java.util.List;
-
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.Tab;
@@ -84,7 +82,7 @@ public class ResultListFactory {
         }
     }
 
-    public static AsyncTaskLoader<? extends List> createLoader(Tab tab, Activity activity, String query, String filter) {
+    public static AsyncTaskLoader<? extends ResultListData<?>> createLoader(Tab tab, Activity activity, String query, String filter) {
         switch (tab) {
             case RHYMER:
                 return new RhymerLoader(activity, query, filter);
