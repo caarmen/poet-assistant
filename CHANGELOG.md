@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.6.0  *(2016-04-02)*
+--------------------
+
+* If a thesaurus or dictionary lookup fails, retry a lookup on the word stem.
+
 1.5.2  *(2016-03-25)*
 --------------------
 

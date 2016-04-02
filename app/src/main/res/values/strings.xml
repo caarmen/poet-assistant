@@ -49,6 +49,7 @@
     <string name="about_license_thesaurus">WordNet Thesaurus License</string>
     <string name="about_license_dictionary">WordNet Dictionary License</string>
     <string name="about_license_event_bus">Green Robot Event Bus License: http://greenrobot.org/eventbus/license/</string>
+    <string name="about_porter_stemming_algorithm">Porter stemming algorithm: http://tartarus.org/martin/PorterStemmer/</string>
     <string name="license_title">Licensing Information</string>
     <string name="file_clear">Clear text</string>
     <string name="file_new">New</string>
