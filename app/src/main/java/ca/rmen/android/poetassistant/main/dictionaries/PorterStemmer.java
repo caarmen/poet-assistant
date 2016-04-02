@@ -34,6 +34,7 @@ public class PorterStemmer {
 
     public String stemWord(String word) {
         String stem = word.toLowerCase(Locale.getDefault());
+        if (stem.length() < 3) return stem;
         stem = stemStep1a(stem);
         stem = stemStep1b(stem);
         stem = stemStep1c(stem);
@@ -151,7 +152,7 @@ public class PorterStemmer {
                 "enci",
                 "anci",
                 "izer",
-                "abli",
+                "bli", // the published algorithm specifies abli instead of bli.
                 "alli",
                 "entli",
                 "eli",
@@ -166,6 +167,7 @@ public class PorterStemmer {
                 "aliti",
                 "iviti",
                 "biliti",
+                "logi", // the published algorithm doesn't contain this
         };
         String[] s2 = new String[]{
                 "ate",
@@ -173,7 +175,7 @@ public class PorterStemmer {
                 "ence",
                 "ance",
                 "ize",
-                "able",
+                "ble", // the published algorithm specifies able instead of ble
                 "al",
                 "ent",
                 "e",
@@ -188,6 +190,7 @@ public class PorterStemmer {
                 "al",
                 "ive",
                 "ble",
+                "log" // the published algorithm doesn't contain this
         };
         // (m>0) ATIONAL ->  ATE
         // (m>0) TIONAL  ->  TION
