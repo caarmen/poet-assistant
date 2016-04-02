@@ -64,6 +64,7 @@ public class ResultListFragment<T> extends ListFragment
     private static final String EXTRA_FILTER = "filter";
     static final String EXTRA_TAB = "tab";
     static final String EXTRA_QUERY = "query";
+    private static final String EXTRA_UNSTEMMED_QUERY = "unstemmed_query";
     private Tab mTab;
     private ArrayAdapter<T> mAdapter;
     private List<T> mData;
@@ -74,6 +75,7 @@ public class ResultListFragment<T> extends ListFragment
     private View mPlayButton;
     private Tts mTts;
     private TextView mEmptyView;
+    private String mUnstemmedQuery;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,6 +107,7 @@ public class ResultListFragment<T> extends ListFragment
 
         if (savedInstanceState != null) {
             String query = savedInstanceState.getString(EXTRA_QUERY);
+            mUnstemmedQuery = savedInstanceState.getString(EXTRA_UNSTEMMED_QUERY);
             String filter = savedInstanceState.getString(EXTRA_FILTER);
             mListHeaderTextView.setText(query);
             mFilterTextView.setText(filter);
@@ -139,6 +142,7 @@ public class ResultListFragment<T> extends ListFragment
         super.onSaveInstanceState(outState);
         Log.d(TAG, mTab + ": onSaveInstanceState() called with: " + "outState = [" + outState + "]");
         outState.putString(EXTRA_QUERY, (String) mListHeaderTextView.getText());
+        outState.putString(EXTRA_UNSTEMMED_QUERY, mUnstemmedQuery);
         outState.putString(EXTRA_FILTER, (String) mFilterTextView.getText());
     }
 
@@ -163,6 +167,7 @@ public class ResultListFragment<T> extends ListFragment
         Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
         mListHeaderTextView.setText(query);
         mFilterView.setVisibility(View.GONE);
+        mUnstemmedQuery = null;
         Bundle args = new Bundle(1);
         args.putString(EXTRA_QUERY, query);
         getLoaderManager().restartLoader(mTab.ordinal(), args, this);
@@ -218,11 +223,18 @@ public class ResultListFragment<T> extends ListFragment
         // If we have no results, try to look up results for the word stem,
         // except for the rhymer: we shouldn't strip suffixes when looking for rhymes.
         if (data.isEmpty() && mTab != Tab.RHYMER) {
-            String initialQuery = mListHeaderTextView.getText().toString();
-            String stem = new PorterStemmer().stemWord(initialQuery);
-            if (!initialQuery.equals(stem)) {
-                mListHeaderTextView.setText(stem);
-                reQuery();
+            if (TextUtils.isEmpty(mUnstemmedQuery)) {
+                mUnstemmedQuery = mListHeaderTextView.getText().toString();
+                String stem = new PorterStemmer().stemWord(mUnstemmedQuery);
+                if (!mUnstemmedQuery.equals(stem)) {
+                    mListHeaderTextView.setText(stem);
+                    reQuery();
+                }
+            }
+            // We are already looking up a stem and there were no results.
+            // Show the original word the user typed.
+            else {
+                mListHeaderTextView.setText(mUnstemmedQuery);
             }
         }
     }
