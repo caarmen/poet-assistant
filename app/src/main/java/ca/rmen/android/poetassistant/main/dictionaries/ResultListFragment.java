@@ -175,6 +175,13 @@ public class ResultListFragment<T> extends ListFragment
         getLoaderManager().restartLoader(mTab.ordinal(), args, this);
     }
 
+    private void requery() {
+        Bundle args = new Bundle(2);
+        args.putString(EXTRA_QUERY, mListHeaderTextView.getText().toString());
+        args.putString(EXTRA_FILTER, mFilterTextView.getText().toString());
+        getLoaderManager().restartLoader(mTab.ordinal(), args, this);
+    }
+
     private void updatePlayButton() {
         int ttsStatus = mTts.getStatus();
         int playButtonVisibility = ttsStatus == TextToSpeech.SUCCESS ? View.VISIBLE : View.GONE;
@@ -207,6 +214,17 @@ public class ResultListFragment<T> extends ListFragment
         getListView().requestFocus();
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getListView().getWindowToken(), 0);
+
+        // If we have no results, try to look up results for the word stem,
+        // except for the rhymer: we shouldn't strip suffixes when looking for rhymes.
+        if (data.isEmpty() && mTab != Tab.RHYMER) {
+            String initialQuery = mListHeaderTextView.getText().toString();
+            String stem = new PorterStemmer().stemWord(initialQuery);
+            if (!initialQuery.equals(stem)) {
+                mListHeaderTextView.setText(stem);
+                requery();
+            }
+        }
     }
 
     private void updateUi() {
