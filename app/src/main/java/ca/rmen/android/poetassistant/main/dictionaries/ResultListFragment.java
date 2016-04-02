@@ -175,7 +175,7 @@ public class ResultListFragment<T> extends ListFragment
         getLoaderManager().restartLoader(mTab.ordinal(), args, this);
     }
 
-    private void requery() {
+    private void reQuery() {
         Bundle args = new Bundle(2);
         args.putString(EXTRA_QUERY, mListHeaderTextView.getText().toString());
         args.putString(EXTRA_FILTER, mFilterTextView.getText().toString());
@@ -222,7 +222,7 @@ public class ResultListFragment<T> extends ListFragment
             String stem = new PorterStemmer().stemWord(initialQuery);
             if (!initialQuery.equals(stem)) {
                 mListHeaderTextView.setText(stem);
-                requery();
+                reQuery();
             }
         }
     }

@@ -24,7 +24,7 @@ import android.support.annotation.VisibleForTesting;
 import java.util.Locale;
 
 /**
- * This is a simple implementation of the Porter stemmer algorithm, defined here:
+ * This is a simple implementation of the Porter stemming algorithm, defined here:
  * http://tartarus.org/martin/PorterStemmer/def.txt
  * <p/>
  * This implementation has not been tuned for high performance on large amounts of text. It is
@@ -98,8 +98,7 @@ public class PorterStemmer {
         return input;
     }
 
-    @VisibleForTesting
-    String step1b2(String input) {
+    private String step1b2(String input) {
         // AT -> ATE
         if (input.endsWith("at")) {
             return input + "e";
@@ -243,7 +242,7 @@ public class PorterStemmer {
 
     @VisibleForTesting
     String stemStep4(String input) {
-        String[] s1 = new String[]{
+        String[] suffixes = new String[]{
                 "al",
                 "ance",
                 "ence",
@@ -266,13 +265,13 @@ public class PorterStemmer {
         };
         // (m>1) AL    ->
         // (m>1) ANCE  ->
-        for (int i = 0; i < s1.length; i++) {
-            if (input.endsWith(s1[i])) {
-                String stem = input.substring(0, input.length() - s1[i].length());
+        for(String suffix : suffixes) {
+            if (input.endsWith(suffix)) {
+                String stem = input.substring(0, input.length() - suffix.length());
                 String letterTypes = getLetterTypes(stem);
                 int m = getM(letterTypes);
                 if (m > 1) {
-                    if (s1[i].equals("ion")) {
+                    if (suffix.equals("ion")) {
                         if (stem.charAt(stem.length() - 1) == 's' || stem.charAt(stem.length() - 1) == 't') {
                             return stem;
                         }
