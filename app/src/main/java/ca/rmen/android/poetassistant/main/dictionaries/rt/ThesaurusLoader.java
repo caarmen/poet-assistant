@@ -31,14 +31,15 @@ import java.util.Set;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 
-public class ThesaurusLoader extends AsyncTaskLoader<List<RTEntry>> {
+public class ThesaurusLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
 
     private static final String TAG = Constants.TAG + ThesaurusLoader.class.getSimpleName();
 
     private final String mQuery;
     private final String mFilter;
-    private List<RTEntry> mResult;
+    private ResultListData<RTEntry> mResult;
 
 
     public ThesaurusLoader(Context context, String query, String filter) {
@@ -48,30 +49,35 @@ public class ThesaurusLoader extends AsyncTaskLoader<List<RTEntry>> {
     }
 
     @Override
-    public List<RTEntry> loadInBackground() {
+    public ResultListData<RTEntry> loadInBackground() {
         Log.d(TAG, "loadInBackground() called with: query = " + mQuery + ", filter = " + mFilter);
 
         Thesaurus thesaurus = Thesaurus.getInstance(getContext());
         List<RTEntry> data = new ArrayList<>();
-        if(TextUtils.isEmpty(mQuery)) return data;
-        Thesaurus.ThesaurusEntry[] entries = thesaurus.getEntries(mQuery);
-        if (entries.length == 0) return data;
+        if(TextUtils.isEmpty(mQuery)) return emptyResult();
+        ThesaurusEntry result  = thesaurus.lookup(mQuery);
+        ThesaurusEntry.ThesaurusEntryDetails[] entries = result.entries;
+        if (entries.length == 0) return emptyResult();
 
         if (!TextUtils.isEmpty(mFilter)) {
             Set<String> rhymes = Rhymer.getInstance(getContext()).getFlatRhymes(mFilter);
             entries = filter(entries, rhymes);
         }
 
-        for (Thesaurus.ThesaurusEntry entry : entries) {
+        for (ThesaurusEntry.ThesaurusEntryDetails entry : entries) {
             data.add(new RTEntry(RTEntry.Type.HEADING, entry.wordType.name().toLowerCase(Locale.US)));
             addResultSection(data, R.string.thesaurus_section_synonyms, entry.synonyms);
             addResultSection(data, R.string.thesaurus_section_antonyms, entry.antonyms);
         }
-        return data;
+        return new ResultListData<>(result.word, data);
+    }
+
+    private ResultListData<RTEntry> emptyResult() {
+        return new ResultListData<>(mQuery, new ArrayList<RTEntry>());
     }
 
     @Override
-    public void deliverResult(List<RTEntry> data) {
+    public void deliverResult(ResultListData<RTEntry> data) {
         Log.d(TAG, "deliverResult() called with: query = " + mQuery + ", filter = " + mFilter + ", data = [" + data + "]");
         mResult = data;
         if (isStarted()) super.deliverResult(data);
@@ -94,24 +100,24 @@ public class ThesaurusLoader extends AsyncTaskLoader<List<RTEntry>> {
         }
     }
 
-    private static Thesaurus.ThesaurusEntry[] filter(Thesaurus.ThesaurusEntry[] entries, Set<String> filter) {
-        List<Thesaurus.ThesaurusEntry> filteredEntries = new ArrayList<>();
-        for (Thesaurus.ThesaurusEntry entry : entries) {
-            Thesaurus.ThesaurusEntry filteredEntry = filter(entry, filter);
+    private static ThesaurusEntry.ThesaurusEntryDetails[] filter(ThesaurusEntry.ThesaurusEntryDetails[] entries, Set<String> filter) {
+        List<ThesaurusEntry.ThesaurusEntryDetails> filteredEntries = new ArrayList<>();
+        for (ThesaurusEntry.ThesaurusEntryDetails entry : entries) {
+            ThesaurusEntry.ThesaurusEntryDetails filteredEntry = filter(entry, filter);
             if (filteredEntry != null) filteredEntries.add(filteredEntry);
         }
-        return filteredEntries.toArray(new Thesaurus.ThesaurusEntry[filteredEntries.size()]);
+        return filteredEntries.toArray(new ThesaurusEntry.ThesaurusEntryDetails[filteredEntries.size()]);
     }
 
-    private static Thesaurus.ThesaurusEntry filter(Thesaurus.ThesaurusEntry entry, Set<String> filter) {
-        Thesaurus.ThesaurusEntry filteredEntry = new Thesaurus.ThesaurusEntry(entry.wordType,
+    private static ThesaurusEntry.ThesaurusEntryDetails filter(ThesaurusEntry.ThesaurusEntryDetails entry, Set<String> filter) {
+        ThesaurusEntry.ThesaurusEntryDetails filteredEntry = new ThesaurusEntry.ThesaurusEntryDetails(entry.wordType,
                 RTUtils.filter(entry.synonyms, filter),
                 RTUtils.filter(entry.antonyms, filter));
         if (isEmpty(filteredEntry)) return null;
         return filteredEntry;
     }
 
-    private static boolean isEmpty(Thesaurus.ThesaurusEntry entry) {
+    private static boolean isEmpty(ThesaurusEntry.ThesaurusEntryDetails entry) {
         return entry.synonyms.length == 0 && entry.antonyms.length == 0;
     }
 

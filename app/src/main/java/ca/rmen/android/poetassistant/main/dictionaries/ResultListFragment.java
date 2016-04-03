@@ -45,7 +45,6 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.List;
 import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
@@ -56,7 +55,7 @@ import ca.rmen.android.poetassistant.main.Tab;
 
 public class ResultListFragment<T> extends ListFragment
         implements
-        LoaderManager.LoaderCallbacks<List<T>>,
+        LoaderManager.LoaderCallbacks<ResultListData<T>>,
         InputDialogFragment.InputDialogListener {
     private static final String TAG = Constants.TAG + ResultListFragment.class.getSimpleName();
     private static final int ACTION_FILTER = 0;
@@ -64,10 +63,9 @@ public class ResultListFragment<T> extends ListFragment
     private static final String EXTRA_FILTER = "filter";
     static final String EXTRA_TAB = "tab";
     static final String EXTRA_QUERY = "query";
-    private static final String EXTRA_UNSTEMMED_QUERY = "unstemmed_query";
     private Tab mTab;
     private ArrayAdapter<T> mAdapter;
-    private List<T> mData;
+    private ResultListData<T> mData;
     private TextView mListHeaderTextView;
     private View mFilterView;
     private TextView mFilterTextView;
@@ -75,7 +73,6 @@ public class ResultListFragment<T> extends ListFragment
     private View mPlayButton;
     private Tts mTts;
     private TextView mEmptyView;
-    private String mUnstemmedQuery;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -107,7 +104,6 @@ public class ResultListFragment<T> extends ListFragment
 
         if (savedInstanceState != null) {
             String query = savedInstanceState.getString(EXTRA_QUERY);
-            mUnstemmedQuery = savedInstanceState.getString(EXTRA_UNSTEMMED_QUERY);
             String filter = savedInstanceState.getString(EXTRA_FILTER);
             mListHeaderTextView.setText(query);
             mFilterTextView.setText(filter);
@@ -142,7 +138,6 @@ public class ResultListFragment<T> extends ListFragment
         super.onSaveInstanceState(outState);
         Log.d(TAG, mTab + ": onSaveInstanceState() called with: " + "outState = [" + outState + "]");
         outState.putString(EXTRA_QUERY, (String) mListHeaderTextView.getText());
-        outState.putString(EXTRA_UNSTEMMED_QUERY, mUnstemmedQuery);
         outState.putString(EXTRA_FILTER, (String) mFilterTextView.getText());
     }
 
@@ -167,7 +162,6 @@ public class ResultListFragment<T> extends ListFragment
         Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
         mListHeaderTextView.setText(query);
         mFilterView.setVisibility(View.GONE);
-        mUnstemmedQuery = null;
         Bundle args = new Bundle(1);
         args.putString(EXTRA_QUERY, query);
         getLoaderManager().restartLoader(mTab.ordinal(), args, this);
@@ -180,13 +174,6 @@ public class ResultListFragment<T> extends ListFragment
         getLoaderManager().restartLoader(mTab.ordinal(), args, this);
     }
 
-    private void reQuery() {
-        Bundle args = new Bundle(2);
-        args.putString(EXTRA_QUERY, mListHeaderTextView.getText().toString());
-        args.putString(EXTRA_FILTER, mFilterTextView.getText().toString());
-        getLoaderManager().restartLoader(mTab.ordinal(), args, this);
-    }
-
     private void updatePlayButton() {
         int ttsStatus = mTts.getStatus();
         int playButtonVisibility = ttsStatus == TextToSpeech.SUCCESS ? View.VISIBLE : View.GONE;
@@ -194,7 +181,7 @@ public class ResultListFragment<T> extends ListFragment
     }
 
     @Override
-    public Loader<List<T>> onCreateLoader(int id, Bundle args) {
+    public Loader<ResultListData<T>> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, mTab + ": onCreateLoader() called with: " + "id = [" + id + "], args = [" + args + "]");
         String query = "";
         String filter = "";
@@ -204,14 +191,15 @@ public class ResultListFragment<T> extends ListFragment
             mListHeaderTextView.setText(query);
         }
         //noinspection unchecked
-        return (Loader<List<T>>) ResultListFactory.createLoader(mTab, getActivity(), query, filter);
+        return (Loader<ResultListData<T>>) ResultListFactory.createLoader(mTab, getActivity(), query, filter);
     }
 
     @Override
-    public void onLoadFinished(Loader<List<T>> loader, List<T> data) {
+    public void onLoadFinished(Loader<ResultListData<T>> loader, ResultListData<T> data) {
         Log.d(TAG, mTab + ": onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
         mAdapter.clear();
-        mAdapter.addAll(data);
+        //noinspection unchecked
+        mAdapter.addAll(data.data);
         mData = data;
         updateUi();
 
@@ -219,24 +207,6 @@ public class ResultListFragment<T> extends ListFragment
         getListView().requestFocus();
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(getListView().getWindowToken(), 0);
-
-        // If we have no results, try to look up results for the word stem,
-        // except for the rhymer: we shouldn't strip suffixes when looking for rhymes.
-        if (data.isEmpty() && mTab != Tab.RHYMER) {
-            if (TextUtils.isEmpty(mUnstemmedQuery)) {
-                mUnstemmedQuery = mListHeaderTextView.getText().toString();
-                String stem = new PorterStemmer().stemWord(mUnstemmedQuery);
-                if (!mUnstemmedQuery.equals(stem)) {
-                    mListHeaderTextView.setText(stem);
-                    reQuery();
-                }
-            }
-            // We are already looking up a stem and there were no results.
-            // Show the original word the user typed.
-            else {
-                mListHeaderTextView.setText(mUnstemmedQuery);
-            }
-        }
     }
 
     private void updateUi() {
@@ -244,7 +214,9 @@ public class ResultListFragment<T> extends ListFragment
         int headerVisible = mAdapter.getCount() == 0 && TextUtils.isEmpty(mListHeaderTextView.getText().toString()) ?
                 View.GONE : View.VISIBLE;
         mHeaderView.setVisibility(headerVisible);
-        String query = mListHeaderTextView.getText().toString();
+
+        String query = mData == null ? null : mData.matchedWord;
+        mListHeaderTextView.setText(query);
         // If we have an empty list because the user didn't enter any search term,
         // we'll show a text to tell them to search.
         if (TextUtils.isEmpty(query)) {
@@ -263,7 +235,7 @@ public class ResultListFragment<T> extends ListFragment
     }
 
     @Override
-    public void onLoaderReset(Loader<List<T>> loader) {
+    public void onLoaderReset(Loader<ResultListData<T>> loader) {
         Log.d(TAG, mTab + ": onLoaderReset() called with: " + "loader = [" + loader + "]");
         mAdapter.clear();
         mData = null;

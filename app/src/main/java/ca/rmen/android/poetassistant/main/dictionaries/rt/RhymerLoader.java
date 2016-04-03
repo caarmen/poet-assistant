@@ -30,15 +30,16 @@ import java.util.Set;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.rhymer.RhymeResult;
 
-public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
+public class RhymerLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
 
     private static final String TAG = Constants.TAG + RhymerLoader.class.getSimpleName();
 
     private final String mQuery;
     private final String mFilter;
-    private List<RTEntry> mResult;
+    private ResultListData<RTEntry> mResult;
 
     public RhymerLoader(Context context, String query, String filter) {
         super(context);
@@ -47,20 +48,20 @@ public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
     }
 
     @Override
-    public List<RTEntry> loadInBackground() {
+    public ResultListData<RTEntry> loadInBackground() {
         Log.d(TAG, "loadInBackground() called with: query = " + mQuery + ", filter = " + mFilter);
 
         List<RTEntry> data = new ArrayList<>();
         Rhymer rhymer = Rhymer.getInstance(getContext());
-        if (TextUtils.isEmpty(mQuery)) return data;
+        if (TextUtils.isEmpty(mQuery)) return emptyResult();
 
         List<RhymeResult> rhymeResults = rhymer.getRhymingWords(mQuery);
         if (rhymeResults == null) {
-            return data;
+            return emptyResult();
         }
         if (!TextUtils.isEmpty(mFilter)) {
             Set<String> synonyms = Thesaurus.getInstance(getContext()).getFlatSynonyms(mFilter);
-            if (synonyms.isEmpty()) return data;
+            if (synonyms.isEmpty()) return emptyResult();
             rhymeResults = filter(rhymeResults, synonyms);
         }
         for (RhymeResult rhymeResult : rhymeResults) {
@@ -75,11 +76,15 @@ public class RhymerLoader extends AsyncTaskLoader<List<RTEntry>> {
             addResultSection(data, R.string.rhyme_section_two_syllables, rhymeResult.twoSyllableRhymes);
             addResultSection(data, R.string.rhyme_section_three_syllables, rhymeResult.threeSyllableRhymes);
         }
-        return data;
+        return new ResultListData<>(mQuery, data);
+    }
+
+    private ResultListData<RTEntry> emptyResult() {
+        return new ResultListData<>(mQuery, new ArrayList<RTEntry>());
     }
 
     @Override
-    public void deliverResult(List<RTEntry> data) {
+    public void deliverResult(ResultListData<RTEntry> data) {
         Log.d(TAG, "deliverResult() called with: query = " + mQuery + ", filter = " + mFilter + ", data = [" + data + "]");
         mResult = data;
         if (isStarted()) super.deliverResult(data);

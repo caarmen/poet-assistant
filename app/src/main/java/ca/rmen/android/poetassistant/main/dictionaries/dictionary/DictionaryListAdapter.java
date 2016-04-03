@@ -30,7 +30,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ViewHolder;
 
 
-public class DictionaryListAdapter extends ArrayAdapter<DictionaryEntryDetails> {
+public class DictionaryListAdapter extends ArrayAdapter<DictionaryEntry.DictionaryEntryDetails> {
     private final Context mContext;
 
     public DictionaryListAdapter(Activity activity) {
@@ -40,7 +40,7 @@ public class DictionaryListAdapter extends ArrayAdapter<DictionaryEntryDetails> 
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        DictionaryEntryDetails entry = getItem(position);
+        DictionaryEntry.DictionaryEntryDetails entry = getItem(position);
         if (convertView == null) {
             convertView = View.inflate(mContext, R.layout.list_item_dictionary_entry, null);
         }

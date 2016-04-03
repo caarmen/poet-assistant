@@ -36,7 +36,6 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntryDetails;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 /**
@@ -118,7 +117,7 @@ public final class Wotd {
 
     private static CharSequence buildWotdNotificationContent(Context context, DictionaryEntry entry) {
         StringBuilder builder = new StringBuilder(entry.word);
-        for (DictionaryEntryDetails details : entry.details) {
+        for (DictionaryEntry.DictionaryEntryDetails details : entry.details) {
             builder.append(context.getString(R.string.wotd_notification_definition, details.partOfSpeech, details.definition));
         }
         String content = builder.toString();
@@ -127,7 +126,7 @@ public final class Wotd {
 
     private static CharSequence buildWotdShareContent(Context context, DictionaryEntry entry) {
         StringBuilder builder = new StringBuilder(context.getString(R.string.share_dictionary_title, entry.word));
-        for (DictionaryEntryDetails details : entry.details) {
+        for (DictionaryEntry.DictionaryEntryDetails details : entry.details) {
             builder.append(context.getString(R.string.share_dictionary_entry, details.partOfSpeech, details.definition));
         }
         return builder.toString();
