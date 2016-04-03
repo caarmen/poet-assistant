@@ -28,6 +28,7 @@ import android.util.Log;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.Tab;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
 
 final class Share {
     private static final String TAG = Constants.TAG + Share.class.getSimpleName();
@@ -42,7 +43,7 @@ final class Share {
      * @param word    the word the user searched for
      * @param filter  an optional filter the user specified to narrow the search results.
      * @param entries the rhymer, thesaurus, or dictionary entries for the given word
-     * @param <T>     the type of data displayed in the list fragment. Must be List of {@link ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry} or List of {@link ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntryDetails}
+     * @param <T>     the type of data displayed in the list fragment. Must be List of {@link ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry} or List of {@link DictionaryEntry.DictionaryEntryDetails}
      */
     public static <T> void share(Context context, @NonNull Tab tab, @NonNull String word, @Nullable String filter, @NonNull T entries) {
         // noinspection unchecked

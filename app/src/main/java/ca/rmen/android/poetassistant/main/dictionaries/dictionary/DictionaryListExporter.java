@@ -28,7 +28,7 @@ import java.util.List;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListExporter;
 
-public class DictionaryListExporter implements ResultListExporter<List<DictionaryEntryDetails>> {
+public class DictionaryListExporter implements ResultListExporter<List<DictionaryEntry.DictionaryEntryDetails>> {
     private final Context mContext;
 
     public DictionaryListExporter(Context context) {
@@ -38,10 +38,10 @@ public class DictionaryListExporter implements ResultListExporter<List<Dictionar
     @Override
     public String export(@NonNull String word,
                          @Nullable String filter /* always null for the dictionary*/,
-                         @NonNull List<DictionaryEntryDetails> entries) {
+                         @NonNull List<DictionaryEntry.DictionaryEntryDetails> entries) {
         String title = mContext.getString(R.string.share_dictionary_title, word);
         StringBuilder builder = new StringBuilder(title);
-        for (DictionaryEntryDetails entry : entries) {
+        for (DictionaryEntry.DictionaryEntryDetails entry : entries) {
             builder.append(mContext.getString(R.string.share_dictionary_entry, entry.partOfSpeech, entry.definition));
         }
         return builder.toString();

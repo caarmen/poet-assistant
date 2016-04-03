@@ -39,35 +39,6 @@ public class Thesaurus {
 
     private final SQLiteDatabase mDb;
 
-    public enum WordType {
-        @SuppressWarnings("unused")ADJ,
-        @SuppressWarnings("unused")ADV,
-        @SuppressWarnings("unused")NOUN,
-        @SuppressWarnings("unused")VERB,
-        @SuppressWarnings("unused")UNKNOWN
-    }
-
-
-    public static class ThesaurusResults {
-        public final String matchedWord;
-        public final ThesaurusEntry[] entries;
-
-        public ThesaurusResults(String matchedWord, ThesaurusEntry[] entries) {
-            this.matchedWord = matchedWord;
-            this.entries = entries;
-        }
-    }
-    public static class ThesaurusEntry {
-        public final WordType wordType;
-        public final String[] synonyms;
-        public final String[] antonyms;
-
-        public ThesaurusEntry(WordType wordType, String[] synonyms, String[] antonyms) {
-            this.wordType = wordType;
-            this.synonyms = synonyms;
-            this.antonyms = antonyms;
-        }
-    }
 
     public static synchronized Thesaurus getInstance(Context context) {
         if (sInstance == null) sInstance = new Thesaurus(context);
@@ -78,7 +49,7 @@ public class Thesaurus {
         mDb = DbUtil.open(context, DB_FILE, DB_VERSION);
     }
 
-    public ThesaurusResults getEntries(String word) {
+    public ThesaurusEntry lookup(String word) {
         String[] projection = new String[]{"word_type", "synonyms", "antonyms"};
         String selection = "word=?";
         String[] selectionArgs = new String[]{word};
@@ -97,22 +68,22 @@ public class Thesaurus {
         }
 
         if (cursor != null) {
-            ThesaurusEntry[] result = new ThesaurusEntry[cursor.getCount()];
+            ThesaurusEntry.ThesaurusEntryDetails[] result = new ThesaurusEntry.ThesaurusEntryDetails[cursor.getCount()];
             try {
                 while (cursor.moveToNext()) {
-                    WordType wordType = WordType.valueOf(cursor.getString(0));
+                    ThesaurusEntry.WordType wordType = ThesaurusEntry.WordType.valueOf(cursor.getString(0));
                     String synonymsList = cursor.getString(1);
                     String antonymsList = cursor.getString(2);
                     String[] synonyms = split(synonymsList);
                     String[] antonyms = split(antonymsList);
-                    result[cursor.getPosition()] = new ThesaurusEntry(wordType, synonyms, antonyms);
+                    result[cursor.getPosition()] = new ThesaurusEntry.ThesaurusEntryDetails(wordType, synonyms, antonyms);
                 }
-                return new ThesaurusResults(lookupWord, result);
+                return new ThesaurusEntry(lookupWord, result);
             } finally {
                 cursor.close();
             }
         }
-        return new ThesaurusResults(word, new ThesaurusEntry[0]);
+        return new ThesaurusEntry(word, new ThesaurusEntry.ThesaurusEntryDetails[0]);
     }
 
     /**

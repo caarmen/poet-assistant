@@ -44,7 +44,7 @@ public class Dictionary {
         mDb = DbUtil.open(context, DB_FILE, DB_VERSION);
     }
 
-    public DictionaryEntry getEntries(String word) {
+    public DictionaryEntry lookup(String word) {
         String[] projection = new String[]{"part_of_speech", "definition"};
         String selection = "word=?";
         String[] selectionArgs = new String[]{word};
@@ -61,19 +61,19 @@ public class Dictionary {
             }
         }
         if (cursor != null) {
-            DictionaryEntryDetails[] result = new DictionaryEntryDetails[cursor.getCount()];
+            DictionaryEntry.DictionaryEntryDetails[] result = new DictionaryEntry.DictionaryEntryDetails[cursor.getCount()];
             try {
                 while (cursor.moveToNext()) {
                     String partOfSpeech = cursor.getString(0);
                     String definition = cursor.getString(1);
-                    result[cursor.getPosition()] = new DictionaryEntryDetails(partOfSpeech, definition);
+                    result[cursor.getPosition()] = new DictionaryEntry.DictionaryEntryDetails(partOfSpeech, definition);
                 }
                 return new DictionaryEntry(lookupWord, result);
             } finally {
                 cursor.close();
             }
         }
-        return new DictionaryEntry(word, new DictionaryEntryDetails[0]);
+        return new DictionaryEntry(word, new DictionaryEntry.DictionaryEntryDetails[0]);
     }
 
     public DictionaryEntry getRandomEntry() {
@@ -93,7 +93,7 @@ public class Dictionary {
             }
 
             if (TextUtils.isEmpty(word)) return null;
-            return getEntries(word);
+            return lookup(word);
         }
 
         return null;

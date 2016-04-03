@@ -215,10 +215,7 @@ public class ResultListFragment<T> extends ListFragment
                 View.GONE : View.VISIBLE;
         mHeaderView.setVisibility(headerVisible);
 
-        String query = null;
-        if (mData != null) {
-            query = mData.matchedWord;
-        }
+        String query = mData == null ? null : mData.matchedWord;
         mListHeaderTextView.setText(query);
         // If we have an empty list because the user didn't enter any search term,
         // we'll show a text to tell them to search.

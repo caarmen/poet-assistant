@@ -27,4 +27,14 @@ public class DictionaryEntry {
         this.word = word;
         this.details = details;
     }
+
+    public static class DictionaryEntryDetails {
+        public final String partOfSpeech;
+        public final String definition;
+
+        public DictionaryEntryDetails(String partOfSpeech, String definition) {
+            this.partOfSpeech = partOfSpeech;
+            this.definition = definition;
+        }
+    }
 }

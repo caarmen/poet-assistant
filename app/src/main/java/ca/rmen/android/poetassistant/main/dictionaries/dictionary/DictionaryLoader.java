@@ -31,12 +31,12 @@ import java.util.List;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 
-public class DictionaryLoader extends AsyncTaskLoader<ResultListData<DictionaryEntryDetails>> {
+public class DictionaryLoader extends AsyncTaskLoader<ResultListData<DictionaryEntry.DictionaryEntryDetails>> {
 
     private static final String TAG = Constants.TAG + DictionaryLoader.class.getSimpleName();
 
     private final String mQuery;
-    private ResultListData<DictionaryEntryDetails> mResult;
+    private ResultListData<DictionaryEntry.DictionaryEntryDetails> mResult;
 
     public DictionaryLoader(Context context, String query) {
         super(context);
@@ -44,18 +44,18 @@ public class DictionaryLoader extends AsyncTaskLoader<ResultListData<DictionaryE
     }
 
     @Override
-    public ResultListData<DictionaryEntryDetails> loadInBackground() {
+    public ResultListData<DictionaryEntry.DictionaryEntryDetails> loadInBackground() {
         Log.d(TAG, "loadInBackground() called with: " + "");
-        List<DictionaryEntryDetails> result = new ArrayList<>();
+        List<DictionaryEntry.DictionaryEntryDetails> result = new ArrayList<>();
         if(TextUtils.isEmpty(mQuery)) return new ResultListData<>(mQuery, result);
         Dictionary dictionary = Dictionary.getInstance(getContext());
-        DictionaryEntry entry = dictionary.getEntries(mQuery);
+        DictionaryEntry entry = dictionary.lookup(mQuery);
         Collections.addAll(result, entry.details);
         return new ResultListData<>(entry.word, result);
     }
 
     @Override
-    public void deliverResult(ResultListData<DictionaryEntryDetails> data) {
+    public void deliverResult(ResultListData<DictionaryEntry.DictionaryEntryDetails> data) {
         Log.d(TAG, "deliverResult() called with: query = " + mQuery + ", data = [" + data + "]");
         mResult = data;
         if (isStarted()) super.deliverResult(data);
