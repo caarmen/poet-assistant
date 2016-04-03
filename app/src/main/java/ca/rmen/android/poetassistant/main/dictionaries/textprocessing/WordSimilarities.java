@@ -24,6 +24,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.porterstemmer.PorterStemmer;
 
 public class WordSimilarities {
 

@@ -93,6 +93,7 @@ dependencies {
     compile 'com.android.support:preference-v7:23.2.1'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'ca.rmen:rhymer:1.1.0'
+    compile 'ca.rmen:porter-stemmer:1.0.0'
     compile 'com.android.support:support-v4:23.2.1'
     apt 'org.jraf:prefs-compiler:1.0.1'
     compile 'org.jraf:prefs:1.0.1'
