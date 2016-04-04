@@ -147,7 +147,7 @@ public class ResultListFragment<T> extends ListFragment
             Share.share(getActivity(), mTab,
                     mListHeaderTextView.getText().toString(),
                     mFilterTextView.getText().toString(),
-                    mData);
+                    mData.data);
         }
         return super.onOptionsItemSelected(item);
     }
