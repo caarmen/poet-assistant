@@ -278,7 +278,7 @@ public class ReaderFragment extends Fragment implements
                 if (mTts.isSpeaking()) {
                     mPlayButton.setImageResource(R.drawable.ic_stop);
                 } else {
-                    mPlayButton.setImageResource(R.drawable.ic_play);
+                    mPlayButton.setImageResource(R.drawable.ic_play_enabled);
                 }
             }
         });
