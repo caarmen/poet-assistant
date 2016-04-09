@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.6.2  *(2016-04-09)*
+--------------------
+
+* Upgraded to version 23.3.0 of the android support library.
+
 1.6.1  *(2016-04-04)*
 --------------------
 
