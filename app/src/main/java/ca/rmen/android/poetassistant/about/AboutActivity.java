@@ -22,12 +22,15 @@ package ca.rmen.android.poetassistant.about;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.IdRes;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.VectorCompat;
 
 
 public class AboutActivity extends AppCompatActivity {
@@ -53,6 +56,7 @@ public class AboutActivity extends AppCompatActivity {
         TextView versionTextView = (TextView) findViewById(R.id.txtVersion);
         assert versionTextView != null;
         versionTextView.setText(appVersionText);
+        hackSetIcons();
     }
 
     @SuppressWarnings("unused")
@@ -73,6 +77,29 @@ public class AboutActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     public void onClickDictionaryLicense(@SuppressWarnings("UnusedParameters") View view) {
         LicenseActivity.start(this, getString(R.string.about_license_dictionary), "LICENSE-dictionary-wordnet.txt");
+    }
+
+    /**
+     * The support library 23.3.0 dropped support for using vector drawables in the
+     * "drawableLeft" attribute of TextViews.  We set them programmatically here.
+     */
+    private void hackSetIcons() {
+        hackSetIcon(R.id.tv_source_code, R.drawable.ic_source_code);
+        hackSetIcon(R.id.tv_bug_report, R.drawable.ic_bug_report_24dp);
+        hackSetIcon(R.id.tv_rate, R.drawable.ic_rate);
+        hackSetIcon(R.id.tv_legal, R.drawable.ic_legal);
+        hackSetIcon(R.id.tv_poet_assistant_license, R.drawable.ic_bullet);
+        hackSetIcon(R.id.tv_rhymer_license, R.drawable.ic_bullet);
+        hackSetIcon(R.id.tv_thesaurus_license, R.drawable.ic_bullet);
+        hackSetIcon(R.id.tv_dictionary_license, R.drawable.ic_bullet);
+        hackSetIcon(R.id.tv_event_bus_license, R.drawable.ic_bullet);
+        hackSetIcon(R.id.tv_stemmer_license, R.drawable.ic_bullet);
+    }
+
+    private void hackSetIcon(@IdRes int textViewRes, @DrawableRes int iconRes) {
+        TextView textView = (TextView) findViewById(textViewRes);
+        assert textView != null;
+        VectorCompat.setCompoundVectorDrawables(this, textView, iconRes, 0, 0, 0);
     }
 }
 

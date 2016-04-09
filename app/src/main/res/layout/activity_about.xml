@@ -60,67 +60,62 @@
                 android:textColorLink="@color/primary" />
 
             <TextView
+                android:id="@+id/tv_source_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:autoLink="all"
-                android:drawableLeft="@drawable/ic_source_code_selector"
                 android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_source_code_selector"
                 android:gravity="center_vertical"
                 android:text="@string/about_projectUrl"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColorLink="@color/primary" />
 
             <TextView
+                android:id="@+id/tv_bug_report"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:autoLink="all"
-                android:drawableLeft="@drawable/ic_bug_report_selector"
                 android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_bug_report_selector"
                 android:gravity="center_vertical"
                 android:text="@string/about_issuesUrl"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColorLink="@color/primary" />
 
             <TextView
+                android:id="@+id/tv_rate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:autoLink="all"
-                android:drawableLeft="@drawable/ic_rate_selector"
                 android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_rate_selector"
                 android:gravity="center_vertical"
                 android:text="@string/about_rateUrl"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColorLink="@color/primary" />
 
             <TextView
+                android:id="@+id/tv_legal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:autoLink="all"
-                android:drawableLeft="@drawable/ic_legal_selector"
                 android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_legal_selector"
                 android:gravity="center_vertical"
                 android:text="@string/about_legal"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColorLink="@color/primary" />
 
             <TextView
+                android:id="@+id/tv_poet_assistant_license"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
                 android:autoLink="all"
-                android:drawableLeft="@drawable/ic_bullet_selector"
                 android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_bullet_selector"
                 android:gravity="center_vertical"
                 android:onClick="onClickAppLicense"
                 android:text="@string/about_license_app"
@@ -128,15 +123,14 @@
                 android:textColor="@color/primary" />
 
             <TextView
+                android:id="@+id/tv_rhymer_license"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
                 android:autoLink="all"
-                android:drawableLeft="@drawable/ic_bullet_selector"
                 android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_bullet_selector"
                 android:gravity="center_vertical"
                 android:onClick="onClickRhymerLicense"
                 android:text="@string/about_license_rhyming_dictionary"
@@ -144,15 +138,14 @@
                 android:textColor="@color/primary" />
 
             <TextView
+                android:id="@+id/tv_thesaurus_license"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
                 android:autoLink="all"
-                android:drawableLeft="@drawable/ic_bullet_selector"
                 android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_bullet_selector"
                 android:gravity="center_vertical"
                 android:onClick="onClickThesaurusLicense"
                 android:text="@string/about_license_thesaurus"
@@ -160,15 +153,14 @@
                 android:textColor="@color/primary" />
 
             <TextView
+                android:id="@+id/tv_dictionary_license"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
                 android:autoLink="all"
-                android:drawableLeft="@drawable/ic_bullet_selector"
                 android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_bullet_selector"
                 android:gravity="center_vertical"
                 android:onClick="onClickDictionaryLicense"
                 android:text="@string/about_license_dictionary"
@@ -176,30 +168,28 @@
                 android:textColor="@color/primary" />
 
             <TextView
+                android:id="@+id/tv_event_bus_license"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
                 android:autoLink="all"
-                android:drawableLeft="@drawable/ic_bullet_selector"
                 android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_bullet_selector"
                 android:gravity="center_vertical"
                 android:text="@string/about_license_event_bus"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColorLink="@color/primary" />
 
             <TextView
+                android:id="@+id/tv_stemmer_license"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
                 android:autoLink="all"
-                android:drawableLeft="@drawable/ic_bullet_selector"
                 android:drawablePadding="8dp"
-                android:drawableStart="@drawable/ic_bullet_selector"
                 android:gravity="center_vertical"
                 android:text="@string/about_porter_stemming_algorithm"
                 android:textAppearance="?android:attr/textAppearanceSmall"
