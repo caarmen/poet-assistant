@@ -24,11 +24,22 @@ import android.content.Context;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.support.graphics.drawable.VectorDrawableCompat;
+import android.text.style.ImageSpan;
 import android.widget.TextView;
 
 public final class VectorCompat {
     private VectorCompat() {
         // prevent instantiation
+    }
+
+    public static ImageSpan createVectorImageSpan(Context context, @DrawableRes int resId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return new ImageSpan(context, resId);
+        }
+        VectorDrawableCompat drawable = createVectorDrawable(context, resId);
+        assert drawable != null;
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+        return new ImageSpan(drawable);
     }
 
     /**
