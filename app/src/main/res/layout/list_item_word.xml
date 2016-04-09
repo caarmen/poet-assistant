@@ -39,7 +39,14 @@
         android:paddingStart="16dp"
         tools:text="happy" />
 
-    <ImageView
+    <!--
+         Define AppCompatImageView instead of ImageView
+         to avoid lint warnings about the app:srcCompat attribute,
+         and to be able to see the image in the design view in
+         Android Studio
+         http://stackoverflow.com/questions/35624562/code-analysis-error-unexpected-namespace-prefix-after-upgrading-android-suppor
+    -->
+    <android.support.v7.widget.AppCompatImageView
         android:id="@id/btn_rhymer"
         android:layout_width="44dp"
         android:layout_height="44dp"
@@ -52,7 +59,7 @@
         android:padding="4dp"
         app:srcCompat="@drawable/ic_rhymer" />
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@id/btn_thesaurus"
         android:layout_width="44dp"
         android:layout_height="44dp"
@@ -65,7 +72,7 @@
         android:padding="4dp"
         app:srcCompat="@drawable/ic_thesaurus" />
 
-    <ImageView
+    <android.support.v7.widget.AppCompatImageView
         android:id="@id/btn_dictionary"
         android:layout_width="44dp"
         android:layout_height="44dp"

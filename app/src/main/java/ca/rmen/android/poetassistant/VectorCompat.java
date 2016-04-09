@@ -32,6 +32,7 @@ public final class VectorCompat {
         // prevent instantiation
     }
 
+    @SuppressWarnings("SameParameterValue")
     public static ImageSpan createVectorImageSpan(Context context, @DrawableRes int resId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return new ImageSpan(context, resId);
@@ -47,6 +48,7 @@ public final class VectorCompat {
      * drawableLeft, from xml.  Use this method to use a vector drawable as
      * a compound drawable of a TextView.
      */
+    @SuppressWarnings("SameParameterValue")
     public static void setCompoundVectorDrawables(Context context,
                                                   TextView textView,
                                                   @DrawableRes int start,
