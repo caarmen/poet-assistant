@@ -18,22 +18,15 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".main.MainActivity">
     <item
-        android:icon="@drawable/ic_rhymer"
         android:id="@+id/action_lookup_rhymer"
-        android:title="@string/menu_lookup_rhymer"
-        app:showAsAction="ifRoom" />
+        android:title="@string/menu_lookup_rhymer" />
     <item
-        android:icon="@drawable/ic_thesaurus"
         android:id="@+id/action_lookup_thesaurus"
-        android:title="@string/menu_lookup_thesaurus"
-        app:showAsAction="ifRoom" />
+        android:title="@string/menu_lookup_thesaurus" />
     <item
-        android:icon="@drawable/ic_dictionary"
         android:id="@+id/action_lookup_dictionary"
-        android:title="@string/menu_lookup_dictionary"
-        app:showAsAction="ifRoom" />
+        android:title="@string/menu_lookup_dictionary" />
 </menu>

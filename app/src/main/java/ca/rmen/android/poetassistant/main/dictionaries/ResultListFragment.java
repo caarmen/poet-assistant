@@ -50,6 +50,7 @@ import java.util.Locale;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.VectorCompat;
 import ca.rmen.android.poetassistant.main.Tab;
 
 
@@ -221,7 +222,7 @@ public class ResultListFragment<T> extends ListFragment
         // we'll show a text to tell them to search.
         if (TextUtils.isEmpty(query)) {
             String emptySearch = getString(R.string.empty_list_without_query);
-            ImageSpan imageSpan = new ImageSpan(getActivity(), R.drawable.ic_action_search_dark);
+            ImageSpan imageSpan = VectorCompat.createVectorImageSpan(getActivity(), R.drawable.ic_action_search_dark);
             SpannableStringBuilder ssb = new SpannableStringBuilder(emptySearch);
             int iconIndex = emptySearch.indexOf("%s");
             ssb.setSpan(imageSpan, iconIndex, iconIndex + 2, Spannable.SPAN_INCLUSIVE_INCLUSIVE);

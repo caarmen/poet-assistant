@@ -54,7 +54,14 @@
                 android:textStyle="bold"
                 tools:text="Query" />
 
-            <ImageButton
+            <!--
+                 Define AppCompatImageButton instead of ImageButton
+                 to avoid lint warnings about the app:srcCompat attribute,
+                 and to be able to see the image in the design view in
+                 Android Studio
+                 http://stackoverflow.com/questions/35624562/code-analysis-error-unexpected-namespace-prefix-after-upgrading-android-suppor
+            -->
+            <android.support.v7.widget.AppCompatImageButton
                 android:id="@id/btn_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -69,7 +76,7 @@
                 android:visibility="gone"
                 app:srcCompat="@drawable/ic_filter_list" />
 
-            <ImageButton
+            <android.support.v7.widget.AppCompatImageButton
                 android:id="@id/btn_web_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -83,7 +90,7 @@
                 android:padding="8dp"
                 app:srcCompat="@drawable/ic_web_search" />
 
-            <ImageButton
+            <android.support.v7.widget.AppCompatImageButton
                 android:id="@id/btn_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -128,7 +135,7 @@
                 android:textColor="#37474f"
                 tools:text="yesterday" />
 
-            <ImageView
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/btn_clear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
