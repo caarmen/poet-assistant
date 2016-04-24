@@ -22,26 +22,25 @@ package ca.rmen.android.poetassistant.main;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Theme;
 import ca.rmen.android.poetassistant.about.AboutActivity;
+import ca.rmen.android.poetassistant.databinding.ActivityMainBinding;
 import ca.rmen.android.poetassistant.main.dictionaries.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickedListener;
@@ -56,38 +55,33 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
     private static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
 
     private Search mSearch;
-    private ViewPager mViewPager;
+    private ActivityMainBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         Theme.checkTheme(this);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        setSupportActionBar(mBinding.toolbar);
         Intent intent = getIntent();
         Uri data = intent.getData();
         PagerAdapter pagerAdapter = new PagerAdapter(this, getSupportFragmentManager(), intent);
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        assert mViewPager != null;
-        mViewPager.setAdapter(pagerAdapter);
-        mViewPager.setOffscreenPageLimit(3);
-        mViewPager.addOnPageChangeListener(mOnPageChangeListener);
+        mBinding.viewPager.setAdapter(pagerAdapter);
+        mBinding.viewPager.setOffscreenPageLimit(3);
+        mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        assert tabLayout != null;
-        tabLayout.setupWithViewPager(mViewPager);
+        mBinding.tabs.setupWithViewPager(mBinding.viewPager);
 
         // If the app was launched with a query for the thesaurus, focus on that tab.
         if (data != null && data.getHost().equalsIgnoreCase(Constants.DEEP_LINK_QUERY))
-            mViewPager.setCurrentItem(Tab.DICTIONARY.ordinal());
+            mBinding.viewPager.setCurrentItem(Tab.DICTIONARY.ordinal());
         else if (Intent.ACTION_SEND.equals(intent.getAction()))
-            mViewPager.setCurrentItem(Tab.READER.ordinal());
+            mBinding.viewPager.setCurrentItem(Tab.READER.ordinal());
 
-        mSearch = new Search(this, mViewPager);
+        mSearch = new Search(this, mBinding.viewPager);
         loadDictionaries();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
@@ -125,9 +119,9 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         }
         // Play some text in the tts tab
         else if (Intent.ACTION_SEND.equals(intent.getAction())) {
-            mViewPager.setCurrentItem(Tab.READER.ordinal());
+            mBinding.viewPager.setCurrentItem(Tab.READER.ordinal());
             String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            ReaderFragment readerFragment = (ReaderFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.READER.ordinal());
+            ReaderFragment readerFragment = (ReaderFragment) mBinding.viewPager.getAdapter().instantiateItem(mBinding.viewPager, Tab.READER.ordinal());
             readerFragment.setText(sharedText);
         }
     }
@@ -138,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         String word = uri.getLastPathSegment();
         if(Constants.DEEP_LINK_QUERY.equals(uri.getHost())) {
             mSearch.search(word);
-            mViewPager.setCurrentItem(Tab.DICTIONARY.ordinal());
+            mBinding.viewPager.setCurrentItem(Tab.DICTIONARY.ordinal());
         } else {
             Tab tab = Tab.parse(uri.getHost());
             if (tab != null) mSearch.search(word, tab);
@@ -162,9 +156,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
             return true;
         } else if (item.getItemId() == R.id.action_clear_search_history) {
             mSearch.clearSearchHistory();
-            View rootView = findViewById(android.R.id.content);
-            assert rootView != null;
-            Snackbar.make(rootView, R.string.search_history_cleared, Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(mBinding.getRoot(), R.string.search_history_cleared, Snackbar.LENGTH_SHORT).show();
             return true;
         } else if (item.getItemId() == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
@@ -188,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
             super.onPageSelected(position);
             if (position != Tab.READER.ordinal()) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mViewPager.getWindowToken(), 0);
+                imm.hideSoftInputFromWindow(mBinding.viewPager.getWindowToken(), 0);
             }
         }
     };

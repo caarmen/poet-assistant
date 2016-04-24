@@ -21,9 +21,9 @@ package ca.rmen.android.poetassistant.about;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.IdRes;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -31,14 +31,16 @@ import android.widget.TextView;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.VectorCompat;
+import ca.rmen.android.poetassistant.databinding.ActivityAboutBinding;
 
 
 public class AboutActivity extends AppCompatActivity {
 
+    private ActivityAboutBinding mBinding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -53,9 +55,8 @@ public class AboutActivity extends AppCompatActivity {
             throw new AssertionError(e);
         }
         String appVersionText = getString(R.string.about_app_version, getString(R.string.app_name), versionName);
-        TextView versionTextView = (TextView) findViewById(R.id.txtVersion);
-        assert versionTextView != null;
-        versionTextView.setText(appVersionText);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_about);
+        mBinding.txtVersion.setText(appVersionText);
         hackSetIcons();
     }
 
@@ -84,21 +85,19 @@ public class AboutActivity extends AppCompatActivity {
      * "drawableLeft" attribute of TextViews.  We set them programmatically here.
      */
     private void hackSetIcons() {
-        hackSetIcon(R.id.tv_source_code, R.drawable.ic_source_code);
-        hackSetIcon(R.id.tv_bug_report, R.drawable.ic_bug_report_24dp);
-        hackSetIcon(R.id.tv_rate, R.drawable.ic_rate);
-        hackSetIcon(R.id.tv_legal, R.drawable.ic_legal);
-        hackSetIcon(R.id.tv_poet_assistant_license, R.drawable.ic_bullet);
-        hackSetIcon(R.id.tv_rhymer_license, R.drawable.ic_bullet);
-        hackSetIcon(R.id.tv_thesaurus_license, R.drawable.ic_bullet);
-        hackSetIcon(R.id.tv_dictionary_license, R.drawable.ic_bullet);
-        hackSetIcon(R.id.tv_event_bus_license, R.drawable.ic_bullet);
-        hackSetIcon(R.id.tv_stemmer_license, R.drawable.ic_bullet);
+        hackSetIcon(mBinding.tvSourceCode, R.drawable.ic_source_code);
+        hackSetIcon(mBinding.tvBugReport, R.drawable.ic_bug_report_24dp);
+        hackSetIcon(mBinding.tvRate, R.drawable.ic_rate);
+        hackSetIcon(mBinding.tvLegal, R.drawable.ic_legal);
+        hackSetIcon(mBinding.tvPoetAssistantLicense, R.drawable.ic_bullet);
+        hackSetIcon(mBinding.tvRhymerLicense, R.drawable.ic_bullet);
+        hackSetIcon(mBinding.tvThesaurusLicense, R.drawable.ic_bullet);
+        hackSetIcon(mBinding.tvDictionaryLicense, R.drawable.ic_bullet);
+        hackSetIcon(mBinding.tvEventBusLicense, R.drawable.ic_bullet);
+        hackSetIcon(mBinding.tvStemmerLicense, R.drawable.ic_bullet);
     }
 
-    private void hackSetIcon(@IdRes int textViewRes, @DrawableRes int iconRes) {
-        TextView textView = (TextView) findViewById(textViewRes);
-        assert textView != null;
+    private void hackSetIcon(TextView textView, @DrawableRes int iconRes) {
         VectorCompat.setCompoundVectorDrawables(this, textView, iconRes, 0, 0, 0);
     }
 }

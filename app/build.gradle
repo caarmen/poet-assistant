@@ -23,12 +23,16 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
 
+    dataBinding {
+        enabled = true
+    }
+
     defaultConfig {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 162
-        versionName "1.6.2"
+        versionCode 163
+        versionName "1.6.3"
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {

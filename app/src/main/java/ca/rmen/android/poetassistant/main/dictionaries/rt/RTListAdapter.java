@@ -21,15 +21,16 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.app.Activity;
 import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.databinding.ListItemWordBinding;
 import ca.rmen.android.poetassistant.main.Tab;
-import ca.rmen.android.poetassistant.main.dictionaries.ViewHolder;
 
 
 public class RTListAdapter extends ArrayAdapter<RTEntry> {
@@ -62,7 +63,7 @@ public class RTListAdapter extends ArrayAdapter<RTEntry> {
         else if (entry.type == RTEntry.Type.SUBHEADING)
             return getSubHeadingView(entry, convertView);
         else
-            return getWordView(entry, convertView);
+            return getWordView(entry, convertView, parent);
     }
 
     private View getHeadingView(RTEntry entry, View convertView) {
@@ -84,18 +85,23 @@ public class RTListAdapter extends ArrayAdapter<RTEntry> {
         return convertView;
     }
 
-    private View getWordView(RTEntry entry, View convertView) {
+    private View getWordView(RTEntry entry, View convertView, ViewGroup parent) {
+        final ListItemWordBinding binding;
         if (convertView == null) {
-            convertView = View.inflate(mContext, R.layout.list_item_word, null);
+            binding = DataBindingUtil.inflate(
+                    LayoutInflater.from(getContext()),
+                    R.layout.list_item_word,
+                    parent,
+                    false);
+            convertView = binding.getRoot();
+            convertView.setTag(binding);
+        } else {
+            binding = (ListItemWordBinding) convertView.getTag();
         }
-        TextView text1 = ViewHolder.get(convertView, android.R.id.text1);
-        text1.setText(entry.text);
-        ImageView btnRhymer = ViewHolder.get(convertView, R.id.btn_rhymer);
-        ImageView btnThesaurus = ViewHolder.get(convertView, R.id.btn_thesaurus);
-        ImageView btnDictionary = ViewHolder.get(convertView, R.id.btn_dictionary);
-        btnRhymer.setOnClickListener(mOnClickListener);
-        btnThesaurus.setOnClickListener(mOnClickListener);
-        btnDictionary.setOnClickListener(mOnClickListener);
+        binding.text1.setText(entry.text);
+        binding.btnRhymer.setOnClickListener(mOnClickListener);
+        binding.btnThesaurus.setOnClickListener(mOnClickListener);
+        binding.btnDictionary.setOnClickListener(mOnClickListener);
         return convertView;
     }
 
@@ -103,8 +109,8 @@ public class RTListAdapter extends ArrayAdapter<RTEntry> {
         @Override
         public void onClick(View v) {
             View parentView = (View) v.getParent();
-            TextView text1 = ViewHolder.get(parentView, android.R.id.text1);
-            String word = (String) text1.getText();
+            ListItemWordBinding binding = (ListItemWordBinding) parentView.getTag();
+            String word = (String) binding.text1.getText();
 
             if (v.getId() == R.id.btn_rhymer) {
                 mListener.onWordClicked(word, Tab.RHYMER);
