@@ -17,162 +17,163 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<layout>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
-        android:id="@+id/list_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="gone">
-
-        <RelativeLayout
-
-            android:layout_width="match_parent"
-            android:layout_height="48dp">
-
-            <TextView
-                android:id="@+id/tv_list_header"
-                style="?android:attr/textAppearanceLarge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/btn_filter"
-                android:layout_toStartOf="@id/btn_filter"
-                android:gravity="start|center_vertical"
-                android:textStyle="bold"
-                tools:text="Query" />
-
-            <!--
-                 Define AppCompatImageButton instead of ImageButton
-                 to avoid lint warnings about the app:srcCompat attribute,
-                 and to be able to see the image in the design view in
-                 Android Studio
-                 http://stackoverflow.com/questions/35624562/code-analysis-error-unexpected-namespace-prefix-after-upgrading-android-suppor
-            -->
-            <android.support.v7.widget.AppCompatImageButton
-                android:id="@id/btn_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignWithParentIfMissing="true"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/btn_web_search"
-                android:layout_toStartOf="@id/btn_web_search"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="@string/filter_hint"
-                android:padding="8dp"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_filter_list" />
-
-            <android.support.v7.widget.AppCompatImageButton
-                android:id="@id/btn_web_search"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignWithParentIfMissing="true"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/btn_play"
-                android:layout_toStartOf="@id/btn_play"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="@string/tts_play"
-                android:padding="8dp"
-                app:srcCompat="@drawable/ic_web_search" />
-
-            <android.support.v7.widget.AppCompatImageButton
-                android:id="@id/btn_play"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="@string/tts_play"
-                android:padding="8dp"
-                app:srcCompat="@drawable/ic_play_circle" />
-        </RelativeLayout>
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
         <LinearLayout
-            android:id="@+id/filter"
-            android:layout_width="wrap_content"
+            android:id="@+id/list_header"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/shape_rounded_rect"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tv_filter_label"
-                android:layout_width="wrap_content"
-                android:layout_height="24dp"
-                android:layout_gravity="center_vertical"
-                android:gravity="center_vertical"
-                android:text="@null"
-                android:textColor="#37474f"
-                tools:text="@string/filter_rhymer_label" />
+            <RelativeLayout
 
-            <TextView
-                android:id="@+id/tv_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="24dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:gravity="center_vertical"
-                android:textColor="#37474f"
-                tools:text="yesterday" />
+                android:layout_width="match_parent"
+                android:layout_height="48dp">
 
-            <android.support.v7.widget.AppCompatImageView
-                android:id="@+id/btn_clear"
+                <TextView
+                    android:id="@+id/tv_list_header"
+                    style="?android:attr/textAppearanceLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/btn_filter"
+                    android:layout_toStartOf="@id/btn_filter"
+                    android:gravity="start|center_vertical"
+                    android:textStyle="bold"
+                    tools:text="Query" />
+
+                <!--
+                     Define AppCompatImageButton instead of ImageButton
+                     to avoid lint warnings about the app:srcCompat attribute,
+                     and to be able to see the image in the design view in
+                     Android Studio
+                     http://stackoverflow.com/questions/35624562/code-analysis-error-unexpected-namespace-prefix-after-upgrading-android-suppor
+                -->
+                <android.support.v7.widget.AppCompatImageButton
+                    android:id="@id/btn_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignWithParentIfMissing="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/btn_web_search"
+                    android:layout_toStartOf="@id/btn_web_search"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="@string/filter_hint"
+                    android:padding="8dp"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_filter_list" />
+
+                <android.support.v7.widget.AppCompatImageButton
+                    android:id="@id/btn_web_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignWithParentIfMissing="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/btn_play"
+                    android:layout_toStartOf="@id/btn_play"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="@string/tts_play"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_web_search" />
+
+                <android.support.v7.widget.AppCompatImageButton
+                    android:id="@id/btn_play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="@string/tts_play"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_play_circle" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                app:srcCompat="@drawable/ic_clear"
-                android:contentDescription="@string/filter_clear" />
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/shape_rounded_rect"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tv_filter_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:text="@null"
+                    android:textColor="#37474f"
+                    tools:text="@string/filter_rhymer_label" />
+
+                <TextView
+                    android:id="@+id/tv_filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:gravity="center_vertical"
+                    android:textColor="#37474f"
+                    tools:text="yesterday" />
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:id="@+id/btn_clear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/filter_clear"
+                    app:srcCompat="@drawable/ic_clear" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@drawable/shadow" />
+
         </LinearLayout>
 
-        <View
-            android:id="@+id/divider"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@drawable/shadow" />
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
+            <TextView
+                android:id="@android:id/empty"
+                style="?attr/textAppearanceSearchResultTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@null" />
+
+
+            <ListView
+                android:id="@android:id/list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@null"
+                android:visibility="gone" />
+        </FrameLayout>
     </LinearLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <TextView
-            android:id="@android:id/empty"
-            style="?attr/textAppearanceSearchResultTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@null" />
-
-
-        <ListView
-            android:id="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@null"
-            android:visibility="gone" />
-    </FrameLayout>
-</LinearLayout>
 </layout>

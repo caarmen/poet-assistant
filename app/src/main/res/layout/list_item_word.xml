@@ -17,76 +17,77 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<layout>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@android:id/text1"
-        style="?attr/textAppearanceListItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/btn_rhymer"
-        android:layout_toStartOf="@+id/btn_rhymer"
-        android:paddingEnd="0dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="0dp"
-        android:paddingStart="16dp"
-        tools:text="happy" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <!--
-         Define AppCompatImageView instead of ImageView
-         to avoid lint warnings about the app:srcCompat attribute,
-         and to be able to see the image in the design view in
-         Android Studio
-         http://stackoverflow.com/questions/35624562/code-analysis-error-unexpected-namespace-prefix-after-upgrading-android-suppor
-    -->
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@id/btn_rhymer"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/btn_thesaurus"
-        android:layout_toStartOf="@id/btn_thesaurus"
-        android:background="?selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:contentDescription="@string/tab_rhymer"
-        android:padding="4dp"
-        app:srcCompat="@drawable/ic_rhymer" />
+        <TextView
+            android:id="@android:id/text1"
+            style="?attr/textAppearanceListItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/btn_rhymer"
+            android:layout_toStartOf="@+id/btn_rhymer"
+            android:paddingEnd="0dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="0dp"
+            android:paddingStart="16dp"
+            tools:text="happy" />
 
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@id/btn_thesaurus"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_toLeftOf="@+id/btn_dictionary"
-        android:layout_toStartOf="@+id/btn_dictionary"
-        android:layout_centerVertical="true"
-        android:background="?selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:contentDescription="@string/tab_thesaurus"
-        android:padding="4dp"
-        app:srcCompat="@drawable/ic_thesaurus" />
+        <!--
+             Define AppCompatImageView instead of ImageView
+             to avoid lint warnings about the app:srcCompat attribute,
+             and to be able to see the image in the design view in
+             Android Studio
+             http://stackoverflow.com/questions/35624562/code-analysis-error-unexpected-namespace-prefix-after-upgrading-android-suppor
+        -->
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@id/btn_rhymer"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/btn_thesaurus"
+            android:layout_toStartOf="@id/btn_thesaurus"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/tab_rhymer"
+            android:padding="4dp"
+            app:srcCompat="@drawable/ic_rhymer" />
 
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@id/btn_dictionary"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:background="?selectableItemBackgroundBorderless"
-        android:clickable="true"
-        android:contentDescription="@string/tab_dictionary"
-        android:padding="4dp"
-        app:srcCompat="@drawable/ic_dictionary" />
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@id/btn_thesaurus"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/btn_dictionary"
+            android:layout_toStartOf="@+id/btn_dictionary"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/tab_thesaurus"
+            android:padding="4dp"
+            app:srcCompat="@drawable/ic_thesaurus" />
 
-</RelativeLayout>
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@id/btn_dictionary"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/tab_dictionary"
+            android:padding="4dp"
+            app:srcCompat="@drawable/ic_dictionary" />
+
+    </RelativeLayout>
 </layout>

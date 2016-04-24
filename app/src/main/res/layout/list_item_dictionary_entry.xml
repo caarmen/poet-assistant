@@ -17,35 +17,36 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<layout>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/word_type"
-        style="?attr/textAppearanceListItem"
-        android:layout_width="24dp"
-        android:layout_height="wrap_content"
-        android:paddingEnd="0dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="0dp"
-        android:paddingStart="16dp"
-        android:textStyle="bold"
-        tools:text="v" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/definition"
-        style="?attr/textAppearanceListItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingEnd="0dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="0dp"
-        android:paddingStart="16dp"
-        tools:text="happy" />
+        <TextView
+            android:id="@+id/word_type"
+            style="?attr/textAppearanceListItem"
+            android:layout_width="24dp"
+            android:layout_height="wrap_content"
+            android:paddingEnd="0dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="0dp"
+            android:paddingStart="16dp"
+            android:textStyle="bold"
+            tools:text="v" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/definition"
+            style="?attr/textAppearanceListItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="0dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="0dp"
+            android:paddingStart="16dp"
+            tools:text="happy" />
+
+    </LinearLayout>
 </layout>
