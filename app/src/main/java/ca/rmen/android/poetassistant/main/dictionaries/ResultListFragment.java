@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
@@ -51,6 +52,7 @@ import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.VectorCompat;
+import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 
 
@@ -64,16 +66,12 @@ public class ResultListFragment<T> extends ListFragment
     private static final String EXTRA_FILTER = "filter";
     static final String EXTRA_TAB = "tab";
     static final String EXTRA_QUERY = "query";
+    private FragmentResultListBinding mBinding;
+
     private Tab mTab;
     private ArrayAdapter<T> mAdapter;
     private ResultListData<T> mData;
-    private TextView mListHeaderTextView;
-    private View mFilterView;
-    private TextView mFilterTextView;
-    private View mHeaderView;
-    private View mPlayButton;
     private Tts mTts;
-    private TextView mEmptyView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -85,30 +83,23 @@ public class ResultListFragment<T> extends ListFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
         mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
-        View view = inflater.inflate(R.layout.fragment_result_list, container, false);
-        mEmptyView = (TextView) view.findViewById(android.R.id.empty);
-        mListHeaderTextView = (TextView) view.findViewById(R.id.tv_list_header);
-        mHeaderView = view.findViewById(R.id.list_header);
-        mFilterView = view.findViewById(R.id.filter);
-        mFilterTextView = (TextView) view.findViewById(R.id.tv_filter);
-        mPlayButton = view.findViewById(R.id.btn_play);
-        mPlayButton.setOnClickListener(mPlayButtonListener);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false);
+        View view = mBinding.getRoot();
+        mBinding.btnPlay.setOnClickListener(mPlayButtonListener);
 
-        View filterButton = view.findViewById(R.id.btn_filter);
-        filterButton.setOnClickListener(mFilterButtonListener);
-        if (mTab == Tab.RHYMER || mTab == Tab.THESAURUS) filterButton.setVisibility(View.VISIBLE);
-        TextView filterTextView = (TextView) view.findViewById(R.id.tv_filter_label);
-        filterTextView.setText(ResultListFactory.getFilterLabel(getActivity(), mTab));
+        mBinding.btnFilter.setOnClickListener(mFilterButtonListener);
+        if (mTab == Tab.RHYMER || mTab == Tab.THESAURUS) mBinding.btnFilter.setVisibility(View.VISIBLE);
+        mBinding.tvFilterLabel.setText(ResultListFactory.getFilterLabel(getActivity(), mTab));
 
-        view.findViewById(R.id.btn_clear).setOnClickListener(mClearButtonListener);
-        view.findViewById(R.id.btn_web_search).setOnClickListener(mWebSearchButtonListener);
+        mBinding.btnClear.setOnClickListener(mClearButtonListener);
+        mBinding.btnWebSearch.setOnClickListener(mWebSearchButtonListener);
 
         if (savedInstanceState != null) {
             String query = savedInstanceState.getString(EXTRA_QUERY);
             String filter = savedInstanceState.getString(EXTRA_FILTER);
-            mListHeaderTextView.setText(query);
-            mFilterTextView.setText(filter);
-            mFilterView.setVisibility(TextUtils.isEmpty(filter) ? View.GONE : View.VISIBLE);
+            mBinding.tvListHeader.setText(query);
+            mBinding.tvFilter.setText(filter);
+            mBinding.filter.setVisibility(TextUtils.isEmpty(filter) ? View.GONE : View.VISIBLE);
         }
 
         EventBus.getDefault().register(this);
@@ -138,16 +129,16 @@ public class ResultListFragment<T> extends ListFragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d(TAG, mTab + ": onSaveInstanceState() called with: " + "outState = [" + outState + "]");
-        outState.putString(EXTRA_QUERY, (String) mListHeaderTextView.getText());
-        outState.putString(EXTRA_FILTER, (String) mFilterTextView.getText());
+        outState.putString(EXTRA_QUERY, (String) mBinding.tvListHeader.getText());
+        outState.putString(EXTRA_FILTER, (String) mBinding.tvFilter.getText());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_share) {
             Share.share(getActivity(), mTab,
-                    mListHeaderTextView.getText().toString(),
-                    mFilterTextView.getText().toString(),
+                    mBinding.tvListHeader.getText().toString(),
+                    mBinding.tvFilter.getText().toString(),
                     mData.data);
         }
         return super.onOptionsItemSelected(item);
@@ -161,8 +152,8 @@ public class ResultListFragment<T> extends ListFragment
 
     public void query(String query) {
         Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
-        mListHeaderTextView.setText(query);
-        mFilterView.setVisibility(View.GONE);
+        mBinding.tvListHeader.setText(query);
+        mBinding.filter.setVisibility(View.GONE);
         Bundle args = new Bundle(1);
         args.putString(EXTRA_QUERY, query);
         getLoaderManager().restartLoader(mTab.ordinal(), args, this);
@@ -170,7 +161,7 @@ public class ResultListFragment<T> extends ListFragment
 
     private void filter(String filter) {
         Bundle args = new Bundle(2);
-        args.putString(EXTRA_QUERY, mListHeaderTextView.getText().toString());
+        args.putString(EXTRA_QUERY, mBinding.tvListHeader.getText().toString());
         args.putString(EXTRA_FILTER, filter);
         getLoaderManager().restartLoader(mTab.ordinal(), args, this);
     }
@@ -178,7 +169,7 @@ public class ResultListFragment<T> extends ListFragment
     private void updatePlayButton() {
         int ttsStatus = mTts.getStatus();
         int playButtonVisibility = ttsStatus == TextToSpeech.SUCCESS ? View.VISIBLE : View.GONE;
-        mPlayButton.setVisibility(playButtonVisibility);
+        mBinding.btnPlay.setVisibility(playButtonVisibility);
     }
 
     @Override
@@ -189,7 +180,7 @@ public class ResultListFragment<T> extends ListFragment
         if (args != null) {
             query = args.getString(EXTRA_QUERY);
             filter = args.getString(EXTRA_FILTER);
-            mListHeaderTextView.setText(query);
+            mBinding.tvListHeader.setText(query);
         }
         //noinspection unchecked
         return (Loader<ResultListData<T>>) ResultListFactory.createLoader(mTab, getActivity(), query, filter);
@@ -212,12 +203,12 @@ public class ResultListFragment<T> extends ListFragment
 
     private void updateUi() {
         Log.d(TAG, mTab + ": updateUi() called with: " + "");
-        int headerVisible = mAdapter.getCount() == 0 && TextUtils.isEmpty(mListHeaderTextView.getText().toString()) ?
+        int headerVisible = mAdapter.getCount() == 0 && TextUtils.isEmpty(mBinding.tvListHeader.getText().toString()) ?
                 View.GONE : View.VISIBLE;
-        mHeaderView.setVisibility(headerVisible);
+        mBinding.listHeader.setVisibility(headerVisible);
 
         String query = mData == null ? null : mData.matchedWord;
-        mListHeaderTextView.setText(query);
+        mBinding.tvListHeader.setText(query);
         // If we have an empty list because the user didn't enter any search term,
         // we'll show a text to tell them to search.
         if (TextUtils.isEmpty(query)) {
@@ -226,11 +217,11 @@ public class ResultListFragment<T> extends ListFragment
             SpannableStringBuilder ssb = new SpannableStringBuilder(emptySearch);
             int iconIndex = emptySearch.indexOf("%s");
             ssb.setSpan(imageSpan, iconIndex, iconIndex + 2, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-            mEmptyView.setText(ssb, TextView.BufferType.SPANNABLE);
+            mBinding.empty.setText(ssb, TextView.BufferType.SPANNABLE);
         }
         // If the user entered a query and there are no matches, show the normal "no results" text.
         else {
-            mEmptyView.setText(R.string.empty_list_with_query);
+            mBinding.empty.setText(R.string.empty_list_with_query);
         }
         getActivity().supportInvalidateOptionsMenu();
     }
@@ -247,13 +238,13 @@ public class ResultListFragment<T> extends ListFragment
     public void onInputSubmitted(int actionId, String input) {
         if (actionId == ACTION_FILTER) {
             if (!TextUtils.isEmpty(input)) {
-                mFilterView.setVisibility(View.VISIBLE);
+                mBinding.filter.setVisibility(View.VISIBLE);
                 String normalizedInput = input.toLowerCase(Locale.getDefault()).trim();
-                mFilterTextView.setText(normalizedInput);
+                mBinding.tvFilter.setText(normalizedInput);
                 filter(normalizedInput);
             } else {
-                mFilterView.setVisibility(View.GONE);
-                mFilterTextView.setText(null);
+                mBinding.filter.setVisibility(View.GONE);
+                mBinding.tvFilter.setText(null);
                 filter(null);
             }
         }
@@ -263,7 +254,7 @@ public class ResultListFragment<T> extends ListFragment
 
         @Override
         public void onClick(View v) {
-            mTts.speak(mListHeaderTextView.getText().toString());
+            mTts.speak(mBinding.tvListHeader.getText().toString());
         }
     };
 
@@ -271,7 +262,7 @@ public class ResultListFragment<T> extends ListFragment
         @Override
         public void onClick(View v) {
             Intent searchIntent = new Intent(Intent.ACTION_WEB_SEARCH);
-            String word = mListHeaderTextView.getText().toString();
+            String word = mBinding.tvListHeader.getText().toString();
             searchIntent.putExtra(SearchManager.QUERY, word);
             // No apps can handle ACTION_WEB_SEARCH.  We'll try a more generic intent instead
             if (getActivity().getPackageManager().queryIntentActivities(searchIntent, 0).isEmpty()) {
@@ -290,7 +281,7 @@ public class ResultListFragment<T> extends ListFragment
                     getActivity(),
                     mTab,
                     ACTION_FILTER,
-                    mFilterTextView.getText().toString());
+                    mBinding.tvFilter.getText().toString());
             getChildFragmentManager().beginTransaction().add(fragment, DIALOG_TAG).commit();
         }
     };
@@ -298,8 +289,8 @@ public class ResultListFragment<T> extends ListFragment
     private final View.OnClickListener mClearButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mFilterTextView.setText(null);
-            mFilterView.setVisibility(View.GONE);
+            mBinding.tvFilter.setText(null);
+            mBinding.filter.setVisibility(View.GONE);
             filter(null);
         }
     };

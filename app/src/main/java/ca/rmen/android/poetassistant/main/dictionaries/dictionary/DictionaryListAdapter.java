@@ -20,36 +20,38 @@
 package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
 
 import android.app.Activity;
-import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.dictionaries.ViewHolder;
+import ca.rmen.android.poetassistant.databinding.ListItemDictionaryEntryBinding;
 
 
 public class DictionaryListAdapter extends ArrayAdapter<DictionaryEntry.DictionaryEntryDetails> {
-    private final Context mContext;
-
     public DictionaryListAdapter(Activity activity) {
         super(activity, 0);
-        mContext = activity;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         DictionaryEntry.DictionaryEntryDetails entry = getItem(position);
+        final ListItemDictionaryEntryBinding binding;
         if (convertView == null) {
-            convertView = View.inflate(mContext, R.layout.list_item_dictionary_entry, null);
+            binding = DataBindingUtil.inflate(
+                    LayoutInflater.from(getContext()),
+                    R.layout.list_item_dictionary_entry,
+                    parent,
+                    false);
+            convertView = binding.getRoot();
+            convertView.setTag(binding);
+        } else {
+            binding = (ListItemDictionaryEntryBinding) convertView.getTag();
         }
-        TextView wordType = ViewHolder.get(convertView, R.id.word_type);
-        wordType.setText(entry.partOfSpeech);
-
-        TextView definition = ViewHolder.get(convertView, R.id.definition);
-        definition.setText(entry.definition);
+        binding.wordType.setText(entry.partOfSpeech);
+        binding.definition.setText(entry.definition);
         return convertView;
     }
-
 }

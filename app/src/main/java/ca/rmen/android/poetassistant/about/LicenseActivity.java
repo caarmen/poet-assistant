@@ -21,12 +21,12 @@ package ca.rmen.android.poetassistant.about;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,6 +35,7 @@ import java.io.InputStreamReader;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.databinding.ActivityLicenseBinding;
 
 
 public class LicenseActivity extends AppCompatActivity {
@@ -43,6 +44,7 @@ public class LicenseActivity extends AppCompatActivity {
     private static final String EXTRA_TITLE = "title";
     private static final String EXTRA_LICENSE_TEXT_ASSET_FILE = "license_text_asset_file";
 
+    private ActivityLicenseBinding mBinding;
 
     public static void start(Context context, String title, String licenseText) {
         Intent intent = new Intent(context, LicenseActivity.class);
@@ -54,7 +56,7 @@ public class LicenseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_license);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_license);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -64,9 +66,7 @@ public class LicenseActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String title = intent.getStringExtra(EXTRA_TITLE);
         String licenseFile = intent.getStringExtra(EXTRA_LICENSE_TEXT_ASSET_FILE);
-        TextView titleTextView = (TextView) findViewById(R.id.tv_title);
-        assert titleTextView != null;
-        titleTextView.setText(title);
+        mBinding.tvTitle.setText(title);
         loadLicenseFile(licenseFile);
     }
 
@@ -99,9 +99,7 @@ public class LicenseActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(String licenseText) {
-                TextView licenseTextView = (TextView) findViewById(R.id.tv_license_text);
-                assert licenseTextView != null;
-                licenseTextView.setText(licenseText);
+                mBinding.tvLicenseText.setText(licenseText);
             }
         }.execute(fileName);
 

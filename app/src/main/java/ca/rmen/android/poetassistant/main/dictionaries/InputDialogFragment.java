@@ -23,18 +23,20 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.EditText;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.databinding.InputDialogEditTextBinding;
 
 
 /**
@@ -73,11 +75,14 @@ public class InputDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.v(TAG, "onCreateDialog: savedInstanceState = " + savedInstanceState);
         Context context = getActivity();
-        View view = View.inflate(getActivity(), R.layout.input_dialog_edit_text, null);
-        final EditText editText = (EditText) view.findViewById(android.R.id.edit);
+        final InputDialogEditTextBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(getActivity()),
+                R.layout.input_dialog_edit_text,
+                null,
+                false);
         Bundle arguments = getArguments();
         final int actionId = arguments.getInt(EXTRA_ACTION_ID);
-        editText.setText(arguments.getString(EXTRA_TEXT));
+        binding.edit.setText(arguments.getString(EXTRA_TEXT));
 
         OnClickListener positiveListener = new OnClickListener() {
             @Override
@@ -87,19 +92,19 @@ public class InputDialogFragment extends DialogFragment {
                 if (parentFragment instanceof InputDialogListener)
                     listener = (InputDialogListener) parentFragment;
                 else listener = (InputDialogListener) getActivity();
-                listener.onInputSubmitted(actionId, editText.getText().toString());
+                listener.onInputSubmitted(actionId, binding.edit.getText().toString());
             }
         };
 
         final Dialog dialog = new AlertDialog.Builder(context)
-                .setView(view)
+                .setView(binding.getRoot())
                 .setTitle(arguments.getString(EXTRA_TITLE))
                 .setMessage(arguments.getString(EXTRA_MESSAGE))
                 .setPositiveButton(android.R.string.ok, positiveListener)
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
 
-        editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        binding.edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {

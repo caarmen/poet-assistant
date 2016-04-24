@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main.reader;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,8 +42,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -50,6 +49,7 @@ import org.greenrobot.eventbus.Subscribe;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickedListener;
 
@@ -61,9 +61,8 @@ public class ReaderFragment extends Fragment implements
     private static final int ACTION_FILE_OPEN = 0;
     private static final int ACTION_FILE_SAVE_AS = 1;
 
+    private FragmentReaderBinding mBinding;
     private Tts mTts;
-    private ImageView mPlayButton;
-    private EditText mTextView;
     private Handler mHandler;
     private PoemPrefs mPoemPrefs;
 
@@ -97,14 +96,12 @@ public class ReaderFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView() called with: " + "inflater = [" + inflater + "], container = [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
-        View view = inflater.inflate(R.layout.fragment_reader, container, false);
-        mPlayButton = (ImageView) view.findViewById(R.id.btn_play);
-        mTextView = (EditText) view.findViewById(R.id.tv_text);
-        mPlayButton.setOnClickListener(mOnClickListener);
-        mTextView.addTextChangedListener(mTextWatcher);
-        registerForContextMenu(mTextView);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false);
+        mBinding.btnPlay.setOnClickListener(mOnClickListener);
+        mBinding.tvText.addTextChangedListener(mTextWatcher);
+        registerForContextMenu(mBinding.tvText);
         mHandler = new Handler();
-        return view;
+        return mBinding.getRoot();
     }
 
     @Override
@@ -137,18 +134,18 @@ public class ReaderFragment extends Fragment implements
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_new) {
             mPoemPrefs.clear();
-            mTextView.setText("");
+            mBinding.tvText.setText("");
             getActivity().supportInvalidateOptionsMenu();
         } else if (item.getItemId() == R.id.action_open) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) open();
         } else if (item.getItemId() == R.id.action_save) {
             PoemFile poemFile = mPoemPrefs.getSavedPoem();
-            PoemFile.save(getActivity(), poemFile.uri, mTextView.getText().toString(), this);
+            PoemFile.save(getActivity(), poemFile.uri, mBinding.tvText.getText().toString(), this);
         } else if (item.getItemId() == R.id.action_save_as) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) saveAs();
         } else if (item.getItemId() == R.id.action_share) {
             Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_TEXT, mTextView.getText().toString());
+            intent.putExtra(Intent.EXTRA_TEXT, mBinding.tvText.getText().toString());
             intent.setType("text/plain");
             startActivity(Intent.createChooser(intent, getString(R.string.share)));
         }
@@ -178,7 +175,7 @@ public class ReaderFragment extends Fragment implements
     @Override
     public void onPause() {
         Log.d(TAG, "onPause() called with: " + "");
-        mPoemPrefs.updatePoemText(mTextView.getText().toString());
+        mPoemPrefs.updatePoemText(mBinding.tvText.getText().toString());
         super.onPause();
     }
 
@@ -201,7 +198,7 @@ public class ReaderFragment extends Fragment implements
         } else if (requestCode == ACTION_FILE_SAVE_AS && resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 Uri uri = data.getData();
-                PoemFile.save(getActivity(), uri, mTextView.getText().toString(), this);
+                PoemFile.save(getActivity(), uri, mBinding.tvText.getText().toString(), this);
             }
         }
     }
@@ -231,7 +228,7 @@ public class ReaderFragment extends Fragment implements
         Log.d(TAG, "speak() called with: " + "text = [" + text + "]");
         PoemFile poemFile = new PoemFile(null, null, text);
         mPoemPrefs.setSavedPoem(poemFile);
-        mTextView.setText(text);
+        mBinding.tvText.setText(text);
     }
 
     @Override
@@ -239,12 +236,12 @@ public class ReaderFragment extends Fragment implements
         Log.d(TAG, "onPoemLoaded() called with: " + "poemFile = [" + poemFile + "]");
         if (poemFile == null) {
             mPoemPrefs.clear();
-            Snackbar.make(mTextView, getString(R.string.file_opened_error), Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mBinding.tvText, getString(R.string.file_opened_error), Snackbar.LENGTH_LONG).show();
         } else {
-            mTextView.setText(poemFile.text);
+            mBinding.tvText.setText(poemFile.text);
             mPoemPrefs.setSavedPoem(poemFile);
             getActivity().supportInvalidateOptionsMenu();
-            Snackbar.make(mTextView, getString(R.string.file_opened, poemFile.name), Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mBinding.tvText, getString(R.string.file_opened, poemFile.name), Snackbar.LENGTH_LONG).show();
         }
         getActivity().supportInvalidateOptionsMenu();
     }
@@ -252,11 +249,11 @@ public class ReaderFragment extends Fragment implements
     @Override
     public void onPoemSaved(PoemFile poemFile) {
         if (poemFile == null) {
-            Snackbar.make(mTextView, getString(R.string.file_saved_error), Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mBinding.tvText, getString(R.string.file_saved_error), Snackbar.LENGTH_LONG).show();
         } else {
             Log.d(TAG, "onPoemSaved() called with: " + "poemFile = [" + poemFile + "]");
             mPoemPrefs.setSavedPoem(poemFile);
-            Snackbar.make(mTextView, getString(R.string.file_saved, poemFile.name), Snackbar.LENGTH_LONG).show();
+            Snackbar.make(mBinding.tvText, getString(R.string.file_saved, poemFile.name), Snackbar.LENGTH_LONG).show();
         }
         getActivity().supportInvalidateOptionsMenu();
     }
@@ -272,15 +269,15 @@ public class ReaderFragment extends Fragment implements
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                boolean enabled = !TextUtils.isEmpty(mTextView.getText())
+                boolean enabled = !TextUtils.isEmpty(mBinding.tvText.getText())
                         && mTts.getStatus() == TextToSpeech.SUCCESS;
-                mPlayButton.setEnabled(enabled);
+                mBinding.btnPlay.setEnabled(enabled);
                 if (mTts.isSpeaking()) {
-                    mPlayButton.setImageResource(R.drawable.ic_stop);
+                    mBinding.btnPlay.setImageResource(R.drawable.ic_stop);
                 } else if (!enabled) {
-                    mPlayButton.setImageResource(R.drawable.ic_play_disabled);
+                    mBinding.btnPlay.setImageResource(R.drawable.ic_play_disabled);
                 } else {
-                    mPlayButton.setImageResource(R.drawable.ic_play_enabled);
+                    mBinding.btnPlay.setImageResource(R.drawable.ic_play_enabled);
                 }
             }
         });
@@ -301,10 +298,10 @@ public class ReaderFragment extends Fragment implements
      * Read the text in our text view.
      */
     private void speak() {
-        String text = mTextView.getText().toString();
-        int startPosition = mTextView.getSelectionStart();
+        String text = mBinding.tvText.getText().toString();
+        int startPosition = mBinding.tvText.getSelectionStart();
         if (startPosition == text.length()) startPosition = 0;
-        int endPosition = mTextView.getSelectionEnd();
+        int endPosition = mBinding.tvText.getSelectionEnd();
         if (startPosition == endPosition) endPosition = text.length();
         text = text.substring(startPosition, endPosition);
         mTts.speak(text);
@@ -318,7 +315,7 @@ public class ReaderFragment extends Fragment implements
         if (arguments != null) {
             String initialText = arguments.getString(EXTRA_INITIAL_TEXT);
             if (!TextUtils.isEmpty(initialText)) {
-                mTextView.setText(initialText);
+                mBinding.tvText.setText(initialText);
                 PoemFile poemFile = new PoemFile(null, null, initialText);
                 mPoemPrefs.setSavedPoem(poemFile);
                 getActivity().supportInvalidateOptionsMenu();
@@ -328,17 +325,17 @@ public class ReaderFragment extends Fragment implements
         // Load the poem we previously saved
         if (mPoemPrefs.hasSavedPoem()) {
             PoemFile poemFile = mPoemPrefs.getSavedPoem();
-            mTextView.setText(poemFile.text);
+            mBinding.tvText.setText(poemFile.text);
         } else if (mPoemPrefs.hasTempPoem()) {
             String tempPoemText = mPoemPrefs.getTempPoem();
-            mTextView.setText(tempPoemText);
+            mBinding.tvText.setText(tempPoemText);
         }
     }
 
     private String getSelectedWord() {
-        int selectionStart = mTextView.getSelectionStart();
-        int selectionEnd = mTextView.getSelectionEnd();
-        String text = mTextView.getText().toString();
+        int selectionStart = mBinding.tvText.getSelectionStart();
+        int selectionEnd = mBinding.tvText.getSelectionEnd();
+        String text = mBinding.tvText.getText().toString();
 
         if (selectionStart < selectionEnd) return text.substring(selectionStart, selectionEnd);
         if (selectionStart == text.length()) return null;
