@@ -37,11 +37,13 @@ public class RTListAdapter extends ArrayAdapter<RTEntry> {
 
     private final Context mContext;
     private final OnWordClickedListener mListener;
+    private final EntryIconClickListener mEntryIconClickListener;
 
     public RTListAdapter(Activity activity) {
         super(activity, 0);
         mContext = activity;
         mListener = (OnWordClickedListener) activity;
+        mEntryIconClickListener = new EntryIconClickListener();
     }
 
     @Override
@@ -99,26 +101,28 @@ public class RTListAdapter extends ArrayAdapter<RTEntry> {
             binding = (ListItemWordBinding) convertView.getTag();
         }
         binding.text1.setText(entry.text);
-        binding.btnRhymer.setOnClickListener(mOnClickListener);
-        binding.btnThesaurus.setOnClickListener(mOnClickListener);
-        binding.btnDictionary.setOnClickListener(mOnClickListener);
+        binding.setEntryIconClickListener(mEntryIconClickListener);
         return convertView;
     }
 
-    private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+    public class EntryIconClickListener {
+
+        private String getWord(View v) {
             View parentView = (View) v.getParent();
             ListItemWordBinding binding = (ListItemWordBinding) parentView.getTag();
-            String word = (String) binding.text1.getText();
-
-            if (v.getId() == R.id.btn_rhymer) {
-                mListener.onWordClicked(word, Tab.RHYMER);
-            } else if (v.getId() == R.id.btn_thesaurus) {
-                mListener.onWordClicked(word, Tab.THESAURUS);
-            } else if (v.getId() == R.id.btn_dictionary) {
-                mListener.onWordClicked(word, Tab.DICTIONARY);
-            }
+            return (String) binding.text1.getText();
         }
-    };
+
+        public void onRhymerIconClicked(View v) {
+            mListener.onWordClicked(getWord(v), Tab.RHYMER);
+        }
+
+        public void onThesaurusIconClicked(View v) {
+            mListener.onWordClicked(getWord(v), Tab.THESAURUS);
+        }
+
+        public void onDictionaryIconClicked(View v) {
+            mListener.onWordClicked(getWord(v), Tab.DICTIONARY);
+        }
+    }
 }

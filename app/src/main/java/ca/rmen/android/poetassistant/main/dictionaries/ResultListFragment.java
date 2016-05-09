@@ -67,6 +67,7 @@ public class ResultListFragment<T> extends ListFragment
     static final String EXTRA_TAB = "tab";
     static final String EXTRA_QUERY = "query";
     private FragmentResultListBinding mBinding;
+    private final HeaderButtonListener mHeaderButtonListener = new HeaderButtonListener();
 
     private Tab mTab;
     private ArrayAdapter<T> mAdapter;
@@ -85,14 +86,11 @@ public class ResultListFragment<T> extends ListFragment
         mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false);
         View view = mBinding.getRoot();
-        mBinding.btnPlay.setOnClickListener(mPlayButtonListener);
+        mBinding.setHeaderButtonListener(mHeaderButtonListener);
 
-        mBinding.btnFilter.setOnClickListener(mFilterButtonListener);
         if (mTab == Tab.RHYMER || mTab == Tab.THESAURUS) mBinding.btnFilter.setVisibility(View.VISIBLE);
         mBinding.tvFilterLabel.setText(ResultListFactory.getFilterLabel(getActivity(), mTab));
 
-        mBinding.btnClear.setOnClickListener(mClearButtonListener);
-        mBinding.btnWebSearch.setOnClickListener(mWebSearchButtonListener);
 
         if (savedInstanceState != null) {
             String query = savedInstanceState.getString(EXTRA_QUERY);
@@ -250,17 +248,16 @@ public class ResultListFragment<T> extends ListFragment
         }
     }
 
-    private final View.OnClickListener mPlayButtonListener = new View.OnClickListener() {
+    /**
+     * @param <T> Needed for the data binding tool to generate a FragmentResultListBinding class which compiles.
+     */
+    public class HeaderButtonListener<T> {
 
-        @Override
-        public void onClick(View v) {
+        public void onPlayButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             mTts.speak(mBinding.tvListHeader.getText().toString());
         }
-    };
 
-    private final View.OnClickListener mWebSearchButtonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+        public void onWebSearchButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             Intent searchIntent = new Intent(Intent.ACTION_WEB_SEARCH);
             String word = mBinding.tvListHeader.getText().toString();
             searchIntent.putExtra(SearchManager.QUERY, word);
@@ -272,11 +269,8 @@ public class ResultListFragment<T> extends ListFragment
             }
             startActivity(Intent.createChooser(searchIntent, getString(R.string.action_web_search, word)));
         }
-    };
 
-    private final View.OnClickListener mFilterButtonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+        public void onFilterButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             InputDialogFragment fragment = ResultListFactory.createFilterDialog(
                     getActivity(),
                     mTab,
@@ -284,16 +278,13 @@ public class ResultListFragment<T> extends ListFragment
                     mBinding.tvFilter.getText().toString());
             getChildFragmentManager().beginTransaction().add(fragment, DIALOG_TAG).commit();
         }
-    };
 
-    private final View.OnClickListener mClearButtonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+        public void onFilterClearButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             mBinding.tvFilter.setText(null);
             mBinding.filter.setVisibility(View.GONE);
             filter(null);
         }
-    };
+    }
 
     @SuppressWarnings("unused")
     @Subscribe

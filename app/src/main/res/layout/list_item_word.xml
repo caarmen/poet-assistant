@@ -21,6 +21,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="entryIconClickListener"
+            type="ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter.EntryIconClickListener" />
+    </data>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -59,6 +65,7 @@
             android:clickable="true"
             android:contentDescription="@string/tab_rhymer"
             android:padding="4dp"
+            android:onClick="@{entryIconClickListener.onRhymerIconClicked}"
             app:srcCompat="@drawable/ic_rhymer" />
 
         <android.support.v7.widget.AppCompatImageView
@@ -72,6 +79,7 @@
             android:clickable="true"
             android:contentDescription="@string/tab_thesaurus"
             android:padding="4dp"
+            android:onClick="@{entryIconClickListener.onThesaurusIconClicked}"
             app:srcCompat="@drawable/ic_thesaurus" />
 
         <android.support.v7.widget.AppCompatImageView
@@ -87,6 +95,7 @@
             android:clickable="true"
             android:contentDescription="@string/tab_dictionary"
             android:padding="4dp"
+            android:onClick="@{entryIconClickListener.onDictionaryIconClicked}"
             app:srcCompat="@drawable/ic_dictionary" />
 
     </RelativeLayout>
