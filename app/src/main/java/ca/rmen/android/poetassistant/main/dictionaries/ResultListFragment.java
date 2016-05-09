@@ -67,6 +67,7 @@ public class ResultListFragment<T> extends ListFragment
     static final String EXTRA_TAB = "tab";
     static final String EXTRA_QUERY = "query";
     private FragmentResultListBinding mBinding;
+    private final HeaderButtonListener mHeaderButtonListener = new HeaderButtonListener(this);
 
     private Tab mTab;
     private ArrayAdapter<T> mAdapter;
@@ -85,14 +86,11 @@ public class ResultListFragment<T> extends ListFragment
         mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false);
         View view = mBinding.getRoot();
-        mBinding.btnPlay.setOnClickListener(mPlayButtonListener);
+        mBinding.setHeaderButtonListener(mHeaderButtonListener);
 
-        mBinding.btnFilter.setOnClickListener(mFilterButtonListener);
         if (mTab == Tab.RHYMER || mTab == Tab.THESAURUS) mBinding.btnFilter.setVisibility(View.VISIBLE);
         mBinding.tvFilterLabel.setText(ResultListFactory.getFilterLabel(getActivity(), mTab));
 
-        mBinding.btnClear.setOnClickListener(mClearButtonListener);
-        mBinding.btnWebSearch.setOnClickListener(mWebSearchButtonListener);
 
         if (savedInstanceState != null) {
             String query = savedInstanceState.getString(EXTRA_QUERY);
@@ -250,50 +248,53 @@ public class ResultListFragment<T> extends ListFragment
         }
     }
 
-    private final View.OnClickListener mPlayButtonListener = new View.OnClickListener() {
+    /**
+     * This inner class is static because I couldn't figure out how to specify a template class
+     * in fragment_result_list.xml
+     * Example which doesn't work:
+     * <pre>
+     * type="ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment<T>.ButtonListener"
+     * </pre>
+     */
+    public static class HeaderButtonListener {
+        private final ResultListFragment<?> mFragment;
 
-        @Override
-        public void onClick(View v) {
-            mTts.speak(mBinding.tvListHeader.getText().toString());
+        public HeaderButtonListener(ResultListFragment<?> fragment) {
+            mFragment = fragment;
         }
-    };
 
-    private final View.OnClickListener mWebSearchButtonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+        public void onPlayButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
+            mFragment.mTts.speak(mFragment.mBinding.tvListHeader.getText().toString());
+        }
+
+        public void onWebSearchButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             Intent searchIntent = new Intent(Intent.ACTION_WEB_SEARCH);
-            String word = mBinding.tvListHeader.getText().toString();
+            String word = mFragment.mBinding.tvListHeader.getText().toString();
             searchIntent.putExtra(SearchManager.QUERY, word);
             // No apps can handle ACTION_WEB_SEARCH.  We'll try a more generic intent instead
-            if (getActivity().getPackageManager().queryIntentActivities(searchIntent, 0).isEmpty()) {
+            if (mFragment.getActivity().getPackageManager().queryIntentActivities(searchIntent, 0).isEmpty()) {
                 searchIntent = new Intent(Intent.ACTION_SEND);
                 searchIntent.setType("text/plain");
                 searchIntent.putExtra(Intent.EXTRA_TEXT, word);
             }
-            startActivity(Intent.createChooser(searchIntent, getString(R.string.action_web_search, word)));
+            mFragment.getActivity().startActivity(Intent.createChooser(searchIntent, mFragment.getString(R.string.action_web_search, word)));
         }
-    };
 
-    private final View.OnClickListener mFilterButtonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+        public void onFilterButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             InputDialogFragment fragment = ResultListFactory.createFilterDialog(
-                    getActivity(),
-                    mTab,
+                    mFragment.getActivity(),
+                    mFragment.mTab,
                     ACTION_FILTER,
-                    mBinding.tvFilter.getText().toString());
-            getChildFragmentManager().beginTransaction().add(fragment, DIALOG_TAG).commit();
+                    mFragment.mBinding.tvFilter.getText().toString());
+            mFragment.getChildFragmentManager().beginTransaction().add(fragment, DIALOG_TAG).commit();
         }
-    };
 
-    private final View.OnClickListener mClearButtonListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mBinding.tvFilter.setText(null);
-            mBinding.filter.setVisibility(View.GONE);
-            filter(null);
+        public void onFilterClearButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
+            mFragment.mBinding.tvFilter.setText(null);
+            mFragment.mBinding.filter.setVisibility(View.GONE);
+            mFragment.filter(null);
         }
-    };
+    }
 
     @SuppressWarnings("unused")
     @Subscribe
