@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+1.6.3  *(2016-05-09)*
+--------------------
+
+* Use the data binding feature in the support library.
+* Fixed colors of alert dialogs.
+
 1.6.2  *(2016-04-09)*
 --------------------
 
