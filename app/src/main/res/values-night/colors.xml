@@ -21,4 +21,5 @@
     <color name="primary_dark">#859AA4</color>
     <color name="primary_text">#cccccc</color>
     <color name="secondary_text">#727272</color>
+    <color name="dialog_accent">@color/accent</color>
 </resources>
