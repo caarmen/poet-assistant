@@ -65,6 +65,7 @@ public class ReaderFragment extends Fragment implements
     private Tts mTts;
     private Handler mHandler;
     private PoemPrefs mPoemPrefs;
+    private final PlayButtonListener mPlayButtonListener = new PlayButtonListener();
 
     public static ReaderFragment newInstance(String initialText) {
         Log.d(TAG, "newInstance() called with: " + "initialText = [" + initialText + "]");
@@ -97,7 +98,7 @@ public class ReaderFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView() called with: " + "inflater = [" + inflater + "], container = [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false);
-        mBinding.btnPlay.setOnClickListener(mOnClickListener);
+        mBinding.setPlayButtonListener(mPlayButtonListener);
         mBinding.tvText.addTextChangedListener(mTextWatcher);
         registerForContextMenu(mBinding.tvText);
         mHandler = new Handler();
@@ -283,16 +284,15 @@ public class ReaderFragment extends Fragment implements
         });
     }
 
-    private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
+    public class PlayButtonListener {
+        public void onPlayButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             Log.v(TAG, "Play button clicked");
             if (mTts.isSpeaking()) mTts.stop();
             else speak();
 
             updatePlayButton();
         }
-    };
+    }
 
     /**
      * Read the text in our text view.
