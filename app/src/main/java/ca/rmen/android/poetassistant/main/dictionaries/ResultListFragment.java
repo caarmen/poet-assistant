@@ -67,7 +67,7 @@ public class ResultListFragment<T> extends ListFragment
     static final String EXTRA_TAB = "tab";
     static final String EXTRA_QUERY = "query";
     private FragmentResultListBinding mBinding;
-    private final HeaderButtonListener mHeaderButtonListener = new HeaderButtonListener(this);
+    private final HeaderButtonListener mHeaderButtonListener = new HeaderButtonListener();
 
     private Tab mTab;
     private ArrayAdapter<T> mAdapter;
@@ -249,50 +249,40 @@ public class ResultListFragment<T> extends ListFragment
     }
 
     /**
-     * This inner class is static because I couldn't figure out how to specify a template class
-     * in fragment_result_list.xml
-     * Example which doesn't work:
-     * <pre>
-     * type="ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment<T>.ButtonListener"
-     * </pre>
+     * @param <T> Needed for the data binding tool to generate a FragmentResultListBinding class which compiles.
      */
-    public static class HeaderButtonListener {
-        private final ResultListFragment<?> mFragment;
-
-        public HeaderButtonListener(ResultListFragment<?> fragment) {
-            mFragment = fragment;
-        }
+    public class HeaderButtonListener<T> {
 
         public void onPlayButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            mFragment.mTts.speak(mFragment.mBinding.tvListHeader.getText().toString());
+            mTts.speak(mBinding.tvListHeader.getText().toString());
         }
 
         public void onWebSearchButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             Intent searchIntent = new Intent(Intent.ACTION_WEB_SEARCH);
-            String word = mFragment.mBinding.tvListHeader.getText().toString();
+            String word = mBinding.tvListHeader.getText().toString();
             searchIntent.putExtra(SearchManager.QUERY, word);
             // No apps can handle ACTION_WEB_SEARCH.  We'll try a more generic intent instead
-            if (mFragment.getActivity().getPackageManager().queryIntentActivities(searchIntent, 0).isEmpty()) {
+            if (getActivity().getPackageManager().queryIntentActivities(searchIntent, 0).isEmpty()) {
                 searchIntent = new Intent(Intent.ACTION_SEND);
                 searchIntent.setType("text/plain");
                 searchIntent.putExtra(Intent.EXTRA_TEXT, word);
             }
-            mFragment.getActivity().startActivity(Intent.createChooser(searchIntent, mFragment.getString(R.string.action_web_search, word)));
+            startActivity(Intent.createChooser(searchIntent, getString(R.string.action_web_search, word)));
         }
 
         public void onFilterButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             InputDialogFragment fragment = ResultListFactory.createFilterDialog(
-                    mFragment.getActivity(),
-                    mFragment.mTab,
+                    getActivity(),
+                    mTab,
                     ACTION_FILTER,
-                    mFragment.mBinding.tvFilter.getText().toString());
-            mFragment.getChildFragmentManager().beginTransaction().add(fragment, DIALOG_TAG).commit();
+                    mBinding.tvFilter.getText().toString());
+            getChildFragmentManager().beginTransaction().add(fragment, DIALOG_TAG).commit();
         }
 
         public void onFilterClearButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            mFragment.mBinding.tvFilter.setText(null);
-            mFragment.mBinding.filter.setVisibility(View.GONE);
-            mFragment.filter(null);
+            mBinding.tvFilter.setText(null);
+            mBinding.filter.setVisibility(View.GONE);
+            filter(null);
         }
     }
 
