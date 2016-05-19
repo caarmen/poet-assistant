@@ -5,6 +5,7 @@ Change Log
 --------------------
 
 * Updated to version 23.4.0 of the android support library.
+* Fixed a crash when tapping on the dictionary "D" icon.  I could not reproduce this issue, but saw it appear in the Play Store console.  For some reason the text was a SpannableString.
 
 1.6.3  *(2016-05-09)*
 --------------------
