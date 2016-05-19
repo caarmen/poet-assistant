@@ -127,8 +127,8 @@ public class ResultListFragment<T> extends ListFragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d(TAG, mTab + ": onSaveInstanceState() called with: " + "outState = [" + outState + "]");
-        outState.putString(EXTRA_QUERY, (String) mBinding.tvListHeader.getText());
-        outState.putString(EXTRA_FILTER, (String) mBinding.tvFilter.getText());
+        outState.putString(EXTRA_QUERY, mBinding.tvListHeader.getText().toString());
+        outState.putString(EXTRA_FILTER, mBinding.tvFilter.getText().toString());
     }
 
     @Override

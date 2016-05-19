@@ -110,7 +110,7 @@ public class RTListAdapter extends ArrayAdapter<RTEntry> {
         private String getWord(View v) {
             View parentView = (View) v.getParent();
             ListItemWordBinding binding = (ListItemWordBinding) parentView.getTag();
-            return (String) binding.text1.getText();
+            return binding.text1.getText().toString();
         }
 
         public void onRhymerIconClicked(View v) {
