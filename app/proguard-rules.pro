@@ -33,10 +33,6 @@
 }
 -keep enum org.greenrobot.eventbus.ThreadMode { *; }
 
-# This app:
--keep class ca.rmen.android.poetassistant.Tts$OnTtsInitialized
--keep class ca.rmen.android.poetassistant.Tts$OnUtteranceCompleted
-
 # Remove logging:
 -assumenosideeffects class android.util.Log {
     public static boolean isLoggable(java.lang.String, int);
