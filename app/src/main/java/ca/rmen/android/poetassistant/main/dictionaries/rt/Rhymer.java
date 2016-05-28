@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +39,8 @@ import ca.rmen.rhymer.WordVariant;
 public class Rhymer extends ca.rmen.rhymer.Rhymer {
     private static final String DB_FILE = "rhymes";
     private static final int DB_VERSION = 2;
-    private final SQLiteDatabase mDb;
+    private final Context mContext;
+    private SQLiteDatabase mDb;
 
     private static Rhymer sInstance = null;
 
@@ -48,30 +50,43 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
     }
 
     private Rhymer(Context context) {
-        mDb = DbUtil.open(context, DB_FILE, DB_VERSION);
+        mContext = context;
     }
 
+    public void load() {
+        if (mDb == null) {
+            mDb = DbUtil.open(mContext, DB_FILE, DB_VERSION);
+        }
+    }
+    public boolean isLoaded() {
+        return mDb != null;
+    }
+
+    @NonNull
     @Override
     protected List<WordVariant> getWordVariants(String word) {
-        String[] projection = new String[]{"variant_number", "stress_syllables", "last_syllable", "last_two_syllables", "last_three_syllables"};
-        String selection = "word=?";
-        String[] selectionArgs = new String[]{word};
-        Cursor cursor = mDb.query("word_variants", projection, selection, selectionArgs, null, null, null);
         List<WordVariant> result = new ArrayList<>();
-        if (cursor != null) {
-            try {
-                while (cursor.moveToNext()) {
-                    int column = 0;
-                    int variantNumber = cursor.getInt(column++);
-                    String lastStressSyllable = cursor.getString(column++);
-                    String lastSyllable = cursor.getString(column++);
-                    String lastTwoSyllables = cursor.getString(column++);
-                    String lastThreeSyllables = cursor.getString(column);
-                    WordVariant wordVariant = new WordVariant(variantNumber, lastStressSyllable, lastSyllable, lastTwoSyllables, lastThreeSyllables);
-                    result.add(wordVariant);
+        load();
+        if (mDb != null) {
+            String[] projection = new String[]{"variant_number", "stress_syllables", "last_syllable", "last_two_syllables", "last_three_syllables"};
+            String selection = "word=?";
+            String[] selectionArgs = new String[]{word};
+            Cursor cursor = mDb.query("word_variants", projection, selection, selectionArgs, null, null, null);
+            if (cursor != null) {
+                try {
+                    while (cursor.moveToNext()) {
+                        int column = 0;
+                        int variantNumber = cursor.getInt(column++);
+                        String lastStressSyllable = cursor.getString(column++);
+                        String lastSyllable = cursor.getString(column++);
+                        String lastTwoSyllables = cursor.getString(column++);
+                        String lastThreeSyllables = cursor.getString(column);
+                        WordVariant wordVariant = new WordVariant(variantNumber, lastStressSyllable, lastSyllable, lastTwoSyllables, lastThreeSyllables);
+                        result.add(wordVariant);
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
         }
         return result;
@@ -114,20 +129,24 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
         return lookupBySyllable(syllables, "last_three_syllables");
     }
 
+    @NonNull
     private SortedSet<String> lookupBySyllable(String syllables, String columnName) {
-        String[] projection = new String[]{"word"};
-        String selection = columnName + "=?";
-        String[] selectionArgs = new String[]{syllables};
-        Cursor cursor = mDb.query("word_variants", projection, selection, selectionArgs, null, null, null);
         SortedSet<String> result = new TreeSet<>();
-        if (cursor != null) {
-            try {
-                while (cursor.moveToNext()) {
-                    String word = cursor.getString(0);
-                    result.add(word);
+        load();
+        if (mDb != null) {
+            String[] projection = new String[]{"word"};
+            String selection = columnName + "=?";
+            String[] selectionArgs = new String[]{syllables};
+            Cursor cursor = mDb.query("word_variants", projection, selection, selectionArgs, null, null, null);
+            if (cursor != null) {
+                try {
+                    while (cursor.moveToNext()) {
+                        String word = cursor.getString(0);
+                        result.add(word);
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
         }
         return result;

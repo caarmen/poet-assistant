@@ -21,6 +21,8 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.File;
@@ -36,11 +38,20 @@ public class DbUtil {
     private DbUtil() {
     }
 
+    /**
+     * @return null if the database could not be opened
+     */
+    @Nullable
     public static SQLiteDatabase open(Context context, String dbName, int version) {
         DbUtil.copyDb(context, dbName, version);
         String dbFile = getDbFileName(dbName, version);
         File dbPath = new File(context.getDir("databases", Context.MODE_PRIVATE), dbFile);
-        return SQLiteDatabase.openDatabase(dbPath.getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY);
+        try {
+            return SQLiteDatabase.openDatabase(dbPath.getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY);
+        } catch (SQLiteException e) {
+            Log.w(TAG, "Could not open database " + dbName + ":" + version + ": " + e.getMessage(), e);
+            return null;
+        }
     }
 
     private static void copyDb(Context context, String dbName, int version) {
@@ -63,6 +74,7 @@ public class DbUtil {
                 }
             } catch (IOException e) {
                 Log.e(TAG, "Error writing to " + dbPath + ": " + e.getMessage(), e);
+                deleteDb(context, dbName, version);
             }
             Log.v(TAG, "wrote " + dbPath);
         }

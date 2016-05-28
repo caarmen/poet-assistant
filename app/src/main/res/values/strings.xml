@@ -84,6 +84,8 @@
     <string name="share_rt_subheading">"\n  %s\n"</string>
     <string name="share_rt_entry">"    %s\n"</string>
     <string name="share_dictionary_entry">\n%1$s. %2$s</string>
+    <string name="warning_no_space_title">Insufficient storage space</string>
+    <string name="warning_no_space_message">Your device doesn\'t have enough storage space to use Poet Assistant. Try to free up some space.</string>
 
     <!-- Strings related to Settings -->
     <string name="pref_theme_title">Theme</string>

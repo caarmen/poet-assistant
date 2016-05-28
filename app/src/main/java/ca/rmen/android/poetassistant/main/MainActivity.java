@@ -25,8 +25,10 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -38,7 +40,6 @@ import android.view.inputmethod.InputMethodManager;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.Theme;
 import ca.rmen.android.poetassistant.about.AboutActivity;
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding;
 import ca.rmen.android.poetassistant.main.dictionaries.Search;
@@ -50,9 +51,10 @@ import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 
 
-public class MainActivity extends AppCompatActivity implements OnWordClickedListener {
+public class MainActivity extends AppCompatActivity implements OnWordClickedListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener {
 
     private static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
+    private static final String DIALOG_TAG = "dialog";
 
     private Search mSearch;
     private ActivityMainBinding mBinding;
@@ -90,14 +92,30 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
      * can already be fast.
      */
     private void loadDictionaries() {
-        new Thread() {
+        new AsyncTask<Void, Void, Boolean>() {
             @Override
-            public void run() {
-                Rhymer.getInstance(getApplicationContext());
-                Thesaurus.getInstance(getApplicationContext());
-                Dictionary.getInstance(getApplicationContext());
+            protected Boolean doInBackground(Void... params) {
+                Rhymer rhymer = Rhymer.getInstance(getApplicationContext());
+                rhymer.load();
+                Thesaurus thesaurus = Thesaurus.getInstance(getApplicationContext());
+                thesaurus.load();
+                Dictionary dictionary = Dictionary.getInstance(getApplicationContext());
+                dictionary.load();
+                return rhymer.isLoaded() && thesaurus.isLoaded() && dictionary.isLoaded();
             }
-        }.start();
+
+            @Override
+            protected void onPostExecute(Boolean allDictionariesAreLoaded) {
+                Fragment warningNoSpaceDialogFragment = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG);
+                if (!allDictionariesAreLoaded
+                        && warningNoSpaceDialogFragment == null) {
+                    getSupportFragmentManager().beginTransaction().add(new WarningNoSpaceDialogFragment(), DIALOG_TAG).commit();
+                } else if (allDictionariesAreLoaded
+                        && warningNoSpaceDialogFragment != null){
+                    getSupportFragmentManager().beginTransaction().remove(warningNoSpaceDialogFragment).commit();
+                }
+            }
+        }.execute();
     }
 
     @Override
@@ -170,6 +188,12 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
     public void onWordClicked(String word, Tab tab) {
         Log.d(TAG, "onWordClicked() called with: " + "word = [" + word + "], tab = [" + tab + "]");
         mSearch.search(word, tab);
+    }
+
+    @Override
+    public void onWarningNoSpaceDialogDismissed() {
+        Log.v(TAG, "onWarningNoSpaceDialogDismissed");
+        finish();
     }
 
     // Hide the keyboard when we navigate to any tab other than the reader tab.
