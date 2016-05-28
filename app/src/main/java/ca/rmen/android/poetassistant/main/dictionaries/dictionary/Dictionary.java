@@ -26,7 +26,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import ca.rmen.android.poetassistant.main.dictionaries.DbUtil;
+import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities;
 
 public class Dictionary {
@@ -35,46 +35,39 @@ public class Dictionary {
 
     private static Dictionary sInstance;
 
-    private final Context mContext;
-    private SQLiteDatabase mDb;
+    private final DbHelper mDbHelper;
 
     public static synchronized Dictionary getInstance(Context context) {
         if (sInstance == null) sInstance = new Dictionary(context);
         return sInstance;
     }
 
-    private Dictionary(Context context) {
-        mContext = context;
-    }
-
-    public void load() {
-        if (mDb == null) {
-            mDb = DbUtil.open(mContext, DB_FILE, DB_VERSION);
-        }
+    private Dictionary (Context context) {
+        mDbHelper = new DbHelper(context, DB_FILE, DB_VERSION);
     }
 
     public boolean isLoaded() {
-        return mDb != null;
+        return mDbHelper.getDb() != null;
     }
 
     @NonNull
     public DictionaryEntry lookup(String word) {
-        load();
-        if (mDb != null) {
+        SQLiteDatabase db = mDbHelper.getDb();
+        if (db != null) {
 
             String[] projection = new String[]{"part_of_speech", "definition"};
             String selection = "word=?";
             String[] selectionArgs = new String[]{word};
             String lookupWord = word;
-            Cursor cursor = mDb.query("dictionary", projection, selection, selectionArgs, null, null, null);
+            Cursor cursor = db.query("dictionary", projection, selection, selectionArgs, null, null, null);
 
             if (cursor != null && cursor.getCount() == 0) {
-                String closestWord = new WordSimilarities().findClosestWord(word, mDb, "stems", "word", "stem");
+                String closestWord = new WordSimilarities().findClosestWord(word, db, "stems", "word", "stem");
                 if (closestWord != null) {
                     lookupWord = closestWord;
                     cursor.close();
                     selectionArgs = new String[]{lookupWord};
-                    cursor = mDb.query("dictionary", projection, selection, selectionArgs, null, null, null);
+                    cursor = db.query("dictionary", projection, selection, selectionArgs, null, null, null);
                 }
             }
             if (cursor != null) {
@@ -96,12 +89,12 @@ public class Dictionary {
 
     @Nullable
     public DictionaryEntry getRandomEntry() {
-        load();
-        if (mDb != null) {
+        SQLiteDatabase db = mDbHelper.getDb();
+        if (db != null) {
             String[] projection = new String[]{"word"};
             String orderBy = "RANDOM()";
             String limit = "1";
-            Cursor cursor = mDb.query(false, "dictionary", projection, null, null, null, null,
+            Cursor cursor = db.query(false, "dictionary", projection, null, null, null, null,
                     orderBy, limit);
             if (cursor != null) {
                 String word = null;

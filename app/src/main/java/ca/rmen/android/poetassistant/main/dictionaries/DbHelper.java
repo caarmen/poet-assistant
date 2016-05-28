@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.File;
@@ -32,39 +31,53 @@ import java.io.InputStream;
 
 import ca.rmen.android.poetassistant.Constants;
 
-public class DbUtil {
-    private static final String TAG = Constants.TAG + DbUtil.class.getSimpleName();
+public class DbHelper {
+    private static final String TAG = Constants.TAG + DbHelper.class.getSimpleName();
 
-    private DbUtil() {
+    private final Context mContext;
+    private final String mDbName;
+    private final int mVersion;
+    private SQLiteDatabase mDb;
+    private final Object mLock = new Object();
+
+    public DbHelper(Context context, String dbName, int version) {
+        mContext = context;
+        mDbName = dbName;
+        mVersion = version;
     }
 
-    /**
-     * @return null if the database could not be opened
-     */
-    @Nullable
-    public static SQLiteDatabase open(Context context, String dbName, int version) {
-        DbUtil.copyDb(context, dbName, version);
-        String dbFile = getDbFileName(dbName, version);
-        File dbPath = new File(context.getDir("databases", Context.MODE_PRIVATE), dbFile);
-        try {
-            return SQLiteDatabase.openDatabase(dbPath.getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY);
-        } catch (SQLiteException e) {
-            Log.w(TAG, "Could not open database " + dbName + ":" + version + ": " + e.getMessage(), e);
-            return null;
+    public SQLiteDatabase getDb() {
+        open();
+        return mDb;
+    }
+
+    private void open() {
+        synchronized (mLock) {
+            if (mDb == null) {
+                Log.v(TAG, "Open db " + mDbName + ":" + mVersion);
+                copyDb();
+                String dbFile = getDbFileName(mVersion);
+                File dbPath = new File(mContext.getDir("databases", Context.MODE_PRIVATE), dbFile);
+                try {
+                    mDb = SQLiteDatabase.openDatabase(dbPath.getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY);
+                } catch (SQLiteException e) {
+                    Log.w(TAG, "Could not open database " + mDbName + ":" + mVersion + ": " + e.getMessage(), e);
+                }
+            }
         }
     }
 
-    private static void copyDb(Context context, String dbName, int version) {
-        String dbFileName = getDbFileName(dbName, version);
-        File dbPath = getDbFile(context, dbFileName);
+    private void copyDb() {
+        String dbFileName = getDbFileName(mVersion);
+        File dbPath = getDbFile(dbFileName);
         if (!dbPath.exists()) {
             Log.v(TAG, dbPath + " not found");
-            for (int i = 0; i < version; i++) {
-                deleteDb(context, dbName, i);
+            for (int i = 0; i < mVersion; i++) {
+                deleteDb(i);
             }
 
             try {
-                InputStream is = context.getAssets().open(dbFileName);
+                InputStream is = mContext.getAssets().open(dbFileName);
                 FileOutputStream os = new FileOutputStream(dbPath);
                 byte[] buffer = new byte[1024];
                 int read = is.read(buffer);
@@ -72,30 +85,30 @@ public class DbUtil {
                     os.write(buffer, 0, read);
                     read = is.read(buffer);
                 }
+                Log.v(TAG, "wrote " + dbPath);
             } catch (IOException e) {
                 Log.e(TAG, "Error writing to " + dbPath + ": " + e.getMessage(), e);
-                deleteDb(context, dbName, version);
+                deleteDb(mVersion);
             }
-            Log.v(TAG, "wrote " + dbPath);
         }
     }
 
-    private static String getDbFileName(String dbName, int version) {
-        if (version == 1) return dbName + ".db";
-        return dbName + version + ".db";
+    private String getDbFileName(int version) {
+        if (version == 1) return mDbName + ".db";
+        return mDbName + version + ".db";
     }
 
-    private static void deleteDb(Context context, String dbName, int version) {
-        String dbFileName = getDbFileName(dbName, version);
-        File dbPath = getDbFile(context, dbFileName);
+    private void deleteDb(int version) {
+        String dbFileName = getDbFileName(version);
+        File dbPath = getDbFile(dbFileName);
         if (dbPath.exists()) {
             boolean deleted = dbPath.delete();
             Log.v(TAG, "dbDelete: deletion of " + dbPath.getAbsolutePath() + ": " + deleted);
         }
     }
 
-    private static File getDbFile(Context context, String filename) {
-        File dbDir = context.getDir("databases", Context.MODE_PRIVATE);
+    private File getDbFile(String filename) {
+        File dbDir = mContext.getDir("databases", Context.MODE_PRIVATE);
         return new File(dbDir, filename);
     }
 

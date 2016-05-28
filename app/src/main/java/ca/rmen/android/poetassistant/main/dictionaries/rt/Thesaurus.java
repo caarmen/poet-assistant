@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import ca.rmen.android.poetassistant.main.dictionaries.DbUtil;
+import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities;
 
 public class Thesaurus {
@@ -37,10 +37,7 @@ public class Thesaurus {
     private static final int DB_VERSION = 2;
 
     private static Thesaurus sInstance;
-
-    private final Context mContext;
-    private SQLiteDatabase mDb;
-
+    private final DbHelper mDbHelper;
 
     public static synchronized Thesaurus getInstance(Context context) {
         if (sInstance == null) sInstance = new Thesaurus(context);
@@ -48,37 +45,31 @@ public class Thesaurus {
     }
 
     private Thesaurus(Context context) {
-        mContext = context;
-    }
-
-    public void load() {
-        if (mDb == null) {
-            mDb = DbUtil.open(mContext, DB_FILE, DB_VERSION);
-        }
+        mDbHelper = new DbHelper(context, DB_FILE, DB_VERSION);
     }
 
     public boolean isLoaded() {
-        return mDb != null;
+        return mDbHelper.getDb() != null;
     }
 
     @NonNull
     public ThesaurusEntry lookup(String word) {
-        load();
-        if (mDb != null) {
+        SQLiteDatabase db = mDbHelper.getDb();
+        if (db != null) {
             String[] projection = new String[]{"word_type", "synonyms", "antonyms"};
             String selection = "word=?";
             String[] selectionArgs = new String[]{word};
             String lookupWord = word;
-            Cursor cursor = mDb.query("thesaurus", projection, selection, selectionArgs, null, null, null);
+            Cursor cursor = db.query("thesaurus", projection, selection, selectionArgs, null, null, null);
 
 
             if (cursor != null && cursor.getCount() == 0) {
-                String closestWord = new WordSimilarities().findClosestWord(word, mDb, "thesaurus", "word", "stem");
+                String closestWord = new WordSimilarities().findClosestWord(word, db, "thesaurus", "word", "stem");
                 if (closestWord != null) {
                     lookupWord = closestWord;
                     cursor.close();
                     selectionArgs = new String[]{lookupWord};
-                    cursor = mDb.query("thesaurus", projection, selection, selectionArgs, null, null, null);
+                    cursor = db.query("thesaurus", projection, selection, selectionArgs, null, null, null);
                 }
             }
 
@@ -108,13 +99,13 @@ public class Thesaurus {
     @NonNull
     public Set<String> getFlatSynonyms(String word) {
         Set<String> flatSynonyms = new HashSet<>();
-        load();
-        if (mDb != null) {
+        SQLiteDatabase db = mDbHelper.getDb();
+        if (db != null) {
 
             String[] projection = new String[]{"synonyms"};
             String selection = "word=?";
             String[] selectionArgs = new String[]{word};
-            Cursor cursor = mDb.query("thesaurus", projection, selection, selectionArgs, null, null, null);
+            Cursor cursor = db.query("thesaurus", projection, selection, selectionArgs, null, null, null);
             if (cursor != null) {
                 try {
                     while (cursor.moveToNext()) {

@@ -96,11 +96,8 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
             @Override
             protected Boolean doInBackground(Void... params) {
                 Rhymer rhymer = Rhymer.getInstance(getApplicationContext());
-                rhymer.load();
                 Thesaurus thesaurus = Thesaurus.getInstance(getApplicationContext());
-                thesaurus.load();
                 Dictionary dictionary = Dictionary.getInstance(getApplicationContext());
-                dictionary.load();
                 return rhymer.isLoaded() && thesaurus.isLoaded() && dictionary.isLoaded();
             }
 
