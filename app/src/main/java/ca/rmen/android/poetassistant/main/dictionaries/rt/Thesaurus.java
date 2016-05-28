@@ -22,13 +22,14 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import ca.rmen.android.poetassistant.main.dictionaries.DbUtil;
+import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities;
 
 public class Thesaurus {
@@ -36,9 +37,7 @@ public class Thesaurus {
     private static final int DB_VERSION = 2;
 
     private static Thesaurus sInstance;
-
-    private final SQLiteDatabase mDb;
-
+    private final DbHelper mDbHelper;
 
     public static synchronized Thesaurus getInstance(Context context) {
         if (sInstance == null) sInstance = new Thesaurus(context);
@@ -46,41 +45,49 @@ public class Thesaurus {
     }
 
     private Thesaurus(Context context) {
-        mDb = DbUtil.open(context, DB_FILE, DB_VERSION);
+        mDbHelper = new DbHelper(context, DB_FILE, DB_VERSION);
     }
 
+    public boolean isLoaded() {
+        return mDbHelper.getDb() != null;
+    }
+
+    @NonNull
     public ThesaurusEntry lookup(String word) {
-        String[] projection = new String[]{"word_type", "synonyms", "antonyms"};
-        String selection = "word=?";
-        String[] selectionArgs = new String[]{word};
-        String lookupWord = word;
-        Cursor cursor = mDb.query("thesaurus", projection, selection, selectionArgs, null, null, null);
+        SQLiteDatabase db = mDbHelper.getDb();
+        if (db != null) {
+            String[] projection = new String[]{"word_type", "synonyms", "antonyms"};
+            String selection = "word=?";
+            String[] selectionArgs = new String[]{word};
+            String lookupWord = word;
+            Cursor cursor = db.query("thesaurus", projection, selection, selectionArgs, null, null, null);
 
 
-        if (cursor != null && cursor.getCount() == 0) {
-            String closestWord = new WordSimilarities().findClosestWord(word, mDb, "thesaurus", "word", "stem");
-            if (closestWord != null) {
-                lookupWord = closestWord;
-                cursor.close();
-                selectionArgs = new String[]{lookupWord};
-                cursor = mDb.query("thesaurus", projection, selection, selectionArgs, null, null, null);
-            }
-        }
-
-        if (cursor != null) {
-            ThesaurusEntry.ThesaurusEntryDetails[] result = new ThesaurusEntry.ThesaurusEntryDetails[cursor.getCount()];
-            try {
-                while (cursor.moveToNext()) {
-                    ThesaurusEntry.WordType wordType = ThesaurusEntry.WordType.valueOf(cursor.getString(0));
-                    String synonymsList = cursor.getString(1);
-                    String antonymsList = cursor.getString(2);
-                    String[] synonyms = split(synonymsList);
-                    String[] antonyms = split(antonymsList);
-                    result[cursor.getPosition()] = new ThesaurusEntry.ThesaurusEntryDetails(wordType, synonyms, antonyms);
+            if (cursor != null && cursor.getCount() == 0) {
+                String closestWord = new WordSimilarities().findClosestWord(word, db, "thesaurus", "word", "stem");
+                if (closestWord != null) {
+                    lookupWord = closestWord;
+                    cursor.close();
+                    selectionArgs = new String[]{lookupWord};
+                    cursor = db.query("thesaurus", projection, selection, selectionArgs, null, null, null);
                 }
-                return new ThesaurusEntry(lookupWord, result);
-            } finally {
-                cursor.close();
+            }
+
+            if (cursor != null) {
+                ThesaurusEntry.ThesaurusEntryDetails[] result = new ThesaurusEntry.ThesaurusEntryDetails[cursor.getCount()];
+                try {
+                    while (cursor.moveToNext()) {
+                        ThesaurusEntry.WordType wordType = ThesaurusEntry.WordType.valueOf(cursor.getString(0));
+                        String synonymsList = cursor.getString(1);
+                        String antonymsList = cursor.getString(2);
+                        String[] synonyms = split(synonymsList);
+                        String[] antonyms = split(antonymsList);
+                        result[cursor.getPosition()] = new ThesaurusEntry.ThesaurusEntryDetails(wordType, synonyms, antonyms);
+                    }
+                    return new ThesaurusEntry(lookupWord, result);
+                } finally {
+                    cursor.close();
+                }
             }
         }
         return new ThesaurusEntry(word, new ThesaurusEntry.ThesaurusEntryDetails[0]);
@@ -89,22 +96,26 @@ public class Thesaurus {
     /**
      * @return the synonyms of the given word, in any order.
      */
+    @NonNull
     public Set<String> getFlatSynonyms(String word) {
         Set<String> flatSynonyms = new HashSet<>();
+        SQLiteDatabase db = mDbHelper.getDb();
+        if (db != null) {
 
-        String[] projection = new String[]{"synonyms"};
-        String selection = "word=?";
-        String[] selectionArgs = new String[]{word};
-        Cursor cursor = mDb.query("thesaurus", projection, selection, selectionArgs, null, null, null);
-        if (cursor != null) {
-            try {
-                while (cursor.moveToNext()) {
-                    String synonymsList = cursor.getString(0);
-                    String[] synonyms = split(synonymsList);
-                    Collections.addAll(flatSynonyms, synonyms);
+            String[] projection = new String[]{"synonyms"};
+            String selection = "word=?";
+            String[] selectionArgs = new String[]{word};
+            Cursor cursor = db.query("thesaurus", projection, selection, selectionArgs, null, null, null);
+            if (cursor != null) {
+                try {
+                    while (cursor.moveToNext()) {
+                        String synonymsList = cursor.getString(0);
+                        String[] synonyms = split(synonymsList);
+                        Collections.addAll(flatSynonyms, synonyms);
+                    }
+                } finally {
+                    cursor.close();
                 }
-            } finally {
-                cursor.close();
             }
         }
         return flatSynonyms;

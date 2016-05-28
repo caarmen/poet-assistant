@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.6.5  *(2016-05-28)*
+--------------------
+
+* Prevent a crash if the user does not have enough disk space.
+
 1.6.4  *(2016-05-18)*
 --------------------
 
