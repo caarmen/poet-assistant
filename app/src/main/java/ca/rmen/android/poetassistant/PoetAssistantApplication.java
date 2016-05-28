@@ -16,19 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package ca.rmen.android.poetassistant;
 
-import android.content.Context;
-import android.support.v7.app.AppCompatDelegate;
+import android.app.Application;
 
-import ca.rmen.android.poetassistant.settings.Settings;
-import ca.rmen.android.poetassistant.settings.SettingsPrefs;
-
-public class Theme {
-
-    public static void setThemeFromSettings(Context context) {
-        String theme = SettingsPrefs.get(context).getTheme();
-        AppCompatDelegate.setDefaultNightMode(Settings.THEME_DARK.equals(theme) ? AppCompatDelegate.MODE_NIGHT_YES: AppCompatDelegate.MODE_NIGHT_NO);
+public class PoetAssistantApplication extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Theme.setThemeFromSettings(this);
     }
 }

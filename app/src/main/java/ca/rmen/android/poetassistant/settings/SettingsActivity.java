@@ -39,7 +39,6 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Theme.checkTheme(this);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
         GeneralPreferenceFragment fragment = new GeneralPreferenceFragment();
@@ -56,10 +55,11 @@ public class SettingsActivity extends AppCompatActivity {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             Context context = getApplicationContext();
             if (Settings.PREF_THEME.equals(key)) {
-                // When the theme changes, restart the app
-                Intent intent = new Intent(context, SettingsActivity.class);
+                // When the theme changes, restart the activity
+                Theme.setThemeFromSettings(getApplicationContext());
+                Intent intent = new Intent(SettingsActivity.this, SettingsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(SettingsActivity.this);
                 stackBuilder.addNextIntentWithParentStack(intent);
                 stackBuilder.startActivities();
             } else if (Settings.PREF_WOTD_ENABLED.equals(key)) {

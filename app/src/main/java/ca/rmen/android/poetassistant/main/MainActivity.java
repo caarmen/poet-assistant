@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
-        Theme.checkTheme(this);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         setSupportActionBar(mBinding.toolbar);
         Intent intent = getIntent();
