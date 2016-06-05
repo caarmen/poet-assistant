@@ -62,25 +62,21 @@ public class SettingsActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private final SharedPreferences.OnSharedPreferenceChangeListener mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            Log.v(TAG, "onSharedPreferenceChanged: key = " + key);
-            Context context = getApplicationContext();
-            if (Settings.PREF_THEME.equals(key)) {
-                // When the theme changes, restart the activity
-                Theme.setThemeFromSettings(getApplicationContext());
-                Intent intent = new Intent(SettingsActivity.this, SettingsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                TaskStackBuilder stackBuilder = TaskStackBuilder.create(SettingsActivity.this);
-                stackBuilder.addNextIntentWithParentStack(intent);
-                stackBuilder.startActivities();
-            } else if (Settings.PREF_WOTD_ENABLED.equals(key)) {
-                Wotd.setWotdEnabled(context, SettingsPrefs.get(context).getIsWotdEnabled());
-            } else if (Settings.PREF_VOICE.equals(key)) {
-                Tts.getInstance(SettingsActivity.this).useVoice(sharedPreferences.getString(key, null));
-            }
+    private final SharedPreferences.OnSharedPreferenceChangeListener mListener = (sharedPreferences, key) -> {
+        Log.v(TAG, "onSharedPreferenceChanged: key = " + key);
+        Context context = getApplicationContext();
+        if (Settings.PREF_THEME.equals(key)) {
+            // When the theme changes, restart the activity
+            Theme.setThemeFromSettings(getApplicationContext());
+            Intent intent = new Intent(SettingsActivity.this, SettingsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(SettingsActivity.this);
+            stackBuilder.addNextIntentWithParentStack(intent);
+            stackBuilder.startActivities();
+        } else if (Settings.PREF_WOTD_ENABLED.equals(key)) {
+            Wotd.setWotdEnabled(context, SettingsPrefs.get(context).getIsWotdEnabled());
+        } else if (Settings.PREF_VOICE.equals(key)) {
+            Tts.getInstance(SettingsActivity.this).useVoice(sharedPreferences.getString(key, null));
         }
     };
 

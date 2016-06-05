@@ -56,19 +56,9 @@ public class WarningNoSpaceDialogFragment extends DialogFragment {
         Log.v(TAG, "onCreateDialog: savedInstanceState = " + savedInstanceState);
         Context context = getActivity();
 
-        OnClickListener positiveListener = new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                notifyListener();
-            }
-        };
+        OnClickListener positiveListener = (dialog, which) -> notifyListener();
 
-        DialogInterface.OnDismissListener dismissListener = new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                notifyListener();
-            }
-        };
+        DialogInterface.OnDismissListener dismissListener = dialog -> notifyListener();
 
         Dialog dialog = new AlertDialog.Builder(context)
                 .setTitle(context.getString(R.string.warning_no_space_title))

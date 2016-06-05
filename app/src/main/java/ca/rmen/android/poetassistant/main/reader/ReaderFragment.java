@@ -267,19 +267,16 @@ public class ReaderFragment extends Fragment implements
      */
     private void updatePlayButton() {
         Log.d(TAG, "updatePlayButton");
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                boolean enabled = !TextUtils.isEmpty(mBinding.tvText.getText())
-                        && mTts.getStatus() == TextToSpeech.SUCCESS;
-                mBinding.btnPlay.setEnabled(enabled);
-                if (mTts.isSpeaking()) {
-                    mBinding.btnPlay.setImageResource(R.drawable.ic_stop);
-                } else if (!enabled) {
-                    mBinding.btnPlay.setImageResource(R.drawable.ic_play_disabled);
-                } else {
-                    mBinding.btnPlay.setImageResource(R.drawable.ic_play_enabled);
-                }
+        mHandler.post(() -> {
+            boolean enabled = !TextUtils.isEmpty(mBinding.tvText.getText())
+                    && mTts.getStatus() == TextToSpeech.SUCCESS;
+            mBinding.btnPlay.setEnabled(enabled);
+            if (mTts.isSpeaking()) {
+                mBinding.btnPlay.setImageResource(R.drawable.ic_stop);
+            } else if (!enabled) {
+                mBinding.btnPlay.setImageResource(R.drawable.ic_play_disabled);
+            } else {
+                mBinding.btnPlay.setImageResource(R.drawable.ic_play_enabled);
             }
         });
     }
