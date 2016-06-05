@@ -50,13 +50,9 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
-        GeneralPreferenceFragment fragment = new GeneralPreferenceFragment();
-        getSupportFragmentManager().
-                beginTransaction().
-                replace(android.R.id.content, fragment).
-                commit();
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(mListener);
     }
 
