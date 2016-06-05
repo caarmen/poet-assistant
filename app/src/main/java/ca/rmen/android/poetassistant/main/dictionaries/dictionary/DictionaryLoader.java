@@ -28,6 +28,7 @@ import java.util.List;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
+import rx.Observable;
 
 public class DictionaryLoader extends ResultListLoader<List<DictionaryEntry>> {
 
@@ -38,13 +39,13 @@ public class DictionaryLoader extends ResultListLoader<List<DictionaryEntry>> {
     }
 
     @Override
-    protected List<DictionaryEntry> getEntries(String query, String filter) {
+    protected Observable<List<DictionaryEntry>> getEntries(String query, String filter) {
         Log.d(TAG, "getEntries() called with: " + "query = [" + query + "], filter = [" + filter + "]");
         Dictionary dictionary = Dictionary.getInstance(getContext());
         DictionaryEntry[] entries = dictionary.getEntries(query);
         List<DictionaryEntry> result = new ArrayList<>();
         Collections.addAll(result, entries);
-        return result;
+        return Observable.just(result);
     }
 
 }
