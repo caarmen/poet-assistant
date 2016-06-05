@@ -38,6 +38,7 @@ public class Tts {
     private final Context mContext;
     private TextToSpeech mTextToSpeech;
     private int mTtsStatus = TextToSpeech.ERROR;
+    private final Voices mVoices;
     private static Tts sInstance;
 
     public static class OnTtsInitialized {
@@ -70,6 +71,7 @@ public class Tts {
         mTextToSpeech.setOnUtteranceProgressListener(utteranceListener);
         //noinspection deprecation
         mTextToSpeech.setOnUtteranceCompletedListener(utteranceListener);
+        mVoices = new Voices(mContext);
     }
 
     public int getStatus() {
@@ -115,7 +117,7 @@ public class Tts {
         public void onInit(int status) {
             mTtsStatus = status;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Voices.useVoice(mTextToSpeech, SettingsPrefs.get(mContext).getVoice());
+                mVoices.useVoice(mTextToSpeech, SettingsPrefs.get(mContext).getVoice());
             }
             EventBus.getDefault().post(new OnTtsInitialized(status));
         }
@@ -123,12 +125,12 @@ public class Tts {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public List<Voices.TtsVoice> getVoices() {
-        return Voices.getVoices(mTextToSpeech);
+        return mVoices.getVoices(mTextToSpeech);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void useVoice(String voiceId) {
-        Voices.useVoice(mTextToSpeech, voiceId);
+        mVoices.useVoice(mTextToSpeech, voiceId);
     }
 
     @SuppressWarnings("deprecation")

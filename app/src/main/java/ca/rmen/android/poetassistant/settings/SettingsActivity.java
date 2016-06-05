@@ -21,17 +21,25 @@ package ca.rmen.android.poetassistant.settings;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.speech.tts.Voice;
+import android.support.annotation.NonNull;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.ListPreferenceDialogFragmentCompat;
+import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.util.Log;
+
+import org.jraf.android.prefs.Prefs;
 
 import java.util.List;
 
@@ -87,6 +95,17 @@ public class SettingsActivity extends AppCompatActivity {
             loadVoices();
         }
 
+        @Override
+        public void onDisplayPreferenceDialog(Preference preference) {
+            if (Settings.PREF_VOICE.equals(preference.getKey())) {
+                VoicePreferenceDialogFragment fragment = VoicePreferenceDialogFragment.newInstance(preference.getKey());
+                fragment.setTargetFragment(this, 0);
+                fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
+            } else {
+                super.onDisplayPreferenceDialog(preference);
+            }
+        }
+
         private void loadVoices() {
             ListPreference voicePreference = (ListPreference) findPreference(Settings.PREF_VOICE);
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
@@ -101,7 +120,8 @@ public class SettingsActivity extends AppCompatActivity {
                 voicePreference.setEntryValues(voiceIds);
                 voicePreference.setEntries(voiceNames);
             }
-            if (voicePreference.getEntries() == null || voicePreference.getEntries().length == 0) {
+            if (voicePreference != null
+                    && (voicePreference.getEntries() == null || voicePreference.getEntries().length == 0)) {
                 getPreferenceScreen().removePreference(voicePreference);
             }
         }

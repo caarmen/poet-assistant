@@ -20,10 +20,13 @@
 package ca.rmen.android.poetassistant;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
 import android.support.annotation.Nullable;
+import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.Comparator;
@@ -35,15 +38,16 @@ import java8.util.stream.Collectors;
 import java8.util.stream.StreamSupport;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class Voices {
+public final class Voices {
 
     private static final String TAG = Constants.TAG + Voices.class.getSimpleName();
+    private final Context mContext;
 
     public static class TtsVoice {
         public final String id;
-        public final String name;
+        public final CharSequence name;
 
-        private TtsVoice(String id, String name) {
+        private TtsVoice(String id, CharSequence name) {
             this.id = id;
             this.name = name;
         }
@@ -57,7 +61,11 @@ public class Voices {
         }
     }
 
-    static List<TtsVoice> getVoices(TextToSpeech textToSpeech) {
+    public Voices(Context context) {
+        mContext = context;
+    }
+
+    List<TtsVoice> getVoices(TextToSpeech textToSpeech) {
         Set<Voice> voices = textToSpeech.getVoices();
         return StreamSupport.stream(voices)
                 .filter(voice ->
@@ -73,7 +81,7 @@ public class Voices {
                 .collect(Collectors.toList());
     }
 
-    static void useVoice(TextToSpeech textToSpeech, @Nullable String voiceId) {
+    void useVoice(TextToSpeech textToSpeech, @Nullable String voiceId) {
         if (voiceId == null) return;
         Voice matchingVoice = StreamSupport.stream(textToSpeech.getVoices())
                 .filter(voice -> voiceId.equals(voice.getName()))
@@ -92,31 +100,37 @@ public class Voices {
      * fr-fr-x-vlf#female_3 => French (France) - female 3
      * en-gb-x-fis#female_3 => English (UK) - female 3
      * es-es-x-ana => Spanish (Spain)
-     *
+     * <p>
      * If the voice name doesn't match any of these patterns, the voice name itself is returned.
      */
-    private static String parseVoiceName(Voice voice) {
+    CharSequence parseVoiceName(Voice voice) {
         String voiceId = voice.getName();
         String[] tokens = voiceId.split("#");
         if (tokens.length < 1) return voiceId;
 
-        final String gender;
-        if (tokens.length == 2) gender = tokens[1];
-        else gender = null;
+        String gender = null;
+        if (tokens.length == 2) {
+            gender = tokens[1];
+            // convert "female_3" to "Female 3"
+            if (!TextUtils.isEmpty(gender)) {
+                gender = gender.replaceAll("_", " ");
+                gender = Character.toUpperCase(gender.charAt(0)) + gender.substring(1);
+            }
+        }
 
         String language = voice.getLocale().getDisplayLanguage(Locale.getDefault());
         String country = voice.getLocale().getDisplayCountry(Locale.getDefault());
         if (gender != null) {
-            return String.format("%s (%s) - %s", language, country, gender.replaceAll("_", " "));
+            return Html.fromHtml(mContext.getString(R.string.pref_voice_value_with_gender, language, country, gender));
         } else {
-            return String.format("%s (%s)", language, country);
+            return mContext.getString(R.string.pref_voice_value_without_gender, language, country);
         }
     }
 
     /**
      * Order voices by language and country, putting the voices using the device language and country first.
      */
-    private static final Comparator<Voice> VOICE_COMPARATOR = (voice1, voice2) -> {
+    final Comparator<Voice> VOICE_COMPARATOR = (voice1, voice2) -> {
         String lang1 = voice1.getLocale().getLanguage();
         String lang2 = voice2.getLocale().getLanguage();
         String country1 = voice1.getLocale().getCountry();
@@ -143,9 +157,9 @@ public class Voices {
         }
 
         // All other cases: sort by the display name.
-        String displayName1 = parseVoiceName(voice1);
-        String displayName2 = parseVoiceName(voice2);
-        return displayName1.compareTo(displayName2);
+        CharSequence displayName1 = parseVoiceName(voice1);
+        CharSequence displayName2 = parseVoiceName(voice2);
+        return displayName1.toString().compareTo(displayName2.toString());
     };
 
 }
