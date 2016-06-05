@@ -23,18 +23,29 @@ package ca.rmen.android.poetassistant.settings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.util.Log;
 
+import java.util.List;
+
+import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Theme;
+import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.Voices;
 import ca.rmen.android.poetassistant.wotd.Wotd;
+import java8.util.stream.StreamSupport;
 
 public class SettingsActivity extends AppCompatActivity {
+
+    private static final String TAG = Constants.TAG + SettingsActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,10 +60,17 @@ public class SettingsActivity extends AppCompatActivity {
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(mListener);
     }
 
+    @Override
+    protected void onDestroy() {
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(mListener);
+        super.onDestroy();
+    }
+
     private final SharedPreferences.OnSharedPreferenceChangeListener mListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            Log.v(TAG, "onSharedPreferenceChanged: key = " + key);
             Context context = getApplicationContext();
             if (Settings.PREF_THEME.equals(key)) {
                 // When the theme changes, restart the activity
@@ -64,6 +82,8 @@ public class SettingsActivity extends AppCompatActivity {
                 stackBuilder.startActivities();
             } else if (Settings.PREF_WOTD_ENABLED.equals(key)) {
                 Wotd.setWotdEnabled(context, SettingsPrefs.get(context).getIsWotdEnabled());
+            } else if (Settings.PREF_VOICE.equals(key)) {
+                Tts.getInstance(SettingsActivity.this).useVoice(sharedPreferences.getString(key, null));
             }
         }
     };
@@ -72,6 +92,26 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
             addPreferencesFromResource(R.xml.pref_general);
+            loadVoices();
+        }
+
+        private void loadVoices() {
+            ListPreference voicePreference = (ListPreference) findPreference(Settings.PREF_VOICE);
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                Tts tts = Tts.getInstance(getContext());
+                List<Voices.TtsVoice> voices = tts.getVoices();
+                CharSequence[] voiceIds = StreamSupport.stream(voices)
+                        .map(voice -> voice.id)
+                        .toArray(size -> new CharSequence[voices.size()]);
+                CharSequence[] voiceNames = StreamSupport.stream(voices)
+                        .map(voice -> voice.name)
+                        .toArray(size -> new CharSequence[voices.size()]);
+                voicePreference.setEntryValues(voiceIds);
+                voicePreference.setEntries(voiceNames);
+            }
+            if (voicePreference.getEntries() == null || voicePreference.getEntries().length == 0) {
+                getPreferenceScreen().removePreference(voicePreference);
+            }
         }
     }
 

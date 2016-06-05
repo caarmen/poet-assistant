@@ -28,10 +28,14 @@ import android.speech.tts.UtteranceProgressListener;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
+import java.util.List;
+
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 public class Tts {
     private static final String TAG = Constants.TAG + Tts.class.getSimpleName();
 
+    private final Context mContext;
     private TextToSpeech mTextToSpeech;
     private int mTtsStatus = TextToSpeech.ERROR;
     private static Tts sInstance;
@@ -60,6 +64,7 @@ public class Tts {
     }
 
     private Tts(Context context) {
+        mContext = context.getApplicationContext();
         mTextToSpeech = new TextToSpeech(context.getApplicationContext(), new OnInitListener());
         UtteranceListener utteranceListener = new UtteranceListener();
         mTextToSpeech.setOnUtteranceProgressListener(utteranceListener);
@@ -109,8 +114,21 @@ public class Tts {
         @Override
         public void onInit(int status) {
             mTtsStatus = status;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Voices.useVoice(mTextToSpeech, SettingsPrefs.get(mContext).getVoice());
+            }
             EventBus.getDefault().post(new OnTtsInitialized(status));
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public List<Voices.TtsVoice> getVoices() {
+        return Voices.getVoices(mTextToSpeech);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void useVoice(String voiceId) {
+        Voices.useVoice(mTextToSpeech, voiceId);
     }
 
     @SuppressWarnings("deprecation")

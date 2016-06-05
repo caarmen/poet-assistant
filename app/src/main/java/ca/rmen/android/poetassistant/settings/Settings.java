@@ -28,8 +28,13 @@ public class Settings {
     @SuppressWarnings("unused")
     public static final String THEME_LIGHT = "Light";
     public static final String THEME_DARK = "Dark";
+    public static final String PREF_VOICE = "PREF_VOICE";
     public static final String PREF_THEME = "PREF_THEME";
     public static final String PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED";
+
+    @SuppressWarnings("unused")
+    @Name(PREF_VOICE)
+    String voice;
 
     @SuppressWarnings("unused")
     @Name(PREF_THEME)
