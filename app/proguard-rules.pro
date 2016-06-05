@@ -33,6 +33,12 @@
 }
 -keep enum org.greenrobot.eventbus.ThreadMode { *; }
 
+# streamsupport:
+-dontwarn java8.util.**
+
+# retrolambda:
+-dontwarn java.lang.invoke.*
+
 # Remove logging:
 -assumenosideeffects class android.util.Log {
     public static boolean isLoggable(java.lang.String, int);
@@ -40,3 +46,5 @@
     public static int d(...);
     public static int i(...);
 }
+
+

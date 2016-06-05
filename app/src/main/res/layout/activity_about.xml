@@ -184,6 +184,34 @@
                     android:textColorLink="@color/primary" />
 
                 <TextView
+                    android:id="@+id/tv_retrolambda_license"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="8dp"
+                    android:autoLink="all"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/about_license_retrolambda"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColorLink="@color/primary" />
+
+                <TextView
+                    android:id="@+id/tv_streamsupport_license"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="8dp"
+                    android:autoLink="all"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/about_license_streamsupport"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColorLink="@color/primary" />
+
+                <TextView
                     android:id="@+id/tv_stemmer_license"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
