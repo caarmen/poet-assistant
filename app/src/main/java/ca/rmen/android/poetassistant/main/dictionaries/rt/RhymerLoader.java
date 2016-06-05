@@ -80,7 +80,7 @@ public class RhymerLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
     }
 
     private ResultListData<RTEntry> emptyResult() {
-        return new ResultListData<>(mQuery, new ArrayList<RTEntry>());
+        return new ResultListData<>(mQuery, new ArrayList<>());
     }
 
     @Override

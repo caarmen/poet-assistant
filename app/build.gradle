@@ -18,10 +18,16 @@
  */
 
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     dataBinding {
         enabled = true
@@ -84,6 +90,7 @@ buildscript {
     dependencies {
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
+        classpath 'me.tatarka:gradle-retrolambda:3.2.3'
     }
 }
 apply plugin: 'com.neenbedankt.android-apt'
@@ -96,6 +103,7 @@ dependencies {
     compile 'com.android.support:design:23.4.0'
     compile 'com.android.support:preference-v7:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
+    compile 'net.sourceforge.streamsupport:streamsupport:1.4.3'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'ca.rmen:rhymer:1.1.0'
     compile 'ca.rmen:porter-stemmer:1.0.0'

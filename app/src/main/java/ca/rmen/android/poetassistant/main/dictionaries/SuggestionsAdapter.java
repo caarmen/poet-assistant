@@ -113,7 +113,7 @@ class SuggestionsAdapter extends CursorAdapter {
         }
 
         public void load() {
-            Set<String> suggestions = mSharedPreferences.getStringSet(PREF_SUGGESTIONS, new TreeSet<String>());
+            Set<String> suggestions = mSharedPreferences.getStringSet(PREF_SUGGESTIONS, new TreeSet<>());
             TreeSet<String> sortedSuggestions = new TreeSet<>();
             sortedSuggestions.addAll(suggestions);
             int i = 0;
@@ -129,7 +129,7 @@ class SuggestionsAdapter extends CursorAdapter {
         }
 
         public void addSuggestion(String suggestion) {
-            Set<String> suggestionsReadOnly = mSharedPreferences.getStringSet(PREF_SUGGESTIONS, new TreeSet<String>());
+            Set<String> suggestionsReadOnly = mSharedPreferences.getStringSet(PREF_SUGGESTIONS, new TreeSet<>());
             if (!suggestionsReadOnly.contains(suggestion)) {
                 addRow(new Object[]{getCount(), suggestion});
                 TreeSet<String> suggestions = new TreeSet<>();

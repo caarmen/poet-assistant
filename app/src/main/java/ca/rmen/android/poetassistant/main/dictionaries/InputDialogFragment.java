@@ -21,7 +21,6 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -31,7 +30,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.WindowManager;
 
 import ca.rmen.android.poetassistant.Constants;
@@ -84,16 +82,13 @@ public class InputDialogFragment extends DialogFragment {
         final int actionId = arguments.getInt(EXTRA_ACTION_ID);
         binding.edit.setText(arguments.getString(EXTRA_TEXT));
 
-        OnClickListener positiveListener = new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                InputDialogListener listener;
-                Fragment parentFragment = getParentFragment();
-                if (parentFragment instanceof InputDialogListener)
-                    listener = (InputDialogListener) parentFragment;
-                else listener = (InputDialogListener) getActivity();
-                listener.onInputSubmitted(actionId, binding.edit.getText().toString());
-            }
+        OnClickListener positiveListener = (dialog, which) -> {
+            InputDialogListener listener;
+            Fragment parentFragment = getParentFragment();
+            if (parentFragment instanceof InputDialogListener)
+                listener = (InputDialogListener) parentFragment;
+            else listener = (InputDialogListener) getActivity();
+            listener.onInputSubmitted(actionId, binding.edit.getText().toString());
         };
 
         final Dialog dialog = new AlertDialog.Builder(context)
@@ -104,14 +99,11 @@ public class InputDialogFragment extends DialogFragment {
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
 
-        binding.edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                } else {
-                    dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-                }
+        binding.edit.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            } else {
+                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
             }
         });
 

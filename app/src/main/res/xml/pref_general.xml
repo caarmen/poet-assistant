@@ -19,6 +19,15 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--suppress AndroidElementNotAllowed -->
+    <ca.rmen.android.poetassistant.settings.VoicePreference
+        android:defaultValue="VOICE_SYSTEM"
+        android:summary="@string/pref_voice_summary"
+        android:key="PREF_VOICE"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_voice_title" />
+
     <ListPreference
         android:defaultValue="Light"
         android:entries="@array/pref_theme_titles"
