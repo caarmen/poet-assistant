@@ -37,8 +37,8 @@ android {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 166
-        versionName "1.6.6"
+        versionCode 170
+        versionName "1.7.0"
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
