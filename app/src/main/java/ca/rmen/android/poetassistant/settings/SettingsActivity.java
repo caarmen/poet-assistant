@@ -86,7 +86,7 @@ public class SettingsActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 voicePreference.loadVoices();
             }
-            if (voicePreference.getEntries() == null || voicePreference.getEntries().length == 0) {
+            if (voicePreference.getEntries() == null || voicePreference.getEntries().length < 2) {
                 getPreferenceScreen().removePreference(voicePreference);
             }
         }

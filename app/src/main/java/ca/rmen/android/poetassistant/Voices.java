@@ -112,9 +112,6 @@ public final class Voices {
      */
     private CharSequence parseVoiceName(Voice voice) {
         String voiceId = voice.getName();
-        if (Settings.VOICE_SYSTEM.equals(voiceId)) {
-            return mContext.getString(R.string.pref_voice_default);
-        }
 
         String[] tokens = voiceId.split("#");
         if (tokens.length < 1) return voiceId;
@@ -151,14 +148,6 @@ public final class Voices {
             String country2 = voice2.getLocale().getCountry();
             String deviceLanguage = Locale.getDefault().getLanguage();
             String deviceCountry = Locale.getDefault().getCountry();
-
-            // Give priority to the default voice
-            if (Settings.VOICE_SYSTEM.equals(voice1.getName())) {
-                return -1;
-            }
-            if (Settings.VOICE_SYSTEM.equals(voice2.getName())) {
-                return 1;
-            }
 
             // Give priority to the device language
             if (lang1.equals(deviceLanguage) && !lang2.equals(deviceLanguage)) {
