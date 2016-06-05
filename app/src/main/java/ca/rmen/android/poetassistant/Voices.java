@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import ca.rmen.android.poetassistant.settings.Settings;
 import java8.util.stream.Collectors;
 import java8.util.stream.StreamSupport;
 
@@ -67,7 +68,7 @@ public final class Voices {
 
     List<TtsVoice> getVoices(TextToSpeech textToSpeech) {
         Set<Voice> voices = textToSpeech.getVoices();
-        return StreamSupport.stream(voices)
+        List<TtsVoice> ttsVoices = StreamSupport.stream(voices)
                 .filter(voice ->
                         !voice.isNetworkConnectionRequired()
                                 && !voice.getFeatures().contains(TextToSpeech.Engine.KEY_FEATURE_NOT_INSTALLED)
@@ -75,18 +76,24 @@ public final class Voices {
                                 && voice.getLocale() != null
                                 && voice.getLocale().getLanguage() != null
                                 && voice.getLocale().getCountry() != null)
-                .sorted(VOICE_COMPARATOR)
+                .sorted(new VoiceComparator())
                 .map(voice ->
                         new TtsVoice(voice.getName(), parseVoiceName(voice)))
                 .collect(Collectors.toList());
+        ttsVoices.add(0, new TtsVoice(Settings.VOICE_SYSTEM, mContext.getString(R.string.pref_voice_default)));
+        return ttsVoices;
     }
 
     void useVoice(TextToSpeech textToSpeech, @Nullable String voiceId) {
-        if (voiceId == null) return;
-        Voice matchingVoice = StreamSupport.stream(textToSpeech.getVoices())
-                .filter(voice -> voiceId.equals(voice.getName()))
-                .findFirst()
-                .get();
+        final Voice matchingVoice;
+        if (voiceId == null || Settings.VOICE_SYSTEM.equals(voiceId)) {
+            matchingVoice = textToSpeech.getDefaultVoice();
+        } else {
+            matchingVoice = StreamSupport.stream(textToSpeech.getVoices())
+                    .filter(voice -> voiceId.equals(voice.getName()))
+                    .findFirst()
+                    .get();
+        }
 
         if (matchingVoice != null) {
             Log.v(TAG, "using voice " + matchingVoice);
@@ -105,6 +112,10 @@ public final class Voices {
      */
     private CharSequence parseVoiceName(Voice voice) {
         String voiceId = voice.getName();
+        if (Settings.VOICE_SYSTEM.equals(voiceId)) {
+            return mContext.getString(R.string.pref_voice_default);
+        }
+
         String[] tokens = voiceId.split("#");
         if (tokens.length < 1) return voiceId;
 
@@ -130,36 +141,49 @@ public final class Voices {
     /**
      * Order voices by language and country, putting the voices using the device language and country first.
      */
-    private final Comparator<Voice> VOICE_COMPARATOR = (voice1, voice2) -> {
-        String lang1 = voice1.getLocale().getLanguage();
-        String lang2 = voice2.getLocale().getLanguage();
-        String country1 = voice1.getLocale().getCountry();
-        String country2 = voice2.getLocale().getCountry();
-        String deviceLanguage = Locale.getDefault().getLanguage();
-        String deviceCountry = Locale.getDefault().getCountry();
+    private class VoiceComparator implements Comparator<Voice> {
 
-        // Give priority to the device language
-        if (lang1.equals(deviceLanguage) && !lang2.equals(deviceLanguage)) {
-            return -1;
-        }
-        if (lang2.equals(deviceLanguage) && !lang1.equals(deviceLanguage)) {
-            return 1;
-        }
+        @Override
+        public int compare(Voice voice1, Voice voice2) {
+            String lang1 = voice1.getLocale().getLanguage();
+            String lang2 = voice2.getLocale().getLanguage();
+            String country1 = voice1.getLocale().getCountry();
+            String country2 = voice2.getLocale().getCountry();
+            String deviceLanguage = Locale.getDefault().getLanguage();
+            String deviceCountry = Locale.getDefault().getCountry();
 
-        // If both voices are using the device language, give priority to the device country.
-        if (lang1.equals(lang2) && lang1.equals(deviceLanguage)) {
-            if (country1.equals(deviceCountry) && !country2.equals(deviceCountry)) {
+            // Give priority to the default voice
+            if (Settings.VOICE_SYSTEM.equals(voice1.getName())) {
                 return -1;
             }
-            if (country2.equals(deviceCountry) && !country1.equals(deviceCountry)) {
+            if (Settings.VOICE_SYSTEM.equals(voice2.getName())) {
                 return 1;
             }
+
+            // Give priority to the device language
+            if (lang1.equals(deviceLanguage) && !lang2.equals(deviceLanguage)) {
+                return -1;
+            }
+            if (lang2.equals(deviceLanguage) && !lang1.equals(deviceLanguage)) {
+                return 1;
+            }
+
+            // If both voices are using the device language, give priority to the device country.
+            if (lang1.equals(lang2) && lang1.equals(deviceLanguage)) {
+                if (country1.equals(deviceCountry) && !country2.equals(deviceCountry)) {
+                    return -1;
+                }
+                if (country2.equals(deviceCountry) && !country1.equals(deviceCountry)) {
+                    return 1;
+                }
+            }
+
+            // All other cases: sort by the display name.
+            CharSequence displayName1 = parseVoiceName(voice1);
+            CharSequence displayName2 = parseVoiceName(voice2);
+            return displayName1.toString().compareTo(displayName2.toString());
         }
 
-        // All other cases: sort by the display name.
-        CharSequence displayName1 = parseVoiceName(voice1);
-        CharSequence displayName2 = parseVoiceName(voice2);
-        return displayName1.toString().compareTo(displayName2.toString());
-    };
+    }
 
 }

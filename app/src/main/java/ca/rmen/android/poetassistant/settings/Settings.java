@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.settings;
 
 import org.jraf.android.prefs.DefaultBoolean;
+import org.jraf.android.prefs.DefaultString;
 import org.jraf.android.prefs.Name;
 import org.jraf.android.prefs.Prefs;
 
@@ -28,12 +29,14 @@ public class Settings {
     @SuppressWarnings("unused")
     public static final String THEME_LIGHT = "Light";
     public static final String THEME_DARK = "Dark";
+    public static final String VOICE_SYSTEM = "VOICE_SYSTEM";
     public static final String PREF_VOICE = "PREF_VOICE";
     public static final String PREF_THEME = "PREF_THEME";
     public static final String PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED";
 
     @SuppressWarnings("unused")
     @Name(PREF_VOICE)
+    @DefaultString(VOICE_SYSTEM)
     String voice;
 
     @SuppressWarnings("unused")

@@ -19,7 +19,6 @@
 
 package ca.rmen.android.poetassistant.settings;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -72,7 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
         } else if (Settings.PREF_WOTD_ENABLED.equals(key)) {
             Wotd.setWotdEnabled(context, SettingsPrefs.get(context).getIsWotdEnabled());
         } else if (Settings.PREF_VOICE.equals(key)) {
-            Tts.getInstance(SettingsActivity.this).useVoice(sharedPreferences.getString(key, null));
+            Tts.getInstance(SettingsActivity.this).useVoice(SettingsPrefs.get(context).getVoice());
         }
     };
 
