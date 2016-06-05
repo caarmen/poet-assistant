@@ -19,7 +19,8 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ListPreference
+    <!--suppress AndroidElementNotAllowed -->
+    <ca.rmen.android.poetassistant.settings.VoicePreference
         android:summary="@string/pref_voice_summary"
         android:key="PREF_VOICE"
         android:negativeButtonText="@null"

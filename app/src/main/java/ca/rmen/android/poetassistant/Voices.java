@@ -103,7 +103,7 @@ public final class Voices {
      * <p>
      * If the voice name doesn't match any of these patterns, the voice name itself is returned.
      */
-    CharSequence parseVoiceName(Voice voice) {
+    private CharSequence parseVoiceName(Voice voice) {
         String voiceId = voice.getName();
         String[] tokens = voiceId.split("#");
         if (tokens.length < 1) return voiceId;
@@ -130,7 +130,7 @@ public final class Voices {
     /**
      * Order voices by language and country, putting the voices using the device language and country first.
      */
-    final Comparator<Voice> VOICE_COMPARATOR = (voice1, voice2) -> {
+    private final Comparator<Voice> VOICE_COMPARATOR = (voice1, voice2) -> {
         String lang1 = voice1.getLocale().getLanguage();
         String lang2 = voice2.getLocale().getLanguage();
         String country1 = voice1.getLocale().getCountry();

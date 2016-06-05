@@ -21,35 +21,23 @@ package ca.rmen.android.poetassistant.settings;
 
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.speech.tts.Voice;
-import android.support.annotation.NonNull;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.ListPreference;
-import android.support.v7.preference.ListPreferenceDialogFragmentCompat;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.util.Log;
-
-import org.jraf.android.prefs.Prefs;
-
-import java.util.List;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Theme;
 import ca.rmen.android.poetassistant.Tts;
-import ca.rmen.android.poetassistant.Voices;
 import ca.rmen.android.poetassistant.wotd.Wotd;
-import java8.util.stream.StreamSupport;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -89,40 +77,32 @@ public class SettingsActivity extends AppCompatActivity {
     };
 
     public static class GeneralPreferenceFragment extends PreferenceFragmentCompat {
+
+        private static final String DIALOG_TAG = "dialog_tag";
+
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
             addPreferencesFromResource(R.xml.pref_general);
-            loadVoices();
+            VoicePreference voicePreference = (VoicePreference) findPreference(Settings.PREF_VOICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                voicePreference.loadVoices();
+            }
+            if (voicePreference.getEntries() == null || voicePreference.getEntries().length == 0) {
+                getPreferenceScreen().removePreference(voicePreference);
+            }
         }
 
         @Override
         public void onDisplayPreferenceDialog(Preference preference) {
             if (Settings.PREF_VOICE.equals(preference.getKey())) {
+                if (getFragmentManager().findFragmentByTag(DIALOG_TAG) != null) {
+                    return;
+                }
                 VoicePreferenceDialogFragment fragment = VoicePreferenceDialogFragment.newInstance(preference.getKey());
                 fragment.setTargetFragment(this, 0);
-                fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
+                fragment.show(getFragmentManager(), DIALOG_TAG);
             } else {
                 super.onDisplayPreferenceDialog(preference);
-            }
-        }
-
-        private void loadVoices() {
-            ListPreference voicePreference = (ListPreference) findPreference(Settings.PREF_VOICE);
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                Tts tts = Tts.getInstance(getContext());
-                List<Voices.TtsVoice> voices = tts.getVoices();
-                CharSequence[] voiceIds = StreamSupport.stream(voices)
-                        .map(voice -> voice.id)
-                        .toArray(size -> new CharSequence[voices.size()]);
-                CharSequence[] voiceNames = StreamSupport.stream(voices)
-                        .map(voice -> voice.name)
-                        .toArray(size -> new CharSequence[voices.size()]);
-                voicePreference.setEntryValues(voiceIds);
-                voicePreference.setEntries(voiceNames);
-            }
-            if (voicePreference != null
-                    && (voicePreference.getEntries() == null || voicePreference.getEntries().length == 0)) {
-                getPreferenceScreen().removePreference(voicePreference);
             }
         }
     }

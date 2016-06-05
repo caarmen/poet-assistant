@@ -19,13 +19,18 @@
 
 package ca.rmen.android.poetassistant.settings;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
 
+/**
+ * We use a custom dialog fragment because the app v7 preference dialog fragment
+ * doesn't support using Spannables for the preference entry labels.  After rotation,
+ * the span information is lost, because ListPreferenceDialogFragmentCompat saves only
+ * the toString() representation of the entry labels in onSaveInstanceState().
+ */
 public class VoicePreferenceDialogFragment extends PreferenceDialogFragmentCompat {
 
     private static final String EXTRA_SELECTED_INDEX = "selected_index";
@@ -60,22 +65,25 @@ public class VoicePreferenceDialogFragment extends PreferenceDialogFragmentCompa
     @Override
     protected void onPrepareDialogBuilder(AlertDialog.Builder builder) {
         super.onPrepareDialogBuilder(builder);
-        ListPreference preference = (ListPreference) getPreference();
-        builder.setSingleChoiceItems(preference.getEntries(), mSelectedIndex, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                mSelectedIndex = which;
-                dialog.dismiss();
-            }
+        // We don't persist the entry labels in onSaveInstanceState().  We ask
+        // the Preference for them every time we want to display the dialog.
+        builder.setSingleChoiceItems(getVoicePreference().getEntries(), mSelectedIndex, (dialog, which) -> {
+            mSelectedIndex = which;
+            dialog.dismiss();
         });
         builder.setPositiveButton(null, null);
     }
 
     @Override
     public void onDialogClosed(boolean positiveResult) {
-        ListPreference preference = (ListPreference) getPreference();
-        String value = preference.getEntryValues()[mSelectedIndex].toString();
-        if(preference.callChangeListener(value)) {
+        String value = getVoicePreference().getEntryValues()[mSelectedIndex].toString();
+        VoicePreference preference = getVoicePreference();
+        if (preference.callChangeListener(value)) {
             preference.setValue(value);
         }
+    }
+
+    private VoicePreference getVoicePreference() {
+        return (VoicePreference) getPreference();
     }
 }
