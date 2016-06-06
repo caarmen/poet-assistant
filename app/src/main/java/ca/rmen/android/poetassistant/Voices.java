@@ -29,6 +29,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -37,6 +38,7 @@ import java.util.Set;
 import ca.rmen.android.poetassistant.settings.Settings;
 import java8.util.stream.Collectors;
 import java8.util.stream.StreamSupport;
+
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public final class Voices {
@@ -67,7 +69,16 @@ public final class Voices {
     }
 
     List<TtsVoice> getVoices(TextToSpeech textToSpeech) {
-        Set<Voice> voices = textToSpeech.getVoices();
+
+        Set<Voice> voices;
+        try {
+            voices = textToSpeech.getVoices();
+        } catch (Throwable t) {
+            // This happens if I choose "SoundAbout TTS" as the preferred engine.
+            // That implementation throws a NullPointerException.
+            Log.w(TAG, "Couldn't load the tts voices: " + t.getMessage(), t);
+            return Collections.emptyList();
+        }
         List<TtsVoice> ttsVoices = StreamSupport.stream(voices)
                 .filter(voice ->
                         !voice.isNetworkConnectionRequired()
@@ -86,13 +97,20 @@ public final class Voices {
 
     void useVoice(TextToSpeech textToSpeech, @Nullable String voiceId) {
         final Voice matchingVoice;
-        if (voiceId == null || Settings.VOICE_SYSTEM.equals(voiceId)) {
-            matchingVoice = textToSpeech.getDefaultVoice();
-        } else {
-            matchingVoice = StreamSupport.stream(textToSpeech.getVoices())
-                    .filter(voice -> voiceId.equals(voice.getName()))
-                    .findFirst()
-                    .get();
+        try {
+            if (voiceId == null || Settings.VOICE_SYSTEM.equals(voiceId)) {
+                matchingVoice = textToSpeech.getDefaultVoice();
+            } else {
+                matchingVoice = StreamSupport.stream(textToSpeech.getVoices())
+                        .filter(voice -> voiceId.equals(voice.getName()))
+                        .findFirst()
+                        .get();
+            }
+        } catch (Throwable t) {
+            // This happens if I choose "SoundAbout TTS" as the preferred engine.
+            // That implementation throws a NullPointerException.
+            Log.w(TAG, "Couldn't load the tts voices: " + t.getMessage(), t);
+            return;
         }
 
         if (matchingVoice != null) {
