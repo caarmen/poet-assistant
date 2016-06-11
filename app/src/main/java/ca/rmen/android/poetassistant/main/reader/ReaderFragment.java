@@ -266,7 +266,7 @@ public class ReaderFragment extends Fragment implements
      * This is called from a background thread by TTS.
      */
     private void updatePlayButton() {
-        Log.d(TAG, "updatePlayButton");
+        Log.d(TAG, "updatePlayButton: tts status = " + mTts.getStatus() + ", tts is speaking = " + mTts.isSpeaking());
         mHandler.post(() -> {
             boolean enabled = !TextUtils.isEmpty(mBinding.tvText.getText())
                     && mTts.getStatus() == TextToSpeech.SUCCESS;
@@ -375,7 +375,14 @@ public class ReaderFragment extends Fragment implements
     @Subscribe
     public void onTtsInitialized(Tts.OnTtsInitialized event) {
         Log.d(TAG, "onTtsInitialized() called with: " + "event = [" + event + "]");
+
         updatePlayButton();
+        // Sometimes when the tts engine is initialized, the "isSpeaking()" method returns true
+        // if you call it immediately.  If we call updatePlayButton only once at this point, we
+        // will show a "stop" button instead of a "play" button.  We workaround this by updating
+        // the button again after a brief moment, hoping that isSpeaking() will correctly
+        // return false, allowing us to display a "play" button.
+        mHandler.postDelayed(this::updatePlayButton, 5000);
     }
 
     @SuppressWarnings("unused")
@@ -383,6 +390,7 @@ public class ReaderFragment extends Fragment implements
     public void onTtsUtteranceCompleted(Tts.OnUtteranceCompleted event) {
         Log.d(TAG, "onTtsUtteranceCompleted() called with: " + "event = [" + event + "]");
         updatePlayButton();
+        mHandler.postDelayed(this::updatePlayButton, 1000);
     }
 
 }
