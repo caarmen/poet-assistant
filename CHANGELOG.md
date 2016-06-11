@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.7.0  *(2016-06-11)*
+--------------------
+
+* Added a setting to select the text-to-speech voice.
+
 1.6.5  *(2016-05-28)*
 --------------------
 
