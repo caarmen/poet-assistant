@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.text.Html;
 import android.util.Log;
@@ -72,12 +73,20 @@ public final class Wotd {
         }
     }
 
-    private static void enableWotd(Context context) {
+    private static void enableWotd(final Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             WotdJob.schedule(context);
         } else {
             WotdAlarm.schedule(context);
         }
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                notifyWotd(context);
+                return null;
+            }
+        }.execute();
     }
 
     private static void disableWotd(Context context) {
@@ -151,6 +160,8 @@ public final class Wotd {
 
     @TargetApi(Build.VERSION_CODES.M)
     private static Notification.Action buildShareAction23(Context context, DictionaryEntry entry) {
+        // On wear devices, the share icon will not appear:
+        // https://code.google.com/p/android/issues/detail?id=204246
         return new Notification.Action.Builder(Icon.createWithResource(context, R.drawable.ic_share_vector), context.getString(R.string.share), getShareIntent(context, entry)).build();
     }
 

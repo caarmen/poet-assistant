@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.7.2  *(2016-06-26)*
+--------------------
+* When enabling the Word of the Day, create a Wotd notification immediately.
+
 1.7.1  *(2016-06-26)*
 --------------------
 * Maintenance release. Updated dependencies: 
