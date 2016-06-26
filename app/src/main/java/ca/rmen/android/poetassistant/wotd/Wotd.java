@@ -29,10 +29,10 @@ import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.text.Html;
 import android.util.Log;
 
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.HtmlCompat;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
@@ -130,7 +130,7 @@ public final class Wotd {
             builder.append(context.getString(R.string.wotd_notification_definition, details.partOfSpeech, details.definition));
         }
         String content = builder.toString();
-        return Html.fromHtml(content);
+        return HtmlCompat.fromHtml(content);
     }
 
     private static CharSequence buildWotdShareContent(Context context, DictionaryEntry entry) {

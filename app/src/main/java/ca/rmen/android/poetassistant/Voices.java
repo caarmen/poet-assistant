@@ -25,7 +25,6 @@ import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
 import android.support.annotation.Nullable;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -155,7 +154,7 @@ public final class Voices {
         String language = voice.getLocale().getDisplayLanguage(Locale.getDefault());
         String country = voice.getLocale().getDisplayCountry(Locale.getDefault());
         if (gender != null) {
-            return Html.fromHtml(mContext.getString(R.string.pref_voice_value_with_gender, language, country, gender));
+            return HtmlCompat.fromHtml(mContext.getString(R.string.pref_voice_value_with_gender, language, country, gender));
         } else {
             return mContext.getString(R.string.pref_voice_value_without_gender, language, country);
         }
