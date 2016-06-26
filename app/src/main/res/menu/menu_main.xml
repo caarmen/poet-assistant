@@ -22,6 +22,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".main.MainActivity">
     <item
+        android:id="@+id/action_random_word"
+        android:title="@string/action_random_word"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_clear_search_history"
         android:title="@string/action_clear_search_history"
         android:orderInCategory="100"

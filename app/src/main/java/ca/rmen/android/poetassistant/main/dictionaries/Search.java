@@ -23,6 +23,8 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -31,6 +33,8 @@ import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.main.Tab;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
 
 /**
  * Glue between the fragments, activity, and view pager, for executing searches.
@@ -89,7 +93,28 @@ public class Search {
         ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.RHYMER.ordinal())).query(word);
         ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.THESAURUS.ordinal())).query(word);
         ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.DICTIONARY.ordinal())).query(word);
-        if (mViewPager.getCurrentItem() == Tab.READER.ordinal()) mViewPager.setCurrentItem(0);
+    }
+
+    /**
+     * Lookup a random word. Update the view pager tabs with the results of this word.
+     */
+    public void lookupRandom() {
+        Log.d(TAG, "lookupRandom");
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                DictionaryEntry entry = Dictionary.getInstance(mSearchableActivity).getRandomEntry();
+                return entry == null ? null : entry.word;
+            }
+
+            @Override
+            protected void onPostExecute(@Nullable String word) {
+                if (word != null) {
+                    search(word);
+                    mViewPager.setCurrentItem(Tab.DICTIONARY.ordinal());
+                }
+            }
+        }.execute();
     }
 
     public void clearSearchHistory() {

@@ -38,6 +38,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 
+import java.util.Locale;
+
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.about.AboutActivity;
@@ -77,9 +79,15 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         mBinding.tabs.setupWithViewPager(mBinding.viewPager);
 
         // If the app was launched with a query for the thesaurus, focus on that tab.
-        if (data != null && data.getHost().equalsIgnoreCase(Constants.DEEP_LINK_QUERY))
-            mBinding.viewPager.setCurrentItem(Tab.DICTIONARY.ordinal());
-        else if (Intent.ACTION_SEND.equals(intent.getAction()))
+        if (data != null) {
+            if (data.getHost().equalsIgnoreCase(Constants.DEEP_LINK_QUERY)) {
+                mBinding.viewPager.setCurrentItem(Tab.DICTIONARY.ordinal());
+            } else if (data.getHost().equalsIgnoreCase(Tab.RHYMER.name().toLowerCase(Locale.US))) {
+                mBinding.viewPager.setCurrentItem(Tab.RHYMER.ordinal());
+            } else if (data.getHost().equalsIgnoreCase(Tab.THESAURUS.name().toLowerCase(Locale.US))) {
+                mBinding.viewPager.setCurrentItem(Tab.THESAURUS.ordinal());
+            }
+        } else if (Intent.ACTION_SEND.equals(intent.getAction()))
             mBinding.viewPager.setCurrentItem(Tab.READER.ordinal());
 
         mSearch = new Search(this, mBinding.viewPager);
@@ -125,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
             if (TextUtils.isEmpty(query)) query = intent.getStringExtra(SearchManager.USER_QUERY);
             if (TextUtils.isEmpty(query)) return;
             mSearch.search(query);
+            if (mBinding.viewPager.getCurrentItem() == Tab.READER.ordinal()) mBinding.viewPager.setCurrentItem(Tab.RHYMER.ordinal());
         }
         // We got here from a deep link
         else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
@@ -167,6 +176,9 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         if (item.getItemId() == R.id.action_about) {
             Intent intent = new Intent(this, AboutActivity.class);
             startActivity(intent);
+            return true;
+        } else if (item.getItemId() == R.id.action_random_word) {
+            mSearch.lookupRandom();
             return true;
         } else if (item.getItemId() == R.id.action_clear_search_history) {
             mSearch.clearSearchHistory();

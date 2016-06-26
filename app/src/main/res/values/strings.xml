@@ -20,6 +20,7 @@
 <resources>
     <string name="app_name">Poet Assistant</string>
     <string name="action_search">Search</string>
+    <string name="action_random_word">Random word</string>
     <string name="action_clear_search_history">Clear search history</string>
     <string name="search_history_cleared">Search history cleared.</string>
     <string name="action_settings">Settings</string>
