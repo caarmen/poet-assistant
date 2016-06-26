@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+1.7.1  *(2016-06-26)*
+--------------------
+* Maintenance release. Updated dependencies: 
+ - support library: 24.0.0
+ - streams support: 1.5
+ - targetSdkVersion, compileVersion, buildToolsVersion: 24
+
 1.7.0  *(2016-06-11)*
 --------------------
 
