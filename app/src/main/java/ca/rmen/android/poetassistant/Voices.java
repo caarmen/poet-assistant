@@ -79,6 +79,10 @@ public final class Voices {
             Log.w(TAG, "Couldn't load the tts voices: " + t.getMessage(), t);
             return Collections.emptyList();
         }
+        if (voices == null) {
+            Log.w(TAG, "No voices found");
+            return Collections.emptyList();
+        }
         List<TtsVoice> ttsVoices = StreamSupport.stream(voices)
                 .filter(voice ->
                         !voice.isNetworkConnectionRequired()
@@ -153,10 +157,23 @@ public final class Voices {
 
         String language = voice.getLocale().getDisplayLanguage(Locale.getDefault());
         String country = voice.getLocale().getDisplayCountry(Locale.getDefault());
-        if (gender != null) {
-            return HtmlCompat.fromHtml(mContext.getString(R.string.pref_voice_value_with_gender, language, country, gender));
-        } else {
-            return mContext.getString(R.string.pref_voice_value_without_gender, language, country);
+        if (!TextUtils.isEmpty(country)) {
+            // We have a country and gender
+            if (!TextUtils.isEmpty(gender)) {
+                return HtmlCompat.fromHtml(mContext.getString(R.string.pref_voice_value_with_country, language, country, gender));
+            }
+            // We have a country and no gender
+            else {
+                return HtmlCompat.fromHtml(mContext.getString(R.string.pref_voice_value_with_country, language, country, voiceId));
+            }
+        }
+        // We have a gender but no country
+        else if (!TextUtils.isEmpty(gender)){
+            return HtmlCompat.fromHtml(mContext.getString(R.string.pref_voice_value_without_country, language, gender));
+        }
+        // We have neither gender nor country.
+        else {
+            return HtmlCompat.fromHtml(mContext.getString(R.string.pref_voice_value_without_country, language, voiceId));
         }
     }
 
