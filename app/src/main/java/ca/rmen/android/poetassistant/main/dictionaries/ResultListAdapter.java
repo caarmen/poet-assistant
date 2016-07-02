@@ -19,12 +19,13 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries;
 
+import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ResultListAdapter<T> extends RecyclerView.Adapter<ResultListEntryViewHolder> {
+public abstract class ResultListAdapter<T> extends RecyclerView.Adapter<ResultListAdapter.ResultListEntryViewHolder> {
 
     private List<T> mData = new ArrayList<>();
 
@@ -47,5 +48,14 @@ public abstract class ResultListAdapter<T> extends RecyclerView.Adapter<ResultLi
         return mData.size();
     }
 
+    public static class ResultListEntryViewHolder extends RecyclerView.ViewHolder {
+
+        public ViewDataBinding binding;
+
+        public ResultListEntryViewHolder(ViewDataBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+    }
 
 }

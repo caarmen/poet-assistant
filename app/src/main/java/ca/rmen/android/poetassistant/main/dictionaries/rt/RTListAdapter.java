@@ -32,7 +32,6 @@ import ca.rmen.android.poetassistant.databinding.ListItemSubheadingBinding;
 import ca.rmen.android.poetassistant.databinding.ListItemWordBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter;
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListEntryViewHolder;
 
 
 public class RTListAdapter extends ResultListAdapter<RTEntry> {
@@ -52,7 +51,7 @@ public class RTListAdapter extends ResultListAdapter<RTEntry> {
     }
 
     @Override
-    public ResultListEntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ResultListAdapter.ResultListEntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutId;
         if (viewType == RTEntry.Type.HEADING.ordinal())
             layoutId = R.layout.list_item_heading;
@@ -66,11 +65,11 @@ public class RTListAdapter extends ResultListAdapter<RTEntry> {
                 layoutId,
                 parent,
                 false);
-        return new ResultListEntryViewHolder(binding);
+        return new ResultListAdapter.ResultListEntryViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(ResultListEntryViewHolder holder, int position) {
+    public void onBindViewHolder(ResultListAdapter.ResultListEntryViewHolder holder, int position) {
         RTEntry entry = getItem(position);
         if (entry.type == RTEntry.Type.HEADING) {
             bindHeadingView(entry, (ListItemHeadingBinding) holder.binding);

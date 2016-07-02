@@ -26,23 +26,22 @@ import android.view.ViewGroup;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.databinding.ListItemDictionaryEntryBinding;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter;
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListEntryViewHolder;
 
 
 public class DictionaryListAdapter extends ResultListAdapter<DictionaryEntry.DictionaryEntryDetails> {
 
     @Override
-    public ResultListEntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ResultListAdapter.ResultListEntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         ListItemDictionaryEntryBinding binding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.getContext()),
                 R.layout.list_item_dictionary_entry,
                 parent,
                 false);
-        return new ResultListEntryViewHolder(binding);
+        return new ResultListAdapter.ResultListEntryViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(ResultListEntryViewHolder holder, int position) {
+    public void onBindViewHolder(ResultListAdapter.ResultListEntryViewHolder holder, int position) {
         DictionaryEntry.DictionaryEntryDetails entry = getItem(position);
         ListItemDictionaryEntryBinding binding = (ListItemDictionaryEntryBinding) holder.binding;
         binding.wordType.setText(entry.partOfSpeech);
