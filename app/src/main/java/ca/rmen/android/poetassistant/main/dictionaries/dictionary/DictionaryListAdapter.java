@@ -44,7 +44,7 @@ public class DictionaryListAdapter extends ResultListAdapter<DictionaryEntry.Dic
     public void onBindViewHolder(ResultListAdapter.ResultListEntryViewHolder holder, int position) {
         DictionaryEntry.DictionaryEntryDetails entry = getItem(position);
         ListItemDictionaryEntryBinding binding = (ListItemDictionaryEntryBinding) holder.binding;
-        binding.wordType.setText(entry.partOfSpeech);
-        binding.definition.setText(entry.definition);
+        binding.setEntry(entry);
+        binding.executePendingBindings();
     }
 }

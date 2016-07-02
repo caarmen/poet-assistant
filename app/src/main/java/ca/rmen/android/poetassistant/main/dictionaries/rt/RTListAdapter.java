@@ -72,26 +72,14 @@ public class RTListAdapter extends ResultListAdapter<RTEntry> {
     public void onBindViewHolder(ResultListAdapter.ResultListEntryViewHolder holder, int position) {
         RTEntry entry = getItem(position);
         if (entry.type == RTEntry.Type.HEADING) {
-            bindHeadingView(entry, (ListItemHeadingBinding) holder.binding);
+            ((ListItemHeadingBinding) holder.binding).setEntry(entry);
         } else if (entry.type == RTEntry.Type.SUBHEADING) {
-            bindSubheadingView(entry, (ListItemSubheadingBinding) holder.binding);
+            ((ListItemSubheadingBinding) holder.binding).setEntry(entry);
         } else {
-            bindWordView(entry, (ListItemWordBinding) holder.binding);
+            ((ListItemWordBinding) holder.binding).setEntry(entry);
+            ((ListItemWordBinding) holder.binding).setEntryIconClickListener(mEntryIconClickListener);
         }
-    }
-
-    private void bindHeadingView(RTEntry entry, ListItemHeadingBinding binding) {
-        binding.text1.setText(entry.text);
-    }
-
-
-    private void bindSubheadingView(RTEntry entry, ListItemSubheadingBinding binding) {
-        binding.text1.setText(entry.text);
-    }
-
-    private void bindWordView(RTEntry entry, ListItemWordBinding binding) {
-        binding.text1.setText(entry.text);
-        binding.setEntryIconClickListener(mEntryIconClickListener);
+        holder.binding.executePendingBindings();
     }
 
     public class EntryIconClickListener {

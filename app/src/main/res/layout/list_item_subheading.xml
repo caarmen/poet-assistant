@@ -19,10 +19,18 @@
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <data>
+
+        <variable
+            name="entry"
+            type="ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry" />
+    </data>
+
     <TextView
-        style="?android:attr/textAppearanceSearchResultSubtitle"
         android:id="@android:id/text1"
+        style="?android:attr/textAppearanceSearchResultSubtitle"
         android:layout_width="match_parent"
         android:layout_height="36dp"
+        android:text="@{entry.text}"
         android:textStyle="italic" />
 </layout>
