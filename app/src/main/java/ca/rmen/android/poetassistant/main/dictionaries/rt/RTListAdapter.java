@@ -20,28 +20,27 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.app.Activity;
-import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.databinding.ListItemHeadingBinding;
+import ca.rmen.android.poetassistant.databinding.ListItemSubheadingBinding;
 import ca.rmen.android.poetassistant.databinding.ListItemWordBinding;
 import ca.rmen.android.poetassistant.main.Tab;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListEntryViewHolder;
 
 
-public class RTListAdapter extends ArrayAdapter<RTEntry> {
+public class RTListAdapter extends ResultListAdapter<RTEntry> {
 
-    private final Context mContext;
     private final OnWordClickedListener mListener;
     private final EntryIconClickListener mEntryIconClickListener;
 
     public RTListAdapter(Activity activity) {
-        super(activity, 0);
-        mContext = activity;
         mListener = (OnWordClickedListener) activity;
         mEntryIconClickListener = new EntryIconClickListener();
     }
@@ -53,63 +52,53 @@ public class RTListAdapter extends ArrayAdapter<RTEntry> {
     }
 
     @Override
-    public int getViewTypeCount() {
-        return 3;
+    public ResultListEntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        int layoutId;
+        if (viewType == RTEntry.Type.HEADING.ordinal())
+            layoutId = R.layout.list_item_heading;
+        else if (viewType == RTEntry.Type.SUBHEADING.ordinal())
+            layoutId = R.layout.list_item_subheading;
+        else
+            layoutId = R.layout.list_item_word;
+
+        ViewDataBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(parent.getContext()),
+                layoutId,
+                parent,
+                false);
+        return new ResultListEntryViewHolder(binding);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public void onBindViewHolder(ResultListEntryViewHolder holder, int position) {
         RTEntry entry = getItem(position);
-        if (entry.type == RTEntry.Type.HEADING)
-            return getHeadingView(entry, convertView);
-        else if (entry.type == RTEntry.Type.SUBHEADING)
-            return getSubHeadingView(entry, convertView);
-        else
-            return getWordView(entry, convertView, parent);
-    }
-
-    private View getHeadingView(RTEntry entry, View convertView) {
-        if (convertView == null) {
-            convertView = View.inflate(mContext, R.layout.list_item_heading, null);
-        }
-        TextView text = (TextView) convertView;
-        text.setText(entry.text);
-        return convertView;
-    }
-
-
-    private View getSubHeadingView(RTEntry entry, View convertView) {
-        if (convertView == null) {
-            convertView = View.inflate(mContext, R.layout.list_item_subheading, null);
-        }
-        TextView text = (TextView) convertView;
-        text.setText(entry.text);
-        return convertView;
-    }
-
-    private View getWordView(RTEntry entry, View convertView, ViewGroup parent) {
-        final ListItemWordBinding binding;
-        if (convertView == null) {
-            binding = DataBindingUtil.inflate(
-                    LayoutInflater.from(getContext()),
-                    R.layout.list_item_word,
-                    parent,
-                    false);
-            convertView = binding.getRoot();
-            convertView.setTag(binding);
+        if (entry.type == RTEntry.Type.HEADING) {
+            bindHeadingView(entry, (ListItemHeadingBinding) holder.binding);
+        } else if (entry.type == RTEntry.Type.SUBHEADING) {
+            bindSubheadingView(entry, (ListItemSubheadingBinding) holder.binding);
         } else {
-            binding = (ListItemWordBinding) convertView.getTag();
+            bindWordView(entry, (ListItemWordBinding) holder.binding);
         }
+    }
+
+    private void bindHeadingView(RTEntry entry, ListItemHeadingBinding binding) {
+        binding.text1.setText(entry.text);
+    }
+
+
+    private void bindSubheadingView(RTEntry entry, ListItemSubheadingBinding binding) {
+        binding.text1.setText(entry.text);
+    }
+
+    private void bindWordView(RTEntry entry, ListItemWordBinding binding) {
         binding.text1.setText(entry.text);
         binding.setEntryIconClickListener(mEntryIconClickListener);
-        return convertView;
     }
 
     public class EntryIconClickListener {
 
         private String getWord(View v) {
-            View parentView = (View) v.getParent();
-            ListItemWordBinding binding = (ListItemWordBinding) parentView.getTag();
+            ListItemWordBinding binding = DataBindingUtil.getBinding((View)v.getParent());
             return binding.text1.getText().toString();
         }
 
@@ -125,4 +114,5 @@ public class RTListAdapter extends ArrayAdapter<RTEntry> {
             mListener.onWordClicked(getWord(v), Tab.DICTIONARY);
         }
     }
+
 }

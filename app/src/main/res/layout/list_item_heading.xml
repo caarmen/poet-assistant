@@ -17,8 +17,11 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?android:attr/textAppearanceSearchResultTitle"
-    android:layout_width="match_parent"
-    android:layout_height="48dp" />
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <TextView
+        style="?android:attr/textAppearanceSearchResultTitle"
+        android:id="@android:id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="48dp" />
+</layout>

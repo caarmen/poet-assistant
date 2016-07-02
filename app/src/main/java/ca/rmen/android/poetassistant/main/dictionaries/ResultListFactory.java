@@ -71,14 +71,14 @@ public class ResultListFactory {
         return fragment;
     }
 
-    public static ArrayAdapter<?> createAdapter(Activity activity, Tab tab) {
+    public static ResultListAdapter<?> createAdapter(Activity activity, Tab tab) {
         switch (tab) {
             case RHYMER:
             case THESAURUS:
                 return new RTListAdapter(activity);
             case DICTIONARY:
             default:
-                return new DictionaryListAdapter(activity);
+                return new DictionaryListAdapter();
         }
     }
 

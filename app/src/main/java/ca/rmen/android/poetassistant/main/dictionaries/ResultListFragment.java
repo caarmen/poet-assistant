@@ -26,9 +26,10 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -40,7 +41,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -56,7 +56,7 @@ import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 
 
-public class ResultListFragment<T> extends ListFragment
+public class ResultListFragment<T> extends Fragment
         implements
         LoaderManager.LoaderCallbacks<ResultListData<T>>,
         InputDialogFragment.InputDialogListener {
@@ -70,7 +70,7 @@ public class ResultListFragment<T> extends ListFragment
     private final HeaderButtonListener mHeaderButtonListener = new HeaderButtonListener();
 
     private Tab mTab;
-    private ArrayAdapter<T> mAdapter;
+    private ResultListAdapter<T> mAdapter;
     private ResultListData<T> mData;
     private Tts mTts;
 
@@ -87,6 +87,7 @@ public class ResultListFragment<T> extends ListFragment
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false);
         View view = mBinding.getRoot();
         mBinding.setHeaderButtonListener(mHeaderButtonListener);
+        mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
 
         if (mTab == Tab.RHYMER || mTab == Tab.THESAURUS) mBinding.btnFilter.setVisibility(View.VISIBLE);
         mBinding.tvFilterLabel.setText(ResultListFactory.getFilterLabel(getActivity(), mTab));
@@ -111,8 +112,8 @@ public class ResultListFragment<T> extends ListFragment
         Log.d(TAG, mTab + ": onActivityCreated() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         mTts = Tts.getInstance(getActivity());
         //noinspection unchecked
-        mAdapter = (ArrayAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
-        setListAdapter(mAdapter);
+        mAdapter = (ResultListAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
+        mBinding.recyclerView.setAdapter(mAdapter);
         getLoaderManager().initLoader(mTab.ordinal(), getArguments(), this);
         updatePlayButton();
     }
@@ -145,7 +146,7 @@ public class ResultListFragment<T> extends ListFragment
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.action_share).setEnabled(!mAdapter.isEmpty());
+        menu.findItem(R.id.action_share).setEnabled(mAdapter.getItemCount() > 0);
     }
 
     public void query(String query) {
@@ -194,14 +195,14 @@ public class ResultListFragment<T> extends ListFragment
         updateUi();
 
         // Hide the keyboard
-        getListView().requestFocus();
+        mBinding.recyclerView.requestFocus();
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getListView().getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(mBinding.recyclerView.getWindowToken(), 0);
     }
 
     private void updateUi() {
         Log.d(TAG, mTab + ": updateUi() called with: " + "");
-        int headerVisible = mAdapter.getCount() == 0 && TextUtils.isEmpty(mBinding.tvListHeader.getText().toString()) ?
+        int headerVisible = mAdapter.getItemCount() == 0 && TextUtils.isEmpty(mBinding.tvListHeader.getText().toString()) ?
                 View.GONE : View.VISIBLE;
         mBinding.listHeader.setVisibility(headerVisible);
 
@@ -220,6 +221,13 @@ public class ResultListFragment<T> extends ListFragment
         // If the user entered a query and there are no matches, show the normal "no results" text.
         else {
             mBinding.empty.setText(R.string.empty_list_with_query);
+        }
+        if (mData == null || mData.data.isEmpty()) {
+            mBinding.empty.setVisibility(View.VISIBLE);
+            mBinding.recyclerView.setVisibility(View.GONE);
+        } else {
+            mBinding.empty.setVisibility(View.GONE);
+            mBinding.recyclerView.setVisibility(View.VISIBLE);
         }
         getActivity().supportInvalidateOptionsMenu();
     }
