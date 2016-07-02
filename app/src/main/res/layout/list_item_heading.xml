@@ -28,8 +28,7 @@
 
     <TextView
         android:id="@android:id/text1"
-        style="?android:attr/textAppearanceSearchResultTitle"
+        style="@style/ListItemHeading"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
         android:text="@{entry.text}" />
 </layout>
