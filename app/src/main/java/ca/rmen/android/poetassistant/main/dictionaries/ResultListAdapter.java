@@ -27,7 +27,7 @@ import java.util.List;
 
 public abstract class ResultListAdapter<T> extends RecyclerView.Adapter<ResultListAdapter.ResultListEntryViewHolder> {
 
-    private List<T> mData = new ArrayList<>();
+    private final List<T> mData = new ArrayList<>();
 
     public void clear() {
         mData.clear();
@@ -39,7 +39,7 @@ public abstract class ResultListAdapter<T> extends RecyclerView.Adapter<ResultLi
         notifyDataSetChanged();
     }
 
-    public T getItem(int position) {
+    protected T getItem(int position) {
         return mData.get(position);
     }
 
@@ -50,7 +50,7 @@ public abstract class ResultListAdapter<T> extends RecyclerView.Adapter<ResultLi
 
     public static class ResultListEntryViewHolder extends RecyclerView.ViewHolder {
 
-        public ViewDataBinding binding;
+        public final ViewDataBinding binding;
 
         public ResultListEntryViewHolder(ViewDataBinding binding) {
             super(binding.getRoot());
