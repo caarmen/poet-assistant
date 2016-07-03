@@ -178,13 +178,12 @@
                 android:layout_gravity="center"
                 android:text="@null" />
 
-
-            <ListView
-                android:id="@android:id/list"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:divider="@null"
-                android:visibility="gone" />
+                android:visibility="gone"/>
+
         </FrameLayout>
     </LinearLayout>
 </layout>

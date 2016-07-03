@@ -17,8 +17,19 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?android:attr/textAppearanceSearchResultTitle"
-    android:layout_width="match_parent"
-    android:layout_height="48dp" />
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <data>
+
+        <variable
+            name="entry"
+            type="ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry" />
+    </data>
+
+    <TextView
+        android:id="@android:id/text1"
+        style="?android:attr/textAppearanceSearchResultTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@{entry.text}" />
+</layout>

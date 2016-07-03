@@ -19,39 +19,32 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
 
-import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.databinding.ListItemDictionaryEntryBinding;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter;
 
 
-public class DictionaryListAdapter extends ArrayAdapter<DictionaryEntry.DictionaryEntryDetails> {
-    public DictionaryListAdapter(Activity activity) {
-        super(activity, 0);
+public class DictionaryListAdapter extends ResultListAdapter<DictionaryEntry.DictionaryEntryDetails> {
+
+    @Override
+    public ResultListAdapter.ResultListEntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        ListItemDictionaryEntryBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(parent.getContext()),
+                R.layout.list_item_dictionary_entry,
+                parent,
+                false);
+        return new ResultListAdapter.ResultListEntryViewHolder(binding);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public void onBindViewHolder(ResultListAdapter.ResultListEntryViewHolder holder, int position) {
         DictionaryEntry.DictionaryEntryDetails entry = getItem(position);
-        final ListItemDictionaryEntryBinding binding;
-        if (convertView == null) {
-            binding = DataBindingUtil.inflate(
-                    LayoutInflater.from(getContext()),
-                    R.layout.list_item_dictionary_entry,
-                    parent,
-                    false);
-            convertView = binding.getRoot();
-            convertView.setTag(binding);
-        } else {
-            binding = (ListItemDictionaryEntryBinding) convertView.getTag();
-        }
-        binding.wordType.setText(entry.partOfSpeech);
-        binding.definition.setText(entry.definition);
-        return convertView;
+        ListItemDictionaryEntryBinding binding = (ListItemDictionaryEntryBinding) holder.binding;
+        binding.setEntry(entry);
+        binding.executePendingBindings();
     }
 }

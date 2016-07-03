@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
@@ -71,14 +70,14 @@ public class ResultListFactory {
         return fragment;
     }
 
-    public static ArrayAdapter<?> createAdapter(Activity activity, Tab tab) {
+    public static ResultListAdapter<?> createAdapter(Activity activity, Tab tab) {
         switch (tab) {
             case RHYMER:
             case THESAURUS:
                 return new RTListAdapter(activity);
             case DICTIONARY:
             default:
-                return new DictionaryListAdapter(activity);
+                return new DictionaryListAdapter();
         }
     }
 
