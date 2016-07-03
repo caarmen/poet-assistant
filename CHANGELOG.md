@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.7.3  *(2016-07-03)*
+--------------------
+* Migrated the ListView to RecyclerView
+
 1.7.2  *(2016-06-26)*
 --------------------
 * When enabling the Word of the Day, create a Wotd notification immediately.
