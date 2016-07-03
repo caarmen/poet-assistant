@@ -44,13 +44,4 @@
         <item name="colorAccent">@color/dialog_accent</item>
     </style>
 
-    <style name="ListItemHeading" parent="@style/TextAppearance.AppCompat.SearchResult.Title">
-        <item name="android:layout_height">48dp</item>
-    </style>
-
-    <style name="ListItemSubHeading" parent="@style/TextAppearance.AppCompat.SearchResult.Subtitle">
-        <item name="android:layout_height">36dp</item>
-        <item name="android:textStyle">italic</item>
-    </style>
-
 </resources>

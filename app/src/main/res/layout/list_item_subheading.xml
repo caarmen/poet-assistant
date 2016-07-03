@@ -28,7 +28,9 @@
 
     <TextView
         android:id="@android:id/text1"
-        style="@style/ListItemSubHeading"
+        style="?android:attr/textAppearanceSearchResultSubtitle"
         android:layout_width="match_parent"
-        android:text="@{entry.text}" />
+        android:layout_height="36dp"
+        android:text="@{entry.text}"
+        android:textStyle="italic" />
 </layout>
