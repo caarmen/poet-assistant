@@ -182,6 +182,7 @@ public class ResultListFragment<T> extends Fragment
             filter = args.getString(EXTRA_FILTER);
             mBinding.tvListHeader.setText(query);
         }
+        mBinding.recyclerView.scrollToPosition(0); // why do I have to do this?
         //noinspection unchecked
         return (Loader<ResultListData<T>>) ResultListFactory.createLoader(mTab, getActivity(), query, filter);
     }
