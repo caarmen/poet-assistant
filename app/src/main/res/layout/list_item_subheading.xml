@@ -30,7 +30,7 @@
         android:id="@android:id/text1"
         style="?android:attr/textAppearanceSearchResultSubtitle"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="wrap_content"
         android:text="@{entry.text}"
         android:textStyle="italic" />
 </layout>
