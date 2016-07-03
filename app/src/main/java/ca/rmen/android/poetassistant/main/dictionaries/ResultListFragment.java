@@ -88,6 +88,7 @@ public class ResultListFragment<T> extends Fragment
         View view = mBinding.getRoot();
         mBinding.setHeaderButtonListener(mHeaderButtonListener);
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        mBinding.recyclerView.setHasFixedSize(true);
 
         if (mTab == Tab.RHYMER || mTab == Tab.THESAURUS) mBinding.btnFilter.setVisibility(View.VISIBLE);
         mBinding.tvFilterLabel.setText(ResultListFactory.getFilterLabel(getActivity(), mTab));
