@@ -4,6 +4,7 @@ Change Log
 1.7.3  *(2016-07-03)*
 --------------------
 * Migrated the ListView to RecyclerView
+* Use a Material theme for the settings screen, on v21+
 
 1.7.2  *(2016-06-26)*
 --------------------
