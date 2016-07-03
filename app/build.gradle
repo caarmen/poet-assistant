@@ -104,6 +104,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.0.0'
     compile 'com.android.support:design:24.0.0'
     compile 'com.android.support:preference-v7:24.0.0'
+    compile 'com.android.support:preference-v14:24.0.0'
     compile 'com.android.support:support-v4:24.0.0'
     compile 'net.sourceforge.streamsupport:streamsupport:1.5'
     compile 'org.greenrobot:eventbus:3.0.0'

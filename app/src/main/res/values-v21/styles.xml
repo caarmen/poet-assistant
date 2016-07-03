@@ -18,6 +18,9 @@
   -->
 
 <resources>
+    <style name="AppTheme" parent="AppBaseTheme">
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+    </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
