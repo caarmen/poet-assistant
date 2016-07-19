@@ -102,7 +102,7 @@
     <string name="pref_voice_speed_value_slow">Slow (&#189; speed)</string>
     <string name="pref_voice_speed_value_normal">Normal</string>
     <string name="pref_voice_speed_value_fast">Fast (1.5x speed)</string>
-    <string name="pref_voice_speed_value_fastest">Fast (2x speed)</string>
+    <string name="pref_voice_speed_value_fastest">Fastest (2x speed)</string>
     <string-array name="pref_voice_speed_titles">
         <item>@string/pref_voice_speed_value_slowest</item>
         <item>@string/pref_voice_speed_value_slow</item>

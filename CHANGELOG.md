@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.8.1  *(2016-07-19)*
+--------------------
+* Corrected a string in the voice speed setting.
+
 1.8.0  *(2016-07-19)*
 --------------------
 * Added setting for playback speed.
