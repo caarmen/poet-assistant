@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.8.0  *(2016-07-19)*
+--------------------
+* Added setting for playback speed.
+
 1.7.3  *(2016-07-03)*
 --------------------
 * Migrated the ListView to RecyclerView
