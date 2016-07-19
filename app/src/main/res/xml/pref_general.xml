@@ -29,6 +29,16 @@
         android:title="@string/pref_voice_title" />
 
     <ListPreference
+        android:defaultValue="1.0"
+        android:entries="@array/pref_voice_speed_titles"
+        android:entryValues="@array/pref_voice_speed_values"
+        android:summary="@string/pref_voice_speed_summary"
+        android:key="PREF_VOICE_SPEED"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_voice_speed_title" />
+
+    <ListPreference
         android:defaultValue="Light"
         android:entries="@array/pref_theme_titles"
         android:entryValues="@array/pref_theme_values"

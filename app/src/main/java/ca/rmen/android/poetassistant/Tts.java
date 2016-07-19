@@ -21,7 +21,9 @@ package ca.rmen.android.poetassistant;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 
@@ -30,6 +32,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.HashMap;
 import java.util.List;
 
+import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 public class Tts {
@@ -119,9 +122,25 @@ public class Tts {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 mVoices.useVoice(mTextToSpeech, SettingsPrefs.get(mContext).getVoice());
             }
+            if (status == TextToSpeech.SUCCESS) {
+                mTextToSpeech.setSpeechRate(Float.valueOf(SettingsPrefs.get(mContext).getVoiceSpeed()));
+                PreferenceManager.getDefaultSharedPreferences(mContext).registerOnSharedPreferenceChangeListener(mSettingsListener);
+            }
             EventBus.getDefault().post(new OnTtsInitialized(status));
         }
     }
+
+    private final SharedPreferences.OnSharedPreferenceChangeListener mSettingsListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    if (Settings.PREF_VOICE_SPEED.equals(key)) {
+                        mTextToSpeech.setSpeechRate(Float.valueOf(SettingsPrefs.get(mContext).getVoiceSpeed()));
+
+                    }
+                }
+            };
+
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public List<Voices.TtsVoice> getVoices() {
