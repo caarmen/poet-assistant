@@ -32,7 +32,9 @@
     <string name="rhyme_section_three_syllables">Three syllable matches:</string>
     <string name="thesaurus_section_synonyms">Synonyms:</string>
     <string name="thesaurus_section_antonyms">Antonyms:</string>
-    <string name="empty_list_with_query">No results</string>
+    <string name="empty_rhymer_list_with_query">Sorry, no rhymes for &#8220;%s&#8221;</string>
+    <string name="empty_thesaurus_list_with_query">Sorry, no synonyms for &#8220;%s&#8221;</string>
+    <string name="empty_dictionary_list_with_query">Sorry, no definitions for &#8220;%s&#8221;</string>
     <string name="empty_list_without_query">Tap on %s to look up a word.</string>
     <string name="action_web_search">Look up %s</string>
     <string name="filter_hint">Filter results</string>

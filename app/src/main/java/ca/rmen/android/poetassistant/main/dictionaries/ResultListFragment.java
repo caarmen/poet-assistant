@@ -46,6 +46,7 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.Collections;
 import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
@@ -175,14 +176,23 @@ public class ResultListFragment<T> extends Fragment
     @Override
     public Loader<ResultListData<T>> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, mTab + ": onCreateLoader() called with: " + "id = [" + id + "], args = [" + args + "]");
+        mAdapter.clear();
+        mData = null;
+
         String query = "";
         String filter = "";
         if (args != null) {
             query = args.getString(EXTRA_QUERY);
             filter = args.getString(EXTRA_FILTER);
             mBinding.tvListHeader.setText(query);
+            mData = new ResultListData<>(query, Collections.emptyList());
         }
+        mBinding.empty.setVisibility(View.GONE);
+        mBinding.listHeader.setVisibility(View.VISIBLE);
         mBinding.recyclerView.scrollToPosition(0); // why do I have to do this?
+
+        getActivity().supportInvalidateOptionsMenu();
+
         //noinspection unchecked
         return (Loader<ResultListData<T>>) ResultListFactory.createLoader(mTab, getActivity(), query, filter);
     }
@@ -222,7 +232,8 @@ public class ResultListFragment<T> extends Fragment
         }
         // If the user entered a query and there are no matches, show the normal "no results" text.
         else {
-            mBinding.empty.setText(R.string.empty_list_with_query);
+            String noResults = ResultListFactory.getEmptyListText(getContext(), mTab, query);
+            mBinding.empty.setText(noResults);
         }
         if (mData == null || mData.data.isEmpty()) {
             mBinding.empty.setVisibility(View.VISIBLE);

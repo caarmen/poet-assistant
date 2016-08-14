@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.8.2  *(2016-08-14)*
+--------------------
+* Minor UX improvements regarding searches with no results.
+
 1.8.1  *(2016-07-19)*
 --------------------
 * Corrected a string in the voice speed setting.

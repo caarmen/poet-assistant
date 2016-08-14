@@ -129,4 +129,16 @@ public class ResultListFactory {
                 return context.getString(R.string.filter_thesaurus_label);
         }
     }
+
+    static String getEmptyListText(Context context, Tab tab, String query) {
+        switch (tab) {
+            case RHYMER:
+                return context.getString(R.string.empty_rhymer_list_with_query, query);
+            case THESAURUS:
+                return context.getString(R.string.empty_thesaurus_list_with_query, query);
+            case DICTIONARY:
+            default:
+                return context.getString(R.string.empty_dictionary_list_with_query, query);
+        }
+    }
 }
