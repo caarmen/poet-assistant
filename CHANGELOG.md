@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.8.3  *(2016-09-03)*
+--------------------
+* Update gradle, gradle plugin, and support library
+
 1.8.2  *(2016-08-14)*
 --------------------
 * Minor UX improvements regarding searches with no results.
