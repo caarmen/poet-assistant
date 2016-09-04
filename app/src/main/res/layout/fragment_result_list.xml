@@ -60,6 +60,7 @@
                     android:layout_toLeftOf="@+id/btn_filter"
                     android:layout_toStartOf="@id/btn_filter"
                     android:gravity="start|center_vertical"
+                    android:textIsSelectable="true"
                     android:textStyle="bold"
                     tools:text="Query" />
 

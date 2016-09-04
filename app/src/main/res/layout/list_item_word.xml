@@ -51,6 +51,7 @@
             android:paddingRight="0dp"
             android:paddingStart="16dp"
             android:text="@{entry.text}"
+            android:textIsSelectable="true"
             tools:text="happy" />
 
         <!--

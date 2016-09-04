@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.9.0  *(2016-09-04)*
+--------------------
+* Make words in the result list selectable, allowing access to the copy/share/translate functions.
+
 1.8.3  *(2016-09-03)*
 --------------------
 * Update gradle, gradle plugin, and support library
