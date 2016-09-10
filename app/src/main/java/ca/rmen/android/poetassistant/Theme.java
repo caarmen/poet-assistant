@@ -29,6 +29,12 @@ public class Theme {
 
     public static void setThemeFromSettings(Context context) {
         String theme = SettingsPrefs.get(context).getTheme();
-        AppCompatDelegate.setDefaultNightMode(Settings.THEME_DARK.equals(theme) ? AppCompatDelegate.MODE_NIGHT_YES: AppCompatDelegate.MODE_NIGHT_NO);
+        if (Settings.THEME_DARK.equals(theme)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else if (Settings.THEME_LIGHT.equals(theme)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else if (Settings.THEME_AUTO.equals(theme)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
+        }
     }
 }

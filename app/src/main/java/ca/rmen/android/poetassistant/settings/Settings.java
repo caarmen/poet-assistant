@@ -29,6 +29,7 @@ public class Settings {
     @SuppressWarnings("unused")
     public static final String THEME_LIGHT = "Light";
     public static final String THEME_DARK = "Dark";
+    public static final String THEME_AUTO = "Auto";
     public static final String VOICE_SYSTEM = "VOICE_SYSTEM";
     public static final String PREF_VOICE = "PREF_VOICE";
     public static final String PREF_VOICE_SPEED = "PREF_VOICE_SPEED";

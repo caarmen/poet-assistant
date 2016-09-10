@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.9.1  *(2016-09-11)*
+--------------------
+* Added new theme option "Auto" to switch automatically between the light and dark themes.
+
 1.9.0  *(2016-09-04)*
 --------------------
 * Make words in the result list selectable, allowing access to the copy/share/translate functions.
