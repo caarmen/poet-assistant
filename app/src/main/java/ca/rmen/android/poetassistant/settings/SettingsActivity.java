@@ -89,7 +89,13 @@ public class SettingsActivity extends AppCompatActivity {
             if (voicePreference.getEntries() == null || voicePreference.getEntries().length < 2) {
                 getPreferenceScreen().removePreference(voicePreference);
             }
+            Preference systemTtsSettings = findPreference(Settings.PREF_SYSTEM_TTS_SETTINGS);
+            Intent intent = systemTtsSettings.getIntent();
+            if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
+                getPreferenceScreen().removePreference(systemTtsSettings);
+            }
         }
+
 
         @Override
         public void onDisplayPreferenceDialog(Preference preference) {

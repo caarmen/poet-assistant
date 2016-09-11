@@ -129,6 +129,8 @@
         <item>@string/pref_theme_value_dark</item>
         <item>@string/pref_theme_value_auto</item>
     </string-array>
+    <string name="pref_system_tts_settings_title">System voice settings</string>
+    <string name="pref_system_tts_settings_description">This will leave Poet Assistant and open the system text-to-speech settings on your device.</string>
     <string-array name="pref_theme_values">
         <item>Light</item>
         <item>Dark</item>
