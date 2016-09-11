@@ -102,7 +102,10 @@ class PoemFile {
                     writer.close();
                     String displayName = readDisplayName(context, uri);
                     return new PoemFile(uri, displayName, text);
-                } catch (IOException e) {
+                }
+                catch (IOException | SecurityException e) {
+                    // Catch the SecurityException because of some crash
+                    // reported which I couldn't reproduce: https://github.com/caarmen/poet-assistant/issues/18
                     Log.w(TAG, "Couldn't save file", e);
                 }
                 return null;
