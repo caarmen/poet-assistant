@@ -32,6 +32,9 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.util.Log;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Theme;
@@ -81,6 +84,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
+            loadPreferences();
+        }
+
+        private void loadPreferences() {
             addPreferencesFromResource(R.xml.pref_general);
             VoicePreference voicePreference = (VoicePreference) findPreference(Settings.PREF_VOICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -96,6 +103,18 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
+        @Override
+        public void onResume() {
+            super.onResume();
+            EventBus.getDefault().register(this);
+            Tts.getInstance(getContext()).restart();
+        }
+
+        @Override
+        public void onPause() {
+            EventBus.getDefault().unregister(this);
+            super.onPause();
+        }
 
         @Override
         public void onDisplayPreferenceDialog(Preference preference) {
@@ -109,6 +128,13 @@ public class SettingsActivity extends AppCompatActivity {
             } else {
                 super.onDisplayPreferenceDialog(preference);
             }
+        }
+        @SuppressWarnings("unused")
+        @Subscribe
+        public void onTtsInitialized(Tts.OnTtsInitialized event) {
+            Log.v(TAG, "onTtsInitialized, event = " + event);
+            getPreferenceScreen().removeAll();
+            loadPreferences();
         }
     }
 
