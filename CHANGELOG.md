@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.9.2  *(2016-09-11)*
+--------------------
+* Added new setting to open the system text-to-speech settings.
+
 1.9.1  *(2016-09-11)*
 --------------------
 * Added new theme option "Auto" to switch automatically between the light and dark themes.
