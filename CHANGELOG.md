@@ -4,6 +4,7 @@ Change Log
 1.9.2  *(2016-09-11)*
 --------------------
 * Added new setting to open the system text-to-speech settings.
+* Fixed Issue #18: Crash when saving a poem to Google Drive without write permission to the document.
 
 1.9.1  *(2016-09-11)*
 --------------------
