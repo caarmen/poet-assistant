@@ -26,9 +26,11 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -69,12 +71,26 @@ public class Tts {
 
     private Tts(Context context) {
         mContext = context.getApplicationContext();
-        mTextToSpeech = new TextToSpeech(context.getApplicationContext(), new OnInitListener());
-        UtteranceListener utteranceListener = new UtteranceListener();
-        mTextToSpeech.setOnUtteranceProgressListener(utteranceListener);
-        //noinspection deprecation
-        mTextToSpeech.setOnUtteranceCompletedListener(utteranceListener);
         mVoices = new Voices(mContext);
+        init();
+    }
+
+    private void init() {
+        Log.v(TAG, "init");
+        mTextToSpeech = new TextToSpeech(mContext.getApplicationContext(), mInitListener);
+        mTextToSpeech.setOnUtteranceProgressListener(mUtteranceListener);
+        //noinspection deprecation
+        mTextToSpeech.setOnUtteranceCompletedListener(mUtteranceListener);
+    }
+
+    /**
+     * Force a reinitialization of the TextToSpeech.
+     * One use case: if the user changed the default engine, a restart is required to get the new list of voices.
+     */
+    public void restart() {
+        Log.v(TAG, "restart");
+        shutdown();
+        init();
     }
 
     public int getStatus() {
@@ -82,10 +98,11 @@ public class Tts {
     }
 
     public boolean isSpeaking() {
-        return mTextToSpeech != null && mTextToSpeech.isSpeaking();
+        return isReady() && mTextToSpeech.isSpeaking();
     }
 
     public void speak(String text) {
+        if (!isReady()) return;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             speak21(text);
         else
@@ -108,16 +125,21 @@ public class Tts {
         if (mTextToSpeech != null) mTextToSpeech.stop();
     }
 
-    public void shutdown() {
+    private void shutdown() {
         if (mTextToSpeech != null) {
+            mTextToSpeech.setOnUtteranceProgressListener(null);
+            //noinspection deprecation
+            mTextToSpeech.setOnUtteranceCompletedListener(null);
             mTextToSpeech.shutdown();
+            mTtsStatus = TextToSpeech.ERROR;
             mTextToSpeech = null;
         }
     }
 
-    private class OnInitListener implements TextToSpeech.OnInitListener {
+    private final TextToSpeech.OnInitListener mInitListener = new TextToSpeech.OnInitListener() {
         @Override
         public void onInit(int status) {
+            Log.v(TAG, "onInit: status = " + status);
             mTtsStatus = status;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 mVoices.useVoice(mTextToSpeech, SettingsPrefs.get(mContext).getVoice());
@@ -128,12 +150,13 @@ public class Tts {
             }
             EventBus.getDefault().post(new OnTtsInitialized(status));
         }
-    }
+    };
 
     private final SharedPreferences.OnSharedPreferenceChangeListener mSettingsListener =
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    if (!isReady()) return;
                     if (Settings.PREF_VOICE_SPEED.equals(key)) {
                         mTextToSpeech.setSpeechRate(Float.valueOf(SettingsPrefs.get(mContext).getVoiceSpeed()));
 
@@ -141,15 +164,20 @@ public class Tts {
                 }
             };
 
-
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public List<Voices.TtsVoice> getVoices() {
+        if (!isReady()) return Collections.emptyList();
         return mVoices.getVoices(mTextToSpeech);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void useVoice(String voiceId) {
+        if (!isReady()) return;
         mVoices.useVoice(mTextToSpeech, voiceId);
+    }
+
+    private boolean isReady() {
+        return mTextToSpeech != null && mTtsStatus == TextToSpeech.SUCCESS;
     }
 
     @SuppressWarnings("deprecation")
@@ -192,4 +220,6 @@ public class Tts {
             onUtteranceCompleted();
         }
     }
+
+    private final UtteranceListener mUtteranceListener = new UtteranceListener();
 }

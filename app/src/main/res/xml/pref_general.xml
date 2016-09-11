@@ -38,6 +38,13 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_voice_speed_title" />
 
+    <Preference
+        android:key="PREF_SYSTEM_TTS_SETTINGS"
+        android:title="@string/pref_system_tts_settings_title"
+        android:summary="@string/pref_system_tts_settings_description">
+        <intent android:action="com.android.settings.TTS_SETTINGS"/>
+    </Preference>
+
     <ListPreference
         android:defaultValue="Light"
         android:entries="@array/pref_theme_titles"
