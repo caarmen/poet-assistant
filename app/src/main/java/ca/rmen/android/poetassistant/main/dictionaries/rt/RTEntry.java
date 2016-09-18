@@ -19,6 +19,8 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
+import android.support.annotation.ColorInt;
+
 public class RTEntry {
     enum Type {
         HEADING,
@@ -28,10 +30,16 @@ public class RTEntry {
 
     public final Type type;
     public final String text;
+    public final @ColorInt int backgroundColor;
 
     public RTEntry(Type type, String text) {
+        this(type, text, 0);
+    }
+
+    public RTEntry(Type type, String text, @ColorInt int backgroundColor) {
         this.type = type;
         this.text = text;
+        this.backgroundColor = backgroundColor;
     }
 
     @Override

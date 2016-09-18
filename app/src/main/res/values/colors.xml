@@ -24,4 +24,6 @@
     <color name="dialog_accent">@color/primary</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#727272</color>
+    <color name="row_background_color_even">#ffffff</color>
+    <color name="row_background_color_odd">#f8f8f8</color>
 </resources>
