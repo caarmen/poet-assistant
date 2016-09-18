@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.9.4  *(2016-09-18)*
+--------------------
+* Slight improvement of result list display on tablets.
+
 1.9.3  *(2016-09-18)*
 --------------------
 * Attempt to fix Issue #21 about too frequent word of the day notifications.
