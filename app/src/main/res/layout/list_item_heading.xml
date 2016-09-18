@@ -27,7 +27,7 @@
     </data>
 
     <TextView
-        android:id="@android:id/text1"
+        android:id="@+id/text1"
         style="?android:attr/textAppearanceSearchResultTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

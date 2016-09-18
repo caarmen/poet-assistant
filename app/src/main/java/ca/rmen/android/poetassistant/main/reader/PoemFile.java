@@ -40,17 +40,17 @@ import ca.rmen.android.poetassistant.Constants;
 class PoemFile {
     private static final String TAG = Constants.TAG + PoemFile.class.getSimpleName();
 
-    public interface PoemFileCallback {
+    interface PoemFileCallback {
         void onPoemLoaded(PoemFile poemFile);
 
         void onPoemSaved(PoemFile poemFile);
     }
 
-    public final Uri uri;
-    public final String name;
-    public final String text;
+    final Uri uri;
+    final String name;
+    final String text;
 
-    public PoemFile(Uri uri, String name, String text) {
+    PoemFile(Uri uri, String name, String text) {
         this.uri = uri;
         this.name = name;
         this.text = text;
@@ -88,7 +88,7 @@ class PoemFile {
         }.execute();
     }
 
-    public static void save(final Context context, final Uri uri, final String text, final PoemFileCallback callback) {
+    static void save(final Context context, final Uri uri, final String text, final PoemFileCallback callback) {
         Log.d(TAG, "save() called with: " + "uri = [" + uri + "], text = [" + text + "]");
         new AsyncTask<Void, Void, PoemFile>() {
 

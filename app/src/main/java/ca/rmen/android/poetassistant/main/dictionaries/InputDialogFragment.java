@@ -30,6 +30,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Window;
 import android.view.WindowManager;
 
 import ca.rmen.android.poetassistant.Constants;
@@ -100,10 +101,13 @@ public class InputDialogFragment extends DialogFragment {
                 .create();
 
         binding.edit.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-            } else {
-                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            Window window = dialog.getWindow();
+            if (window != null) {
+                if (hasFocus) {
+                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                } else {
+                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                }
             }
         });
 

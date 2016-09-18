@@ -48,7 +48,7 @@ final class WotdJob {
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         List<JobInfo> jobs = jobScheduler.getAllPendingJobs();
         Log.v(TAG, "Pending jobs: " + jobs);
-        if (jobs == null || jobs.isEmpty()) schedule(context);
+        if (jobs.isEmpty()) schedule(context);
     }
 
     static void schedule(Context context) {

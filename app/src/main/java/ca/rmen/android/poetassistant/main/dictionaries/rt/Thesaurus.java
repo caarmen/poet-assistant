@@ -53,7 +53,7 @@ public class Thesaurus {
     }
 
     @NonNull
-    public ThesaurusEntry lookup(String word) {
+    ThesaurusEntry lookup(String word) {
         SQLiteDatabase db = mDbHelper.getDb();
         if (db != null) {
             String[] projection = new String[]{"word_type", "synonyms", "antonyms"};
@@ -97,7 +97,7 @@ public class Thesaurus {
      * @return the synonyms of the given word, in any order.
      */
     @NonNull
-    public Set<String> getFlatSynonyms(String word) {
+    Set<String> getFlatSynonyms(String word) {
         Set<String> flatSynonyms = new HashSet<>();
         SQLiteDatabase db = mDbHelper.getDb();
         if (db != null) {

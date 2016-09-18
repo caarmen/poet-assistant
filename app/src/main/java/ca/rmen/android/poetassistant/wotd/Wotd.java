@@ -62,7 +62,7 @@ public final class Wotd {
      * If we have the wotd setting enabled, but no task has been scheduled
      * to do the wotd, we'll schedule the task.
      */
-    public static void reschedule(Context context) {
+    static void reschedule(Context context) {
         Log.d(TAG, "reschedule() called with: " + "context = [" + context + "]");
         if (SettingsPrefs.get(context).getIsWotdEnabled()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

@@ -30,24 +30,24 @@ class PoemPrefs {
     private static final String PREF_POEM_URI = "poem_uri";
     private static final String PREF_POEM_NAME = "poem_name";
 
-    public PoemPrefs(Context context) {
+    PoemPrefs(Context context) {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
     }
 
-    public boolean hasTempPoem() {
+    boolean hasTempPoem() {
         return !mSharedPreferences.contains(PREF_POEM_URI)
                 && mSharedPreferences.contains(PREF_POEM_TEXT);
     }
 
-    public String getTempPoem() {
+    String getTempPoem() {
         return mSharedPreferences.getString(PREF_POEM_TEXT, null);
     }
 
-    public boolean hasSavedPoem() {
+    boolean hasSavedPoem() {
         return mSharedPreferences.contains(PREF_POEM_URI);
     }
 
-    public void setSavedPoem(PoemFile poemFile) {
+    void setSavedPoem(PoemFile poemFile) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         if (poemFile.uri != null)
             editor.putString(PREF_POEM_URI, poemFile.uri.toString());
@@ -58,11 +58,11 @@ class PoemPrefs {
         editor.apply();
     }
 
-    public void updatePoemText(String text) {
+    void updatePoemText(String text) {
         mSharedPreferences.edit().putString(PREF_POEM_TEXT, text).apply();
     }
 
-    public PoemFile getSavedPoem() {
+    PoemFile getSavedPoem() {
         String uri = mSharedPreferences.getString(PREF_POEM_URI, null);
         if (uri != null) {
             String text = mSharedPreferences.getString(PREF_POEM_TEXT, null);
@@ -72,7 +72,7 @@ class PoemPrefs {
         return null;
     }
 
-    public void clear() {
+    void clear() {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.remove(PREF_POEM_TEXT);
         editor.remove(PREF_POEM_URI);

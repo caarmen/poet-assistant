@@ -42,14 +42,14 @@ class SuggestionsAdapter extends CursorAdapter {
 
     private SuggestionsCursor mCursor;
 
-    public SuggestionsAdapter(Context context) {
+    SuggestionsAdapter(Context context) {
         super(context, null, false);
         mCursor = new SuggestionsCursor(context);
         mCursor.load();
         changeCursor(mCursor);
     }
 
-    public void clear() {
+    void clear() {
         mCursor.clear();
         reload();
     }
@@ -61,12 +61,12 @@ class SuggestionsAdapter extends CursorAdapter {
         notifyDataSetChanged();
     }
 
-    public void addSuggestion(String suggestion) {
+    void addSuggestion(String suggestion) {
         mCursor.addSuggestion(suggestion.toLowerCase(Locale.getDefault()));
         reload();
     }
 
-    public void filterSuggestions(String filter) {
+    void filterSuggestions(String filter) {
         mCursor = new SuggestionsCursor(mContext);
         mCursor.setFilter(filter);
         mCursor.load();
@@ -74,7 +74,7 @@ class SuggestionsAdapter extends CursorAdapter {
         notifyDataSetChanged();
     }
 
-    public String getSuggestion(int position) {
+    String getSuggestion(int position) {
         mCursor.moveToPosition(position);
         return mCursor.getString(1);
     }
@@ -103,16 +103,16 @@ class SuggestionsAdapter extends CursorAdapter {
         private final SharedPreferences mSharedPreferences;
         private String mFilter;
 
-        public SuggestionsCursor(Context context) {
+        SuggestionsCursor(Context context) {
             super(COLUMNS);
             mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         }
 
-        public void setFilter(String filter) {
+        void setFilter(String filter) {
             mFilter = filter;
         }
 
-        public void load() {
+        void load() {
             Set<String> suggestions = mSharedPreferences.getStringSet(PREF_SUGGESTIONS, new TreeSet<>());
             TreeSet<String> sortedSuggestions = new TreeSet<>();
             sortedSuggestions.addAll(suggestions);
@@ -123,12 +123,12 @@ class SuggestionsAdapter extends CursorAdapter {
             }
         }
 
-        public void clear() {
+        void clear() {
             mFilter = null;
             mSharedPreferences.edit().remove(PREF_SUGGESTIONS).apply();
         }
 
-        public void addSuggestion(String suggestion) {
+        void addSuggestion(String suggestion) {
             Set<String> suggestionsReadOnly = mSharedPreferences.getStringSet(PREF_SUGGESTIONS, new TreeSet<>());
             if (!suggestionsReadOnly.contains(suggestion)) {
                 addRow(new Object[]{getCount(), suggestion});

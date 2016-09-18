@@ -45,7 +45,7 @@ final class Share {
      * @param entries the rhymer, thesaurus, or dictionary entries for the given word
      * @param <T>     the type of data displayed in the list fragment. Must be List of {@link ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry} or List of {@link DictionaryEntry.DictionaryEntryDetails}
      */
-    public static <T> void share(Context context, @NonNull Tab tab, @NonNull String word, @Nullable String filter, @NonNull T entries) {
+    static <T> void share(Context context, @NonNull Tab tab, @NonNull String word, @Nullable String filter, @NonNull T entries) {
         // noinspection unchecked
         ResultListExporter<T> exporter = (ResultListExporter<T>) ResultListFactory.createExporter(context, tab);
         String text = exporter.export(word, filter, entries);

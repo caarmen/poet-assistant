@@ -44,12 +44,13 @@ public class Tts {
     private TextToSpeech mTextToSpeech;
     private int mTtsStatus = TextToSpeech.ERROR;
     private final Voices mVoices;
+    private final SettingsPrefs mSettingsPrefs;
     private static Tts sInstance;
 
     public static class OnTtsInitialized {
         public final int status;
 
-        public OnTtsInitialized(int status) {
+        private OnTtsInitialized(int status) {
             this.status = status;
         }
 
@@ -65,19 +66,21 @@ public class Tts {
     }
 
     public synchronized static Tts getInstance(Context context) {
-        if (sInstance == null) sInstance = new Tts(context);
+        if (sInstance == null) sInstance = new Tts(context.getApplicationContext());
         return sInstance;
     }
 
     private Tts(Context context) {
-        mContext = context.getApplicationContext();
-        mVoices = new Voices(mContext);
+        mContext = context;
+        mVoices = new Voices(context);
+        mSettingsPrefs = SettingsPrefs.get(context);
+        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(new TtsPrefsListener());
         init();
     }
 
     private void init() {
         Log.v(TAG, "init");
-        mTextToSpeech = new TextToSpeech(mContext.getApplicationContext(), mInitListener);
+        mTextToSpeech = new TextToSpeech(mContext, mInitListener);
         mTextToSpeech.setOnUtteranceProgressListener(mUtteranceListener);
         //noinspection deprecation
         mTextToSpeech.setOnUtteranceCompletedListener(mUtteranceListener);
@@ -142,27 +145,25 @@ public class Tts {
             Log.v(TAG, "onInit: status = " + status);
             mTtsStatus = status;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mVoices.useVoice(mTextToSpeech, SettingsPrefs.get(mContext).getVoice());
+                mVoices.useVoice(mTextToSpeech, mSettingsPrefs.getVoice());
             }
             if (status == TextToSpeech.SUCCESS) {
-                mTextToSpeech.setSpeechRate(Float.valueOf(SettingsPrefs.get(mContext).getVoiceSpeed()));
-                PreferenceManager.getDefaultSharedPreferences(mContext).registerOnSharedPreferenceChangeListener(mSettingsListener);
+                mTextToSpeech.setSpeechRate(Float.valueOf(mSettingsPrefs.getVoiceSpeed()));
             }
             EventBus.getDefault().post(new OnTtsInitialized(status));
         }
     };
 
-    private final SharedPreferences.OnSharedPreferenceChangeListener mSettingsListener =
-            new SharedPreferences.OnSharedPreferenceChangeListener() {
-                @Override
-                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                    if (!isReady()) return;
-                    if (Settings.PREF_VOICE_SPEED.equals(key)) {
-                        mTextToSpeech.setSpeechRate(Float.valueOf(SettingsPrefs.get(mContext).getVoiceSpeed()));
+    private class TtsPrefsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (!isReady()) return;
+            if (Settings.PREF_VOICE_SPEED.equals(key)) {
+                mTextToSpeech.setSpeechRate(Float.valueOf(mSettingsPrefs.getVoiceSpeed()));
 
-                    }
-                }
-            };
+            }
+        }
+    }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public List<Voices.TtsVoice> getVoices() {
@@ -181,7 +182,7 @@ public class Tts {
     }
 
     @SuppressWarnings("deprecation")
-    public static class UtteranceListener extends UtteranceProgressListener
+    private static class UtteranceListener extends UtteranceProgressListener
             implements TextToSpeech.OnUtteranceCompletedListener {
 
         private void onUtteranceCompleted() {

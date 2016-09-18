@@ -27,7 +27,7 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@android:id/edit"
+            android:id="@+id/edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"

@@ -29,12 +29,12 @@ public abstract class ResultListAdapter<T> extends RecyclerView.Adapter<ResultLi
 
     private final List<T> mData = new ArrayList<>();
 
-    public void clear() {
+    void clear() {
         mData.clear();
         notifyDataSetChanged();
     }
 
-    public void addAll(List<T> data) {
+    void addAll(List<T> data) {
         mData.addAll(data);
         notifyDataSetChanged();
     }

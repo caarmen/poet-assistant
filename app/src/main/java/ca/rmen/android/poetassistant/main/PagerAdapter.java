@@ -47,7 +47,7 @@ class PagerAdapter extends FragmentPagerAdapter {
     private String mInitialDictionaryQuery;
     private String mInitialPoemText;
 
-    public PagerAdapter(Context context, FragmentManager fm, Intent intent) {
+    PagerAdapter(Context context, FragmentManager fm, Intent intent) {
         super(fm);
         Log.v(TAG, "Constructor: intent = " + intent);
         mContext = context;

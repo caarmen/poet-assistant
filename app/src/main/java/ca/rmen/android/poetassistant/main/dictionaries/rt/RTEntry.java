@@ -20,7 +20,7 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 public class RTEntry {
-    public enum Type {
+    enum Type {
         HEADING,
         SUBHEADING,
         WORD

@@ -64,7 +64,7 @@ public final class Voices {
         }
     }
 
-    public Voices(Context context) {
+    Voices(Context context) {
         mContext = context;
     }
 

@@ -32,24 +32,28 @@ import ca.rmen.android.poetassistant.Voices;
 import java8.util.stream.StreamSupport;
 
 public class VoicePreference extends ListPreference {
+    @SuppressWarnings("unused")
     public VoicePreference(Context context) {
         super(context);
     }
 
+    @SuppressWarnings("unused")
     public VoicePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
+    @SuppressWarnings("unused")
     public VoicePreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
+    @SuppressWarnings("unused")
     public VoicePreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public void loadVoices() {
+    void loadVoices() {
         Tts tts = Tts.getInstance(getContext());
         List<Voices.TtsVoice> voices = tts.getVoices();
         setEntryValues(StreamSupport.stream(voices)

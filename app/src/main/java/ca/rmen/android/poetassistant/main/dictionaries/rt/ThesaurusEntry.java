@@ -18,16 +18,16 @@
  */
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
-public class ThesaurusEntry {
+class ThesaurusEntry {
     public final String word;
     public final ThesaurusEntryDetails[] entries;
 
-    public ThesaurusEntry(String word, ThesaurusEntryDetails[] entries) {
+    ThesaurusEntry(String word, ThesaurusEntryDetails[] entries) {
         this.word = word;
         this.entries = entries;
     }
 
-    public enum WordType {
+    enum WordType {
         @SuppressWarnings("unused")ADJ,
         @SuppressWarnings("unused")ADV,
         @SuppressWarnings("unused")NOUN,
@@ -35,12 +35,12 @@ public class ThesaurusEntry {
         @SuppressWarnings("unused")UNKNOWN
     }
 
-    public static class ThesaurusEntryDetails {
-        public final WordType wordType;
-        public final String[] synonyms;
-        public final String[] antonyms;
+    static class ThesaurusEntryDetails {
+        final WordType wordType;
+        final String[] synonyms;
+        final String[] antonyms;
 
-        public ThesaurusEntryDetails(WordType wordType, String[] synonyms, String[] antonyms) {
+        ThesaurusEntryDetails(WordType wordType, String[] synonyms, String[] antonyms) {
             this.wordType = wordType;
             this.synonyms = synonyms;
             this.antonyms = antonyms;

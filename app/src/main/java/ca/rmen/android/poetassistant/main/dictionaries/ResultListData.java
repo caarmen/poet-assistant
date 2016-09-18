@@ -22,7 +22,7 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import java.util.List;
 
 public class ResultListData<T> {
-    public final String matchedWord;
+    final String matchedWord;
     public final List<T> data;
 
     public ResultListData(String matchedWord, List<T> data) {

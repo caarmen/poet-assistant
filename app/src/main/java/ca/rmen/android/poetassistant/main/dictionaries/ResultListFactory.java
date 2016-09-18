@@ -70,7 +70,7 @@ public class ResultListFactory {
         return fragment;
     }
 
-    public static ResultListAdapter<?> createAdapter(Activity activity, Tab tab) {
+    static ResultListAdapter<?> createAdapter(Activity activity, Tab tab) {
         switch (tab) {
             case RHYMER:
             case THESAURUS:
@@ -81,7 +81,7 @@ public class ResultListFactory {
         }
     }
 
-    public static AsyncTaskLoader<? extends ResultListData<?>> createLoader(Tab tab, Activity activity, String query, String filter) {
+    static AsyncTaskLoader<? extends ResultListData<?>> createLoader(Tab tab, Activity activity, String query, String filter) {
         switch (tab) {
             case RHYMER:
                 return new RhymerLoader(activity, query, filter);

@@ -132,7 +132,7 @@ public class SettingsActivity extends AppCompatActivity {
         @SuppressWarnings("unused")
         @Subscribe
         public void onTtsInitialized(Tts.OnTtsInitialized event) {
-            Log.v(TAG, "onTtsInitialized, event = " + event);
+            Log.v(TAG, "onTtsInitialized, event = " + event + ", status = " + event.status);
             getPreferenceScreen().removeAll();
             loadPreferences();
         }
