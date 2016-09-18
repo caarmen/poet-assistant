@@ -54,7 +54,7 @@ final class WotdJob {
     static void schedule(Context context) {
         Log.d(TAG, "schedule() called with: " + "context = [" + context + "]");
         JobInfo jobInfo = new JobInfo.Builder(TAG.hashCode(), new ComponentName(context, WotdJobService.class))
-                .setBackoffCriteria(30, JobInfo.BACKOFF_POLICY_EXPONENTIAL)
+                .setBackoffCriteria(Wotd.NOTIFICATION_FREQUENCY_MS, JobInfo.BACKOFF_POLICY_EXPONENTIAL)
                 .setRequiresDeviceIdle(false)
                 .setPeriodic(Wotd.NOTIFICATION_FREQUENCY_MS)
                 .setPersisted(true)

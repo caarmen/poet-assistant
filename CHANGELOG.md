@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+1.9.3  *(2016-09-18)*
+--------------------
+* Attempt to fix Issue #21 about too frequent word of the day notifications.
+* Use support library 24.2.1
+* Use prefs library 1.1.0
+
 1.9.2  *(2016-09-11)*
 --------------------
 * Added new setting to open the system text-to-speech settings.

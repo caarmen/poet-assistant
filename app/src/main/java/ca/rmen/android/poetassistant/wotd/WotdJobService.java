@@ -35,7 +35,7 @@ public class WotdJobService extends JobService {
     @Override
     public boolean onStartJob(JobParameters params) {
         Log.v(TAG, "onStartJob: params " + params);
-        mTask.execute();
+        mTask.execute(params);
         return true;
     }
 
@@ -44,11 +44,12 @@ public class WotdJobService extends JobService {
         return false;
     }
 
-    private final AsyncTask<Void, Void, Void> mTask = new AsyncTask<Void, Void, Void>() {
+    private final AsyncTask<JobParameters, Void, Void> mTask = new AsyncTask<JobParameters, Void, Void>() {
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(JobParameters... params) {
             Wotd.notifyWotd(getApplicationContext());
+            jobFinished(params[0], false);
             return null;
         }
     };
