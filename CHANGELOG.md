@@ -4,6 +4,7 @@ Change Log
 1.9.3  *(2016-09-18)*
 --------------------
 * Attempt to fix Issue #21 about too frequent word of the day notifications.
+* Fix for crash Issue #19, when opening the word of the day notification just after changing the theme in the settings.
 * Use support library 24.2.1
 * Use prefs library 1.1.0
 
