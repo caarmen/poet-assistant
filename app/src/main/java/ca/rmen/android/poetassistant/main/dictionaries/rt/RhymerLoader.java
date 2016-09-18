@@ -20,7 +20,9 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.content.Context;
+import android.support.annotation.ColorRes;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -101,8 +103,12 @@ public class RhymerLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
     private void addResultSection(List<RTEntry> results, int sectionHeadingResId, String[] rhymes) {
         if (rhymes.length > 0) {
             results.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
-            for (String word : rhymes) {
-                results.add(new RTEntry(RTEntry.Type.WORD, word));
+            for (int i = 0; i < rhymes.length; i++) {
+                @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
+                results.add(new RTEntry(
+                        RTEntry.Type.WORD,
+                        rhymes[i],
+                        ContextCompat.getColor(getContext(), color)));
             }
         }
     }
