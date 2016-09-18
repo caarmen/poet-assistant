@@ -22,6 +22,6 @@
     <color name="primary_text">#cccccc</color>
     <color name="secondary_text">#727272</color>
     <color name="dialog_accent">@color/accent</color>
-    <color name="row_background_color_even">#383838</color>
-    <color name="row_background_color_odd">#303030</color>
+    <color name="row_background_color_even">@android:color/transparent</color>
+    <color name="row_background_color_odd">@android:color/transparent</color>
 </resources>
