@@ -27,9 +27,9 @@
     <string name="action_about">About</string>
     <string name="search_hint">Lookup a word</string>
     <string name="rhyme_section_stress_syllables">Strict rhyme matches:</string>
-    <string name="rhyme_section_one_syllable">One syllable matches:</string>
-    <string name="rhyme_section_two_syllables">Two syllable matches:</string>
-    <string name="rhyme_section_three_syllables">Three syllable matches:</string>
+    <string name="rhyme_section_one_syllable">Last-syllable matches:</string>
+    <string name="rhyme_section_two_syllables">Last-2-syllables matches:</string>
+    <string name="rhyme_section_three_syllables">Last-3-syllables matches:</string>
     <string name="thesaurus_section_synonyms">Synonyms:</string>
     <string name="thesaurus_section_antonyms">Antonyms:</string>
     <string name="empty_rhymer_list_with_query">Sorry, no rhymes for &#8220;%s&#8221;</string>

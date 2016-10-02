@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.9.5  *(2016-10-02)*
+--------------------
+* Clarify rhyme types (ex: "One syllable matches" becomes "Last-syllable matches").
+
 1.9.4  *(2016-09-18)*
 --------------------
 * Slight improvement of result list display on tablets.
