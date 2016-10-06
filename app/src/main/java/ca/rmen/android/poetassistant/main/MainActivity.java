@@ -44,8 +44,10 @@ import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.about.AboutActivity;
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding;
+import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoriteListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickedListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus;
@@ -53,18 +55,20 @@ import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 
 
-public class MainActivity extends AppCompatActivity implements OnWordClickedListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener {
+public class MainActivity extends AppCompatActivity implements OnWordClickedListener, FavoriteListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener {
 
     private static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
     private static final String DIALOG_TAG = "dialog";
 
     private Search mSearch;
     private ActivityMainBinding mBinding;
+    private Favorites mFavorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
+        mFavorites = new Favorites(getApplicationContext());
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         setSupportActionBar(mBinding.toolbar);
         Intent intent = getIntent();
@@ -184,6 +188,10 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
             mSearch.clearSearchHistory();
             Snackbar.make(mBinding.getRoot(), R.string.search_history_cleared, Snackbar.LENGTH_SHORT).show();
             return true;
+        } else if (item.getItemId() == R.id.action_clear_favorites) {
+            mFavorites.clear();
+            Snackbar.make(mBinding.getRoot(), R.string.favorites_cleared, Snackbar.LENGTH_SHORT).show();
+            return true;
         } else if (item.getItemId() == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
@@ -198,6 +206,12 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
         Log.d(TAG, "onWordClicked() called with: " + "word = [" + word + "], tab = [" + tab + "]");
         mSearch.search(word, tab);
     }
+
+    @Override
+    public void onFavoriteToggled(final String word) {
+        mFavorites.toggleFavorite(word);
+    }
+
 
     @Override
     public void onWarningNoSpaceDialogDismissed() {

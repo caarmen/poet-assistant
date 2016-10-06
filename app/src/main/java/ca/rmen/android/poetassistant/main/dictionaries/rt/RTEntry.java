@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.support.annotation.ColorInt;
+import android.support.annotation.DrawableRes;
 
 public class RTEntry {
     enum Type {
@@ -31,15 +32,17 @@ public class RTEntry {
     public final Type type;
     public final String text;
     public final @ColorInt int backgroundColor;
+    public final @DrawableRes int favoriteIcon;
 
     public RTEntry(Type type, String text) {
-        this(type, text, 0);
+        this(type, text, 0, 0);
     }
 
-    public RTEntry(Type type, String text, @ColorInt int backgroundColor) {
+    public RTEntry(Type type, String text, @ColorInt int backgroundColor, @DrawableRes int favoriteIcon) {
         this.type = type;
         this.text = text;
         this.backgroundColor = backgroundColor;
+        this.favoriteIcon = favoriteIcon;
     }
 
     @Override

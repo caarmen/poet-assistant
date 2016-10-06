@@ -17,18 +17,8 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries;
+package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
-import java.util.List;
-
-public class ResultListData<T> {
-    final String matchedWord;
-    public final boolean isFavorite;
-    public final List<T> data;
-
-    public ResultListData(String matchedWord, boolean isFavorite, List<T> data) {
-        this.matchedWord = matchedWord;
-        this.isFavorite = isFavorite;
-        this.data = data;
-    }
+public interface FavoriteListener {
+    void onFavoriteToggled(String word);
 }

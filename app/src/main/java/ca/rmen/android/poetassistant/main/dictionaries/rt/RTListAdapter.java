@@ -36,11 +36,13 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter;
 
 public class RTListAdapter extends ResultListAdapter<RTEntry> {
 
-    private final OnWordClickedListener mListener;
+    private final OnWordClickedListener mWordClickedListener;
+    private final FavoriteListener mFavoriteListener;
     private final EntryIconClickListener mEntryIconClickListener;
 
     public RTListAdapter(Activity activity) {
-        mListener = (OnWordClickedListener) activity;
+        mWordClickedListener = (OnWordClickedListener) activity;
+        mFavoriteListener = (FavoriteListener) activity;
         mEntryIconClickListener = new EntryIconClickListener();
     }
 
@@ -78,6 +80,7 @@ public class RTListAdapter extends ResultListAdapter<RTEntry> {
         } else {
             ((ListItemWordBinding) holder.binding).setEntry(entry);
             ((ListItemWordBinding) holder.binding).setEntryIconClickListener(mEntryIconClickListener);
+            ((ListItemWordBinding) holder.binding).btnStarResult.setImageResource(entry.favoriteIcon);
         }
         holder.binding.executePendingBindings();
     }
@@ -89,16 +92,20 @@ public class RTListAdapter extends ResultListAdapter<RTEntry> {
             return binding.text1.getText().toString();
         }
 
+        public void onFavoriteIconClicked(View v) {
+            mFavoriteListener.onFavoriteToggled(getWord(v));
+
+        }
         public void onRhymerIconClicked(View v) {
-            mListener.onWordClicked(getWord(v), Tab.RHYMER);
+            mWordClickedListener.onWordClicked(getWord(v), Tab.RHYMER);
         }
 
         public void onThesaurusIconClicked(View v) {
-            mListener.onWordClicked(getWord(v), Tab.THESAURUS);
+            mWordClickedListener.onWordClicked(getWord(v), Tab.THESAURUS);
         }
 
         public void onDictionaryIconClicked(View v) {
-            mListener.onWordClicked(getWord(v), Tab.DICTIONARY);
+            mWordClickedListener.onWordClicked(getWord(v), Tab.DICTIONARY);
         }
     }
 

@@ -55,6 +55,7 @@ import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.VectorCompat;
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
 import ca.rmen.android.poetassistant.main.Tab;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoriteListener;
 
 
 public class ResultListFragment<T> extends Fragment
@@ -185,7 +186,7 @@ public class ResultListFragment<T> extends Fragment
             query = args.getString(EXTRA_QUERY);
             filter = args.getString(EXTRA_FILTER);
             mBinding.tvListHeader.setText(query);
-            mData = new ResultListData<>(query, Collections.emptyList());
+            mData = new ResultListData<>(query, false, Collections.emptyList());
         }
         mBinding.empty.setVisibility(View.GONE);
         mBinding.listHeader.setVisibility(View.VISIBLE);
@@ -242,6 +243,10 @@ public class ResultListFragment<T> extends Fragment
             mBinding.empty.setVisibility(View.GONE);
             mBinding.recyclerView.setVisibility(View.VISIBLE);
         }
+
+        if (mData != null) {
+            mBinding.btnStarQuery.setImageResource(mData.isFavorite ? R.drawable.ic_star_activated : R.drawable.ic_star_normal);
+        }
         getActivity().supportInvalidateOptionsMenu();
     }
 
@@ -276,6 +281,11 @@ public class ResultListFragment<T> extends Fragment
 
         public void onPlayButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             mTts.speak(mBinding.tvListHeader.getText().toString());
+        }
+
+        public void onFavoriteButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
+            String word = mBinding.tvListHeader.getText().toString();
+            ((FavoriteListener) getActivity()).onFavoriteToggled(word);
         }
 
         public void onWebSearchButtonClicked(@SuppressWarnings("UnusedParameters") View v) {

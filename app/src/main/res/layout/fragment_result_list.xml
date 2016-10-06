@@ -42,6 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            tools:visibility="visible"
             android:visibility="gone">
 
             <RelativeLayout
@@ -57,12 +58,27 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/btn_filter"
-                    android:layout_toStartOf="@id/btn_filter"
                     android:gravity="start|center_vertical"
                     android:textIsSelectable="true"
                     android:textStyle="bold"
                     tools:text="Query" />
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:id="@+id/btn_star_query"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_toEndOf="@id/tv_list_header"
+                    android:layout_toRightOf="@id/tv_list_header"
+                    android:layout_centerVertical="true"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:tint="@color/primary_dark"
+                    tools:src="@drawable/ic_star_activated"
+                    android:onClick="@{headerButtonListener.onFavoriteButtonClicked}" />
 
                 <!--
                      Define AppCompatImageButton instead of ImageButton
@@ -72,7 +88,7 @@
                      http://stackoverflow.com/questions/35624562/code-analysis-error-unexpected-namespace-prefix-after-upgrading-android-suppor
                 -->
                 <android.support.v7.widget.AppCompatImageButton
-                    android:id="@id/btn_filter"
+                    android:id="@+id/btn_filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignWithParentIfMissing="true"
