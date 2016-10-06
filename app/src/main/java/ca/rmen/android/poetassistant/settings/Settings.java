@@ -21,8 +21,11 @@ package ca.rmen.android.poetassistant.settings;
 
 import org.jraf.android.prefs.DefaultBoolean;
 import org.jraf.android.prefs.DefaultString;
+import org.jraf.android.prefs.DefaultStringSet;
 import org.jraf.android.prefs.Name;
 import org.jraf.android.prefs.Prefs;
+
+import java.util.Set;
 
 @Prefs
 public class Settings {
@@ -38,6 +41,7 @@ public class Settings {
     static final String PREF_SYSTEM_TTS_SETTINGS = "PREF_SYSTEM_TTS_SETTINGS";
     static final String PREF_THEME = "PREF_THEME";
     static final String PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED";
+    private static final String PREF_SUGGESTED_WORDS = "pref_suggestions";
 
     @SuppressWarnings("unused")
     @Name(PREF_VOICE)
@@ -57,4 +61,9 @@ public class Settings {
     @Name(PREF_WOTD_ENABLED)
     @DefaultBoolean(true)
     Boolean isWotdEnabled;
+
+    @SuppressWarnings("unused")
+    @Name(PREF_SUGGESTED_WORDS)
+    @DefaultStringSet({})
+    Set<String> suggestedWords;
 }

@@ -21,10 +21,8 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.preference.PreferenceManager;
 import android.provider.BaseColumns;
 import android.support.v4.widget.CursorAdapter;
 import android.text.TextUtils;
@@ -37,6 +35,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 class SuggestionsAdapter extends CursorAdapter {
 
@@ -98,14 +97,12 @@ class SuggestionsAdapter extends CursorAdapter {
         private static final String[] COLUMNS =
                 new String[]{BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1};
 
-        private static final String PREF_SUGGESTIONS = "pref_suggestions";
-
-        private final SharedPreferences mSharedPreferences;
+        private final SettingsPrefs mSettingsPrefs;
         private String mFilter;
 
         SuggestionsCursor(Context context) {
             super(COLUMNS);
-            mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            mSettingsPrefs = SettingsPrefs.get(context);
         }
 
         void setFilter(String filter) {
@@ -113,7 +110,7 @@ class SuggestionsAdapter extends CursorAdapter {
         }
 
         void load() {
-            Set<String> suggestions = mSharedPreferences.getStringSet(PREF_SUGGESTIONS, new TreeSet<>());
+            Set<String> suggestions = mSettingsPrefs.getSuggestedWords();
             TreeSet<String> sortedSuggestions = new TreeSet<>();
             sortedSuggestions.addAll(suggestions);
             int i = 0;
@@ -125,17 +122,17 @@ class SuggestionsAdapter extends CursorAdapter {
 
         void clear() {
             mFilter = null;
-            mSharedPreferences.edit().remove(PREF_SUGGESTIONS).apply();
+            mSettingsPrefs.removeSuggestedWords();
         }
 
         void addSuggestion(String suggestion) {
-            Set<String> suggestionsReadOnly = mSharedPreferences.getStringSet(PREF_SUGGESTIONS, new TreeSet<>());
+            Set<String> suggestionsReadOnly = mSettingsPrefs.getSuggestedWords();
             if (!suggestionsReadOnly.contains(suggestion)) {
                 addRow(new Object[]{getCount(), suggestion});
                 TreeSet<String> suggestions = new TreeSet<>();
                 suggestions.addAll(suggestionsReadOnly);
                 suggestions.add(suggestion);
-                mSharedPreferences.edit().putStringSet(PREF_SUGGESTIONS, suggestions).apply();
+                mSettingsPrefs.putSuggestedWords(suggestions);
             }
         }
 
