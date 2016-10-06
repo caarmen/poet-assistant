@@ -55,6 +55,7 @@
             android:paddingRight="0dp"
             android:paddingStart="16dp"
             android:text="@{entry.definition}"
+            android:textIsSelectable="true"
             tools:text="happy" />
 
     </LinearLayout>

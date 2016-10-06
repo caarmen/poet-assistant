@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.9.6  *(2016-10-06)*
+--------------------
+* Make the dictionary definitions selectable.
+
 1.9.5  *(2016-10-02)*
 --------------------
 * Clarify rhyme types (ex: "One syllable matches" becomes "Last-syllable matches").
