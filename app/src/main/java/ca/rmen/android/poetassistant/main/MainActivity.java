@@ -23,7 +23,9 @@ import android.app.ActivityManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -84,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         Intent intent = getIntent();
         Uri data = intent.getData();
         mPagerAdapter = new PagerAdapter(this, getSupportFragmentManager(), intent);
+        mPagerAdapter.registerDataSetObserver(mAdapterChangeListener);
 
         // Set up the ViewPager with the sections adapter.
         mBinding.viewPager.setAdapter(mPagerAdapter);
@@ -91,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener);
 
         mBinding.tabs.setupWithViewPager(mBinding.viewPager);
+        mAdapterChangeListener.onChanged();
 
         // If the app was launched with a query for the thesaurus, focus on that tab.
         if (data != null) {
@@ -235,6 +239,16 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
             if (tab != Tab.READER) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mBinding.viewPager.getWindowToken(), 0);
+            }
+        }
+    };
+
+    private final DataSetObserver mAdapterChangeListener = new DataSetObserver() {
+        @Override
+        public void onChanged() {
+            for (int i=0; i < mBinding.tabs.getTabCount(); i++) {
+                Drawable icon = mPagerAdapter.getIcon(i);
+                if (icon != null) mBinding.tabs.getTabAt(i).setIcon(icon);
             }
         }
     };

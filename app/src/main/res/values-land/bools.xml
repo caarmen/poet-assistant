@@ -18,7 +18,6 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
-    <bool name="wotd_boot_receiver_enabled">true</bool>
-    <bool name="tab_icons">true</bool>
-    <bool name="tab_text">false</bool>
+    <bool name="tab_icons">false</bool>
+    <bool name="tab_text">true</bool>
 </resources>
