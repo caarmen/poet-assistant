@@ -39,7 +39,7 @@ public class FavoritesListExporter implements ResultListExporter<List<RTEntry>> 
     public String export(@NonNull String word,
                          @Nullable String filter,
                          @NonNull List<RTEntry> entries) {
-        final String title = mContext.getString(R.string.share_favorites_title, word);
+        final String title = mContext.getString(R.string.share_favorites_title);
         StringBuilder builder = new StringBuilder(title);
         for (RTEntry entry : entries) {
             builder.append(mContext.getString(R.string.share_rt_entry, entry.text));

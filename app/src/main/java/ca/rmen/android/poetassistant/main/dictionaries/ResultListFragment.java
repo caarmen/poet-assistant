@@ -97,7 +97,7 @@ public class ResultListFragment<T> extends Fragment
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mBinding.recyclerView.setHasFixedSize(true);
 
-        ResultListFactory.updateListHeaderButtonsVisbility(mBinding, mTab, TextToSpeech.ERROR);
+        ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, TextToSpeech.ERROR);
         mBinding.tvFilterLabel.setText(ResultListFactory.getFilterLabel(getActivity(), mTab));
 
 
@@ -174,7 +174,7 @@ public class ResultListFragment<T> extends Fragment
     }
 
     private void updatePlayButton() {
-        ResultListFactory.updateListHeaderButtonsVisbility(mBinding, mTab, mTts.getStatus());
+        ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, mTts.getStatus());
     }
 
     @Override

@@ -17,7 +17,7 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Poet Assistant</string>
     <string name="action_search">Search</string>
     <string name="action_random_word">Random word</string>
@@ -108,7 +108,7 @@
 <b>?</b> matches a single character<br/>
 <b>*</b> matches multiple characters]]></string>
 
-    <string name="max_results">Limited to %d matches</string>
+    <string name="max_results" tools:ignore="PluralsCandidate">Limited to %d matches</string>
 
     <!-- Strings related to Settings -->
     <string translatable="false" name="pref_voice_value_with_country"><![CDATA[%1$s (%2$s)<br/><font color=\'#888888\'><small>%3$s</small></font>]]></string>

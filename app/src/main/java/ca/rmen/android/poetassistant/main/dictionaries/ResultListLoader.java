@@ -20,23 +20,13 @@
 package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.content.Context;
-import android.support.annotation.ColorRes;
 import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 
 public abstract class ResultListLoader<T> extends AsyncTaskLoader<T> {
 

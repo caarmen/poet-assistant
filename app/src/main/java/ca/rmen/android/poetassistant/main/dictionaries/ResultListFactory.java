@@ -168,7 +168,7 @@ public class ResultListFactory {
      * Set the various buttons which appear in the result list header (ex: tts play,
      * web search, filter, help) to visible or gone, depending on the tab.
      */
-    static void updateListHeaderButtonsVisbility(FragmentResultListBinding fragmentResultListBinding, Tab tab, int textToSpeechStatus) {
+    static void updateListHeaderButtonsVisibility(FragmentResultListBinding fragmentResultListBinding, Tab tab, int textToSpeechStatus) {
         switch (tab) {
             case FAVORITES:
                 fragmentResultListBinding.btnPlay.setVisibility(View.GONE);
