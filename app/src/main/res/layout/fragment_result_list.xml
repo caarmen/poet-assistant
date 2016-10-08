@@ -105,22 +105,7 @@
                     app:srcCompat="@drawable/ic_filter_list" />
 
                 <android.support.v7.widget.AppCompatImageButton
-                    android:id="@id/btn_web_search"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignWithParentIfMissing="true"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/btn_play"
-                    android:layout_toStartOf="@id/btn_play"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:contentDescription="@string/action_search"
-                    android:onClick="@{headerButtonListener.onWebSearchButtonClicked}"
-                    android:padding="8dp"
-                    app:srcCompat="@drawable/ic_web_search" />
-
-                <android.support.v7.widget.AppCompatImageButton
-                    android:id="@id/btn_play"
+                    android:id="@+id/btn_play"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -132,6 +117,22 @@
                     android:onClick="@{headerButtonListener.onPlayButtonClicked}"
                     android:padding="8dp"
                     app:srcCompat="@drawable/ic_play_circle" />
+
+                <android.support.v7.widget.AppCompatImageButton
+                    android:id="@id/btn_web_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignWithParentIfMissing="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@id/btn_play"
+                    android:layout_toStartOf="@id/btn_play"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="@string/action_search"
+                    android:onClick="@{headerButtonListener.onWebSearchButtonClicked}"
+                    android:padding="8dp"
+                    app:srcCompat="@drawable/ic_web_search" />
+
             </RelativeLayout>
 
             <LinearLayout

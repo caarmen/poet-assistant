@@ -283,7 +283,7 @@ public class ResultListFragment<T> extends Fragment
             mTts.speak(mBinding.tvListHeader.getText().toString());
         }
 
-        public void onFavoriteButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
+        public void onFavoriteButtonClicked(View v) {
             String word = mBinding.tvListHeader.getText().toString();
             ((OnFavoriteClickListener) getActivity()).onFavoriteToggled(word, ((CheckBox)v).isChecked());
         }
