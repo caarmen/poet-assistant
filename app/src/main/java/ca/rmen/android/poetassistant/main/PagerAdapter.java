@@ -92,6 +92,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
         Log.v(TAG, "setPatternTabVisible: " + mIsPatternTabVisible + "->" + visible);
         if (mIsPatternTabVisible != visible) {
             if (visible) mIsFavoritesTabVisible = false;
+            else if (mPrefs.getIsFavoritesTabVisible()) mIsFavoritesTabVisible = true;
             mIsPatternTabVisible = visible;
             notifyDataSetChanged();
         }
