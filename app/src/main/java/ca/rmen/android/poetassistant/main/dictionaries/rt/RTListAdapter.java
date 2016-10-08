@@ -25,6 +25,7 @@ import android.databinding.ViewDataBinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.databinding.ListItemHeadingBinding;
@@ -36,13 +37,13 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter;
 
 public class RTListAdapter extends ResultListAdapter<RTEntry> {
 
-    private final OnWordClickedListener mWordClickedListener;
-    private final FavoriteListener mFavoriteListener;
+    private final OnWordClickListener mWordClickedListener;
+    private final OnFavoriteClickListener mOnFavoriteClickListener;
     private final EntryIconClickListener mEntryIconClickListener;
 
     public RTListAdapter(Activity activity) {
-        mWordClickedListener = (OnWordClickedListener) activity;
-        mFavoriteListener = (FavoriteListener) activity;
+        mWordClickedListener = (OnWordClickListener) activity;
+        mOnFavoriteClickListener = (OnFavoriteClickListener) activity;
         mEntryIconClickListener = new EntryIconClickListener();
     }
 
@@ -80,7 +81,7 @@ public class RTListAdapter extends ResultListAdapter<RTEntry> {
         } else {
             ((ListItemWordBinding) holder.binding).setEntry(entry);
             ((ListItemWordBinding) holder.binding).setEntryIconClickListener(mEntryIconClickListener);
-            ((ListItemWordBinding) holder.binding).btnStarResult.setImageResource(entry.favoriteIcon);
+            ((ListItemWordBinding) holder.binding).btnStarResult.setChecked(entry.isFavorite);
         }
         holder.binding.executePendingBindings();
     }
@@ -93,19 +94,19 @@ public class RTListAdapter extends ResultListAdapter<RTEntry> {
         }
 
         public void onFavoriteIconClicked(View v) {
-            mFavoriteListener.onFavoriteToggled(getWord(v));
+            mOnFavoriteClickListener.onFavoriteToggled(getWord(v), ((CheckBox)v).isChecked());
 
         }
         public void onRhymerIconClicked(View v) {
-            mWordClickedListener.onWordClicked(getWord(v), Tab.RHYMER);
+            mWordClickedListener.onWordClick(getWord(v), Tab.RHYMER);
         }
 
         public void onThesaurusIconClicked(View v) {
-            mWordClickedListener.onWordClicked(getWord(v), Tab.THESAURUS);
+            mWordClickedListener.onWordClick(getWord(v), Tab.THESAURUS);
         }
 
         public void onDictionaryIconClicked(View v) {
-            mWordClickedListener.onWordClicked(getWord(v), Tab.DICTIONARY);
+            mWordClickedListener.onWordClick(getWord(v), Tab.DICTIONARY);
         }
     }
 

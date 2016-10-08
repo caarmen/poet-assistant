@@ -47,15 +47,15 @@ import ca.rmen.android.poetassistant.databinding.ActivityMainBinding;
 import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoriteListener;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickedListener;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFavoriteClickListener;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus;
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 
 
-public class MainActivity extends AppCompatActivity implements OnWordClickedListener, FavoriteListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener {
+public class MainActivity extends AppCompatActivity implements OnWordClickListener, OnFavoriteClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener {
 
     private static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
     private static final String DIALOG_TAG = "dialog";
@@ -202,14 +202,15 @@ public class MainActivity extends AppCompatActivity implements OnWordClickedList
     }
 
     @Override
-    public void onWordClicked(String word, Tab tab) {
-        Log.d(TAG, "onWordClicked() called with: " + "word = [" + word + "], tab = [" + tab + "]");
+    public void onWordClick(String word, Tab tab) {
+        Log.d(TAG, "onWordClick() called with: " + "word = [" + word + "], tab = [" + tab + "]");
         mSearch.search(word, tab);
     }
 
     @Override
-    public void onFavoriteToggled(final String word) {
-        mFavorites.toggleFavorite(word);
+    public void onFavoriteToggled(final String word, boolean isFavorite) {
+        if (isFavorite) mFavorites.addFavorite(word);
+        else mFavorites.removeFavorite(word);
     }
 
 

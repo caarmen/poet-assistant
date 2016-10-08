@@ -21,7 +21,6 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.content.Context;
 import android.support.annotation.ColorRes;
-import android.support.annotation.DrawableRes;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -158,12 +157,11 @@ public class RhymerLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
             results.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
             for (int i = 0; i < rhymes.length; i++) {
                 @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
-                @DrawableRes int favoriteIcon = favorites.contains(rhymes[i]) ? R.drawable.ic_star_activated : R.drawable.ic_star_normal;
                 results.add(new RTEntry(
                         RTEntry.Type.WORD,
                         rhymes[i],
                         ContextCompat.getColor(getContext(), color),
-                        favoriteIcon));
+                        favorites.contains(rhymes[i])));
             }
         }
     }

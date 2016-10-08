@@ -51,7 +51,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding;
 import ca.rmen.android.poetassistant.main.Tab;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickedListener;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 
 
 public class ReaderFragment extends Fragment implements
@@ -207,18 +207,18 @@ public class ReaderFragment extends Fragment implements
     @Override
     public boolean onContextItemSelected(MenuItem item) {
 
-        OnWordClickedListener listener = (OnWordClickedListener) getActivity();
+        OnWordClickListener listener = (OnWordClickListener) getActivity();
         String word = getSelectedWord();
         if (word == null) return false;
         switch (item.getItemId()) {
             case R.id.action_lookup_rhymer:
-                listener.onWordClicked(word, Tab.RHYMER);
+                listener.onWordClick(word, Tab.RHYMER);
                 return true;
             case R.id.action_lookup_thesaurus:
-                listener.onWordClicked(word, Tab.THESAURUS);
+                listener.onWordClick(word, Tab.THESAURUS);
                 return true;
             case R.id.action_lookup_dictionary:
-                listener.onWordClicked(word, Tab.DICTIONARY);
+                listener.onWordClick(word, Tab.DICTIONARY);
                 return true;
             default:
                 return false;

@@ -63,8 +63,9 @@
                     android:textStyle="bold"
                     tools:text="Query" />
 
-                <android.support.v7.widget.AppCompatImageView
+                <CheckBox
                     android:background="?selectableItemBackgroundBorderless"
+                    android:button="@drawable/ic_star"
                     android:clickable="true"
                     android:id="@+id/btn_star_query"
                     android:layout_marginLeft="8dp"
@@ -74,10 +75,10 @@
                     android:layout_toEndOf="@id/tv_list_header"
                     android:layout_toRightOf="@id/tv_list_header"
                     android:layout_centerVertical="true"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:tint="@color/primary_dark"
-                    tools:src="@drawable/ic_star_activated"
+                    android:padding="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:buttonTint="@color/primary_dark"
                     android:onClick="@{headerButtonListener.onFavoriteButtonClicked}" />
 
                 <!--

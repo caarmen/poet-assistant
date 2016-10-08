@@ -37,14 +37,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <android.support.v7.widget.AppCompatImageView
+        <CheckBox
             android:background="?selectableItemBackgroundBorderless"
+            android:button="@drawable/ic_star"
             android:clickable="true"
             android:id="@+id/btn_star_result"
-            android:paddingLeft="16dp"
-            android:paddingStart="16dp"
-            android:paddingRight="8dp"
-            android:paddingEnd="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:paddingLeft="4dp"
+            android:paddingStart="4dp"
+            android:paddingRight="4dp"
+            android:paddingEnd="4dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"

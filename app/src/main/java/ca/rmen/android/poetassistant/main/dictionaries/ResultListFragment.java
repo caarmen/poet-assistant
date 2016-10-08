@@ -41,6 +41,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -55,7 +56,7 @@ import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.VectorCompat;
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
 import ca.rmen.android.poetassistant.main.Tab;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoriteListener;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFavoriteClickListener;
 
 
 public class ResultListFragment<T> extends Fragment
@@ -244,9 +245,8 @@ public class ResultListFragment<T> extends Fragment
             mBinding.recyclerView.setVisibility(View.VISIBLE);
         }
 
-        if (mData != null) {
-            mBinding.btnStarQuery.setImageResource(mData.isFavorite ? R.drawable.ic_star_activated : R.drawable.ic_star_normal);
-        }
+        if (mData != null) mBinding.btnStarQuery.setChecked(mData.isFavorite);
+
         getActivity().supportInvalidateOptionsMenu();
     }
 
@@ -285,7 +285,7 @@ public class ResultListFragment<T> extends Fragment
 
         public void onFavoriteButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             String word = mBinding.tvListHeader.getText().toString();
-            ((FavoriteListener) getActivity()).onFavoriteToggled(word);
+            ((OnFavoriteClickListener) getActivity()).onFavoriteToggled(word, ((CheckBox)v).isChecked());
         }
 
         public void onWebSearchButtonClicked(@SuppressWarnings("UnusedParameters") View v) {

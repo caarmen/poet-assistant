@@ -49,13 +49,18 @@ public class Favorites {
         return mPrefs.getFavoriteWords();
     }
 
-    public void toggleFavorite(String favorite) {
+    public void addFavorite(String favorite) {
         // We need to make a copy of the string set, or our changes
         // won't be saved:
         // https://code.google.com/p/android/issues/detail?id=27801
         Set<String> favorites = new HashSet<>(mPrefs.getFavoriteWords());
-        if (favorites.contains(favorite)) favorites.remove(favorite);
-        else favorites.add(favorite);
+        favorites.add(favorite);
+        mPrefs.putFavoriteWords(favorites);
+        EventBus.getDefault().post(new OnFavoritesChanged());
+    }
+    public void removeFavorite(String favorite) {
+        Set<String> favorites = new HashSet<>(mPrefs.getFavoriteWords());
+        favorites.remove(favorite);
         mPrefs.putFavoriteWords(favorites);
         EventBus.getDefault().post(new OnFavoritesChanged());
     }

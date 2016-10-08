@@ -19,6 +19,6 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
-public interface FavoriteListener {
-    void onFavoriteToggled(String word);
+public interface OnFavoriteClickListener {
+    void onFavoriteToggled(String word, boolean isFavorite);
 }
