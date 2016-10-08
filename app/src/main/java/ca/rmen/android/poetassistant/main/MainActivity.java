@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
 
         // Set up the ViewPager with the sections adapter.
         mBinding.viewPager.setAdapter(mPagerAdapter);
-        mBinding.viewPager.setOffscreenPageLimit(4);
+        mBinding.viewPager.setOffscreenPageLimit(5);
         mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener);
 
         mBinding.tabs.setupWithViewPager(mBinding.viewPager);
@@ -186,18 +186,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem menuItem = menu.findItem(R.id.action_toggle_favorites);
-        Fragment favoritesFragment = mPagerAdapter.getFragment(mBinding.viewPager, Tab.FAVORITES);
-        if (favoritesFragment == null) {
-            menuItem.setTitle(R.string.action_show_favorites);
-        } else {
-            menuItem.setTitle(R.string.action_hide_favorites);
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_about) {
             Intent intent = new Intent(this, AboutActivity.class);
@@ -209,16 +197,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         } else if (item.getItemId() == R.id.action_clear_search_history) {
             mSearch.clearSearchHistory();
             Snackbar.make(mBinding.getRoot(), R.string.search_history_cleared, Snackbar.LENGTH_SHORT).show();
-            return true;
-        } else if (item.getItemId() == R.id.action_toggle_favorites) {
-            Fragment favoritesFragment = mPagerAdapter.getFragment(mBinding.viewPager, Tab.FAVORITES);
-            if (favoritesFragment == null) {
-                mPagerAdapter.setFavoritesTabVisible(true);
-                mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.FAVORITES));
-            } else {
-                mPagerAdapter.setFavoritesTabVisible(false);
-            }
-            supportInvalidateOptionsMenu();
             return true;
         } else if (item.getItemId() == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);

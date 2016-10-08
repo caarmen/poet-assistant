@@ -20,7 +20,7 @@
 package ca.rmen.android.poetassistant.main;
 
 public enum Tab {
-    PATTERN, FAVORITES, RHYMER, THESAURUS, DICTIONARY, READER;
+    RHYMER, THESAURUS, DICTIONARY, READER, FAVORITES, PATTERN;
 
     public static Tab parse(String value) {
         if (FAVORITES.name().equalsIgnoreCase(value)) return FAVORITES;

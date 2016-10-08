@@ -35,7 +35,7 @@ public abstract class ResultListLoader<T> extends AsyncTaskLoader<T> {
     protected final Favorites mFavorites;
     private T mResult;
 
-    public ResultListLoader(Context context) {
+    protected ResultListLoader(Context context) {
         super(context);
         mFavorites = new Favorites(context);
     }
