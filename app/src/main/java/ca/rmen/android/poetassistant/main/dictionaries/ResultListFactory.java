@@ -36,6 +36,8 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntr
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListExporter;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesListExporter;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternListExporter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
@@ -58,6 +60,7 @@ public class ResultListFactory {
         ResultListFragment<?> fragment;
         switch (tab) {
             case PATTERN:
+            case FAVORITES:
             case RHYMER:
             case THESAURUS:
                 fragment = new ResultListFragment<RTEntry>();
@@ -79,6 +82,7 @@ public class ResultListFactory {
     static ResultListAdapter<?> createAdapter(Activity activity, Tab tab) {
         switch (tab) {
             case PATTERN:
+            case FAVORITES:
             case RHYMER:
             case THESAURUS:
                 return new RTListAdapter(activity);
@@ -92,6 +96,8 @@ public class ResultListFactory {
         switch (tab) {
             case PATTERN:
                 return new PatternLoader(activity, query);
+            case FAVORITES:
+                return new FavoritesLoader(activity);
             case RHYMER:
                 return new RhymerLoader(activity, query, filter);
             case THESAURUS:
@@ -107,6 +113,8 @@ public class ResultListFactory {
         switch (tab) {
             case PATTERN:
                 return new PatternListExporter(context);
+            case FAVORITES:
+                return new FavoritesListExporter(context);
             case RHYMER:
                 return new RhymerListExporter(context);
             case THESAURUS:
@@ -143,6 +151,8 @@ public class ResultListFactory {
 
     static String getEmptyListText(Context context, Tab tab, String query) {
         switch (tab) {
+            case FAVORITES:
+                return context.getString(R.string.empty_favorites_list);
             case PATTERN:
                 return context.getString(R.string.empty_pattern_list_with_query, query);
             case RHYMER:
@@ -161,6 +171,12 @@ public class ResultListFactory {
      */
     static void updateListHeaderButtonsVisbility(FragmentResultListBinding fragmentResultListBinding, Tab tab, int textToSpeechStatus) {
         switch (tab) {
+            case FAVORITES:
+                fragmentResultListBinding.btnPlay.setVisibility(View.GONE);
+                fragmentResultListBinding.btnWebSearch.setVisibility(View.GONE);
+                fragmentResultListBinding.btnStarQuery.setVisibility(View.GONE);
+                fragmentResultListBinding.btnDelete.setVisibility(View.VISIBLE);
+                break;
             case PATTERN:
                 fragmentResultListBinding.btnHelp.setVisibility(View.VISIBLE);
                 fragmentResultListBinding.btnPlay.setVisibility(View.GONE);

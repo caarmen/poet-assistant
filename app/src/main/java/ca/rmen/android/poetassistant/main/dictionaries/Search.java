@@ -146,7 +146,7 @@ public class Search {
         } else {
             mPagerAdapter.setPatternTabVisible(false);
             // If we're in the pattern tab but not searching for a pattern, go to the rhymer tab.
-            if (currentTab == Tab.PATTERN || currentTab == Tab.READER) {
+            if (currentTab != Tab.RHYMER && currentTab != Tab.THESAURUS && currentTab != Tab.DICTIONARY) {
                 mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.RHYMER));
             }
         }

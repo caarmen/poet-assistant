@@ -26,6 +26,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -63,9 +64,11 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFavoriteClickListene
 public class ResultListFragment<T> extends Fragment
         implements
         LoaderManager.LoaderCallbacks<ResultListData<T>>,
-        InputDialogFragment.InputDialogListener {
+        InputDialogFragment.InputDialogListener,
+        ConfirmDialogFragment.ConfirmDialogListener {
     private static final String TAG = Constants.TAG + ResultListFragment.class.getSimpleName();
     private static final int ACTION_FILTER = 0;
+    private static final int ACTION_CLEAR_FAVORITES = 1;
     private static final String DIALOG_TAG = "dialog";
     private static final String EXTRA_FILTER = "filter";
     public static final String EXTRA_TAB = "tab";
@@ -273,6 +276,14 @@ public class ResultListFragment<T> extends Fragment
         }
     }
 
+    @Override
+    public void onOk(int actionId) {
+        if (actionId == ACTION_CLEAR_FAVORITES) {
+            new Favorites(getContext()).clear();
+            Snackbar.make(mBinding.getRoot(), R.string.favorites_cleared, Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
     /**
      * @param <T> Needed for the data binding tool to generate a FragmentResultListBinding class which compiles.
      */
@@ -285,6 +296,13 @@ public class ResultListFragment<T> extends Fragment
         public void onFavoriteButtonClicked(View v) {
             String word = mBinding.tvListHeader.getText().toString();
             ((OnFavoriteClickListener) getActivity()).onFavoriteToggled(word, ((CheckBox)v).isChecked());
+        }
+
+        public void onDeleteFavoritesButtonClicked(View v) {
+            ConfirmDialogFragment fragment = ConfirmDialogFragment.create(
+                    ACTION_CLEAR_FAVORITES,
+                    getString(R.string.action_clear_favorites));
+            getChildFragmentManager().beginTransaction().add(fragment, DIALOG_TAG).commit();
         }
 
         public void onWebSearchButtonClicked(@SuppressWarnings("UnusedParameters") View v) {

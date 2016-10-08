@@ -43,6 +43,7 @@ public class Settings {
     static final String PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED";
     private static final String PREF_FAVORITE_WORDS = "PREF_FAVORITE_WORDS";
     private static final String PREF_SUGGESTED_WORDS = "pref_suggestions";
+    private static final String PREF_SHOW_FAVORITES = "PREF_SHOW_FAVORITES";
 
     @SuppressWarnings("unused")
     @Name(PREF_VOICE)
@@ -72,4 +73,9 @@ public class Settings {
     @Name(PREF_FAVORITE_WORDS)
     @DefaultStringSet({})
     Set<String> favoriteWords;
+
+    @SuppressWarnings("unused")
+    @Name(PREF_SHOW_FAVORITES)
+    @DefaultBoolean(false)
+    Boolean isFavoritesTabVisible;
 }
