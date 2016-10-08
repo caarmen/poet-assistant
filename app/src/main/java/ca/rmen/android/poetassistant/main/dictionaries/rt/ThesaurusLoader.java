@@ -21,13 +21,9 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.content.Context;
 import android.support.annotation.ColorRes;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,25 +32,20 @@ import java.util.Set;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 
-public class ThesaurusLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
+public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
     private static final String TAG = Constants.TAG + ThesaurusLoader.class.getSimpleName();
 
     private final String mQuery;
     private final String mFilter;
-    private final Favorites mFavorites;
-    private ResultListData<RTEntry> mResult;
-
 
     public ThesaurusLoader(Context context, String query, String filter) {
         super(context);
         mQuery = query;
         mFilter = filter;
-        mFavorites = new Favorites(context);
-
     }
 
     @Override
@@ -84,34 +75,6 @@ public class ThesaurusLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
 
     private ResultListData<RTEntry> emptyResult() {
         return new ResultListData<>(mQuery, false, new ArrayList<>());
-    }
-
-    @Override
-    public void deliverResult(ResultListData<RTEntry> data) {
-        Log.d(TAG, "deliverResult() called with: query = " + mQuery + ", filter = " + mFilter + ", data = [" + data + "]");
-        mResult = data;
-        if (isStarted()) super.deliverResult(data);
-    }
-
-    @Override
-    protected void onStartLoading() {
-        super.onStartLoading();
-        Log.d(TAG, "onStartLoading() called with: query = " + mQuery + ", filter = " + mFilter);
-        if (!EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
-        if (mResult != null) super.deliverResult(mResult);
-        else forceLoad();
-    }
-
-    @Override
-    protected void onReset() {
-        if (EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
-        super.onReset();
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onFavoritesChanged(Favorites.OnFavoritesChanged event) {
-        onContentChanged();
     }
 
     private void addResultSection(Set<String> favorites, List<RTEntry> results, int sectionHeadingResId, String[] words) {

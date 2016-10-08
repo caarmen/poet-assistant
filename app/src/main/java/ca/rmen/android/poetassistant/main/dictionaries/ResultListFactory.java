@@ -24,7 +24,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
-import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 import android.view.View;
 
@@ -92,7 +91,7 @@ public class ResultListFactory {
         }
     }
 
-    static AsyncTaskLoader<? extends ResultListData<?>> createLoader(Tab tab, Activity activity, String query, String filter) {
+    static ResultListLoader<? extends ResultListData<?>> createLoader(Tab tab, Activity activity, String query, String filter) {
         switch (tab) {
             case PATTERN:
                 return new PatternLoader(activity, query);

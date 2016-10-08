@@ -21,13 +21,9 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.content.Context;
 import android.support.annotation.ColorRes;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,23 +33,20 @@ import java.util.Set;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.Patterns;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 
-public class PatternLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
+public class PatternLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
     private static final String TAG = Constants.TAG + PatternLoader.class.getSimpleName();
 
     private final String mQuery;
-    private final Favorites mFavorites;
-    private ResultListData<RTEntry> mResult;
 
     public PatternLoader(Context context, String query) {
         super(context);
         mQuery = query;
-        mFavorites = new Favorites(context);
     }
 
     @Override
@@ -113,33 +106,4 @@ public class PatternLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
     private ResultListData<RTEntry> emptyResult() {
         return new ResultListData<>(mQuery, false, new ArrayList<>());
     }
-
-    @Override
-    public void deliverResult(ResultListData<RTEntry> data) {
-        Log.d(TAG, "deliverResult() called with: query = " + mQuery + ", data = [" + data + "]");
-        mResult = data;
-        if (isStarted()) super.deliverResult(data);
-    }
-
-    @Override
-    protected void onStartLoading() {
-        super.onStartLoading();
-        Log.d(TAG, "onStartLoading() called with: query = " + mQuery);
-        if (!EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
-        if (mResult != null) super.deliverResult(mResult);
-        else forceLoad();
-    }
-
-    @Override
-    protected void onReset() {
-        if (EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
-        super.onReset();
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onFavoritesChanged(Favorites.OnFavoritesChanged event) {
-        onContentChanged();
-    }
-
 }
