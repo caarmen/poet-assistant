@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+1.10.0  *(2016-10-08)*
+--------------------
+* Possibility to star words.  
+ - In the rhymer they will appear before the other rhymes.
+ - In the thesaurus they appear starred but, for now, they remain at the default position
+* Basic pattern search support.
+ - Two wildcards are supported: `*` matches any number of letters, and `?` matches exactly one letter.
+ - When searching for a word with one of these symbols, a new "Patterns" tab appears with the results, from
+   which you may navigate to the rhymer, thesaurus, or dictionary tabs.
+
 1.9.6  *(2016-10-06)*
 --------------------
 * Make the dictionary definitions selectable.
