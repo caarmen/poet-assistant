@@ -27,6 +27,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
+import ca.rmen.android.poetassistant.main.dictionaries.Patterns;
 import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities;
 
 public class Dictionary {
@@ -85,6 +86,34 @@ public class Dictionary {
             }
         }
         return new DictionaryEntry(word, new DictionaryEntry.DictionaryEntryDetails[0]);
+    }
+
+    public
+    @NonNull
+    String[] findWordsByPattern(String pattern) {
+        SQLiteDatabase db = mDbHelper.getDb();
+        if (db != null) {
+            String[] projection = new String[]{"word"};
+            String selection = "word LIKE ?";
+            String[] selectionArgs = new String[]{pattern};
+            String orderBy = "word";
+            String limit = String.valueOf(Patterns.MAX_RESULTS);
+            Cursor cursor = db.query(true, "dictionary", projection, selection, selectionArgs, null, null, orderBy, limit);
+            if (cursor != null) {
+                try {
+                    if (cursor.getCount() > 0) {
+                        String[] result = new String[cursor.getCount()];
+                        while (cursor.moveToNext()) {
+                            result[cursor.getPosition()] = cursor.getString(0);
+                        }
+                        return result;
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+        }
+        return new String[0];
     }
 
     @Nullable

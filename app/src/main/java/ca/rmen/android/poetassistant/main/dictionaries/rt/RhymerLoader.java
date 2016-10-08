@@ -26,12 +26,17 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.rhymer.RhymeResult;
 
@@ -41,12 +46,14 @@ public class RhymerLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
 
     private final String mQuery;
     private final String mFilter;
+    private final Favorites mFavorites;
     private ResultListData<RTEntry> mResult;
 
     public RhymerLoader(Context context, String query, String filter) {
         super(context);
         mQuery = query;
         mFilter = filter;
+        mFavorites = new Favorites(context);
     }
 
     @Override
@@ -66,6 +73,10 @@ public class RhymerLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
             if (synonyms.isEmpty()) return emptyResult();
             rhymeResults = filter(rhymeResults, synonyms);
         }
+        Set<String> favorites = mFavorites.getFavorites();
+        if (!favorites.isEmpty()) {
+            addResultSection(favorites, data, R.string.rhyme_section_favorites, getMatchingFavorites(rhymeResults, favorites));
+        }
         for (RhymeResult rhymeResult : rhymeResults) {
             // Add the word variant, if there are multiple pronunciations.
             if (rhymeResults.size() > 1) {
@@ -73,16 +84,43 @@ public class RhymerLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
                 data.add(new RTEntry(RTEntry.Type.HEADING, heading));
             }
 
-            addResultSection(data, R.string.rhyme_section_stress_syllables, rhymeResult.strictRhymes);
-            addResultSection(data, R.string.rhyme_section_one_syllable, rhymeResult.oneSyllableRhymes);
-            addResultSection(data, R.string.rhyme_section_two_syllables, rhymeResult.twoSyllableRhymes);
-            addResultSection(data, R.string.rhyme_section_three_syllables, rhymeResult.threeSyllableRhymes);
+            addResultSection(favorites, data, R.string.rhyme_section_stress_syllables, rhymeResult.strictRhymes);
+            addResultSection(favorites, data, R.string.rhyme_section_one_syllable, rhymeResult.oneSyllableRhymes);
+            addResultSection(favorites, data, R.string.rhyme_section_two_syllables, rhymeResult.twoSyllableRhymes);
+            addResultSection(favorites, data, R.string.rhyme_section_three_syllables, rhymeResult.threeSyllableRhymes);
         }
-        return new ResultListData<>(mQuery, data);
+        return new ResultListData<>(mQuery, favorites.contains(mQuery), data);
+    }
+
+    private String[] getMatchingFavorites(List<RhymeResult> rhymeResults, Set<String> favorites) {
+        Set<String> matchingFavorites = new TreeSet<>();
+        for (RhymeResult rhymeResult : rhymeResults) {
+            for (String rhyme : rhymeResult.strictRhymes) {
+                if (favorites.contains(rhyme)) {
+                    matchingFavorites.add(rhyme);
+                }
+            }
+            for (String rhyme : rhymeResult.oneSyllableRhymes) {
+                if (favorites.contains(rhyme)) {
+                    matchingFavorites.add(rhyme);
+                }
+            }
+            for (String rhyme : rhymeResult.twoSyllableRhymes) {
+                if (favorites.contains(rhyme)) {
+                    matchingFavorites.add(rhyme);
+                }
+            }
+            for (String rhyme : rhymeResult.threeSyllableRhymes) {
+                if (favorites.contains(rhyme)) {
+                    matchingFavorites.add(rhyme);
+                }
+            }
+        }
+        return matchingFavorites.toArray(new String[0]);
     }
 
     private ResultListData<RTEntry> emptyResult() {
-        return new ResultListData<>(mQuery, new ArrayList<>());
+        return new ResultListData<>(mQuery, false, new ArrayList<>());
     }
 
     @Override
@@ -96,11 +134,25 @@ public class RhymerLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
     protected void onStartLoading() {
         super.onStartLoading();
         Log.d(TAG, "onStartLoading() called with: query = " + mQuery + ", filter = " + mFilter);
+        if (!EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         if (mResult != null) super.deliverResult(mResult);
         else forceLoad();
     }
 
-    private void addResultSection(List<RTEntry> results, int sectionHeadingResId, String[] rhymes) {
+    @Override
+    protected void onReset() {
+        if (EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
+        super.onReset();
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe
+    public void onFavoritesChanged(Favorites.OnFavoritesChanged event) {
+        onContentChanged();
+    }
+
+
+    private void addResultSection(Set<String> favorites, List<RTEntry> results, int sectionHeadingResId, String[] rhymes) {
         if (rhymes.length > 0) {
             results.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
             for (int i = 0; i < rhymes.length; i++) {
@@ -108,7 +160,8 @@ public class RhymerLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
                 results.add(new RTEntry(
                         RTEntry.Type.WORD,
                         rhymes[i],
-                        ContextCompat.getColor(getContext(), color)));
+                        ContextCompat.getColor(getContext(), color),
+                        favorites.contains(rhymes[i])));
             }
         }
     }

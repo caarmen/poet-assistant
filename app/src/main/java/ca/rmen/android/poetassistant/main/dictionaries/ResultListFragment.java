@@ -41,6 +41,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -54,7 +55,9 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.VectorCompat;
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
+import ca.rmen.android.poetassistant.main.HelpDialogFragment;
 import ca.rmen.android.poetassistant.main.Tab;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFavoriteClickListener;
 
 
 public class ResultListFragment<T> extends Fragment
@@ -65,7 +68,7 @@ public class ResultListFragment<T> extends Fragment
     private static final int ACTION_FILTER = 0;
     private static final String DIALOG_TAG = "dialog";
     private static final String EXTRA_FILTER = "filter";
-    static final String EXTRA_TAB = "tab";
+    public static final String EXTRA_TAB = "tab";
     static final String EXTRA_QUERY = "query";
     private FragmentResultListBinding mBinding;
     private final HeaderButtonListener mHeaderButtonListener = new HeaderButtonListener();
@@ -91,7 +94,7 @@ public class ResultListFragment<T> extends Fragment
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mBinding.recyclerView.setHasFixedSize(true);
 
-        if (mTab == Tab.RHYMER || mTab == Tab.THESAURUS) mBinding.btnFilter.setVisibility(View.VISIBLE);
+        ResultListFactory.updateListHeaderButtonsVisbility(mBinding, mTab, TextToSpeech.ERROR);
         mBinding.tvFilterLabel.setText(ResultListFactory.getFilterLabel(getActivity(), mTab));
 
 
@@ -168,9 +171,7 @@ public class ResultListFragment<T> extends Fragment
     }
 
     private void updatePlayButton() {
-        int ttsStatus = mTts.getStatus();
-        int playButtonVisibility = ttsStatus == TextToSpeech.SUCCESS ? View.VISIBLE : View.GONE;
-        mBinding.btnPlay.setVisibility(playButtonVisibility);
+        ResultListFactory.updateListHeaderButtonsVisbility(mBinding, mTab, mTts.getStatus());
     }
 
     @Override
@@ -185,7 +186,7 @@ public class ResultListFragment<T> extends Fragment
             query = args.getString(EXTRA_QUERY);
             filter = args.getString(EXTRA_FILTER);
             mBinding.tvListHeader.setText(query);
-            mData = new ResultListData<>(query, Collections.emptyList());
+            mData = new ResultListData<>(query, false, Collections.emptyList());
         }
         mBinding.empty.setVisibility(View.GONE);
         mBinding.listHeader.setVisibility(View.VISIBLE);
@@ -242,6 +243,9 @@ public class ResultListFragment<T> extends Fragment
             mBinding.empty.setVisibility(View.GONE);
             mBinding.recyclerView.setVisibility(View.VISIBLE);
         }
+
+        if (mData != null) mBinding.btnStarQuery.setChecked(mData.isFavorite);
+
         getActivity().supportInvalidateOptionsMenu();
     }
 
@@ -278,6 +282,11 @@ public class ResultListFragment<T> extends Fragment
             mTts.speak(mBinding.tvListHeader.getText().toString());
         }
 
+        public void onFavoriteButtonClicked(View v) {
+            String word = mBinding.tvListHeader.getText().toString();
+            ((OnFavoriteClickListener) getActivity()).onFavoriteToggled(word, ((CheckBox)v).isChecked());
+        }
+
         public void onWebSearchButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             Intent searchIntent = new Intent(Intent.ACTION_WEB_SEARCH);
             String word = mBinding.tvListHeader.getText().toString();
@@ -298,6 +307,10 @@ public class ResultListFragment<T> extends Fragment
                     ACTION_FILTER,
                     mBinding.tvFilter.getText().toString());
             getChildFragmentManager().beginTransaction().add(fragment, DIALOG_TAG).commit();
+        }
+
+        public void onHelpButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
+            getFragmentManager().beginTransaction().add(new HelpDialogFragment(), DIALOG_TAG).commit();
         }
 
         public void onFilterClearButtonClicked(@SuppressWarnings("UnusedParameters") View v) {

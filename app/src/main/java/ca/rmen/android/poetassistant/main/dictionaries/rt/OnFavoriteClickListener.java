@@ -19,8 +19,6 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
-import ca.rmen.android.poetassistant.main.Tab;
-
-public interface OnWordClickedListener {
-    void onWordClicked(String word, Tab tab);
+public interface OnFavoriteClickListener {
+    void onFavoriteToggled(String word, boolean isFavorite);
 }

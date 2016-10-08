@@ -25,6 +25,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -33,6 +34,7 @@ import android.view.ViewTreeObserver;
 import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.main.PagerAdapter;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
@@ -51,12 +53,14 @@ public class Search {
     private static final String TAG = Constants.TAG + Search.class.getSimpleName();
     private SearchView mSearchView;
     private final ViewPager mViewPager;
+    private final PagerAdapter mPagerAdapter;
     private final SuggestionsAdapter mSuggestionsAdapter;
     private final Activity mSearchableActivity;
 
     public Search(Activity searchableActivity, ViewPager viewPager) {
         mSearchableActivity = searchableActivity;
         mViewPager = viewPager;
+        mPagerAdapter = (PagerAdapter) viewPager.getAdapter();
         mSuggestionsAdapter = new SuggestionsAdapter(mSearchableActivity);
     }
 
@@ -76,11 +80,11 @@ public class Search {
      */
     public void search(String word, Tab tab) {
         Log.d(TAG, "search() called with: " + "word = [" + word + "], tab = [" + tab + "]");
-        mViewPager.setCurrentItem(tab.ordinal());
+        mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab));
         word = word.trim().toLowerCase(Locale.US);
         // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
         // We want to retrieve the existing fragment.
-        ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, tab.ordinal())).query(word);
+        ((ResultListFragment) mPagerAdapter.getFragment(mViewPager, tab)).query(word);
     }
 
     /**
@@ -88,20 +92,24 @@ public class Search {
      */
     public void search(String word) {
         Log.d(TAG, "search() called with: " + "word = [" + word + "]");
-        // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
-        // We want to retrieve the existing fragment.
+        String wordTrimmed = word.trim().toLowerCase(Locale.US);
+
+        selectTabForSearch(wordTrimmed);
         final Runnable performSearch = () -> {
-            String wordTrimmed = word.trim().toLowerCase(Locale.US);
-            ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.RHYMER.ordinal())).query(wordTrimmed);
-            ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.THESAURUS.ordinal())).query(wordTrimmed);
-            ((ResultListFragment) mViewPager.getAdapter().instantiateItem(mViewPager, Tab.DICTIONARY.ordinal())).query(wordTrimmed);
+            if (Patterns.isPattern(wordTrimmed)) {
+                ((ResultListFragment) mPagerAdapter.getFragment(mViewPager, Tab.PATTERN)).query(wordTrimmed);
+            } else {
+                ((ResultListFragment) mPagerAdapter.getFragment(mViewPager, Tab.RHYMER)).query(wordTrimmed);
+                ((ResultListFragment) mPagerAdapter.getFragment(mViewPager, Tab.THESAURUS)).query(wordTrimmed);
+                ((ResultListFragment) mPagerAdapter.getFragment(mViewPager, Tab.DICTIONARY)).query(wordTrimmed);
+            }
         };
         // Issue #19: In a specific scenario, the fragments may not be "ready" yet (onCreateView() may not have been called).
         // Wait until the ViewPager is laid out before invoking anything on the fragments.
         // (We assume that the fragments are "ready" once the ViewPager is laid out.)
         if (mViewPager.isShown()) {
             Log.d(TAG, "searching immediately");
-            performSearch.run();
+            mViewPager.post(performSearch);
         } else {
             mViewPager.getViewTreeObserver().addOnGlobalLayoutListener(
                     new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -114,6 +122,35 @@ public class Search {
                     }
             );
         }
+    }
+
+    /**
+     * Navigate to the appropriate tag for the search term:
+     * If it's a pattern, open the pattern tab.
+     * If it's any other word:
+     *  - If we're in the reader tab, go to rhymer tab
+     *  - Otherwise stay in the current tab
+     */
+    private void selectTabForSearch(String word) {
+        final boolean isPattern = Patterns.isPattern(word);
+        Tab currentTab = mPagerAdapter.getTabForPosition(mViewPager.getCurrentItem());
+        // If we're searching for a pattern, open the pattern tab
+        if (isPattern) {
+            if (currentTab != Tab.PATTERN) {
+                Fragment patternTab = mPagerAdapter.getFragment(mViewPager, Tab.PATTERN);
+                if (patternTab == null) {
+                    mPagerAdapter.setPatternTabVisible(true);
+                }
+                mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.PATTERN));
+            }
+        } else {
+            mPagerAdapter.setPatternTabVisible(false);
+            // If we're in the pattern tab but not searching for a pattern, go to the rhymer tab.
+            if (currentTab == Tab.PATTERN || currentTab == Tab.READER) {
+                mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.RHYMER));
+            }
+        }
+
     }
 
     /**
@@ -132,7 +169,7 @@ public class Search {
             protected void onPostExecute(@Nullable String word) {
                 if (word != null) {
                     search(word);
-                    mViewPager.setCurrentItem(Tab.DICTIONARY.ordinal());
+                    mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY));
                 }
             }
         }.execute();

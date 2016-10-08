@@ -31,15 +31,17 @@ public class RTEntry {
     public final Type type;
     public final String text;
     public final @ColorInt int backgroundColor;
+    public final boolean isFavorite;
 
     public RTEntry(Type type, String text) {
-        this(type, text, 0);
+        this(type, text, 0, false);
     }
 
-    public RTEntry(Type type, String text, @ColorInt int backgroundColor) {
+    public RTEntry(Type type, String text, @ColorInt int backgroundColor, boolean isFavorite) {
         this.type = type;
         this.text = text;
         this.backgroundColor = backgroundColor;
+        this.isFavorite = isFavorite;
     }
 
     @Override

@@ -17,18 +17,10 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries;
+package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
-import java.util.List;
+import ca.rmen.android.poetassistant.main.Tab;
 
-public class ResultListData<T> {
-    final String matchedWord;
-    public final boolean isFavorite;
-    public final List<T> data;
-
-    public ResultListData(String matchedWord, boolean isFavorite, List<T> data) {
-        this.matchedWord = matchedWord;
-        this.isFavorite = isFavorite;
-        this.data = data;
-    }
+public interface OnWordClickListener {
+    void onWordClick(String word, Tab tab);
 }

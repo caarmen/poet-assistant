@@ -26,6 +26,9 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -33,6 +36,7 @@ import java.util.Set;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 
 public class ThesaurusLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
@@ -41,6 +45,7 @@ public class ThesaurusLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
 
     private final String mQuery;
     private final String mFilter;
+    private final Favorites mFavorites;
     private ResultListData<RTEntry> mResult;
 
 
@@ -48,6 +53,8 @@ public class ThesaurusLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
         super(context);
         mQuery = query;
         mFilter = filter;
+        mFavorites = new Favorites(context);
+
     }
 
     @Override
@@ -66,16 +73,17 @@ public class ThesaurusLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
             entries = filter(entries, rhymes);
         }
 
+        Set<String> favorites = mFavorites.getFavorites();
         for (ThesaurusEntry.ThesaurusEntryDetails entry : entries) {
             data.add(new RTEntry(RTEntry.Type.HEADING, entry.wordType.name().toLowerCase(Locale.US)));
-            addResultSection(data, R.string.thesaurus_section_synonyms, entry.synonyms);
-            addResultSection(data, R.string.thesaurus_section_antonyms, entry.antonyms);
+            addResultSection(favorites, data, R.string.thesaurus_section_synonyms, entry.synonyms);
+            addResultSection(favorites, data, R.string.thesaurus_section_antonyms, entry.antonyms);
         }
-        return new ResultListData<>(result.word, data);
+        return new ResultListData<>(result.word, favorites.contains(result.word), data);
     }
 
     private ResultListData<RTEntry> emptyResult() {
-        return new ResultListData<>(mQuery, new ArrayList<>());
+        return new ResultListData<>(mQuery, false, new ArrayList<>());
     }
 
     @Override
@@ -89,11 +97,24 @@ public class ThesaurusLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
     protected void onStartLoading() {
         super.onStartLoading();
         Log.d(TAG, "onStartLoading() called with: query = " + mQuery + ", filter = " + mFilter);
+        if (!EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         if (mResult != null) super.deliverResult(mResult);
         else forceLoad();
     }
 
-    private void addResultSection(List<RTEntry> results, int sectionHeadingResId, String[] words) {
+    @Override
+    protected void onReset() {
+        if (EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
+        super.onReset();
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe
+    public void onFavoritesChanged(Favorites.OnFavoritesChanged event) {
+        onContentChanged();
+    }
+
+    private void addResultSection(Set<String> favorites, List<RTEntry> results, int sectionHeadingResId, String[] words) {
         if (words.length > 0) {
             results.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
             for (int i = 0; i < words.length; i++) {
@@ -101,7 +122,8 @@ public class ThesaurusLoader extends AsyncTaskLoader<ResultListData<RTEntry>> {
                 results.add(new RTEntry(
                         RTEntry.Type.WORD,
                         words[i],
-                        ContextCompat.getColor(getContext(), color)));
+                        ContextCompat.getColor(getContext(), color),
+                        favorites.contains(words[i])));
             }
         }
     }
