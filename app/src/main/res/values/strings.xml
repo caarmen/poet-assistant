@@ -35,12 +35,14 @@
     <string name="rhyme_section_three_syllables">Last-3-syllables matches:</string>
     <string name="thesaurus_section_synonyms">Synonyms:</string>
     <string name="thesaurus_section_antonyms">Antonyms:</string>
+    <string name="empty_pattern_list_with_query">Sorry, no words match &#8220;%s&#8221;</string>
     <string name="empty_rhymer_list_with_query">Sorry, no rhymes for &#8220;%s&#8221;</string>
     <string name="empty_thesaurus_list_with_query">Sorry, no synonyms for &#8220;%s&#8221;</string>
     <string name="empty_dictionary_list_with_query">Sorry, no definitions for &#8220;%s&#8221;</string>
     <string name="empty_list_without_query">Tap on %s to look up a word.</string>
     <string name="action_web_search">Look up %s</string>
     <string name="filter_hint">Filter results</string>
+    <string name="help">Help</string>
     <string name="tts_play">Play</string>
     <string name="tts_hint">Paste your poem here and press the play icon to listen to it.</string>
     <string name="about_title">About %s</string>
@@ -83,6 +85,7 @@
     <string name="wotd_notification_title">Word of the day: %s</string>
     <string name="wotd_notification_definition"><![CDATA[<br>\n<b>%1$s.</b> %2$s]]></string>
     <string name="share">Share</string>
+    <string name="share_patterns_title">Words matching %s:\n</string>
     <string name="share_rhymer_title">Rhymes for %s:\n</string>
     <string name="share_thesaurus_title">Synonyms for %s:\n</string>
     <string name="share_rhymer_title_with_filter">Rhymes for %1$s which are synonyms of %2$s:\n</string>
@@ -94,6 +97,13 @@
     <string name="share_dictionary_entry">\n%1$s. %2$s</string>
     <string name="warning_no_space_title">Insufficient storage space</string>
     <string name="warning_no_space_message">Your device doesn\'t have enough storage space to use Poet Assistant. Try to free up some space.</string>
+    <string name="pattern_help_title">Pattern search</string>
+    <string name="pattern_help_message"><![CDATA[Use wildcards to search for words with a pattern.<br/>
+<br/>
+<b>?</b> matches a single character<br/>
+<b>*</b> matches multiple characters]]></string>
+
+    <string name="max_results">Limited to %d matches</string>
 
     <!-- Strings related to Settings -->
     <string translatable="false" name="pref_voice_value_with_country"><![CDATA[%1$s (%2$s)<br/><font color=\'#888888\'><small>%3$s</small></font>]]></string>

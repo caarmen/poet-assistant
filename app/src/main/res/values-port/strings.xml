@@ -18,6 +18,7 @@
   -->
 
 <resources>
+    <string name="tab_pattern">Patt.</string>
     <string name="tab_rhymer">Rhymer</string>
     <string name="tab_thesaurus">Thes.</string>
     <string name="tab_dictionary">Dict.</string>

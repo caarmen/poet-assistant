@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
     private Search mSearch;
     private ActivityMainBinding mBinding;
     private Favorites mFavorites;
+    private PagerAdapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +74,11 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         setSupportActionBar(mBinding.toolbar);
         Intent intent = getIntent();
         Uri data = intent.getData();
-        PagerAdapter pagerAdapter = new PagerAdapter(this, getSupportFragmentManager(), intent);
+        mPagerAdapter = new PagerAdapter(this, getSupportFragmentManager(), intent);
 
         // Set up the ViewPager with the sections adapter.
-        mBinding.viewPager.setAdapter(pagerAdapter);
-        mBinding.viewPager.setOffscreenPageLimit(3);
+        mBinding.viewPager.setAdapter(mPagerAdapter);
+        mBinding.viewPager.setOffscreenPageLimit(4);
         mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener);
 
         mBinding.tabs.setupWithViewPager(mBinding.viewPager);
@@ -85,14 +86,15 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         // If the app was launched with a query for the thesaurus, focus on that tab.
         if (data != null) {
             if (data.getHost().equalsIgnoreCase(Constants.DEEP_LINK_QUERY)) {
-                mBinding.viewPager.setCurrentItem(Tab.DICTIONARY.ordinal());
+                mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY));
             } else if (data.getHost().equalsIgnoreCase(Tab.RHYMER.name().toLowerCase(Locale.US))) {
-                mBinding.viewPager.setCurrentItem(Tab.RHYMER.ordinal());
+                mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.RHYMER));
             } else if (data.getHost().equalsIgnoreCase(Tab.THESAURUS.name().toLowerCase(Locale.US))) {
-                mBinding.viewPager.setCurrentItem(Tab.THESAURUS.ordinal());
+                mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.THESAURUS));
             }
-        } else if (Intent.ACTION_SEND.equals(intent.getAction()))
-            mBinding.viewPager.setCurrentItem(Tab.READER.ordinal());
+        } else if (Intent.ACTION_SEND.equals(intent.getAction())) {
+            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER));
+        }
 
         mSearch = new Search(this, mBinding.viewPager);
         loadDictionaries();
@@ -137,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
             if (TextUtils.isEmpty(query)) query = intent.getStringExtra(SearchManager.USER_QUERY);
             if (TextUtils.isEmpty(query)) return;
             mSearch.search(query);
-            if (mBinding.viewPager.getCurrentItem() == Tab.READER.ordinal()) mBinding.viewPager.setCurrentItem(Tab.RHYMER.ordinal());
         }
         // We got here from a deep link
         else if (Intent.ACTION_VIEW.equals(intent.getAction())) {
@@ -146,9 +147,9 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         }
         // Play some text in the tts tab
         else if (Intent.ACTION_SEND.equals(intent.getAction())) {
-            mBinding.viewPager.setCurrentItem(Tab.READER.ordinal());
+            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER));
             String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-            ReaderFragment readerFragment = (ReaderFragment) mBinding.viewPager.getAdapter().instantiateItem(mBinding.viewPager, Tab.READER.ordinal());
+            ReaderFragment readerFragment = (ReaderFragment) mPagerAdapter.getFragment(mBinding.viewPager, Tab.READER);
             readerFragment.setText(sharedText);
         }
     }
@@ -159,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         String word = uri.getLastPathSegment();
         if(Constants.DEEP_LINK_QUERY.equals(uri.getHost())) {
             mSearch.search(word);
-            mBinding.viewPager.setCurrentItem(Tab.DICTIONARY.ordinal());
+            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY));
         } else {
             Tab tab = Tab.parse(uri.getHost());
             if (tab != null) mSearch.search(word, tab);
@@ -225,7 +226,8 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         @Override
         public void onPageSelected(int position) {
             super.onPageSelected(position);
-            if (position != Tab.READER.ordinal()) {
+            Tab tab = mPagerAdapter.getTabForPosition(position);
+            if (tab != Tab.READER) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mBinding.viewPager.getWindowToken(), 0);
             }

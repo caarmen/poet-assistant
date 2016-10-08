@@ -22,17 +22,22 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
+import android.view.View;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListExporter;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternListExporter;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListExporter;
@@ -52,6 +57,7 @@ public class ResultListFactory {
         Log.d(TAG, "createListFragment() called with: " + "tab= [" + tab + "], initialQuery = [" + initialQuery + "]");
         ResultListFragment<?> fragment;
         switch (tab) {
+            case PATTERN:
             case RHYMER:
             case THESAURUS:
                 fragment = new ResultListFragment<RTEntry>();
@@ -72,6 +78,7 @@ public class ResultListFactory {
 
     static ResultListAdapter<?> createAdapter(Activity activity, Tab tab) {
         switch (tab) {
+            case PATTERN:
             case RHYMER:
             case THESAURUS:
                 return new RTListAdapter(activity);
@@ -83,6 +90,8 @@ public class ResultListFactory {
 
     static AsyncTaskLoader<? extends ResultListData<?>> createLoader(Tab tab, Activity activity, String query, String filter) {
         switch (tab) {
+            case PATTERN:
+                return new PatternLoader(activity, query);
             case RHYMER:
                 return new RhymerLoader(activity, query, filter);
             case THESAURUS:
@@ -96,6 +105,8 @@ public class ResultListFactory {
 
     static ResultListExporter<?> createExporter(Context context, Tab tab) {
         switch (tab) {
+            case PATTERN:
+                return new PatternListExporter(context);
             case RHYMER:
                 return new RhymerListExporter(context);
             case THESAURUS:
@@ -132,6 +143,8 @@ public class ResultListFactory {
 
     static String getEmptyListText(Context context, Tab tab, String query) {
         switch (tab) {
+            case PATTERN:
+                return context.getString(R.string.empty_pattern_list_with_query, query);
             case RHYMER:
                 return context.getString(R.string.empty_rhymer_list_with_query, query);
             case THESAURUS:
@@ -139,6 +152,28 @@ public class ResultListFactory {
             case DICTIONARY:
             default:
                 return context.getString(R.string.empty_dictionary_list_with_query, query);
+        }
+    }
+
+    /**
+     * Set the various buttons which appear in the result list header (ex: tts play,
+     * web search, filter, help) to visible or gone, depending on the tab.
+     */
+    static void updateListHeaderButtonsVisbility(FragmentResultListBinding fragmentResultListBinding, Tab tab, int textToSpeechStatus) {
+        switch (tab) {
+            case PATTERN:
+                fragmentResultListBinding.btnHelp.setVisibility(View.VISIBLE);
+                fragmentResultListBinding.btnPlay.setVisibility(View.GONE);
+                fragmentResultListBinding.btnWebSearch.setVisibility(View.GONE);
+                fragmentResultListBinding.btnStarQuery.setVisibility(View.GONE);
+                break;
+            case RHYMER:
+            case THESAURUS:
+                fragmentResultListBinding.btnFilter.setVisibility(View.VISIBLE);
+            case DICTIONARY:
+                int playButtonVisibility = textToSpeechStatus == TextToSpeech.SUCCESS ? View.VISIBLE : View.GONE;
+                fragmentResultListBinding.btnPlay.setVisibility(playButtonVisibility);
+            default:
         }
     }
 }
