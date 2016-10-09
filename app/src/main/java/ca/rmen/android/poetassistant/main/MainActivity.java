@@ -23,12 +23,15 @@ import android.app.ActivityManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -84,13 +87,15 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         Intent intent = getIntent();
         Uri data = intent.getData();
         mPagerAdapter = new PagerAdapter(this, getSupportFragmentManager(), intent);
+        mPagerAdapter.registerDataSetObserver(mAdapterChangeListener);
 
         // Set up the ViewPager with the sections adapter.
         mBinding.viewPager.setAdapter(mPagerAdapter);
-        mBinding.viewPager.setOffscreenPageLimit(4);
+        mBinding.viewPager.setOffscreenPageLimit(5);
         mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener);
 
         mBinding.tabs.setupWithViewPager(mBinding.viewPager);
+        mAdapterChangeListener.onChanged();
 
         // If the app was launched with a query for the thesaurus, focus on that tab.
         if (data != null) {
@@ -186,18 +191,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem menuItem = menu.findItem(R.id.action_toggle_favorites);
-        Fragment favoritesFragment = mPagerAdapter.getFragment(mBinding.viewPager, Tab.FAVORITES);
-        if (favoritesFragment == null) {
-            menuItem.setTitle(R.string.action_show_favorites);
-        } else {
-            menuItem.setTitle(R.string.action_hide_favorites);
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_about) {
             Intent intent = new Intent(this, AboutActivity.class);
@@ -209,16 +202,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         } else if (item.getItemId() == R.id.action_clear_search_history) {
             mSearch.clearSearchHistory();
             Snackbar.make(mBinding.getRoot(), R.string.search_history_cleared, Snackbar.LENGTH_SHORT).show();
-            return true;
-        } else if (item.getItemId() == R.id.action_toggle_favorites) {
-            Fragment favoritesFragment = mPagerAdapter.getFragment(mBinding.viewPager, Tab.FAVORITES);
-            if (favoritesFragment == null) {
-                mPagerAdapter.setFavoritesTabVisible(true);
-                mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.FAVORITES));
-            } else {
-                mPagerAdapter.setFavoritesTabVisible(false);
-            }
-            supportInvalidateOptionsMenu();
             return true;
         } else if (item.getItemId() == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
@@ -257,6 +240,24 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
             if (tab != Tab.READER) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mBinding.viewPager.getWindowToken(), 0);
+            }
+        }
+    };
+
+    private final DataSetObserver mAdapterChangeListener = new DataSetObserver() {
+        @Override
+        public void onChanged() {
+            for (int i=0; i < mBinding.tabs.getTabCount(); i++) {
+                Drawable icon = mPagerAdapter.getIcon(i);
+                TabLayout.Tab tab = mBinding.tabs.getTabAt(i);
+                if (tab != null) {
+                    if (icon != null) {
+                        tab.setIcon(icon);
+                    }
+                    if (!getResources().getBoolean(R.bool.tab_text)) {
+                        tab.setText(null);
+                    }
+                }
             }
         }
     };

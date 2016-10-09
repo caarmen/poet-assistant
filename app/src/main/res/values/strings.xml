@@ -19,12 +19,18 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Poet Assistant</string>
+
+    <string name="tab_pattern">Pattern</string>
+    <string name="tab_favorites">Favorites</string>
+    <string name="tab_rhymer">Rhymer</string>
+    <string name="tab_thesaurus">Thesaurus</string>
+    <string name="tab_dictionary">Dictionary</string>
+    <string name="tab_reader">Reader</string>
+
     <string name="action_search">Search</string>
     <string name="action_random_word">Random word</string>
     <string name="action_clear_search_history">Clear search history</string>
     <string name="action_clear_favorites">Clear all favorite words?</string>
-    <string name="action_show_favorites">Show favorites</string>
-    <string name="action_hide_favorites">Hide favorites</string>
     <string name="search_history_cleared">Search history cleared.</string>
     <string name="favorites_cleared">Favorites cleared.</string>
     <string name="action_settings">Settings</string>

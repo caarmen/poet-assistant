@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ Copyright (c) 2016 Carmen Alvarez
   ~
@@ -16,13 +17,7 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
-
 <resources>
-    <string name="tab_pattern">Pattern</string>
-    <string name="tab_favorites">Favorites</string>
-    <string name="tab_rhymer">Rhymer</string>
-    <string name="tab_thesaurus">Thesaurus</string>
-    <string name="tab_dictionary">Dictionary</string>
-    <string name="tab_reader">Reader</string>
+    <bool name="tab_icons">true</bool>
+    <bool name="tab_text">true</bool>
 </resources>
-

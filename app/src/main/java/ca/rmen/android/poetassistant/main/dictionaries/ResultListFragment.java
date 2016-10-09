@@ -298,7 +298,7 @@ public class ResultListFragment<T> extends Fragment
             ((OnFavoriteClickListener) getActivity()).onFavoriteToggled(word, ((CheckBox)v).isChecked());
         }
 
-        public void onDeleteFavoritesButtonClicked(View v) {
+        public void onDeleteFavoritesButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             ConfirmDialogFragment fragment = ConfirmDialogFragment.create(
                     ACTION_CLEAR_FAVORITES,
                     getString(R.string.action_clear_favorites));

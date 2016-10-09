@@ -19,4 +19,6 @@
   -->
 <resources>
     <bool name="wotd_boot_receiver_enabled">true</bool>
+    <bool name="tab_icons">true</bool>
+    <bool name="tab_text">false</bool>
 </resources>

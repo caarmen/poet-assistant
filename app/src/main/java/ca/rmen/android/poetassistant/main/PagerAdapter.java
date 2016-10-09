@@ -21,12 +21,17 @@ package ca.rmen.android.poetassistant.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.DrawableRes;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
 import android.view.ViewGroup;
 
@@ -37,7 +42,6 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
-import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 /**
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -48,9 +52,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
     private static final String EXTRA_IS_PATTERN_TAB_VISIBLE = "is_pattern_tab_visible";
 
     private final Context mContext;
-    private final SettingsPrefs mPrefs;
     private boolean mIsPatternTabVisible;
-    private boolean mIsFavoritesTabVisible;
     private String mInitialPatternQuery;
     private String mInitialRhymeQuery;
     private String mInitialThesaurusQuery;
@@ -61,7 +63,6 @@ public class PagerAdapter extends FragmentPagerAdapter {
         super(fm);
         Log.v(TAG, "Constructor: intent = " + intent);
         mContext = context;
-        mPrefs = SettingsPrefs.get(context.getApplicationContext());
         Uri initialQuery = intent.getData();
         // Deep link to query in a specific tab
         if (initialQuery != null) {
@@ -84,26 +85,12 @@ public class PagerAdapter extends FragmentPagerAdapter {
         else if (Intent.ACTION_SEND.equals(intent.getAction())) {
             mInitialPoemText = intent.getStringExtra(Intent.EXTRA_TEXT);
         }
-
-        setFavoritesTabVisible(mPrefs.getIsFavoritesTabVisible());
     }
 
     public void setPatternTabVisible(boolean visible) {
         Log.v(TAG, "setPatternTabVisible: " + mIsPatternTabVisible + "->" + visible);
         if (mIsPatternTabVisible != visible) {
-            if (visible) mIsFavoritesTabVisible = false;
-            else if (mPrefs.getIsFavoritesTabVisible()) mIsFavoritesTabVisible = true;
             mIsPatternTabVisible = visible;
-            notifyDataSetChanged();
-        }
-    }
-
-    public void setFavoritesTabVisible(boolean visible) {
-        Log.v(TAG, "setFavoritesTabVisible: " + mIsFavoritesTabVisible + "->" + visible);
-        if (mIsFavoritesTabVisible != visible) {
-            if (visible) mIsPatternTabVisible = false;
-            mIsFavoritesTabVisible = visible;
-            mPrefs.putIsFavoritesTabVisible(visible);
             notifyDataSetChanged();
         }
     }
@@ -142,24 +129,36 @@ public class PagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return mIsPatternTabVisible || mIsFavoritesTabVisible ? 5 : 4;
+        return mIsPatternTabVisible ? 6 : 5;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
         Tab tab = getTabForPosition(position);
+        return ResultListFactory.getTabName(mContext, tab);
+    }
+
+    Drawable getIcon(int position) {
+        if (!mContext.getResources().getBoolean(R.bool.tab_icons)) return null;
+        Tab tab = getTabForPosition(position);
         if (tab == Tab.PATTERN)
-            return mContext.getString(R.string.tab_pattern).toUpperCase(Locale.getDefault());
+            return getTintedIcon(R.drawable.ic_pattern);
         else if (tab == Tab.FAVORITES)
-            return mContext.getString(R.string.tab_favorites).toUpperCase(Locale.getDefault());
+            return getTintedIcon(R.drawable.ic_star_activated_vector);
         else if (tab == Tab.RHYMER)
-            return mContext.getString(R.string.tab_rhymer).toUpperCase(Locale.getDefault());
+            return getTintedIcon(R.drawable.ic_rhymer);
         else if (tab == Tab.THESAURUS)
-            return mContext.getString(R.string.tab_thesaurus).toUpperCase(Locale.getDefault());
+            return getTintedIcon(R.drawable.ic_thesaurus);
         else if (tab == Tab.DICTIONARY)
-            return mContext.getString(R.string.tab_dictionary).toUpperCase(Locale.getDefault());
+            return getTintedIcon(R.drawable.ic_dictionary);
         else
-            return mContext.getString(R.string.tab_reader).toUpperCase(Locale.getDefault());
+            return getTintedIcon(R.drawable.ic_play_enabled);
+    }
+
+    private Drawable getTintedIcon(@DrawableRes int drawableRes) {
+        Drawable drawable = VectorDrawableCompat.create(mContext.getResources(), drawableRes, null).mutate();
+        DrawableCompat.setTintList(drawable, ContextCompat.getColorStateList(mContext, R.color.tab_icon));
+        return drawable;
     }
 
     @Override
@@ -174,9 +173,6 @@ public class PagerAdapter extends FragmentPagerAdapter {
         Bundle bundle = (Bundle) state;
         boolean isPatternTabVisible = bundle.getBoolean(EXTRA_IS_PATTERN_TAB_VISIBLE);
         setPatternTabVisible(isPatternTabVisible);
-        if (!isPatternTabVisible) {
-            setFavoritesTabVisible(mPrefs.getIsFavoritesTabVisible());
-        }
     }
 
     public Fragment getFragment(ViewGroup viewGroup, Tab tab) {
@@ -195,37 +191,14 @@ public class PagerAdapter extends FragmentPagerAdapter {
     }
 
     public Tab getTabForPosition(int position) {
-        if (mIsPatternTabVisible) {
-            if (position == 0) return Tab.PATTERN;
-            return Tab.values()[position + 1];
-        }
-        if (mIsFavoritesTabVisible) {
-            if (position == 0) return Tab.FAVORITES;
-            return Tab.values()[position + 1];
-        }
-
-        return Tab.values()[position + 2];
+        return Tab.values()[position];
     }
 
     public int getPositionForTab(Tab tab) {
-        // If we're showing the pattern tab, we have:
-        // pattern, rhymer, thesaurus, dictionary, reader
-        if (mIsPatternTabVisible) {
-            if (tab == Tab.PATTERN) return tab.ordinal();
-            if (tab == Tab.FAVORITES) return POSITION_NONE;
-            return tab.ordinal() - 1;
+        if (tab == Tab.PATTERN) {
+            return mIsPatternTabVisible ? tab.ordinal() : POSITION_NONE;
         }
-        // If we're showing the favorites tab, we have:
-        // favorites, rhymer, thesaurus, dictionary, reader
-        if (mIsFavoritesTabVisible) {
-            if (tab == Tab.PATTERN) return POSITION_NONE;
-            if (tab == Tab.FAVORITES) return tab.ordinal() - 1;
-            return tab.ordinal() - 1;
-        }
-
-        // By default we have rhymer, thesaurus, dictionary, reader
-        if (tab == Tab.PATTERN || tab == Tab.FAVORITES) return POSITION_NONE;
-        return tab.ordinal() - 2;
+        return tab.ordinal();
     }
 
 }
