@@ -35,8 +35,6 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
 import android.view.ViewGroup;
 
-import java.util.Locale;
-
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory;
