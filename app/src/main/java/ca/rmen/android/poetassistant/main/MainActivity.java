@@ -31,6 +31,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -248,7 +249,15 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         public void onChanged() {
             for (int i=0; i < mBinding.tabs.getTabCount(); i++) {
                 Drawable icon = mPagerAdapter.getIcon(i);
-                if (icon != null) mBinding.tabs.getTabAt(i).setIcon(icon);
+                TabLayout.Tab tab = mBinding.tabs.getTabAt(i);
+                if (tab != null) {
+                    if (icon != null) {
+                        tab.setIcon(icon);
+                    }
+                    if (!getResources().getBoolean(R.bool.tab_text)) {
+                        tab.setText(null);
+                    }
+                }
             }
         }
     };

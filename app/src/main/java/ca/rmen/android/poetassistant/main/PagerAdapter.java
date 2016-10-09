@@ -134,21 +134,8 @@ public class PagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        if (!mContext.getResources().getBoolean(R.bool.tab_text)) return null;
-
         Tab tab = getTabForPosition(position);
-        if (tab == Tab.PATTERN)
-            return mContext.getString(R.string.tab_pattern).toUpperCase(Locale.getDefault());
-        else if (tab == Tab.FAVORITES)
-            return mContext.getString(R.string.tab_favorites).toUpperCase(Locale.getDefault());
-        else if (tab == Tab.RHYMER)
-            return mContext.getString(R.string.tab_rhymer).toUpperCase(Locale.getDefault());
-        else if (tab == Tab.THESAURUS)
-            return mContext.getString(R.string.tab_thesaurus).toUpperCase(Locale.getDefault());
-        else if (tab == Tab.DICTIONARY)
-            return mContext.getString(R.string.tab_dictionary).toUpperCase(Locale.getDefault());
-        else
-            return mContext.getString(R.string.tab_reader).toUpperCase(Locale.getDefault());
+        return ResultListFactory.getTabName(mContext, tab);
     }
 
     Drawable getIcon(int position) {
