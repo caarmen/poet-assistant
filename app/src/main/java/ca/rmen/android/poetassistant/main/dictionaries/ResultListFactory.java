@@ -27,6 +27,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
+import java.util.Locale;
+
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
@@ -190,5 +192,20 @@ public class ResultListFactory {
                 fragmentResultListBinding.btnPlay.setVisibility(playButtonVisibility);
             default:
         }
+    }
+
+    public static String getTabName(Context context, Tab tab) {
+        if (tab == Tab.PATTERN)
+            return context.getString(R.string.tab_pattern).toUpperCase(Locale.getDefault());
+        else if (tab == Tab.FAVORITES)
+            return context.getString(R.string.tab_favorites).toUpperCase(Locale.getDefault());
+        else if (tab == Tab.RHYMER)
+            return context.getString(R.string.tab_rhymer).toUpperCase(Locale.getDefault());
+        else if (tab == Tab.THESAURUS)
+            return context.getString(R.string.tab_thesaurus).toUpperCase(Locale.getDefault());
+        else if (tab == Tab.DICTIONARY)
+            return context.getString(R.string.tab_dictionary).toUpperCase(Locale.getDefault());
+        else
+            return context.getString(R.string.tab_reader).toUpperCase(Locale.getDefault());
     }
 }

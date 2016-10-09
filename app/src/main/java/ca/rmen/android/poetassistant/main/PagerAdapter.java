@@ -21,12 +21,17 @@ package ca.rmen.android.poetassistant.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.DrawableRes;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
 import android.view.ViewGroup;
 
@@ -130,18 +135,30 @@ public class PagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         Tab tab = getTabForPosition(position);
+        return ResultListFactory.getTabName(mContext, tab);
+    }
+
+    Drawable getIcon(int position) {
+        if (!mContext.getResources().getBoolean(R.bool.tab_icons)) return null;
+        Tab tab = getTabForPosition(position);
         if (tab == Tab.PATTERN)
-            return mContext.getString(R.string.tab_pattern).toUpperCase(Locale.getDefault());
+            return getTintedIcon(R.drawable.ic_pattern);
         else if (tab == Tab.FAVORITES)
-            return mContext.getString(R.string.tab_favorites).toUpperCase(Locale.getDefault());
+            return getTintedIcon(R.drawable.ic_star_activated_vector);
         else if (tab == Tab.RHYMER)
-            return mContext.getString(R.string.tab_rhymer).toUpperCase(Locale.getDefault());
+            return getTintedIcon(R.drawable.ic_rhymer);
         else if (tab == Tab.THESAURUS)
-            return mContext.getString(R.string.tab_thesaurus).toUpperCase(Locale.getDefault());
+            return getTintedIcon(R.drawable.ic_thesaurus);
         else if (tab == Tab.DICTIONARY)
-            return mContext.getString(R.string.tab_dictionary).toUpperCase(Locale.getDefault());
+            return getTintedIcon(R.drawable.ic_dictionary);
         else
-            return mContext.getString(R.string.tab_reader).toUpperCase(Locale.getDefault());
+            return getTintedIcon(R.drawable.ic_play_enabled);
+    }
+
+    private Drawable getTintedIcon(@DrawableRes int drawableRes) {
+        Drawable drawable = VectorDrawableCompat.create(mContext.getResources(), drawableRes, null).mutate();
+        DrawableCompat.setTintList(drawable, ContextCompat.getColorStateList(mContext, R.color.tab_icon));
+        return drawable;
     }
 
     @Override

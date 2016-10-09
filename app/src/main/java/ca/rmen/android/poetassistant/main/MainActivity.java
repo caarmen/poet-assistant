@@ -23,12 +23,15 @@ import android.app.ActivityManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -84,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         Intent intent = getIntent();
         Uri data = intent.getData();
         mPagerAdapter = new PagerAdapter(this, getSupportFragmentManager(), intent);
+        mPagerAdapter.registerDataSetObserver(mAdapterChangeListener);
 
         // Set up the ViewPager with the sections adapter.
         mBinding.viewPager.setAdapter(mPagerAdapter);
@@ -91,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener);
 
         mBinding.tabs.setupWithViewPager(mBinding.viewPager);
+        mAdapterChangeListener.onChanged();
 
         // If the app was launched with a query for the thesaurus, focus on that tab.
         if (data != null) {
@@ -235,6 +240,24 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
             if (tab != Tab.READER) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mBinding.viewPager.getWindowToken(), 0);
+            }
+        }
+    };
+
+    private final DataSetObserver mAdapterChangeListener = new DataSetObserver() {
+        @Override
+        public void onChanged() {
+            for (int i=0; i < mBinding.tabs.getTabCount(); i++) {
+                Drawable icon = mPagerAdapter.getIcon(i);
+                TabLayout.Tab tab = mBinding.tabs.getTabAt(i);
+                if (tab != null) {
+                    if (icon != null) {
+                        tab.setIcon(icon);
+                    }
+                    if (!getResources().getBoolean(R.bool.tab_text)) {
+                        tab.setText(null);
+                    }
+                }
             }
         }
     };
