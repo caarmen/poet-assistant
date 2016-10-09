@@ -6,10 +6,14 @@ Change Log
 * Possibility to star words.  
  - In the rhymer they will appear before the other rhymes.
  - In the thesaurus they appear starred but, for now, they remain at the default position
+ - A new "favorites" tab shows all the starred words.
 * Basic pattern search support.
  - Two wildcards are supported: `*` matches any number of letters, and `?` matches exactly one letter.
  - When searching for a word with one of these symbols, a new "Patterns" tab appears with the results, from
    which you may navigate to the rhymer, thesaurus, or dictionary tabs.
+* Slight modification to the UI: since we can now have 5 or 6 tabs, it wasn't possible anymore to use
+  a fixed tab layout with text labels.  Now the app has scrolling tabs, with icons instead of text labels
+  on phones in portrait mode.
 
 1.9.6  *(2016-10-06)*
 --------------------
