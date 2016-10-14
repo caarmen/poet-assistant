@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.10.1  *(2016-10-15)*
+--------------------
+* Minor UI improvements
+
 1.10.0  *(2016-10-08)*
 --------------------
 * Possibility to star words.  
