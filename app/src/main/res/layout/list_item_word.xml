@@ -34,8 +34,9 @@
 
     <RelativeLayout
         android:background="@{entry.backgroundColor}"
+        android:gravity="center_vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/list_rt_item_word_height">
 
         <CheckBox
             android:background="?selectableItemBackgroundBorderless"
@@ -77,8 +78,8 @@
         -->
         <android.support.v7.widget.AppCompatImageView
             android:id="@id/btn_rhymer"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="@dimen/list_rtd_icon_size"
+            android:layout_height="@dimen/list_rtd_icon_size"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/btn_thesaurus"
             android:layout_toStartOf="@id/btn_thesaurus"
@@ -86,13 +87,16 @@
             android:clickable="true"
             android:contentDescription="@string/tab_rhymer"
             android:onClick="@{entryIconClickListener.onRhymerIconClicked}"
-            android:padding="4dp"
+            android:paddingLeft="@dimen/list_rtd_icon_padding"
+            android:paddingRight="@dimen/list_rtd_icon_padding"
+            android:paddingStart="@dimen/list_rtd_icon_padding"
+            android:paddingEnd="@dimen/list_rtd_icon_padding"
             app:srcCompat="@drawable/ic_rhymer" />
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@id/btn_thesaurus"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="@dimen/list_rtd_icon_size"
+            android:layout_height="@dimen/list_rtd_icon_size"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/btn_dictionary"
             android:layout_toStartOf="@+id/btn_dictionary"
@@ -100,13 +104,16 @@
             android:clickable="true"
             android:contentDescription="@string/tab_thesaurus"
             android:onClick="@{entryIconClickListener.onThesaurusIconClicked}"
-            android:padding="4dp"
+            android:paddingLeft="@dimen/list_rtd_icon_padding"
+            android:paddingRight="@dimen/list_rtd_icon_padding"
+            android:paddingStart="@dimen/list_rtd_icon_padding"
+            android:paddingEnd="@dimen/list_rtd_icon_padding"
             app:srcCompat="@drawable/ic_thesaurus" />
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@id/btn_dictionary"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="@dimen/list_rtd_icon_size"
+            android:layout_height="@dimen/list_rtd_icon_size"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
@@ -114,9 +121,12 @@
             android:layout_marginRight="16dp"
             android:background="?selectableItemBackgroundBorderless"
             android:clickable="true"
+            android:paddingLeft="@dimen/list_rtd_icon_padding"
+            android:paddingRight="@dimen/list_rtd_icon_padding"
+            android:paddingStart="@dimen/list_rtd_icon_padding"
+            android:paddingEnd="@dimen/list_rtd_icon_padding"
             android:contentDescription="@string/tab_dictionary"
             android:onClick="@{entryIconClickListener.onDictionaryIconClicked}"
-            android:padding="4dp"
             app:srcCompat="@drawable/ic_dictionary" />
 
     </RelativeLayout>

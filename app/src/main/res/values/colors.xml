@@ -26,4 +26,5 @@
     <color name="secondary_text">#727272</color>
     <color name="row_background_color_even">@android:color/transparent</color>
     <color name="row_background_color_odd">@android:color/transparent</color>
+    <color name="divider">#1f000000</color>
 </resources>
