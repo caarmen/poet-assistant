@@ -24,4 +24,5 @@
     <color name="dialog_accent">@color/accent</color>
     <color name="row_background_color_even">@android:color/transparent</color>
     <color name="row_background_color_odd">@android:color/transparent</color>
+    <color name="divider">#1fffffff</color>
 </resources>

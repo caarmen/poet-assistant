@@ -29,7 +29,8 @@
     <TextView
         android:id="@+id/text1"
         style="?android:attr/textAppearanceSearchResultTitle"
+        android:gravity="center_vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/list_rt_item_heading_height"
         android:text="@{entry.text}" />
 </layout>
