@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -136,6 +137,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
         return ResultListFactory.getTabName(mContext, tab);
     }
 
+    @Nullable
     Drawable getIcon(int position) {
         if (!mContext.getResources().getBoolean(R.bool.tab_icons)) return null;
         Tab tab = getTabForPosition(position);
@@ -153,8 +155,11 @@ public class PagerAdapter extends FragmentPagerAdapter {
             return getTintedIcon(R.drawable.ic_play_enabled);
     }
 
+    @Nullable
     private Drawable getTintedIcon(@DrawableRes int drawableRes) {
-        Drawable drawable = VectorDrawableCompat.create(mContext.getResources(), drawableRes, null).mutate();
+        Drawable drawable = VectorDrawableCompat.create(mContext.getResources(), drawableRes, null);
+        if (drawable == null) return null;
+        drawable = drawable.mutate();
         DrawableCompat.setTintList(drawable, ContextCompat.getColorStateList(mContext, R.color.tab_icon));
         return drawable;
     }

@@ -74,7 +74,7 @@ public class Tts {
         mContext = context;
         mVoices = new Voices(context);
         mSettingsPrefs = SettingsPrefs.get(context);
-        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(new TtsPrefsListener());
+        PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(mTtsPrefsListener);
         init();
     }
 
@@ -154,16 +154,18 @@ public class Tts {
         }
     };
 
-    private class TtsPrefsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
+    // This can't be local or it will be removed from the shared prefs manager!
+    @SuppressWarnings("FieldCanBeLocal")
+    private final SharedPreferences.OnSharedPreferenceChangeListener mTtsPrefsListener
+            = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (!isReady()) return;
             if (Settings.PREF_VOICE_SPEED.equals(key)) {
                 mTextToSpeech.setSpeechRate(Float.valueOf(mSettingsPrefs.getVoiceSpeed()));
-
             }
         }
-    }
+    };
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public List<Voices.TtsVoice> getVoices() {

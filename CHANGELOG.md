@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.10.2  *(2016-10-15)*
+--------------------
+* Fixed bug where changing the voice speed setting required an app restart.
+
 1.10.1  *(2016-10-15)*
 --------------------
 * Minor UI improvements
