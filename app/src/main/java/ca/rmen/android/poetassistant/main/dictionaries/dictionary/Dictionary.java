@@ -32,7 +32,14 @@ import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimila
 
 public class Dictionary {
     private static final String DB_FILE = "dictionary";
-    private static final int DB_VERSION = 2;
+
+    // When looking up random words, their "frequency" is a factor in the selection.
+    // Words which are too frequent (a, the, why) are not interesting words.
+    // Words which are too rare (aalto) are likely not interesting either.
+    private static final int MIN_INTERESTING_FREQUENCY = 1500;
+    private static final int MAX_INTERESTING_FREQUENCY = 25000;
+
+    private static final int DB_VERSION = 3;
 
     private static Dictionary sInstance;
 
@@ -121,9 +128,15 @@ public class Dictionary {
         SQLiteDatabase db = mDbHelper.getDb();
         if (db != null) {
             String[] projection = new String[]{"word"};
-            String orderBy = "RANDOM()";
             String limit = "1";
-            Cursor cursor = db.query(false, "dictionary", projection, null, null, null, null,
+            String selection = "google_ngram_frequency > ? AND google_ngram_frequency < ?";
+            String orderBy = "RANDOM()";
+            String[] args = new String[]
+                    {
+                            String.valueOf(MIN_INTERESTING_FREQUENCY),
+                            String.valueOf(MAX_INTERESTING_FREQUENCY)
+                    };
+            Cursor cursor = db.query(false, "stems", projection, selection, args, null, null,
                     orderBy, limit);
             if (cursor != null) {
                 String word = null;

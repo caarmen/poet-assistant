@@ -170,6 +170,21 @@
                     android:textColor="@color/primary" />
 
                 <TextView
+                    android:id="@+id/tv_google_ngram_dataset_license"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="8dp"
+                    android:autoLink="all"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:onClick="onClickGoogleNgramDatasetLicense"
+                    android:text="@string/about_license_google_ngram_dataset"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/primary" />
+
+                <TextView
                     android:id="@+id/tv_event_bus_license"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
