@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.10.3  *(2016-10-15)*
+--------------------
+* Try to improve random word selection by filtering out words which are too common or too rare.
+
 1.10.2  *(2016-10-15)*
 --------------------
 * Fixed bug where changing the voice speed setting required an app restart.
