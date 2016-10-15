@@ -1,0 +1,15 @@
+This app uses word frequencies from the Google Ngram Viewer dataset
+compilation, for the random word selection.  This is used in the "Random
+word" and "Word of the day" features.
+
+The dataset compilation is here:
+http://storage.googleapis.com/books/ngrams/books/datasetsv2.html
+
+The processing of the dataset is described here:
+https://github.com/caarmen/text-processing
+
+The Google Ngram compilation is licensed under the Creative Commons
+Attribution 3.0 Unported License. To view a copy of this license, visit
+http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative
+Commons, PO Box 1866, Mountain View, CA 94042, USA.
+
