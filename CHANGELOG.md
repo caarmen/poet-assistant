@@ -4,6 +4,7 @@ Change Log
 1.10.4  *(2016-10-21)*
 --------------------
 * Try to improve random word selection by filtering out words which are too common or too rare.
+* Added a setting to show/hide rhymes which have no definition
 
 1.10.3  *(2016-10-21)*
 --------------------
