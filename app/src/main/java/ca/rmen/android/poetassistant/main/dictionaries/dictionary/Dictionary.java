@@ -31,15 +31,11 @@ import ca.rmen.android.poetassistant.main.dictionaries.Patterns;
 import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities;
 
 public class Dictionary {
-    private static final String DB_FILE = "dictionary";
-
     // When looking up random words, their "frequency" is a factor in the selection.
     // Words which are too frequent (a, the, why) are not interesting words.
     // Words which are too rare (aalto) are likely not interesting either.
     private static final int MIN_INTERESTING_FREQUENCY = 1500;
     private static final int MAX_INTERESTING_FREQUENCY = 25000;
-
-    private static final int DB_VERSION = 3;
 
     private static Dictionary sInstance;
 
@@ -51,7 +47,7 @@ public class Dictionary {
     }
 
     private Dictionary (Context context) {
-        mDbHelper = new DbHelper(context, DB_FILE, DB_VERSION);
+        mDbHelper = DbHelper.getInstance(context);
     }
 
     public boolean isLoaded() {
