@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+1.10.3  *(2016-10-21)*
+--------------------
+* Maintenance (updated Android SDK components)
+* Simplified labels of different types of rhymes
+* Use NotificationCompat for the word of the day notification.
+
 1.10.2  *(2016-10-15)*
 --------------------
 * Fixed bug where changing the voice speed setting required an app restart.
