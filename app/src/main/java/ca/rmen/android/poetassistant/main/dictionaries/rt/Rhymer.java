@@ -33,13 +33,15 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.rhymer.RhymeResult;
 import ca.rmen.rhymer.WordVariant;
 
 public class Rhymer extends ca.rmen.rhymer.Rhymer {
     private static final String DB_FILE = "rhymes";
-    private static final int DB_VERSION = 2;
+    private static final int DB_VERSION = 3;
     private final DbHelper mDbHelper;
+    private final SettingsPrefs mPrefs;
 
     private static Rhymer sInstance = null;
 
@@ -50,6 +52,7 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
 
     private Rhymer(Context context) {
         mDbHelper = new DbHelper(context, DB_FILE, DB_VERSION);
+        mPrefs = SettingsPrefs.get(context);
     }
 
     public boolean isLoaded() {
@@ -130,6 +133,9 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
         if (db != null) {
             String[] projection = new String[]{"word"};
             String selection = columnName + "=?";
+            if (!mPrefs.getIsAllRhymesEnabled()) {
+                selection += "AND has_definition=1";
+            }
             String[] selectionArgs = new String[]{syllables};
             Cursor cursor = db.query("word_variants", projection, selection, selectionArgs, null, null, null);
             if (cursor != null) {
