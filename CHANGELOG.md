@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.10.4  *(2016-10-21)*
+--------------------
+* Try to improve random word selection by filtering out words which are too common or too rare.
+
 1.10.3  *(2016-10-21)*
 --------------------
 * Maintenance (updated Android SDK components)
