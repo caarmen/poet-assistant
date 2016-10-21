@@ -39,9 +39,9 @@
     <string name="favorites_list_header">favorites</string>
     <string name="rhyme_section_stress_syllables">Strict rhyme matches:</string>
     <string name="rhyme_section_favorites">Favorites:</string>
-    <string name="rhyme_section_one_syllable">Last-syllable matches:</string>
-    <string name="rhyme_section_two_syllables">Last-2-syllables matches:</string>
-    <string name="rhyme_section_three_syllables">Last-3-syllables matches:</string>
+    <string name="rhyme_section_one_syllable">Last syllable:</string>
+    <string name="rhyme_section_two_syllables">Last 2 syllables:</string>
+    <string name="rhyme_section_three_syllables">Last 3 syllables:</string>
     <string name="thesaurus_section_synonyms">Synonyms:</string>
     <string name="thesaurus_section_antonyms">Antonyms:</string>
     <string name="empty_pattern_list_with_query">Sorry, no words match &#8220;%s&#8221;</string>

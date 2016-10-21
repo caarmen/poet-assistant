@@ -78,9 +78,9 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
             }
 
             addResultSection(favorites, data, R.string.rhyme_section_stress_syllables, rhymeResult.strictRhymes);
-            addResultSection(favorites, data, R.string.rhyme_section_one_syllable, rhymeResult.oneSyllableRhymes);
-            addResultSection(favorites, data, R.string.rhyme_section_two_syllables, rhymeResult.twoSyllableRhymes);
             addResultSection(favorites, data, R.string.rhyme_section_three_syllables, rhymeResult.threeSyllableRhymes);
+            addResultSection(favorites, data, R.string.rhyme_section_two_syllables, rhymeResult.twoSyllableRhymes);
+            addResultSection(favorites, data, R.string.rhyme_section_one_syllable, rhymeResult.oneSyllableRhymes);
         }
         return new ResultListData<>(mQuery, favorites.contains(mQuery), data);
     }
