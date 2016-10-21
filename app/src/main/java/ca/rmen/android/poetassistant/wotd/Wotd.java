@@ -19,16 +19,15 @@
 
 package ca.rmen.android.poetassistant.wotd;
 
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import ca.rmen.android.poetassistant.Constants;
@@ -103,7 +102,7 @@ public final class Wotd {
         if (entry == null) return;
         String title = context.getString(R.string.wotd_notification_title, entry.word);
         CharSequence content = buildWotdNotificationContent(context, entry);
-        Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle().bigText(content);
+        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle().bigText(content);
         Uri uri = Uri.parse(String.format("poetassistant://%s/%s", Constants.DEEP_LINK_QUERY, entry.word));
         Intent intent = new Intent(context, MainActivity.class)
                 .setAction(Intent.ACTION_VIEW)
@@ -111,15 +110,18 @@ public final class Wotd {
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         int iconId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? R.drawable.ic_book_vector : R.drawable.ic_book;
-        Notification.Builder builder = new Notification.Builder(context)
+        Notification notification = new NotificationCompat.Builder(context)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setContentText(content)
                 .setContentTitle(title)
                 .setSmallIcon(iconId)
-                .setStyle(bigTextStyle);
-        setShareAction(context, builder, entry);
-        Notification notification = builder.build();
+                .setStyle(bigTextStyle)
+                .addAction(
+                        getShareIconId(),
+                        context.getString(R.string.share),
+                        getShareIntent(context, entry))
+                .build();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(TAG.hashCode(), notification);
     }
@@ -139,30 +141,6 @@ public final class Wotd {
             builder.append(context.getString(R.string.share_dictionary_entry, details.partOfSpeech, details.definition));
         }
         return builder.toString();
-    }
-
-    private static void setShareAction(Context context, Notification.Builder builder, DictionaryEntry entry) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            builder.addAction(buildShareAction23(context, entry));
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-            builder.addAction(buildShareAction20(context, entry));
-        } else {
-            //noinspection deprecation
-            builder.addAction(getShareIconId(), context.getString(R.string.share), getShareIntent(context, entry));
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.KITKAT_WATCH)
-    private static Notification.Action buildShareAction20(Context context, DictionaryEntry entry) {
-        //noinspection deprecation
-        return new Notification.Action.Builder(getShareIconId(), context.getString(R.string.share), getShareIntent(context, entry)).build();
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private static Notification.Action buildShareAction23(Context context, DictionaryEntry entry) {
-        // On wear devices, the share icon will not appear:
-        // https://code.google.com/p/android/issues/detail?id=204246
-        return new Notification.Action.Builder(Icon.createWithResource(context, R.drawable.ic_share_vector), context.getString(R.string.share), getShareIntent(context, entry)).build();
     }
 
     private static int getShareIconId() {
