@@ -22,6 +22,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
 
         <variable
             name="entryIconClickListener"
@@ -101,13 +102,14 @@
             android:layout_toLeftOf="@+id/btn_dictionary"
             android:layout_toStartOf="@+id/btn_dictionary"
             android:background="?selectableItemBackgroundBorderless"
-            android:clickable="true"
+            android:clickable="@{entry.hasDefinition}"
             android:contentDescription="@string/tab_thesaurus"
             android:onClick="@{entryIconClickListener.onThesaurusIconClicked}"
             android:paddingLeft="@dimen/list_rtd_icon_padding"
             android:paddingRight="@dimen/list_rtd_icon_padding"
             android:paddingStart="@dimen/list_rtd_icon_padding"
             android:paddingEnd="@dimen/list_rtd_icon_padding"
+            android:alpha="@{entry.hasDefinition ? 0xff: 0x44}"
             app:srcCompat="@drawable/ic_thesaurus" />
 
         <android.support.v7.widget.AppCompatImageView
@@ -120,13 +122,14 @@
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:background="?selectableItemBackgroundBorderless"
-            android:clickable="true"
+            android:clickable="@{entry.hasDefinition}"
             android:paddingLeft="@dimen/list_rtd_icon_padding"
             android:paddingRight="@dimen/list_rtd_icon_padding"
             android:paddingStart="@dimen/list_rtd_icon_padding"
             android:paddingEnd="@dimen/list_rtd_icon_padding"
             android:contentDescription="@string/tab_dictionary"
             android:onClick="@{entryIconClickListener.onDictionaryIconClicked}"
+            android:alpha="@{entry.hasDefinition ? 0xff: 0x44}"
             app:srcCompat="@drawable/ic_dictionary" />
 
     </RelativeLayout>

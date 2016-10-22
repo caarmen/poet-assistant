@@ -45,6 +45,8 @@ public class Settings {
     private static final String PREF_FAVORITE_WORDS = "PREF_FAVORITE_WORDS";
     @SuppressWarnings("unused")
     private static final String PREF_SUGGESTED_WORDS = "pref_suggestions";
+    @SuppressWarnings("unused")
+    private static final String PREF_ALL_RHYMES_ENABLED = "PREF_ALL_RHYMES_ENABLED";
 
     @SuppressWarnings("unused")
     @Name(PREF_VOICE)
@@ -74,4 +76,9 @@ public class Settings {
     @Name(PREF_FAVORITE_WORDS)
     @DefaultStringSet({})
     Set<String> favoriteWords;
+
+    @SuppressWarnings("unused")
+    @Name(PREF_ALL_RHYMES_ENABLED)
+    @DefaultBoolean(false)
+    Boolean isAllRhymesEnabled;
 }

@@ -80,6 +80,11 @@ public class AboutActivity extends AppCompatActivity {
         LicenseActivity.start(this, getString(R.string.about_license_dictionary), "LICENSE-dictionary-wordnet.txt");
     }
 
+    @SuppressWarnings("unused")
+    public void onClickGoogleNgramDatasetLicense(@SuppressWarnings("UnusedParameters") View view) {
+        LicenseActivity.start(this, getString(R.string.about_license_google_ngram_dataset), "LICENSE-google-ngram-dataset.txt");
+    }
+
     /**
      * The support library 23.3.0 dropped support for using vector drawables in the
      * "drawableLeft" attribute of TextViews.  We set them programmatically here.
@@ -93,6 +98,7 @@ public class AboutActivity extends AppCompatActivity {
         hackSetIcon(mBinding.tvRhymerLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvThesaurusLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvDictionaryLicense, R.drawable.ic_bullet);
+        hackSetIcon(mBinding.tvGoogleNgramDatasetLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvEventBusLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvRetrolambdaLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvStreamsupportLicense, R.drawable.ic_bullet);

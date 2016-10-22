@@ -33,13 +33,13 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.rhymer.RhymeResult;
 import ca.rmen.rhymer.WordVariant;
 
 public class Rhymer extends ca.rmen.rhymer.Rhymer {
-    private static final String DB_FILE = "rhymes";
-    private static final int DB_VERSION = 2;
     private final DbHelper mDbHelper;
+    private final SettingsPrefs mPrefs;
 
     private static Rhymer sInstance = null;
 
@@ -49,7 +49,8 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
     }
 
     private Rhymer(Context context) {
-        mDbHelper = new DbHelper(context, DB_FILE, DB_VERSION);
+        mDbHelper = DbHelper.getInstance(context);
+        mPrefs = SettingsPrefs.get(context);
     }
 
     public boolean isLoaded() {
@@ -123,6 +124,43 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
         return lookupBySyllable(syllables, "last_three_syllables");
     }
 
+    /**
+     * Of the given words, returns a set containing those which have a definition in the dictionary table.
+     */
+    Set<String> getWordsWithDefinitions(String[] words) {
+        if (words.length == 0) return Collections.emptySet();
+        Set<String> result = new HashSet<>();
+        SQLiteDatabase db = mDbHelper.getDb();
+        if (db != null) {
+            String[] projection = new String[]{"word"};
+            String selection = "word in " + buildInClause(words.length) + " AND has_definition=1";
+            Cursor cursor = db.query("word_variants", projection, selection, words, null, null, null);
+            if (cursor != null) {
+                try {
+                    while (cursor.moveToNext()) {
+                        String word = cursor.getString(0);
+                        result.add(word);
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private static String buildInClause(int size) {
+        StringBuilder builder = new StringBuilder(size * 2 + 1);
+        builder.append('(');
+        for (int i = 0; i < size; i++) {
+            builder.append('?');
+            if (i != size - 1) builder.append(',');
+        }
+        builder.append(')');
+        return builder.toString();
+    }
+
     @NonNull
     private SortedSet<String> lookupBySyllable(String syllables, String columnName) {
         SortedSet<String> result = new TreeSet<>();
@@ -130,6 +168,9 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
         if (db != null) {
             String[] projection = new String[]{"word"};
             String selection = columnName + "=?";
+            if (!mPrefs.getIsAllRhymesEnabled()) {
+                selection += "AND has_definition=1";
+            }
             String[] selectionArgs = new String[]{syllables};
             Cursor cursor = db.query("word_variants", projection, selection, selectionArgs, null, null, null);
             if (cursor != null) {
