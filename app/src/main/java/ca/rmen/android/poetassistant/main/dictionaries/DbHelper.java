@@ -79,6 +79,9 @@ public class DbHelper {
             for (int i = 0; i < DB_VERSION; i++) {
                 deleteDb(i);
             }
+            deleteOldDbs("rhymes", 2);
+            deleteOldDbs("thesaurus", 2);
+            deleteOldDbs("dictionary", 2);
 
             try {
                 InputStream is = mContext.getAssets().open(dbFileName);
@@ -93,6 +96,19 @@ public class DbHelper {
             } catch (IOException e) {
                 Log.e(TAG, "Error writing to " + dbPath + ": " + e.getMessage(), e);
                 deleteDb(DB_VERSION);
+            }
+        }
+    }
+
+    private void deleteOldDbs(String name, int maxVersion) {
+        for (int i = 0; i <= maxVersion; i++) {
+            final String dbFileName;
+            if (i == 1) dbFileName = name + ".db";
+            else dbFileName = name + i + ".db";
+            File dbPath = getDbFile(dbFileName);
+            if (dbPath.exists()) {
+                boolean deleted = dbPath.delete();
+                Log.v(TAG, "dbDelete: deletion of " + dbPath.getAbsolutePath() + ": " + deleted);
             }
         }
     }
