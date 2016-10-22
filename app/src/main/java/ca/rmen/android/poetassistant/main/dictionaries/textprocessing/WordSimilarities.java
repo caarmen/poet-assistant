@@ -33,14 +33,11 @@ public class WordSimilarities {
     public String findClosestWord(String word,
                                   SQLiteDatabase db) {
         String stem = new PorterStemmer().stemWord(word);
-        if (!word.equals(stem)) {
-            String[] projection = new String[]{"word"};
-            String selection = "stem=?";
-            String[] selectionArgs = new String[]{stem};
-            Cursor cursor = db.query(true, "stems", projection, selection, selectionArgs, null, null, null, null);
-            return new WordSimilarities().findClosestWord(word, cursor);
-        }
-        return null;
+        String[] projection = new String[]{"word"};
+        String selection = "stem=?";
+        String[] selectionArgs = new String[]{stem};
+        Cursor cursor = db.query(true, "stems", projection, selection, selectionArgs, null, null, null, null);
+        return new WordSimilarities().findClosestWord(word, cursor);
     }
 
     /**
