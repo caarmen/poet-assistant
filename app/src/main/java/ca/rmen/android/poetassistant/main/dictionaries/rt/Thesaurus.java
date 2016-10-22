@@ -33,8 +33,6 @@ import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities;
 
 public class Thesaurus {
-    private static final String DB_FILE = "thesaurus";
-    private static final int DB_VERSION = 2;
 
     private static Thesaurus sInstance;
     private final DbHelper mDbHelper;
@@ -45,7 +43,7 @@ public class Thesaurus {
     }
 
     private Thesaurus(Context context) {
-        mDbHelper = new DbHelper(context, DB_FILE, DB_VERSION);
+        mDbHelper = DbHelper.getInstance(context);
     }
 
     public boolean isLoaded() {
@@ -64,7 +62,7 @@ public class Thesaurus {
 
 
             if (cursor != null && cursor.getCount() == 0) {
-                String closestWord = new WordSimilarities().findClosestWord(word, db, "thesaurus", "word", "stem");
+                String closestWord = new WordSimilarities().findClosestWord(word, db, "stems", "word", "stem");
                 if (closestWord != null) {
                     lookupWord = closestWord;
                     cursor.close();

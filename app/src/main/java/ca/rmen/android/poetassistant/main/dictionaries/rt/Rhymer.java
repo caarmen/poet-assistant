@@ -38,8 +38,6 @@ import ca.rmen.rhymer.RhymeResult;
 import ca.rmen.rhymer.WordVariant;
 
 public class Rhymer extends ca.rmen.rhymer.Rhymer {
-    private static final String DB_FILE = "rhymes";
-    private static final int DB_VERSION = 3;
     private final DbHelper mDbHelper;
     private final SettingsPrefs mPrefs;
 
@@ -51,7 +49,7 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
     }
 
     private Rhymer(Context context) {
-        mDbHelper = new DbHelper(context, DB_FILE, DB_VERSION);
+        mDbHelper = DbHelper.getInstance(context);
         mPrefs = SettingsPrefs.get(context);
     }
 
