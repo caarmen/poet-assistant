@@ -66,7 +66,7 @@ public class Dictionary {
             Cursor cursor = db.query("dictionary", projection, selection, selectionArgs, null, null, null);
 
             if (cursor != null && cursor.getCount() == 0) {
-                String closestWord = new WordSimilarities().findClosestWord(word, db, "stems", "word", "stem");
+                String closestWord = new WordSimilarities().findClosestWord(word, db);
                 if (closestWord != null) {
                     lookupWord = closestWord;
                     cursor.close();

@@ -34,6 +34,7 @@ import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.rhymer.RhymeResult;
 
 public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
@@ -42,16 +43,19 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
     private final String mQuery;
     private final String mFilter;
+    private final SettingsPrefs mPrefs;
 
     public RhymerLoader(Context context, String query, String filter) {
         super(context);
         mQuery = query;
         mFilter = filter;
+        mPrefs = SettingsPrefs.get(context);
     }
 
     @Override
     public ResultListData<RTEntry> loadInBackground() {
         Log.d(TAG, "loadInBackground() called with: query = " + mQuery + ", filter = " + mFilter);
+        long before = System.currentTimeMillis();
 
         List<RTEntry> data = new ArrayList<>();
         Rhymer rhymer = Rhymer.getInstance(getContext());
@@ -82,7 +86,10 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
             addResultSection(favorites, data, R.string.rhyme_section_two_syllables, rhymeResult.twoSyllableRhymes);
             addResultSection(favorites, data, R.string.rhyme_section_one_syllable, rhymeResult.oneSyllableRhymes);
         }
-        return new ResultListData<>(mQuery, favorites.contains(mQuery), data);
+        ResultListData<RTEntry> result = new ResultListData<>(mQuery, favorites.contains(mQuery), data);
+        long after = System.currentTimeMillis();
+        Log.d(TAG, "loadInBackground() finished in " + (after - before) + "ms");
+        return result;
     }
 
     private String[] getMatchingFavorites(List<RhymeResult> rhymeResults, Set<String> favorites) {
@@ -118,17 +125,22 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
     private void addResultSection(Set<String> favorites, List<RTEntry> results, int sectionHeadingResId, String[] rhymes) {
         if (rhymes.length > 0) {
+
+            Set<String> wordsWithDefinitions = mPrefs.getIsAllRhymesEnabled() ? Rhymer.getInstance(getContext()).getWordsWithDefinitions(rhymes) : null;
             results.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
             for (int i = 0; i < rhymes.length; i++) {
                 @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
+                boolean hasDefinition = wordsWithDefinitions == null || wordsWithDefinitions.contains(rhymes[i]);
                 results.add(new RTEntry(
                         RTEntry.Type.WORD,
                         rhymes[i],
                         ContextCompat.getColor(getContext(), color),
-                        favorites.contains(rhymes[i])));
+                        favorites.contains(rhymes[i]),
+                        hasDefinition));
             }
         }
     }
+
 
     private static List<RhymeResult> filter(List<RhymeResult> rhymes, Set<String> filter) {
         List<RhymeResult> filteredRhymes = new ArrayList<>();

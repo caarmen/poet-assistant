@@ -45,6 +45,7 @@ public class Settings {
     private static final String PREF_FAVORITE_WORDS = "PREF_FAVORITE_WORDS";
     @SuppressWarnings("unused")
     private static final String PREF_SUGGESTED_WORDS = "pref_suggestions";
+    @SuppressWarnings("unused")
     private static final String PREF_ALL_RHYMES_ENABLED = "PREF_ALL_RHYMES_ENABLED";
 
     @SuppressWarnings("unused")

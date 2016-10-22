@@ -31,16 +31,13 @@ public class WordSimilarities {
     private static final String TAG = Constants.TAG + WordSimilarities.class.getSimpleName();
 
     public String findClosestWord(String word,
-                                  SQLiteDatabase db,
-                                  String table,
-                                  @SuppressWarnings("SameParameterValue") String wordColumn,
-                                  @SuppressWarnings("SameParameterValue") String stemColumn) {
+                                  SQLiteDatabase db) {
         String stem = new PorterStemmer().stemWord(word);
         if (!word.equals(stem)) {
-            String[] projection = new String[]{wordColumn};
-            String selection = stemColumn + "=?";
+            String[] projection = new String[]{"word"};
+            String selection = "stem=?";
             String[] selectionArgs = new String[]{stem};
-            Cursor cursor = db.query(true, table, projection, selection, selectionArgs, null, null, null, null);
+            Cursor cursor = db.query(true, "stems", projection, selection, selectionArgs, null, null, null, null);
             return new WordSimilarities().findClosestWord(word, cursor);
         }
         return null;
