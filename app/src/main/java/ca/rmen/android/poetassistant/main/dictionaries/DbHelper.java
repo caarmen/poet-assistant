@@ -34,7 +34,7 @@ import ca.rmen.android.poetassistant.Constants;
 
 public class DbHelper {
     private static final String TAG = Constants.TAG + DbHelper.class.getSimpleName();
-    public static final int MAX_QUERY_ARGUMENT_COUNT = 500;
+    private static final int MAX_QUERY_ARGUMENT_COUNT = 500;
 
     private final Context mContext;
     private static final String DB_NAME = "poet_assistant";
