@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import java.io.File;
@@ -33,6 +34,7 @@ import ca.rmen.android.poetassistant.Constants;
 
 public class DbHelper {
     private static final String TAG = Constants.TAG + DbHelper.class.getSimpleName();
+    public static final int MAX_QUERY_ARGUMENT_COUNT = 500;
 
     private final Context mContext;
     private static final String DB_NAME = "poet_assistant";
@@ -53,6 +55,66 @@ public class DbHelper {
     public SQLiteDatabase getDb() {
         open();
         return mDb;
+    }
+
+    /**
+     * SQLite doesn't support unlimited number of query arguments.  If we have to do a mega huge
+     * query, for example with a clause like `WHERE word in (?, ?, ?, ?, ?, ... ?)', with thousands
+     * of `?' args, we will need to perform multiple queries each with a clause of a subset of the args,
+     * and aggregate the results.
+     * @param totalArgCount the total number of arguments we have in our mega query.
+     * @return the number of smaller queries which must be done.
+     */
+    public static int getQueryCount(int totalArgCount) {
+        return getQueryCount(totalArgCount, MAX_QUERY_ARGUMENT_COUNT);
+    }
+
+    /**
+     * @param allArgs the total set of arguments we need to process
+     * @return the arguments in the query at index queryNumber (0-based index).
+     * @see #getQueryCount(int)
+     */
+    public static String[] getArgsInQuery(String[] allArgs, int queryNumber) {
+        return getArgsInQuery(allArgs, queryNumber, MAX_QUERY_ARGUMENT_COUNT);
+    }
+
+    /**
+     * SQLite doesn't support unlimited number of query arguments.  If we have to do a mega huge
+     * query, for example with a clause like `WHERE word in (?, ?, ?, ?, ?, ... ?)', with thousands
+     * of `?' args, we will need to perform multiple queries each with a clause of a subset of the args,
+     * and aggregate the results.
+     * @param totalArgCount the total number of arguments we have in our mega query.
+     * @param maxArgCountPerQuery the total number of arguments a single query can allow.
+     * @return the number of smaller queries which must be done.
+     */
+    @VisibleForTesting
+    static int getQueryCount(int totalArgCount, int maxArgCountPerQuery) {
+        return (int) Math.ceil((double) totalArgCount / maxArgCountPerQuery);
+    }
+
+    /**
+     * @return the number of arguments in the query at index queryNumber (0-based index).
+     * @see #getQueryCount(int, int)
+     */
+    @VisibleForTesting
+    static int getArgCountInQuery(int totalArgCount, int maxArgCountPerQuery, int queryNumber) {
+        int argCountThisQuery = maxArgCountPerQuery;
+        int queryCount = getQueryCount(totalArgCount, maxArgCountPerQuery);
+        if (queryNumber == queryCount - 1) argCountThisQuery = totalArgCount % maxArgCountPerQuery;
+        return argCountThisQuery;
+    }
+
+    /**
+     * @param allArgs the total set of arguments we need to process
+     * @return the arguments in the query at index queryNumber (0-based index).
+     * @see #getQueryCount(int, int)
+     */
+    @VisibleForTesting
+    static String[] getArgsInQuery(String[] allArgs, int queryNumber, int maxArgCount) {
+        int argCountThisQuery = getArgCountInQuery(allArgs.length, maxArgCount, queryNumber);
+        String[] argsThisQuery = new String[argCountThisQuery];
+        System.arraycopy(allArgs, queryNumber * maxArgCount, argsThisQuery, 0, argCountThisQuery);
+        return argsThisQuery;
     }
 
     private void open() {
