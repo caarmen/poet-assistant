@@ -4,6 +4,7 @@ Change Log
 1.10.6  *(2016-10-29)*
 --------------------
 * Fix issue #36: save voice-searched words to suggested words list.
+* Add more words to suggested list dropdown, based on similar sounding words.
 
 1.10.5  *(2016-10-29)*
 --------------------
