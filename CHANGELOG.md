@@ -4,6 +4,7 @@ Change Log
 1.10.5  *(2016-10-29)*
 --------------------
 * Fix issue #35: crash when searching for some words, with "show all rhymes" enabled.
+* Use rhymer 1.1.2, which excludes "last syllable" rhymes if there there are too many and if there are "strict" rhymes.
 
 1.10.4  *(2016-10-21)*
 --------------------
