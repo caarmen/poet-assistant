@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.10.5  *(2016-10-29)*
+--------------------
+* Fix issue #35: crash when searching for some words, with "show all rhymes" enabled.
+
 1.10.4  *(2016-10-21)*
 --------------------
 * Try to improve random word selection by filtering out words which are too common or too rare.
