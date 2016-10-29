@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
             String query = intent.getStringExtra(SearchManager.QUERY);
             if (TextUtils.isEmpty(query)) query = intent.getStringExtra(SearchManager.USER_QUERY);
             if (TextUtils.isEmpty(query)) return;
+            mSearch.addSuggestion(query);
             mSearch.search(query);
         }
         // We got here from a deep link

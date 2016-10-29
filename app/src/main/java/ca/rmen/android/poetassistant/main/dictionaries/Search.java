@@ -175,6 +175,10 @@ public class Search {
         }.execute();
     }
 
+    public void addSuggestion(String query) {
+        mSuggestionsAdapter.addSuggestion(query);
+    }
+
     public void clearSearchHistory() {
         mSuggestionsAdapter.clear();
     }
@@ -182,7 +186,6 @@ public class Search {
     private final SearchView.OnQueryTextListener mOnQueryTextListener = new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
-            mSuggestionsAdapter.addSuggestion(query.trim().toLowerCase(Locale.US));
             return false;
         }
 

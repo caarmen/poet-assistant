@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.10.6  *(2016-10-29)*
+--------------------
+* Fix issue #36: save voice-searched words to suggested words list.
+
 1.10.5  *(2016-10-29)*
 --------------------
 * Fix issue #35: crash when searching for some words, with "show all rhymes" enabled.
