@@ -108,7 +108,7 @@ dependencies {
     compile 'com.android.support:preference-v14:25.0.0'
     compile 'net.sourceforge.streamsupport:streamsupport:1.5.2'
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'ca.rmen:rhymer:1.1.1'
+    compile 'ca.rmen:rhymer:1.1.2'
     compile 'ca.rmen:porter-stemmer:1.0.0'
     compile 'org.jraf:prefs:1.1.0'
 
