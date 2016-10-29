@@ -96,7 +96,7 @@
     <string name="wotd_notification_title">Word of the day: %s</string>
     <string name="wotd_notification_definition"><![CDATA[<br>\n<b>%1$s.</b> %2$s]]></string>
     <string name="all_rhymes_setting_title">Show all rhymes</string>
-    <string name="all_rhymes_setting_description">Display all rhymes, even if words have no definitions</string>
+    <string name="all_rhymes_setting_description">Display all rhymes, even if words have no definitions (search may be slower)</string>
     <string name="share">Share</string>
     <string name="share_patterns_title">Words matching %s:\n</string>
     <string name="share_favorites_title">My favorite words:\n</string>

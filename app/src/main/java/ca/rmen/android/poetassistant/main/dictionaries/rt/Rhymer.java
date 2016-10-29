@@ -23,6 +23,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,12 +33,14 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.rhymer.RhymeResult;
 import ca.rmen.rhymer.WordVariant;
 
 public class Rhymer extends ca.rmen.rhymer.Rhymer {
+    private static final String TAG = Constants.TAG + Rhymer.class.getSimpleName();
     private final DbHelper mDbHelper;
     private final SettingsPrefs mPrefs;
 
@@ -129,26 +132,33 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
      */
     Set<String> getWordsWithDefinitions(String[] words) {
         if (words.length == 0) return Collections.emptySet();
+        Log.v(TAG, "getWordsWithDefinitions for " + words.length + " words");
         Set<String> result = new HashSet<>();
         SQLiteDatabase db = mDbHelper.getDb();
         if (db != null) {
             String[] projection = new String[]{"word"};
-            String selection = "word in " + buildInClause(words.length) + " AND has_definition=1";
-            Cursor cursor = db.query("word_variants", projection, selection, words, null, null, null);
-            if (cursor != null) {
-                try {
-                    while (cursor.moveToNext()) {
-                        String word = cursor.getString(0);
-                        result.add(word);
+            int queryCount = DbHelper.getQueryCount(words.length);
+            for (int i = 0; i < queryCount; i++) {
+                String[] queryWords = DbHelper.getArgsInQuery(words, i);
+                Log.v(TAG, "getWordsWithDefinitions: query " + i + " has " + queryWords.length + " words");
+                String selection = "word in " + buildInClause(queryWords.length) + " AND has_definition=1";
+                Cursor cursor = db.query("word_variants", projection, selection, queryWords, null, null, null);
+                if (cursor != null) {
+                    try {
+                        while (cursor.moveToNext()) {
+                            String word = cursor.getString(0);
+                            result.add(word);
+                        }
+                    } finally {
+                        cursor.close();
                     }
-                } finally {
-                    cursor.close();
                 }
             }
         }
 
         return result;
     }
+
 
     private static String buildInClause(int size) {
         StringBuilder builder = new StringBuilder(size * 2 + 1);
