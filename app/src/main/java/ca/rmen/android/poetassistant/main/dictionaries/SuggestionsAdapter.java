@@ -19,30 +19,33 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.MatrixCursor;
-import android.provider.BaseColumns;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.support.annotation.DrawableRes;
 import android.support.v4.widget.CursorAdapter;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.settings.SettingsPrefs;
+import ca.rmen.android.poetassistant.VectorCompat;
 
 class SuggestionsAdapter extends CursorAdapter {
 
     private SuggestionsCursor mCursor;
 
+    // We use mHandler and mIsLoading to prevent loading suggestions in parallel AsyncTasks.
+    private boolean mIsLoading;
+    private final Handler mHandler;
+
     SuggestionsAdapter(Context context) {
         super(context, null, false);
+        mHandler = new Handler();
         mCursor = new SuggestionsCursor(context);
         mCursor.load();
         changeCursor(mCursor);
@@ -50,27 +53,21 @@ class SuggestionsAdapter extends CursorAdapter {
 
     void clear() {
         mCursor.clear();
-        reload();
-    }
-
-    private void reload() {
-        mCursor = new SuggestionsCursor(mContext);
-        mCursor.load();
-        changeCursor(mCursor);
-        notifyDataSetChanged();
+        filterSuggestions(null);
     }
 
     void addSuggestion(String suggestion) {
-        mCursor.addSuggestion(suggestion.toLowerCase(Locale.getDefault()));
-        reload();
+        mCursor.saveNewSuggestion(suggestion.toLowerCase(Locale.getDefault()));
+        filterSuggestions(null);
     }
 
     void filterSuggestions(String filter) {
-        mCursor = new SuggestionsCursor(mContext);
-        mCursor.setFilter(filter);
-        mCursor.load();
-        changeCursor(mCursor);
-        notifyDataSetChanged();
+        if (mIsLoading) {
+            mHandler.removeCallbacksAndMessages(null);
+            mHandler.postDelayed(() -> new SuggestionsLoader().execute(filter), TimeUnit.SECONDS.toMillis(1));
+        } else {
+            new SuggestionsLoader().execute(filter);
+        }
     }
 
     String getSuggestion(int position) {
@@ -87,54 +84,31 @@ class SuggestionsAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         TextView textView = (TextView) view;
         String suggestion = cursor.getString(1);
+        @DrawableRes int iconRes = cursor.getInt(2);
         textView.setText(suggestion);
+        VectorCompat.setCompoundVectorDrawables(mContext, textView, iconRes, 0, 0, 0);
     }
 
-    /**
-     * SharedPreferences-backed cursor to read and add suggestions
-     */
-    private static class SuggestionsCursor extends MatrixCursor {
-        private static final String[] COLUMNS =
-                new String[]{BaseColumns._ID, SearchManager.SUGGEST_COLUMN_TEXT_1};
-
-        private final SettingsPrefs mSettingsPrefs;
-        private String mFilter;
-
-        SuggestionsCursor(Context context) {
-            super(COLUMNS);
-            mSettingsPrefs = SettingsPrefs.get(context);
+    private class SuggestionsLoader extends AsyncTask<String, Void, SuggestionsCursor> {
+        @Override
+        protected void onPreExecute() {
+            mIsLoading = true;
         }
 
-        void setFilter(String filter) {
-            mFilter = filter;
+        @Override
+        protected SuggestionsCursor doInBackground(String... filter) {
+            SuggestionsCursor cursor = new SuggestionsCursor(mContext);
+            cursor.setFilter(filter[0]);
+            cursor.load();
+            return cursor;
         }
 
-        void load() {
-            Set<String> suggestions = mSettingsPrefs.getSuggestedWords();
-            TreeSet<String> sortedSuggestions = new TreeSet<>();
-            sortedSuggestions.addAll(suggestions);
-            int i = 0;
-            for (String suggestion : sortedSuggestions) {
-                if (TextUtils.isEmpty(mFilter) || suggestion.contains(mFilter))
-                    addRow(new Object[]{i++, suggestion});
-            }
+        @Override
+        protected void onPostExecute(SuggestionsCursor cursor) {
+            mCursor = cursor;
+            changeCursor(cursor);
+            notifyDataSetChanged();
+            mIsLoading = false;
         }
-
-        void clear() {
-            mFilter = null;
-            mSettingsPrefs.removeSuggestedWords();
-        }
-
-        void addSuggestion(String suggestion) {
-            Set<String> suggestionsReadOnly = mSettingsPrefs.getSuggestedWords();
-            if (!suggestionsReadOnly.contains(suggestion)) {
-                addRow(new Object[]{getCount(), suggestion});
-                TreeSet<String> suggestions = new TreeSet<>();
-                suggestions.addAll(suggestionsReadOnly);
-                suggestions.add(suggestion);
-                mSettingsPrefs.putSuggestedWords(suggestions);
-            }
-        }
-
     }
 }

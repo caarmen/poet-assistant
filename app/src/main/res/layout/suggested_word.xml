@@ -25,8 +25,10 @@
     android:layout_alignParentLeft="true"
     android:layout_alignParentStart="true"
     android:layout_centerVertical="true"
+    android:drawablePadding="8dp"
     android:padding="8dp"
-    android:textSize="24sp"
+    android:textSize="18sp"
     android:theme="@style/AppTheme.AppBarOverlay"
+    tools:drawableLeft="@drawable/ic_action_search"
     tools:text="happy" />
 

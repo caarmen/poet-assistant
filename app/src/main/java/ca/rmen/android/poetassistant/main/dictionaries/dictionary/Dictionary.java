@@ -37,6 +37,8 @@ public class Dictionary {
     private static final int MIN_INTERESTING_FREQUENCY = 1500;
     private static final int MAX_INTERESTING_FREQUENCY = 25000;
 
+    private static final int MAX_PREFIX_MATCHES = 10;
+
     private static Dictionary sInstance;
 
     private final DbHelper mDbHelper;
@@ -117,6 +119,39 @@ public class Dictionary {
             }
         }
         return new String[0];
+    }
+
+    /**
+     * @return at most limit words starting with the given prefix
+     */
+    public String[] findWordsWithPrefix(String prefix) {
+        SQLiteDatabase db = mDbHelper.getDb();
+        if (db != null) {
+            String[] projection = new String[]{"word"};
+            String selection = "has_definition=1 AND word LIKE ?";
+            String[] selectionArgs = new String[]{prefix + "%"};
+            String orderBy = "word";
+            Cursor cursor = db.query(
+                    true,
+                    "word_variants", projection, selection, selectionArgs,
+                    null, null,
+                    orderBy, String.valueOf(MAX_PREFIX_MATCHES));
+            if (cursor != null) {
+                try {
+                    if (cursor.getCount() > 0) {
+                        String[] result = new String[cursor.getCount()];
+                        while (cursor.moveToNext()) {
+                            result[cursor.getPosition()] = cursor.getString(0);
+                        }
+                        return result;
+                    }
+                } finally {
+                    cursor.close();
+                }
+            }
+        }
+        return new String[0];
+
     }
 
     @Nullable
