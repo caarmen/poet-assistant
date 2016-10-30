@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.10.7  *(2016-10-30)*
+--------------------
+* Support Android 4.0.3-4.0.4 (api level 15).
+
 1.10.6  *(2016-10-29)*
 --------------------
 * Fix issue #36: save voice-searched words to suggested words list.

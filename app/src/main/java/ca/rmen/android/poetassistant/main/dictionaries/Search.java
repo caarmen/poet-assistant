@@ -24,6 +24,7 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -117,7 +118,12 @@ public class Search {
                         public void onGlobalLayout() {
                             Log.d(TAG, "searching after layout");
                             performSearch.run();
-                            mViewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                mViewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            } else {
+                                //noinspection deprecation
+                                mViewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            }
                         }
                     }
             );
