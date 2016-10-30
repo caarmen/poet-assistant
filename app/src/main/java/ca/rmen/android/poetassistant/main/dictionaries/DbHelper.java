@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
+import android.os.Build;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
@@ -125,7 +126,12 @@ public class DbHelper {
                 String dbFile = getDbFileName(DB_VERSION);
                 File dbPath = new File(mContext.getDir("databases", Context.MODE_PRIVATE), dbFile);
                 try {
-                    mDb = SQLiteDatabase.openDatabase(dbPath.getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY);
+                    int flags = SQLiteDatabase.OPEN_READONLY;
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                        // http://stackoverflow.com/questions/2528489/no-such-table-android-metadata-whats-the-problem
+                        flags |= SQLiteDatabase.NO_LOCALIZED_COLLATORS;
+                    }
+                    mDb = SQLiteDatabase.openDatabase(dbPath.getAbsolutePath(), null, flags);
                 } catch (SQLiteException e) {
                     Log.w(TAG, "Could not open database " + DB_NAME + ":" + DB_VERSION + ": " + e.getMessage(), e);
                 }
