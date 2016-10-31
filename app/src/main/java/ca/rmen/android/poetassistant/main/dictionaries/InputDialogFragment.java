@@ -28,6 +28,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Window;
@@ -74,8 +75,8 @@ public class InputDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.v(TAG, "onCreateDialog: savedInstanceState = " + savedInstanceState);
         Context context = getActivity();
-        final InputDialogEditTextBinding binding = DataBindingUtil.inflate(
-                LayoutInflater.from(getActivity()),
+        LayoutInflater themedLayoutInflater = LayoutInflater.from(new ContextThemeWrapper(getActivity(), R.style.AppAlertDialog));
+        final InputDialogEditTextBinding binding = DataBindingUtil.inflate(themedLayoutInflater,
                 R.layout.input_dialog_edit_text,
                 null,
                 false);
