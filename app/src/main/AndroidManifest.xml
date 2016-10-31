@@ -112,6 +112,11 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <provider
+            android:exported="false"
+            android:name="ca.rmen.android.poetassistant.main.dictionaries.SuggestionsProvider"
+            android:authorities="ca.rmen.android.poetassistant.SuggestionsProvider"/>
     </application>
 
 </manifest>

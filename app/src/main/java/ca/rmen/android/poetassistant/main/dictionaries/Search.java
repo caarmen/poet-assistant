@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -52,27 +53,20 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntr
  */
 public class Search {
     private static final String TAG = Constants.TAG + Search.class.getSimpleName();
-    private SearchView mSearchView;
     private final ViewPager mViewPager;
     private final PagerAdapter mPagerAdapter;
-    private final SuggestionsAdapter mSuggestionsAdapter;
     private final Activity mSearchableActivity;
 
     public Search(Activity searchableActivity, ViewPager viewPager) {
         mSearchableActivity = searchableActivity;
         mViewPager = viewPager;
         mPagerAdapter = (PagerAdapter) viewPager.getAdapter();
-        mSuggestionsAdapter = new SuggestionsAdapter(mSearchableActivity);
     }
 
     public void setSearchView(SearchView searchView) {
-        mSearchView = searchView;
         SearchManager searchManager = (SearchManager) mSearchableActivity.getSystemService(Context.SEARCH_SERVICE);
         ComponentName searchableActivityComponentName = new ComponentName(mSearchableActivity, mSearchableActivity.getClass());
-        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(searchableActivityComponentName));
-        mSearchView.setOnQueryTextListener(mOnQueryTextListener);
-        mSearchView.setSuggestionsAdapter(mSuggestionsAdapter);
-        mSearchView.setOnSuggestionListener(mOnSuggestionListener);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(searchableActivityComponentName));
     }
 
     /**
@@ -182,39 +176,13 @@ public class Search {
     }
 
     public void addSuggestion(String query) {
-        mSuggestionsAdapter.addSuggestion(query);
+        ContentValues contentValues = new ContentValues(1);
+        contentValues.put(SearchManager.QUERY, query);
+        mSearchableActivity.getContentResolver().insert(SuggestionsProvider.CONTENT_URI, contentValues);
     }
 
     public void clearSearchHistory() {
-        mSuggestionsAdapter.clear();
+        mSearchableActivity.getContentResolver().delete(SuggestionsProvider.CONTENT_URI, null, null);
     }
 
-    private final SearchView.OnQueryTextListener mOnQueryTextListener = new SearchView.OnQueryTextListener() {
-        @Override
-        public boolean onQueryTextSubmit(String query) {
-            return false;
-        }
-
-        @Override
-        public boolean onQueryTextChange(String newText) {
-            mSuggestionsAdapter.filterSuggestions(newText);
-            return false;
-        }
-    };
-
-    private final SearchView.OnSuggestionListener mOnSuggestionListener = new SearchView.OnSuggestionListener() {
-        @Override
-        public boolean onSuggestionSelect(int position) {
-            String suggestion = mSuggestionsAdapter.getSuggestion(position);
-            mSearchView.setQuery(suggestion, false);
-            return false;
-        }
-
-        @Override
-        public boolean onSuggestionClick(int position) {
-            String suggestion = mSuggestionsAdapter.getSuggestion(position);
-            mSearchView.setQuery(suggestion, true);
-            return true;
-        }
-    };
 }

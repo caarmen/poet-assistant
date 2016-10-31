@@ -17,18 +17,37 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/text1"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentStart="true"
-    android:layout_centerVertical="true"
-    android:drawablePadding="8dp"
-    android:padding="8dp"
-    android:textSize="18sp"
-    android:theme="@style/AppTheme.AppBarOverlay"
-    tools:drawableLeft="@drawable/ic_action_search"
-    tools:text="happy" />
+    android:orientation="horizontal"
+    tools:background="#000">
 
+    <ImageView
+        android:id="@android:id/icon1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/content_description_icon_suggested_word"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        tools:src="@drawable/ic_search_history" />
+
+    <TextView
+        android:id="@android:id/text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:textSize="18sp"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        tools:text="happy" />
+
+    <!-- we don't care about the rest of the views, but we have to declare them -->
+    <ImageView
+        android:id="@+id/edit_query"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@null"
+        android:visibility="gone" />
+
+</LinearLayout>

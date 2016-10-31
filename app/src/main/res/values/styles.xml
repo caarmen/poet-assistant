@@ -39,7 +39,13 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.SearchViewStyle" parent="Widget.AppCompat.SearchView.ActionBar">
+        <item name="suggestionRowLayout">@layout/suggested_word</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
+        <item name="searchViewStyle">@style/AppTheme.SearchViewStyle</item>
+    </style>
 
     <style name="AppAlertDialog" parent="Theme.AppCompat.DayNight.Dialog">
         <item name="colorPrimary">@color/primary</item>

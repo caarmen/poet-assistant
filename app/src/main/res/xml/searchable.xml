@@ -21,4 +21,6 @@
     android:label="@string/app_name"
     android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
     android:searchMode="queryRewriteFromText"
-    android:hint="@string/search_hint"/>
+    android:hint="@string/search_hint"
+    android:searchSuggestAuthority="ca.rmen.android.poetassistant.SuggestionsProvider"
+    android:searchSuggestIntentAction="android.intent.action.SEARCH"/>
