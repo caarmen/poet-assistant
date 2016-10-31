@@ -119,6 +119,8 @@
 
     <string name="max_results" tools:ignore="PluralsCandidate">Limited to %d matches</string>
 
+    <string name="content_description_icon_suggested_word">Suggested word icon</string>
+
     <!-- Strings related to Settings -->
     <string translatable="false" name="pref_voice_value_with_country"><![CDATA[%1$s (%2$s)<br/><font color=\'#888888\'><small>%3$s</small></font>]]></string>
     <string translatable="false" name="pref_voice_value_without_country"><![CDATA[%1$s<br/><font color=\'#888888\'><small>%2$s</small></font>]]></string>
