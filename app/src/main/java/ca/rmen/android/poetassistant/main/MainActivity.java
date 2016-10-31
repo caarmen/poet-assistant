@@ -149,8 +149,14 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         setIntent(intent);
         // The user entered a search term either by typing or by voice
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            if (TextUtils.isEmpty(query)) query = intent.getStringExtra(SearchManager.USER_QUERY);
+            String query = intent.getDataString();
+            if (TextUtils.isEmpty(query)) {
+                query = intent.getStringExtra(SearchManager.QUERY);
+            }
+            if (TextUtils.isEmpty(query)) {
+                CharSequence userQuery = intent.getCharSequenceExtra(SearchManager.USER_QUERY);
+                if (!TextUtils.isEmpty(userQuery)) query = userQuery.toString();
+            }
             if (TextUtils.isEmpty(query)) return;
             mSearch.addSuggestion(query);
             mSearch.search(query);
