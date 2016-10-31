@@ -64,6 +64,7 @@ class SuggestionsCursor extends MatrixCursor {
         Set<String> suggestions = mSettingsPrefs.getSuggestedWords();
         TreeSet<String> sortedSuggestions = new TreeSet<>();
         sortedSuggestions.addAll(suggestions);
+        // https://code.google.com/p/android/issues/detail?id=226686
         final @DrawableRes int iconId;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             iconId = R.drawable.ic_search_history_deprecated;
@@ -78,6 +79,7 @@ class SuggestionsCursor extends MatrixCursor {
     private void loadSimilarWords() {
         if (!TextUtils.isEmpty(mFilter)) {
             String[] similarSoundingWords = mDictionary.findWordsWithPrefix(mFilter.trim().toLowerCase(Locale.getDefault()));
+            // https://code.google.com/p/android/issues/detail?id=226686
             final @DrawableRes int iconId;
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 iconId = R.drawable.ic_action_search_deprecated;
