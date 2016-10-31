@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         mAdapterChangeListener.onChanged();
 
         // If the app was launched with a query for the thesaurus, focus on that tab.
-        if (data != null) {
+        if (data != null && data.getHost() != null) {
             if (data.getHost().equalsIgnoreCase(Constants.DEEP_LINK_QUERY)) {
                 mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY));
             } else if (data.getHost().equalsIgnoreCase(Tab.RHYMER.name().toLowerCase(Locale.US))) {
