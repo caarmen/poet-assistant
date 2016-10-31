@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import android.app.SearchManager;
 import android.content.Context;
 import android.database.MatrixCursor;
+import android.os.Build;
 import android.provider.BaseColumns;
 import android.support.annotation.DrawableRes;
 import android.text.TextUtils;
@@ -63,16 +64,28 @@ class SuggestionsCursor extends MatrixCursor {
         Set<String> suggestions = mSettingsPrefs.getSuggestedWords();
         TreeSet<String> sortedSuggestions = new TreeSet<>();
         sortedSuggestions.addAll(suggestions);
+        final @DrawableRes int iconId;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            iconId = R.drawable.ic_search_history_deprecated;
+        } else {
+            iconId = R.drawable.ic_search_history;
+        }
         StreamSupport.stream(sortedSuggestions)
                 .filter(suggestion -> TextUtils.isEmpty(mFilter) || suggestion.contains(mFilter))
-                .forEach(suggestion -> addSuggestion(suggestion, R.drawable.ic_search_history));
+                .forEach(suggestion -> addSuggestion(suggestion, iconId));
     }
 
     private void loadSimilarWords() {
         if (!TextUtils.isEmpty(mFilter)) {
             String[] similarSoundingWords = mDictionary.findWordsWithPrefix(mFilter.trim().toLowerCase(Locale.getDefault()));
+            final @DrawableRes int iconId;
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                iconId = R.drawable.ic_action_search_deprecated;
+            } else {
+                iconId = R.drawable.ic_action_search;
+            }
             for (String similarSoundingWord : similarSoundingWords) {
-                addSuggestion(similarSoundingWord, R.drawable.ic_action_search);
+                addSuggestion(similarSoundingWord, iconId);
             }
         }
     }
