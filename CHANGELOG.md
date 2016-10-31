@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.10.8  *(2016-10-30)*
+--------------------
+* Maintenance release: use a content provider for the suggested words.
+
 1.10.7  *(2016-10-30)*
 --------------------
 * Support Android 4.0.3-4.0.4 (api level 15).
