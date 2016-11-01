@@ -18,5 +18,5 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
-    <bool name="wotd_boot_receiver_enabled">true</bool>
+    <dimen name="tab_text_size">@dimen/design_tab_text_size</dimen>
 </resources>

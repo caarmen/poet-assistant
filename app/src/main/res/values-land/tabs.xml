@@ -20,4 +20,5 @@
 <resources>
     <bool name="tab_icons">false</bool>
     <bool name="tab_text">true</bool>
+    <dimen name="tab_text_size">10dp</dimen>
 </resources>
