@@ -39,6 +39,10 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.TextAppearance.Design.Tab" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">@dimen/tab_text_size</item>
+    </style>
+
     <style name="AppTheme.SearchViewStyle" parent="Widget.AppCompat.SearchView.ActionBar">
         <item name="suggestionRowLayout">@layout/suggested_word</item>
     </style>

@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.10.9  *(2016-11-01)*
+--------------------
+* Improve display of tabs on small screens.
+
 1.10.8  *(2016-10-30)*
 --------------------
 * Maintenance release: use a content provider for the suggested words.
