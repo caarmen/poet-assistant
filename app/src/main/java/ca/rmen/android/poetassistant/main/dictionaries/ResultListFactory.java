@@ -24,6 +24,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 
@@ -126,7 +127,8 @@ public class ResultListFactory {
         }
     }
 
-    static InputDialogFragment createFilterDialog(Context context, Tab tab, @SuppressWarnings("SameParameterValue") int actionId, String text) {
+    static void showFilterDialog(Context context, Tab tab, @SuppressWarnings("SameParameterValue") int actionId, String text,
+                                 FragmentManager fragmentManager, String tag) {
         String dialogMessage;
         switch (tab) {
             case RHYMER:
@@ -137,7 +139,8 @@ public class ResultListFactory {
                 dialogMessage = context.getString(R.string.filter_thesaurus_message);
                 break;
         }
-        return InputDialogFragment.create(actionId, context.getString(R.string.filter_title), dialogMessage, text);
+        InputDialogFragment.show(actionId, context.getString(R.string.filter_title), dialogMessage, text,
+                fragmentManager, tag);
     }
 
     static String getFilterLabel(Context context, Tab tab) {

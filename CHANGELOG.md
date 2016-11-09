@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.10.10  *(2016-11-09)*
+--------------------
+* Prompt before clearing the poem text (from the "new" menu item)
+
 1.10.9  *(2016-11-01)*
 --------------------
 * Improve display of tabs on small screens.

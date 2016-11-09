@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
@@ -56,7 +57,8 @@ public class InputDialogFragment extends DialogFragment {
         void onInputSubmitted(int actionId, String input);
     }
 
-    public static InputDialogFragment create(int actionId, String title, String message, String text) {
+    public static void show(int actionId, String title, String message, String text,
+                            FragmentManager fragmentManager, String tag) {
         InputDialogFragment fragment = new InputDialogFragment();
         Bundle bundle = new Bundle(3);
         bundle.putInt(EXTRA_ACTION_ID, actionId);
@@ -64,7 +66,7 @@ public class InputDialogFragment extends DialogFragment {
         bundle.putString(EXTRA_MESSAGE, message);
         bundle.putString(EXTRA_TEXT, text);
         fragment.setArguments(bundle);
-        return fragment;
+        fragmentManager.beginTransaction().add(fragment, tag).commit();
     }
 
     /**

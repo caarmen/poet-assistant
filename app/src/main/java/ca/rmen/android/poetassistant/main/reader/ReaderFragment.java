@@ -51,15 +51,19 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding;
 import ca.rmen.android.poetassistant.main.Tab;
+import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 
 
 public class ReaderFragment extends Fragment implements
-        PoemFile.PoemFileCallback {
+        PoemFile.PoemFileCallback,
+        ConfirmDialogFragment.ConfirmDialogListener {
     private static final String TAG = Constants.TAG + ReaderFragment.class.getSimpleName();
     private static final String EXTRA_INITIAL_TEXT = "initial_text";
+    private static final String DIALOG_TAG = "dialog";
     private static final int ACTION_FILE_OPEN = 0;
     private static final int ACTION_FILE_SAVE_AS = 1;
+    private static final int ACTION_FILE_NEW = 2;
 
     private FragmentReaderBinding mBinding;
     private Tts mTts;
@@ -110,13 +114,21 @@ public class ReaderFragment extends Fragment implements
         super.onCreateOptionsMenu(menu, inflater);
         Log.d(TAG, "onCreateOptionsMenu() called with: " + "menu = [" + menu + "], inflater = [" + inflater + "]");
         inflater.inflate(R.menu.menu_tts, menu);
-        menu.findItem(R.id.action_save).setEnabled(mPoemPrefs.hasSavedPoem());
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             menu.findItem(R.id.action_new).setTitle(R.string.file_clear);
             menu.findItem(R.id.action_open).setVisible(false);
             menu.findItem(R.id.action_save).setVisible(false);
             menu.findItem(R.id.action_save_as).setVisible(false);
         }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        boolean hasEnteredText = !TextUtils.isEmpty(mBinding.tvText.getText());
+        menu.findItem(R.id.action_new).setEnabled(hasEnteredText);
+        menu.findItem(R.id.action_save).setEnabled(mPoemPrefs.hasSavedPoem());
+        menu.findItem(R.id.action_save_as).setEnabled(hasEnteredText);
     }
 
     @Override
@@ -130,13 +142,13 @@ public class ReaderFragment extends Fragment implements
 
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_new) {
-            mPoemPrefs.clear();
-            mBinding.tvText.setText("");
-            getActivity().supportInvalidateOptionsMenu();
+            ConfirmDialogFragment.show(ACTION_FILE_NEW,
+                    getString(R.string.file_new_confirm_title),
+                    getChildFragmentManager(),
+                    DIALOG_TAG);
         } else if (item.getItemId() == R.id.action_open) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) open();
         } else if (item.getItemId() == R.id.action_save) {
@@ -279,6 +291,15 @@ public class ReaderFragment extends Fragment implements
                 mBinding.btnPlay.setImageResource(R.drawable.ic_play_enabled);
             }
         });
+    }
+
+    @Override
+    public void onOk(int actionId) {
+        if (actionId == ACTION_FILE_NEW) {
+            mPoemPrefs.clear();
+            mBinding.tvText.setText("");
+            getActivity().supportInvalidateOptionsMenu();
+        }
     }
 
     public class PlayButtonListener {

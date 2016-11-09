@@ -73,6 +73,7 @@
     <string name="about_porter_stemming_algorithm">Porter stemming algorithm: http://tartarus.org/martin/PorterStemmer/</string>
     <string name="license_title">Licensing Information</string>
     <string name="file_clear">Clear text</string>
+    <string name="file_new_confirm_title">Clear current poem?</string>
     <string name="file_new">New</string>
     <string name="file_open">Open</string>
     <string name="file_save">Save</string>

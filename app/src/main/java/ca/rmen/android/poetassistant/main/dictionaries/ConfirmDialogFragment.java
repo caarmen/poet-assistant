@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
@@ -47,13 +48,13 @@ public class ConfirmDialogFragment extends DialogFragment {
         void onOk(int actionId);
     }
 
-    public static ConfirmDialogFragment create(int actionId, String title) {
+    public static void show(int actionId, String title, FragmentManager fragmentManager, String tag) {
         ConfirmDialogFragment fragment = new ConfirmDialogFragment();
         Bundle bundle = new Bundle(3);
         bundle.putInt(EXTRA_ACTION_ID, actionId);
         bundle.putString(EXTRA_TITLE, title);
         fragment.setArguments(bundle);
-        return fragment;
+        fragmentManager.beginTransaction().add(fragment, tag).commit();
     }
 
     /**

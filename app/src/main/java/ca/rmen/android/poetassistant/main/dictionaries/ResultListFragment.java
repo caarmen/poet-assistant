@@ -299,10 +299,11 @@ public class ResultListFragment<T> extends Fragment
         }
 
         public void onDeleteFavoritesButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            ConfirmDialogFragment fragment = ConfirmDialogFragment.create(
+            ConfirmDialogFragment.show(
                     ACTION_CLEAR_FAVORITES,
-                    getString(R.string.action_clear_favorites));
-            getChildFragmentManager().beginTransaction().add(fragment, DIALOG_TAG).commit();
+                    getString(R.string.action_clear_favorites),
+                    getChildFragmentManager(),
+                    DIALOG_TAG);
         }
 
         public void onWebSearchButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
@@ -319,12 +320,13 @@ public class ResultListFragment<T> extends Fragment
         }
 
         public void onFilterButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            InputDialogFragment fragment = ResultListFactory.createFilterDialog(
+            ResultListFactory.showFilterDialog(
                     getActivity(),
                     mTab,
                     ACTION_FILTER,
-                    mBinding.tvFilter.getText().toString());
-            getChildFragmentManager().beginTransaction().add(fragment, DIALOG_TAG).commit();
+                    mBinding.tvFilter.getText().toString(),
+                    getChildFragmentManager(),
+                    DIALOG_TAG);
         }
 
         public void onHelpButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
