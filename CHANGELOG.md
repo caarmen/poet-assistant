@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.10.11  *(2016-11-19)*
+--------------------
+* Use support library 25.0.1
+
 1.10.10  *(2016-11-09)*
 --------------------
 * Prompt before clearing the poem text (from the "new" menu item)
