@@ -28,7 +28,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 
@@ -37,10 +40,12 @@ public class DictionaryLoader extends ResultListLoader<ResultListData<Dictionary
     private static final String TAG = Constants.TAG + DictionaryLoader.class.getSimpleName();
 
     private final String mQuery;
+    @Inject Dictionary mDictionary;
 
     public DictionaryLoader(Context context, String query) {
         super(context);
         mQuery = query;
+        DaggerHelper.getAppComponent(context).inject(this);
     }
 
     @Override
@@ -48,8 +53,7 @@ public class DictionaryLoader extends ResultListLoader<ResultListData<Dictionary
         Log.d(TAG, "loadInBackground() called with: " + "");
         List<DictionaryEntry.DictionaryEntryDetails> result = new ArrayList<>();
         if (TextUtils.isEmpty(mQuery)) return new ResultListData<>(mQuery, false, result);
-        Dictionary dictionary = Dictionary.getInstance(getContext());
-        DictionaryEntry entry = dictionary.lookup(mQuery);
+        DictionaryEntry entry = mDictionary.lookup(mQuery);
         Collections.addAll(result, entry.details);
         Set<String> favorites = mFavorites.getFavorites();
         return new ResultListData<>(entry.word, favorites.contains(entry.word), result);

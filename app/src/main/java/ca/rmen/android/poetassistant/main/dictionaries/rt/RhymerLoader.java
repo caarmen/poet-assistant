@@ -30,7 +30,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
@@ -44,12 +47,15 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
     private final String mQuery;
     private final String mFilter;
     private final SettingsPrefs mPrefs;
+    @Inject Rhymer mRhymer;
+    @Inject Thesaurus mThesaurus;
 
     public RhymerLoader(Context context, String query, String filter) {
         super(context);
         mQuery = query;
         mFilter = filter;
         mPrefs = SettingsPrefs.get(context);
+        DaggerHelper.getAppComponent(context).inject(this);
     }
 
     @Override
@@ -58,15 +64,14 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
         long before = System.currentTimeMillis();
 
         List<RTEntry> data = new ArrayList<>();
-        Rhymer rhymer = Rhymer.getInstance(getContext());
         if (TextUtils.isEmpty(mQuery)) return emptyResult();
 
-        List<RhymeResult> rhymeResults = rhymer.getRhymingWords(mQuery);
+        List<RhymeResult> rhymeResults = mRhymer.getRhymingWords(mQuery);
         if (rhymeResults == null) {
             return emptyResult();
         }
         if (!TextUtils.isEmpty(mFilter)) {
-            Set<String> synonyms = Thesaurus.getInstance(getContext()).getFlatSynonyms(mFilter);
+            Set<String> synonyms = mThesaurus.getFlatSynonyms(mFilter);
             if (synonyms.isEmpty()) return emptyResult();
             rhymeResults = filter(rhymeResults, synonyms);
         }
@@ -126,7 +131,7 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
     private void addResultSection(Set<String> favorites, List<RTEntry> results, int sectionHeadingResId, String[] rhymes) {
         if (rhymes.length > 0) {
 
-            Set<String> wordsWithDefinitions = mPrefs.getIsAllRhymesEnabled() ? Rhymer.getInstance(getContext()).getWordsWithDefinitions(rhymes) : null;
+            Set<String> wordsWithDefinitions = mPrefs.getIsAllRhymesEnabled() ? mRhymer.getWordsWithDefinitions(rhymes) : null;
             results.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
             for (int i = 0; i < rhymes.length; i++) {
                 @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;

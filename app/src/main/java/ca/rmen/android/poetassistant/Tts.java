@@ -45,7 +45,6 @@ public class Tts {
     private int mTtsStatus = TextToSpeech.ERROR;
     private final Voices mVoices;
     private final SettingsPrefs mSettingsPrefs;
-    private static Tts sInstance;
 
     public static class OnTtsInitialized {
         public final int status;
@@ -65,12 +64,7 @@ public class Tts {
     public static class OnUtteranceCompleted {
     }
 
-    public synchronized static Tts getInstance(Context context) {
-        if (sInstance == null) sInstance = new Tts(context.getApplicationContext());
-        return sInstance;
-    }
-
-    private Tts(Context context) {
+    public Tts(Context context) {
         mContext = context;
         mVoices = new Voices(context);
         mSettingsPrefs = SettingsPrefs.get(context);

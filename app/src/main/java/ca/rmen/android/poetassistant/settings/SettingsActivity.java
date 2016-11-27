@@ -35,19 +35,27 @@ import android.util.Log;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Theme;
 import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.wotd.Wotd;
 
 public class SettingsActivity extends AppCompatActivity {
 
     private static final String TAG = Constants.TAG + SettingsActivity.class.getSimpleName();
 
+    @Inject Tts mTts;
+    @Inject Dictionary mDictionary;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DaggerHelper.getAppComponent(this).inject(this);
         setContentView(R.layout.activity_settings);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
@@ -72,15 +80,23 @@ public class SettingsActivity extends AppCompatActivity {
             stackBuilder.addNextIntentWithParentStack(intent);
             stackBuilder.startActivities();
         } else if (Settings.PREF_WOTD_ENABLED.equals(key)) {
-            Wotd.setWotdEnabled(context, SettingsPrefs.get(context).getIsWotdEnabled());
+            Wotd.setWotdEnabled(context, mDictionary, SettingsPrefs.get(context).getIsWotdEnabled());
         } else if (Settings.PREF_VOICE.equals(key)) {
-            Tts.getInstance(SettingsActivity.this).useVoice(SettingsPrefs.get(context).getVoice());
+            mTts.useVoice(SettingsPrefs.get(context).getVoice());
         }
     };
 
     public static class GeneralPreferenceFragment extends PreferenceFragmentCompat {
 
         private static final String DIALOG_TAG = "dialog_tag";
+
+        @Inject Tts mTts;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            DaggerHelper.getAppComponent(getContext()).inject(this);
+        }
 
         @Override
         public void onCreatePreferences(Bundle bundle, String s) {
@@ -107,7 +123,7 @@ public class SettingsActivity extends AppCompatActivity {
         public void onResume() {
             super.onResume();
             EventBus.getDefault().register(this);
-            Tts.getInstance(getContext()).restart();
+            mTts.restart();
         }
 
         @Override

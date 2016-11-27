@@ -19,12 +19,13 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.Patterns;
@@ -39,17 +40,11 @@ public class Dictionary {
 
     private static final int MAX_PREFIX_MATCHES = 10;
 
-    private static Dictionary sInstance;
-
     private final DbHelper mDbHelper;
 
-    public static synchronized Dictionary getInstance(Context context) {
-        if (sInstance == null) sInstance = new Dictionary(context);
-        return sInstance;
-    }
-
-    private Dictionary (Context context) {
-        mDbHelper = DbHelper.getInstance(context);
+    @Inject
+    public Dictionary (DbHelper dbHelper) {
+        mDbHelper = dbHelper;
     }
 
     public boolean isLoaded() {

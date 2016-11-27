@@ -51,9 +51,9 @@ public final class Wotd {
         // Prevent instantiation
     }
 
-    public static void setWotdEnabled(Context context, boolean enabled) {
+    public static void setWotdEnabled(Context context, Dictionary dictionary, boolean enabled) {
         Log.v(TAG, "setWotdEnabled: enabled = " + enabled);
-        if (enabled) enableWotd(context);
+        if (enabled) enableWotd(context, dictionary);
         else disableWotd(context);
     }
 
@@ -72,7 +72,7 @@ public final class Wotd {
         }
     }
 
-    private static void enableWotd(final Context context) {
+    private static void enableWotd(final Context context, final Dictionary dictionary) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             WotdJob.schedule(context);
         } else {
@@ -82,7 +82,7 @@ public final class Wotd {
 
             @Override
             protected Void doInBackground(Void... voids) {
-                notifyWotd(context);
+                notifyWotd(context, dictionary);
                 return null;
             }
         }.execute();
@@ -96,9 +96,9 @@ public final class Wotd {
         }
     }
 
-    static void notifyWotd(Context context) {
+    static void notifyWotd(Context context, Dictionary dictionary) {
         Log.v(TAG, "notifyWotd");
-        DictionaryEntry entry = Dictionary.getInstance(context).getRandomEntry();
+        DictionaryEntry entry = dictionary.getRandomEntry();
         if (entry == null) return;
         String title = context.getString(R.string.wotd_notification_title, entry.word);
         CharSequence content = buildWotdNotificationContent(context, entry);

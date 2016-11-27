@@ -51,6 +51,8 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.Collections;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
@@ -79,7 +81,7 @@ public class ResultListFragment<T> extends Fragment
     private Tab mTab;
     private ResultListAdapter<T> mAdapter;
     private ResultListData<T> mData;
-    private Tts mTts;
+    @Inject Tts mTts;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,6 +93,7 @@ public class ResultListFragment<T> extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
         mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
+        ResultListFactory.inject(mTab, this);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false);
         View view = mBinding.getRoot();
         mBinding.setHeaderButtonListener(mHeaderButtonListener);
@@ -118,7 +121,6 @@ public class ResultListFragment<T> extends Fragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, mTab + ": onActivityCreated() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
-        mTts = Tts.getInstance(getActivity());
         //noinspection unchecked
         mAdapter = (ResultListAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
         mBinding.recyclerView.setAdapter(mAdapter);

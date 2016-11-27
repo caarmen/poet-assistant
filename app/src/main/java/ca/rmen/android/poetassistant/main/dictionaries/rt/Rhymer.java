@@ -33,6 +33,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
@@ -41,18 +43,13 @@ import ca.rmen.rhymer.WordVariant;
 
 public class Rhymer extends ca.rmen.rhymer.Rhymer {
     private static final String TAG = Constants.TAG + Rhymer.class.getSimpleName();
-    private final DbHelper mDbHelper;
     private final SettingsPrefs mPrefs;
 
-    private static Rhymer sInstance = null;
+    private final DbHelper mDbHelper;
 
-    public static synchronized Rhymer getInstance(Context context) {
-        if (sInstance == null) sInstance = new Rhymer(context.getApplicationContext());
-        return sInstance;
-    }
-
-    private Rhymer(Context context) {
-        mDbHelper = DbHelper.getInstance(context);
+    @Inject
+    public Rhymer(Context context, DbHelper dbHelper) {
+        mDbHelper = dbHelper;
         mPrefs = SettingsPrefs.get(context);
     }
 

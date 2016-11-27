@@ -25,14 +25,21 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 
 public class WotdBroadcastReceiver extends BroadcastReceiver {
     private static final String TAG = Constants.TAG + WotdBroadcastReceiver.class.getSimpleName();
 
+    @Inject Dictionary mDictionary;
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive: intent = " + intent);
+        DaggerHelper.getAppComponent(context).inject(this);
         mTask.execute(context);
     }
 
@@ -40,7 +47,7 @@ public class WotdBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         protected Void doInBackground(Context... params) {
-            Wotd.notifyWotd(params[0]);
+            Wotd.notifyWotd(params[0], mDictionary);
             return null;
         }
     };

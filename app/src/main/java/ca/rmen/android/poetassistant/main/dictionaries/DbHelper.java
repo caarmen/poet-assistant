@@ -42,14 +42,8 @@ public class DbHelper {
     private static final int DB_VERSION = 1;
     private SQLiteDatabase mDb;
     private final Object mLock = new Object();
-    private static DbHelper sInstance;
 
-    public static synchronized DbHelper getInstance(Context context) {
-        if (sInstance == null) sInstance = new DbHelper(context);
-        return sInstance;
-    }
-
-    private DbHelper(Context context) {
+    public DbHelper(Context context) {
         mContext = context;
     }
 
