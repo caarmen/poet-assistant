@@ -20,9 +20,12 @@
 package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabaseCorruptException;
 import android.database.sqlite.SQLiteException;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
@@ -40,9 +43,11 @@ public class DbHelper {
     private final Context mContext;
     private static final String DB_NAME = "poet_assistant";
     private static final int DB_VERSION = 1;
+    private static final int MAX_DB_RESTORE_ATTEMPTS = 3;
     private SQLiteDatabase mDb;
     private final Object mLock = new Object();
     private static DbHelper sInstance;
+    private int mDbRestoreAttemptCount = 0;
 
     public static synchronized DbHelper getInstance(Context context) {
         if (sInstance == null) sInstance = new DbHelper(context);
@@ -53,9 +58,58 @@ public class DbHelper {
         mContext = context;
     }
 
-    public SQLiteDatabase getDb() {
+    public boolean isLoaded() {
+        return getDb() != null;
+    }
+
+    private SQLiteDatabase getDb() {
         open();
         return mDb;
+    }
+
+    @Nullable
+    public Cursor query(String table, String [] projection, String selection, String[] selectionArgs,
+                        String groupBy, String having, String orderBy) {
+        if (mDb == null) return null;
+        try {
+            return mDb.query(table, projection, selection, selectionArgs, groupBy, having, orderBy);
+        } catch (SQLiteDatabaseCorruptException e) {
+            handleDbCorruptException(e);
+            return null;
+        }
+    }
+
+    @Nullable
+    public Cursor query(boolean distinct,
+                        String table, String [] projection, String selection, String[] selectionArgs,
+                        String groupBy, String having, String orderBy,
+                        String limit) {
+        if (mDb == null) return null;
+        try {
+            return mDb.query(distinct, table, projection, selection, selectionArgs, groupBy, having, orderBy, limit);
+        } catch (SQLiteDatabaseCorruptException e) {
+            handleDbCorruptException(e);
+            return null;
+        }
+    }
+
+    /**
+     * Issue #44 (https://github.com/caarmen/poet-assistant/issues/44):
+     * Some users reported an {@link SQLiteDatabaseCorruptException}.  If this happens, we try to
+     * recopy the db, up to a limited number of times, before giving up.
+     */
+    private void handleDbCorruptException(SQLiteDatabaseCorruptException e) {
+        Log.v(TAG, "Error querying db: " + e.getMessage(), e);
+        if (mDbRestoreAttemptCount >= MAX_DB_RESTORE_ATTEMPTS) {
+            // Make the app crash.  We'll hopefully see if this is actually happening, by receiving crash reports.
+            throw new RuntimeException("Tried to recover the db " + mDbRestoreAttemptCount + " times. Giving up :(", e);
+        }
+        synchronized (mLock) {
+            deleteDb(DB_VERSION);
+            mDb = null;
+            open();
+            mDbRestoreAttemptCount++;
+        }
     }
 
     /**
