@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -48,41 +47,38 @@ public class Dictionary {
     }
 
     public boolean isLoaded() {
-        return mDbHelper.getDb() != null;
+        return mDbHelper.isLoaded();
     }
 
     @NonNull
     DictionaryEntry lookup(String word) {
-        SQLiteDatabase db = mDbHelper.getDb();
-        if (db != null) {
 
-            String[] projection = new String[]{"part_of_speech", "definition"};
-            String selection = "word=?";
-            String[] selectionArgs = new String[]{word};
-            String lookupWord = word;
-            Cursor cursor = db.query("dictionary", projection, selection, selectionArgs, null, null, null);
+        String[] projection = new String[]{"part_of_speech", "definition"};
+        String selection = "word=?";
+        String[] selectionArgs = new String[]{word};
+        String lookupWord = word;
+        Cursor cursor = mDbHelper.query("dictionary", projection, selection, selectionArgs, null, null, null);
 
-            if (cursor != null && cursor.getCount() == 0) {
-                String closestWord = new WordSimilarities().findClosestWord(word, db);
-                if (closestWord != null) {
-                    lookupWord = closestWord;
-                    cursor.close();
-                    selectionArgs = new String[]{lookupWord};
-                    cursor = db.query("dictionary", projection, selection, selectionArgs, null, null, null);
-                }
+        if (cursor != null && cursor.getCount() == 0) {
+            String closestWord = new WordSimilarities().findClosestWord(word, mDbHelper);
+            if (closestWord != null) {
+                lookupWord = closestWord;
+                cursor.close();
+                selectionArgs = new String[]{lookupWord};
+                cursor = mDbHelper.query("dictionary", projection, selection, selectionArgs, null, null, null);
             }
-            if (cursor != null) {
-                DictionaryEntry.DictionaryEntryDetails[] result = new DictionaryEntry.DictionaryEntryDetails[cursor.getCount()];
-                try {
-                    while (cursor.moveToNext()) {
-                        String partOfSpeech = cursor.getString(0);
-                        String definition = cursor.getString(1);
-                        result[cursor.getPosition()] = new DictionaryEntry.DictionaryEntryDetails(partOfSpeech, definition);
-                    }
-                    return new DictionaryEntry(lookupWord, result);
-                } finally {
-                    cursor.close();
+        }
+        if (cursor != null) {
+            DictionaryEntry.DictionaryEntryDetails[] result = new DictionaryEntry.DictionaryEntryDetails[cursor.getCount()];
+            try {
+                while (cursor.moveToNext()) {
+                    String partOfSpeech = cursor.getString(0);
+                    String definition = cursor.getString(1);
+                    result[cursor.getPosition()] = new DictionaryEntry.DictionaryEntryDetails(partOfSpeech, definition);
                 }
+                return new DictionaryEntry(lookupWord, result);
+            } finally {
+                cursor.close();
             }
         }
         return new DictionaryEntry(word, new DictionaryEntry.DictionaryEntryDetails[0]);
@@ -91,26 +87,23 @@ public class Dictionary {
     public
     @NonNull
     String[] findWordsByPattern(String pattern) {
-        SQLiteDatabase db = mDbHelper.getDb();
-        if (db != null) {
-            String[] projection = new String[]{"word"};
-            String selection = "word LIKE ?";
-            String[] selectionArgs = new String[]{pattern};
-            String orderBy = "word";
-            String limit = String.valueOf(Patterns.MAX_RESULTS);
-            Cursor cursor = db.query(true, "dictionary", projection, selection, selectionArgs, null, null, orderBy, limit);
-            if (cursor != null) {
-                try {
-                    if (cursor.getCount() > 0) {
-                        String[] result = new String[cursor.getCount()];
-                        while (cursor.moveToNext()) {
-                            result[cursor.getPosition()] = cursor.getString(0);
-                        }
-                        return result;
+        String[] projection = new String[]{"word"};
+        String selection = "word LIKE ?";
+        String[] selectionArgs = new String[]{pattern};
+        String orderBy = "word";
+        String limit = String.valueOf(Patterns.MAX_RESULTS);
+        Cursor cursor = mDbHelper.query(true, "dictionary", projection, selection, selectionArgs, null, null, orderBy, limit);
+        if (cursor != null) {
+            try {
+                if (cursor.getCount() > 0) {
+                    String[] result = new String[cursor.getCount()];
+                    while (cursor.moveToNext()) {
+                        result[cursor.getPosition()] = cursor.getString(0);
                     }
-                } finally {
-                    cursor.close();
+                    return result;
                 }
+            } finally {
+                cursor.close();
             }
         }
         return new String[0];
@@ -120,29 +113,26 @@ public class Dictionary {
      * @return at most limit words starting with the given prefix
      */
     public String[] findWordsWithPrefix(String prefix) {
-        SQLiteDatabase db = mDbHelper.getDb();
-        if (db != null) {
-            String[] projection = new String[]{"word"};
-            String selection = "has_definition=1 AND word LIKE ?";
-            String[] selectionArgs = new String[]{prefix + "%"};
-            String orderBy = "word";
-            Cursor cursor = db.query(
-                    true,
-                    "word_variants", projection, selection, selectionArgs,
-                    null, null,
-                    orderBy, String.valueOf(MAX_PREFIX_MATCHES));
-            if (cursor != null) {
-                try {
-                    if (cursor.getCount() > 0) {
-                        String[] result = new String[cursor.getCount()];
-                        while (cursor.moveToNext()) {
-                            result[cursor.getPosition()] = cursor.getString(0);
-                        }
-                        return result;
+        String[] projection = new String[]{"word"};
+        String selection = "has_definition=1 AND word LIKE ?";
+        String[] selectionArgs = new String[]{prefix + "%"};
+        String orderBy = "word";
+        Cursor cursor = mDbHelper.query(
+                true,
+                "word_variants", projection, selection, selectionArgs,
+                null, null,
+                orderBy, String.valueOf(MAX_PREFIX_MATCHES));
+        if (cursor != null) {
+            try {
+                if (cursor.getCount() > 0) {
+                    String[] result = new String[cursor.getCount()];
+                    while (cursor.moveToNext()) {
+                        result[cursor.getPosition()] = cursor.getString(0);
                     }
-                } finally {
-                    cursor.close();
+                    return result;
                 }
+            } finally {
+                cursor.close();
             }
         }
         return new String[0];
@@ -151,32 +141,29 @@ public class Dictionary {
 
     @Nullable
     public DictionaryEntry getRandomEntry() {
-        SQLiteDatabase db = mDbHelper.getDb();
-        if (db != null) {
-            String[] projection = new String[]{"word"};
-            String limit = "1";
-            String selection = "google_ngram_frequency > ? AND google_ngram_frequency < ?";
-            String orderBy = "RANDOM()";
-            String[] args = new String[]
-                    {
-                            String.valueOf(MIN_INTERESTING_FREQUENCY),
-                            String.valueOf(MAX_INTERESTING_FREQUENCY)
-                    };
-            Cursor cursor = db.query(false, "stems", projection, selection, args, null, null,
-                    orderBy, limit);
-            if (cursor != null) {
-                String word = null;
-                try {
-                    if (cursor.moveToNext()) {
-                        word = cursor.getString(0);
-                    }
-                } finally {
-                    cursor.close();
+        String[] projection = new String[]{"word"};
+        String limit = "1";
+        String selection = "google_ngram_frequency > ? AND google_ngram_frequency < ?";
+        String orderBy = "RANDOM()";
+        String[] args = new String[]
+                {
+                        String.valueOf(MIN_INTERESTING_FREQUENCY),
+                        String.valueOf(MAX_INTERESTING_FREQUENCY)
+                };
+        Cursor cursor = mDbHelper.query(false, "stems", projection, selection, args, null, null,
+                orderBy, limit);
+        if (cursor != null) {
+            String word = null;
+            try {
+                if (cursor.moveToNext()) {
+                    word = cursor.getString(0);
                 }
-
-                if (TextUtils.isEmpty(word)) return null;
-                return lookup(word);
+            } finally {
+                cursor.close();
             }
+
+            if (TextUtils.isEmpty(word)) return null;
+            return lookup(word);
         }
 
         return null;
