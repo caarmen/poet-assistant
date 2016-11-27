@@ -17,6 +17,7 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="ca.rmen.android.poetassistant">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -82,15 +83,29 @@
         <activity
             android:name=".about.AboutActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".main.MainActivity" />
+            android:parentActivityName=".main.MainActivity"
+            tools:ignore="UnusedAttribute">
+            <!-- Parent activity meta-data to support 4.0 -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ca.rmen.android.poetassistant.main.MainActivity" />
+        </activity>
         <activity
             android:name=".about.LicenseActivity"
             android:label="@string/license_title"
-            android:parentActivityName=".about.AboutActivity" />
+            android:parentActivityName=".about.AboutActivity"
+            tools:ignore="UnusedAttribute">
+            <!-- Parent activity meta-data to support 4.0 -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ca.rmen.android.poetassistant.about.AboutActivity" />
+        </activity>
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".main.MainActivity">
+            android:parentActivityName=".main.MainActivity"
+            tools:ignore="UnusedAttribute">
+            <!-- Parent activity meta-data to support 4.0 -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ca.rmen.android.poetassistant.main.MainActivity" />
