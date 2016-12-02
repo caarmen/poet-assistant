@@ -46,8 +46,11 @@ import android.view.inputmethod.InputMethodManager;
 
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.BuildConfig;
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.about.AboutActivity;
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding;
@@ -71,6 +74,9 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
     private ActivityMainBinding mBinding;
     private Favorites mFavorites;
     private PagerAdapter mPagerAdapter;
+    @Inject Rhymer mRhymer;
+    @Inject Thesaurus mThesaurus;
+    @Inject Dictionary mDictionary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,10 +129,8 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
-                Rhymer rhymer = Rhymer.getInstance(getApplicationContext());
-                Thesaurus thesaurus = Thesaurus.getInstance(getApplicationContext());
-                Dictionary dictionary = Dictionary.getInstance(getApplicationContext());
-                return rhymer.isLoaded() && thesaurus.isLoaded() && dictionary.isLoaded();
+                DaggerHelper.getAppComponent(MainActivity.this).inject(MainActivity.this);
+                return mRhymer.isLoaded() && mThesaurus.isLoaded() && mDictionary.isLoaded();
             }
 
             @Override

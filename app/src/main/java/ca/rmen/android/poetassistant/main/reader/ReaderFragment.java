@@ -46,7 +46,10 @@ import android.view.ViewGroup;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding;
@@ -66,7 +69,7 @@ public class ReaderFragment extends Fragment implements
     private static final int ACTION_FILE_NEW = 2;
 
     private FragmentReaderBinding mBinding;
-    private Tts mTts;
+    @Inject Tts mTts;
     private Handler mHandler;
     private PoemPrefs mPoemPrefs;
     private final PlayButtonListener mPlayButtonListener = new PlayButtonListener();
@@ -85,9 +88,9 @@ public class ReaderFragment extends Fragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         super.onCreate(savedInstanceState);
+        DaggerHelper.getAppComponent(getContext()).inject(this);
         setHasOptionsMenu(true);
         mPoemPrefs = new PoemPrefs(getActivity());
-        mTts = Tts.getInstance(getActivity());
         EventBus.getDefault().register(this);
     }
 

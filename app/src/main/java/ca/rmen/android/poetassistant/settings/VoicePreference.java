@@ -27,35 +27,47 @@ import android.util.AttributeSet;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.Voices;
 import java8.util.stream.StreamSupport;
 
 public class VoicePreference extends ListPreference {
+    @Inject Tts mTts;
+
     @SuppressWarnings("unused")
     public VoicePreference(Context context) {
         super(context);
+        init();
     }
 
     @SuppressWarnings("unused")
     public VoicePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     @SuppressWarnings("unused")
     public VoicePreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
     }
 
     @SuppressWarnings("unused")
     public VoicePreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        init();
+    }
+
+    private void init() {
+        DaggerHelper.getAppComponent(getContext()).inject(this);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     void loadVoices() {
-        Tts tts = Tts.getInstance(getContext());
-        List<Voices.TtsVoice> voices = tts.getVoices();
+        List<Voices.TtsVoice> voices = mTts.getVoices();
         setEntryValues(StreamSupport.stream(voices)
                 .map(voice -> voice.id)
                 .toArray(size -> new CharSequence[voices.size()]));

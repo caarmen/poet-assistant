@@ -21,7 +21,6 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -33,6 +32,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
@@ -41,50 +42,42 @@ import ca.rmen.rhymer.WordVariant;
 
 public class Rhymer extends ca.rmen.rhymer.Rhymer {
     private static final String TAG = Constants.TAG + Rhymer.class.getSimpleName();
-    private final DbHelper mDbHelper;
     private final SettingsPrefs mPrefs;
 
-    private static Rhymer sInstance = null;
+    private final DbHelper mDbHelper;
 
-    public static synchronized Rhymer getInstance(Context context) {
-        if (sInstance == null) sInstance = new Rhymer(context.getApplicationContext());
-        return sInstance;
-    }
-
-    private Rhymer(Context context) {
-        mDbHelper = DbHelper.getInstance(context);
+    @Inject
+    public Rhymer(Context context, DbHelper dbHelper) {
+        mDbHelper = dbHelper;
         mPrefs = SettingsPrefs.get(context);
     }
 
     public boolean isLoaded() {
-        return mDbHelper.getDb() != null;
+        return mDbHelper.isLoaded();
     }
 
     @NonNull
     @Override
     protected List<WordVariant> getWordVariants(String word) {
         List<WordVariant> result = new ArrayList<>();
-        SQLiteDatabase db = mDbHelper.getDb();
-        if (db != null) {
-            String[] projection = new String[]{"variant_number", "stress_syllables", "last_syllable", "last_two_syllables", "last_three_syllables"};
-            String selection = "word=?";
-            String[] selectionArgs = new String[]{word};
-            Cursor cursor = db.query("word_variants", projection, selection, selectionArgs, null, null, null);
-            if (cursor != null) {
-                try {
-                    while (cursor.moveToNext()) {
-                        int column = 0;
-                        int variantNumber = cursor.getInt(column++);
-                        String lastStressSyllable = cursor.getString(column++);
-                        String lastSyllable = cursor.getString(column++);
-                        String lastTwoSyllables = cursor.getString(column++);
-                        String lastThreeSyllables = cursor.getString(column);
-                        WordVariant wordVariant = new WordVariant(variantNumber, lastStressSyllable, lastSyllable, lastTwoSyllables, lastThreeSyllables);
-                        result.add(wordVariant);
-                    }
-                } finally {
-                    cursor.close();
+        String[] projection = new String[]{"variant_number", "stress_syllables", "last_syllable", "last_two_syllables", "last_three_syllables"};
+        String selection = "word=?";
+        String[] selectionArgs = new String[]{word};
+        Cursor cursor = mDbHelper.query("word_variants", projection, selection, selectionArgs, null, null, null);
+        if (cursor != null) {
+            try {
+                while (cursor.moveToNext()) {
+                    int column = 0;
+                    int variantNumber = cursor.getInt(column++);
+                    String lastStressSyllable = cursor.getString(column++);
+                    String lastSyllable = cursor.getString(column++);
+                    String lastTwoSyllables = cursor.getString(column++);
+                    String lastThreeSyllables = cursor.getString(column);
+                    WordVariant wordVariant = new WordVariant(variantNumber, lastStressSyllable, lastSyllable, lastTwoSyllables, lastThreeSyllables);
+                    result.add(wordVariant);
                 }
+            } finally {
+                cursor.close();
             }
         }
         return result;
@@ -134,24 +127,21 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
         if (words.length == 0) return Collections.emptySet();
         Log.v(TAG, "getWordsWithDefinitions for " + words.length + " words");
         Set<String> result = new HashSet<>();
-        SQLiteDatabase db = mDbHelper.getDb();
-        if (db != null) {
-            String[] projection = new String[]{"word"};
-            int queryCount = DbHelper.getQueryCount(words.length);
-            for (int i = 0; i < queryCount; i++) {
-                String[] queryWords = DbHelper.getArgsInQuery(words, i);
-                Log.v(TAG, "getWordsWithDefinitions: query " + i + " has " + queryWords.length + " words");
-                String selection = "word in " + buildInClause(queryWords.length) + " AND has_definition=1";
-                Cursor cursor = db.query("word_variants", projection, selection, queryWords, null, null, null);
-                if (cursor != null) {
-                    try {
-                        while (cursor.moveToNext()) {
-                            String word = cursor.getString(0);
-                            result.add(word);
-                        }
-                    } finally {
-                        cursor.close();
+        String[] projection = new String[]{"word"};
+        int queryCount = DbHelper.getQueryCount(words.length);
+        for (int i = 0; i < queryCount; i++) {
+            String[] queryWords = DbHelper.getArgsInQuery(words, i);
+            Log.v(TAG, "getWordsWithDefinitions: query " + i + " has " + queryWords.length + " words");
+            String selection = "word in " + buildInClause(queryWords.length) + " AND has_definition=1";
+            Cursor cursor = mDbHelper.query("word_variants", projection, selection, queryWords, null, null, null);
+            if (cursor != null) {
+                try {
+                    while (cursor.moveToNext()) {
+                        String word = cursor.getString(0);
+                        result.add(word);
                     }
+                } finally {
+                    cursor.close();
                 }
             }
         }
@@ -174,24 +164,21 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
     @NonNull
     private SortedSet<String> lookupBySyllable(String syllables, String columnName) {
         SortedSet<String> result = new TreeSet<>();
-        SQLiteDatabase db = mDbHelper.getDb();
-        if (db != null) {
-            String[] projection = new String[]{"word"};
-            String selection = columnName + "=?";
-            if (!mPrefs.getIsAllRhymesEnabled()) {
-                selection += "AND has_definition=1";
-            }
-            String[] selectionArgs = new String[]{syllables};
-            Cursor cursor = db.query("word_variants", projection, selection, selectionArgs, null, null, null);
-            if (cursor != null) {
-                try {
-                    while (cursor.moveToNext()) {
-                        String word = cursor.getString(0);
-                        result.add(word);
-                    }
-                } finally {
-                    cursor.close();
+        String[] projection = new String[]{"word"};
+        String selection = columnName + "=?";
+        if (!mPrefs.getIsAllRhymesEnabled()) {
+            selection += "AND has_definition=1";
+        }
+        String[] selectionArgs = new String[]{syllables};
+        Cursor cursor = mDbHelper.query("word_variants", projection, selection, selectionArgs, null, null, null);
+        if (cursor != null) {
+            try {
+                while (cursor.moveToNext()) {
+                    String word = cursor.getString(0);
+                    result.add(word);
                 }
+            } finally {
+                cursor.close();
             }
         }
         return result;

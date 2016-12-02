@@ -31,7 +31,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.Patterns;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
@@ -43,10 +46,12 @@ public class PatternLoader extends ResultListLoader<ResultListData<RTEntry>> {
     private static final String TAG = Constants.TAG + PatternLoader.class.getSimpleName();
 
     private final String mQuery;
+    @Inject Dictionary mDictionary;
 
     public PatternLoader(Context context, String query) {
         super(context);
         mQuery = query;
+        DaggerHelper.getAppComponent(context).inject(this);
     }
 
     @Override
@@ -55,8 +60,7 @@ public class PatternLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
         List<RTEntry> data = new ArrayList<>();
         if (TextUtils.isEmpty(mQuery)) return emptyResult();
-        Dictionary dictionary = Dictionary.getInstance(getContext());
-        String[] matches = dictionary.findWordsByPattern(Patterns.convertForSqlite(mQuery));
+        String[] matches = mDictionary.findWordsByPattern(Patterns.convertForSqlite(mQuery));
 
         if (matches.length == 0) {
             return emptyResult();

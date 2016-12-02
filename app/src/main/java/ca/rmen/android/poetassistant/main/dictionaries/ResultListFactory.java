@@ -31,6 +31,7 @@ import android.view.View;
 import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
 import ca.rmen.android.poetassistant.main.Tab;
@@ -143,6 +144,24 @@ public class ResultListFactory {
                 fragmentManager, tag);
     }
 
+    static void inject(Tab tab, ResultListFragment<?> fragment) {
+        switch (tab) {
+            case RHYMER:
+            case THESAURUS:
+            case PATTERN:
+            case FAVORITES:
+                //noinspection unchecked
+                DaggerHelper.getAppComponent(fragment.getContext())
+                        .inject((ResultListFragment<RTEntry>) fragment);
+                break;
+            case DICTIONARY:
+                //noinspection unchecked
+                DaggerHelper.getAppComponent(fragment.getContext())
+                        .injectDict((ResultListFragment<DictionaryEntry>) fragment);
+                break;
+            default:
+        }
+    }
     static String getFilterLabel(Context context, Tab tab) {
         switch (tab) {
             case RHYMER:

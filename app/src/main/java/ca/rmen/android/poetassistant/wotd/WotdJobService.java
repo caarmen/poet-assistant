@@ -26,11 +26,22 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class WotdJobService extends JobService {
     private static final String TAG = Constants.TAG + WotdJobService.class.getSimpleName();
+    @Inject Dictionary mDictionary;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        DaggerHelper.getAppComponent(this).inject(this);
+    }
 
     @Override
     public boolean onStartJob(JobParameters params) {
@@ -48,7 +59,7 @@ public class WotdJobService extends JobService {
 
         @Override
         protected Void doInBackground(JobParameters... params) {
-            Wotd.notifyWotd(getApplicationContext());
+            Wotd.notifyWotd(getApplicationContext(), mDictionary);
             jobFinished(params[0], false);
             return null;
         }

@@ -35,7 +35,10 @@ import android.view.ViewTreeObserver;
 
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.main.PagerAdapter;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
@@ -56,8 +59,10 @@ public class Search {
     private final ViewPager mViewPager;
     private final PagerAdapter mPagerAdapter;
     private final Activity mSearchableActivity;
+    @Inject Dictionary mDictionary;
 
     public Search(Activity searchableActivity, ViewPager viewPager) {
+        DaggerHelper.getAppComponent(searchableActivity).inject(this);
         mSearchableActivity = searchableActivity;
         mViewPager = viewPager;
         mPagerAdapter = (PagerAdapter) viewPager.getAdapter();
@@ -161,7 +166,7 @@ public class Search {
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {
-                DictionaryEntry entry = Dictionary.getInstance(mSearchableActivity).getRandomEntry();
+                DictionaryEntry entry = mDictionary.getRandomEntry();
                 return entry == null ? null : entry.word;
             }
 

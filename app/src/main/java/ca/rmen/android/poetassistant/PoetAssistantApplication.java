@@ -21,9 +21,17 @@ package ca.rmen.android.poetassistant;
 import android.app.Application;
 
 public class PoetAssistantApplication extends Application {
+    private DaggerHelper.AppComponent mAppComponent;
     @Override
     public void onCreate() {
         super.onCreate();
         Theme.setThemeFromSettings(this);
+        mAppComponent = DaggerDaggerHelper_AppComponent.builder()
+                .appModule(new DaggerHelper.AppModule(this))
+                .build();
+    }
+
+    DaggerHelper.AppComponent getAppComponent() {
+        return mAppComponent;
     }
 }

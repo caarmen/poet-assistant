@@ -30,7 +30,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
@@ -39,6 +42,8 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
     private static final String TAG = Constants.TAG + ThesaurusLoader.class.getSimpleName();
 
+    @Inject Rhymer mRhymer;
+    @Inject Thesaurus mThesaurus;
     private final String mQuery;
     private final String mFilter;
 
@@ -46,21 +51,21 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
         super(context);
         mQuery = query;
         mFilter = filter;
+        DaggerHelper.getAppComponent(context).inject(this);
     }
 
     @Override
     public ResultListData<RTEntry> loadInBackground() {
         Log.d(TAG, "loadInBackground() called with: query = " + mQuery + ", filter = " + mFilter);
 
-        Thesaurus thesaurus = Thesaurus.getInstance(getContext());
         List<RTEntry> data = new ArrayList<>();
         if(TextUtils.isEmpty(mQuery)) return emptyResult();
-        ThesaurusEntry result  = thesaurus.lookup(mQuery);
+        ThesaurusEntry result  = mThesaurus.lookup(mQuery);
         ThesaurusEntry.ThesaurusEntryDetails[] entries = result.entries;
         if (entries.length == 0) return emptyResult();
 
         if (!TextUtils.isEmpty(mFilter)) {
-            Set<String> rhymes = Rhymer.getInstance(getContext()).getFlatRhymes(mFilter);
+            Set<String> rhymes = mRhymer.getFlatRhymes(mFilter);
             entries = filter(entries, rhymes);
         }
 

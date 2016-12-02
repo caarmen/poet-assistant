@@ -31,6 +31,9 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
+
+import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
@@ -40,7 +43,7 @@ import java8.util.stream.StreamSupport;
  * SharedPreferences and db-backed cursor to read suggestions.  Suggestions include
  * words which have been looked up before, as well as similar words in the database.
  */
-class SuggestionsCursor extends MatrixCursor {
+public class SuggestionsCursor extends MatrixCursor {
     private static final String[] COLUMNS =
             new String[]{BaseColumns._ID,
                 SearchManager.SUGGEST_COLUMN_TEXT_1,
@@ -48,14 +51,14 @@ class SuggestionsCursor extends MatrixCursor {
                 SearchManager.SUGGEST_COLUMN_INTENT_DATA};
 
     private final SettingsPrefs mSettingsPrefs;
-    private final Dictionary mDictionary;
+    @Inject Dictionary mDictionary;
     private final String mFilter;
 
     SuggestionsCursor(Context context, String filter) {
         super(COLUMNS);
         mFilter = filter;
         mSettingsPrefs = SettingsPrefs.get(context);
-        mDictionary = Dictionary.getInstance(context);
+        DaggerHelper.getAppComponent(context).inject(this);
         loadHistory();
         loadSimilarWords();
     }
