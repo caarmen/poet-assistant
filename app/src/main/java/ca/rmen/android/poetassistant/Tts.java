@@ -143,6 +143,7 @@ public class Tts {
             }
             if (status == TextToSpeech.SUCCESS) {
                 mTextToSpeech.setSpeechRate(Float.valueOf(mSettingsPrefs.getVoiceSpeed()));
+                mTextToSpeech.setPitch(Float.valueOf(mSettingsPrefs.getVoicePitch()));
             }
             EventBus.getDefault().post(new OnTtsInitialized(status));
         }
@@ -157,6 +158,8 @@ public class Tts {
             if (!isReady()) return;
             if (Settings.PREF_VOICE_SPEED.equals(key)) {
                 mTextToSpeech.setSpeechRate(Float.valueOf(mSettingsPrefs.getVoiceSpeed()));
+            } else if (Settings.PREF_VOICE_PITCH.equals(key)) {
+                mTextToSpeech.setPitch(Float.valueOf(mSettingsPrefs.getVoicePitch()));
             }
         }
     };

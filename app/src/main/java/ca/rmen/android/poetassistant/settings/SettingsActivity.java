@@ -29,6 +29,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.util.Log;
 
@@ -48,6 +49,7 @@ import ca.rmen.android.poetassistant.wotd.Wotd;
 public class SettingsActivity extends AppCompatActivity {
 
     private static final String TAG = Constants.TAG + SettingsActivity.class.getSimpleName();
+    private static final String PREF_CATEGORY_VOICE = "PREF_CATEGORY_VOICE";
 
     @Inject Tts mTts;
     @Inject Dictionary mDictionary;
@@ -110,12 +112,12 @@ public class SettingsActivity extends AppCompatActivity {
                 voicePreference.loadVoices();
             }
             if (voicePreference.getEntries() == null || voicePreference.getEntries().length < 2) {
-                getPreferenceScreen().removePreference(voicePreference);
+                removePreference(PREF_CATEGORY_VOICE, voicePreference);
             }
             Preference systemTtsSettings = findPreference(Settings.PREF_SYSTEM_TTS_SETTINGS);
             Intent intent = systemTtsSettings.getIntent();
             if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
-                getPreferenceScreen().removePreference(systemTtsSettings);
+                removePreference(PREF_CATEGORY_VOICE, systemTtsSettings);
             }
         }
 
@@ -152,6 +154,12 @@ public class SettingsActivity extends AppCompatActivity {
             getPreferenceScreen().removeAll();
             loadPreferences();
         }
+
+        private void removePreference(String categoryKey, Preference preference) {
+            PreferenceCategory category = (PreferenceCategory) getPreferenceScreen().findPreference(categoryKey);
+            category.removePreference(preference);
+        }
+
     }
 
 }

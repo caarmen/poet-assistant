@@ -126,6 +126,8 @@
     <!-- Strings related to Settings -->
     <string translatable="false" name="pref_voice_value_with_country"><![CDATA[%1$s (%2$s)<br/><font color=\'#888888\'><small>%3$s</small></font>]]></string>
     <string translatable="false" name="pref_voice_value_without_country"><![CDATA[%1$s<br/><font color=\'#888888\'><small>%2$s</small></font>]]></string>
+    <string name="pref_category_voice">Voice settings</string>
+    <string name="pref_category_other">Other</string>
     <string name="pref_voice_default">System voice</string>
     <string name="pref_voice_title">Voice</string>
     <string name="pref_voice_summary">%s</string>
@@ -146,6 +148,27 @@
     <string-array name="pref_voice_speed_values">
         <item>0.25</item>
         <item>0.5</item>
+        <item>1.0</item>
+        <item>1.5</item>
+        <item>2.0</item>
+    </string-array>
+    <string name="pref_voice_pitch_title">Voice pitch</string>
+    <string name="pref_voice_pitch_summary">%s</string>
+    <string name="pref_voice_pitch_value_slowest">Lowest</string>
+    <string name="pref_voice_pitch_value_slow">Lower</string>
+    <string name="pref_voice_pitch_value_normal">Normal</string>
+    <string name="pref_voice_pitch_value_fast">Higher</string>
+    <string name="pref_voice_pitch_value_fastest">Highest</string>
+    <string-array name="pref_voice_pitch_titles">
+        <item>@string/pref_voice_pitch_value_slowest</item>
+        <item>@string/pref_voice_pitch_value_slow</item>
+        <item>@string/pref_voice_pitch_value_normal</item>
+        <item>@string/pref_voice_pitch_value_fast</item>
+        <item>@string/pref_voice_pitch_value_fastest</item>
+    </string-array>
+    <string-array name="pref_voice_pitch_values">
+        <item>0.5</item>
+        <item>0.75</item>
         <item>1.0</item>
         <item>1.5</item>
         <item>2.0</item>

@@ -36,8 +36,11 @@ public class Settings {
     public static final String VOICE_SYSTEM = "VOICE_SYSTEM";
     static final String PREF_VOICE = "PREF_VOICE";
     public static final String PREF_VOICE_SPEED = "PREF_VOICE_SPEED";
+    public static final String PREF_VOICE_PITCH = "PREF_VOICE_PITCH";
     @SuppressWarnings("unused")
     private static final String VOICE_SPEED_NORMAL = "1.0";
+    @SuppressWarnings("unused")
+    private static final String VOICE_PITCH_NORMAL = "1.0";
     static final String PREF_SYSTEM_TTS_SETTINGS = "PREF_SYSTEM_TTS_SETTINGS";
     static final String PREF_THEME = "PREF_THEME";
     static final String PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED";
@@ -57,6 +60,11 @@ public class Settings {
     @Name(PREF_VOICE_SPEED)
     @DefaultString(VOICE_SPEED_NORMAL)
     String voiceSpeed;
+
+    @SuppressWarnings("unused")
+    @Name(PREF_VOICE_PITCH)
+    @DefaultString(VOICE_PITCH_NORMAL)
+    String voicePitch;
 
     @SuppressWarnings("unused")
     @Name(PREF_THEME)
