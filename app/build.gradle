@@ -37,8 +37,8 @@ android {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 11011
-        versionName "1.10.11"
+        versionCode 11012
+        versionName "1.10.12"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
@@ -117,7 +117,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
-    provided 'javax.annotation:jsr250-api:1.0'
 }
 
 // Only show real releases with the ben-manes plugin.
