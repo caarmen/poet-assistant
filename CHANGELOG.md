@@ -4,6 +4,8 @@ Change Log
 1.10.11  *(2016-11-19)*
 --------------------
 * Use support library 25.0.1
+* Fix corrupt db crashes
+* Added dagger
 
 1.10.10  *(2016-11-09)*
 --------------------
