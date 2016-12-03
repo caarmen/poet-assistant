@@ -119,12 +119,9 @@ public class SettingsActivity extends AppCompatActivity {
             if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
                 removePreference(PREF_CATEGORY_VOICE, systemTtsSettings);
             } else {
-                systemTtsSettings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                    @Override
-                    public boolean onPreferenceClick(Preference preference) {
-                        mRestartTtsOnResume = true;
-                        return false;
-                    }
+                systemTtsSettings.setOnPreferenceClickListener(preference -> {
+                    mRestartTtsOnResume = true;
+                    return false;
                 });
             }
         }

@@ -156,5 +156,8 @@
         <item>Dark</item>
         <item>Auto</item>
     </string-array>
+    <string name="tts_error"><![CDATA[No voices found! &#128552;]]></string>
+    <string name="tts_error_open_system_settings">Voice settings</string>
+    <string name="tts_error_open_app_settings">Settings</string>
 
 </resources>
