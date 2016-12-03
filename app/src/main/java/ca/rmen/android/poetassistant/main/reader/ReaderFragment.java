@@ -50,12 +50,14 @@ import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.HtmlCompat;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
+import ca.rmen.android.poetassistant.settings.SettingsActivity;
 
 
 public class ReaderFragment extends Fragment implements
@@ -283,8 +285,7 @@ public class ReaderFragment extends Fragment implements
     private void updatePlayButton() {
         Log.d(TAG, "updatePlayButton: tts status = " + mTts.getStatus() + ", tts is speaking = " + mTts.isSpeaking());
         mHandler.post(() -> {
-            boolean enabled = !TextUtils.isEmpty(mBinding.tvText.getText())
-                    && mTts.getStatus() == TextToSpeech.SUCCESS;
+            boolean enabled = !TextUtils.isEmpty(mBinding.tvText.getText());
             mBinding.btnPlay.setEnabled(enabled);
             if (mTts.isSpeaking()) {
                 mBinding.btnPlay.setImageResource(R.drawable.ic_stop);
@@ -308,8 +309,20 @@ public class ReaderFragment extends Fragment implements
     public class PlayButtonListener {
         public void onPlayButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             Log.v(TAG, "Play button clicked");
-            if (mTts.isSpeaking()) mTts.stop();
-            else speak();
+            if (mTts.isSpeaking()) {
+                mTts.stop();
+            } else if (mTts.getStatus() == TextToSpeech.SUCCESS) {
+                speak();
+            } else {
+                Snackbar snackBar = Snackbar.make(mBinding.getRoot(), HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG);
+                final Intent intent = new Intent("com.android.settings.TTS_SETTINGS");
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    snackBar.setAction(R.string.tts_error_open_system_settings, view -> startActivity(intent));
+                } else {
+                    snackBar.setAction(R.string.tts_error_open_app_settings, view -> startActivity(new Intent(getContext(), SettingsActivity.class)));
+                }
+                snackBar.show();
+            }
 
             updatePlayButton();
         }
