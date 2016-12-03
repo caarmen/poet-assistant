@@ -76,8 +76,8 @@ public class VoicePreferenceDialogFragment extends PreferenceDialogFragmentCompa
 
     @Override
     public void onDialogClosed(boolean positiveResult) {
-        String value = getVoicePreference().getEntryValues()[mSelectedIndex].toString();
         VoicePreference preference = getVoicePreference();
+        String value = preference.getEntryValues()[mSelectedIndex].toString();
         if (preference.callChangeListener(value)) {
             preference.setValue(value);
         }

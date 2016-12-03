@@ -40,6 +40,8 @@ import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 public class Tts {
     private static final String TAG = Constants.TAG + Tts.class.getSimpleName();
 
+    private static final float MIN_VOICE_PITCH = 0.25f;
+
     private final Context mContext;
     private TextToSpeech mTextToSpeech;
     private int mTtsStatus = TextToSpeech.ERROR;
@@ -143,7 +145,7 @@ public class Tts {
             }
             if (status == TextToSpeech.SUCCESS) {
                 mTextToSpeech.setSpeechRate(Float.valueOf(mSettingsPrefs.getVoiceSpeed()));
-                mTextToSpeech.setPitch(Float.valueOf(mSettingsPrefs.getVoicePitch()));
+                setVoicePitchFromSettings();
             }
             EventBus.getDefault().post(new OnTtsInitialized(status));
         }
@@ -159,10 +161,16 @@ public class Tts {
             if (Settings.PREF_VOICE_SPEED.equals(key)) {
                 mTextToSpeech.setSpeechRate(Float.valueOf(mSettingsPrefs.getVoiceSpeed()));
             } else if (Settings.PREF_VOICE_PITCH.equals(key)) {
-                mTextToSpeech.setPitch(Float.valueOf(mSettingsPrefs.getVoicePitch()));
+                setVoicePitchFromSettings();
             }
         }
     };
+
+    private void setVoicePitchFromSettings() {
+        float pitch = mSettingsPrefs.getVoicePitch() / 100;
+        if (pitch < MIN_VOICE_PITCH) pitch = MIN_VOICE_PITCH;
+        mTextToSpeech.setPitch(pitch);
+    }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public List<Voices.TtsVoice> getVoices() {

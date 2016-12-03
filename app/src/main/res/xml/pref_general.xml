@@ -17,7 +17,8 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" >
 
     <PreferenceCategory
         android:key="PREF_CATEGORY_VOICE"
@@ -42,13 +43,15 @@
             android:summary="@string/pref_voice_speed_summary"
             android:title="@string/pref_voice_speed_title" />
 
-        <ListPreference
+        <!--suppress AndroidElementNotAllowed -->
+        <ca.rmen.android.poetassistant.settings.SeekBarPreference
+            app:min="0"
+            app:max="200"
+            app:minLabel="@string/pref_voice_pitch_min_label"
+            app:maxLabel="@string/pref_voice_pitch_max_label"
+            app:progressLabel="@string/pref_voice_pitch_summary"
             android:defaultValue="1.0"
-            android:entries="@array/pref_voice_pitch_titles"
-            android:entryValues="@array/pref_voice_pitch_values"
             android:key="PREF_VOICE_PITCH"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
             android:summary="@string/pref_voice_pitch_summary"
             android:title="@string/pref_voice_pitch_title" />
 

@@ -61,4 +61,12 @@
         <item name="colorAccent">@color/dialog_accent</item>
     </style>
 
+    <declare-styleable name="SeekBarPreference">
+        <attr name="min" format="float" />
+        <attr name="max" format="float" />
+        <attr name="minLabel" format="string" />
+        <attr name="maxLabel" format="string" />
+        <attr name="progressLabel" format="string" />
+    </declare-styleable>
+
 </resources>

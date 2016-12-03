@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.settings;
 
 import org.jraf.android.prefs.DefaultBoolean;
+import org.jraf.android.prefs.DefaultFloat;
 import org.jraf.android.prefs.DefaultString;
 import org.jraf.android.prefs.DefaultStringSet;
 import org.jraf.android.prefs.Name;
@@ -40,7 +41,7 @@ public class Settings {
     @SuppressWarnings("unused")
     private static final String VOICE_SPEED_NORMAL = "1.0";
     @SuppressWarnings("unused")
-    private static final String VOICE_PITCH_NORMAL = "1.0";
+    private static final float VOICE_PITCH_NORMAL = 100f;
     static final String PREF_SYSTEM_TTS_SETTINGS = "PREF_SYSTEM_TTS_SETTINGS";
     static final String PREF_THEME = "PREF_THEME";
     static final String PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED";
@@ -63,8 +64,8 @@ public class Settings {
 
     @SuppressWarnings("unused")
     @Name(PREF_VOICE_PITCH)
-    @DefaultString(VOICE_PITCH_NORMAL)
-    String voicePitch;
+    @DefaultFloat(VOICE_PITCH_NORMAL)
+    Float voicePitch;
 
     @SuppressWarnings("unused")
     @Name(PREF_THEME)
