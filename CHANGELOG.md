@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-1.10.12  *(2016-12-03)*
+1.11.0  *(2016-12-03)*
 --------------------
 * Add a setting for the voice pitch
 * Make the voice speed and pitch settings sliders instead of lists
