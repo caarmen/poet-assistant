@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+1.10.12  *(2016-12-03)*
+--------------------
+* Add a setting for the voice pitch
+* Make the voice speed and pitch settings sliders instead of lists
+* Display a snackbar when the user tries to play the poem without TTS initialized
+
 1.10.11  *(2016-11-19)*
 --------------------
 * Use support library 25.0.1
