@@ -39,7 +39,7 @@ public class Settings {
     public static final String THEME_DARK = "Dark";
     public static final String THEME_AUTO = "Auto";
     public static final String VOICE_SYSTEM = "VOICE_SYSTEM";
-    static final String PREF_VOICE = "PREF_VOICE";
+    public static final String PREF_VOICE = "PREF_VOICE";
     // v1 for the speed was a string of values 0.25, 0.5, 1.0, 1.5, or 2.0
     // v2 is a float between 0 and 200
     public static final String PREF_VOICE_SPEED = "PREF_VOICE_SPEED_V2";

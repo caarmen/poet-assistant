@@ -84,8 +84,6 @@ public class SettingsActivity extends AppCompatActivity {
             stackBuilder.startActivities();
         } else if (Settings.PREF_WOTD_ENABLED.equals(key)) {
             Wotd.setWotdEnabled(context, mDictionary, mSettingsPrefs.getIsWotdEnabled());
-        } else if (Settings.PREF_VOICE.equals(key)) {
-            mTts.useVoice(mSettingsPrefs.getVoice());
         }
     };
 
@@ -94,6 +92,7 @@ public class SettingsActivity extends AppCompatActivity {
         private static final String DIALOG_TAG = "dialog_tag";
 
         @Inject Tts mTts;
+        private boolean mRestartTtsOnResume = false;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -119,6 +118,14 @@ public class SettingsActivity extends AppCompatActivity {
             Intent intent = systemTtsSettings.getIntent();
             if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
                 removePreference(PREF_CATEGORY_VOICE, systemTtsSettings);
+            } else {
+                systemTtsSettings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        mRestartTtsOnResume = true;
+                        return false;
+                    }
+                });
             }
         }
 
@@ -126,7 +133,10 @@ public class SettingsActivity extends AppCompatActivity {
         public void onResume() {
             super.onResume();
             EventBus.getDefault().register(this);
-            mTts.restart();
+            if (mRestartTtsOnResume) {
+                mTts.restart();
+                mRestartTtsOnResume = false;
+            }
         }
 
         @Override

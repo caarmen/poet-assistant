@@ -142,7 +142,7 @@ public class Tts {
             Log.v(TAG, "onInit: status = " + status);
             mTtsStatus = status;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mVoices.useVoice(mTextToSpeech, mSettingsPrefs.getVoice());
+                useVoiceFromSettings();
             }
             if (status == TextToSpeech.SUCCESS) {
                 setVoiceSpeedFromSettings();
@@ -161,8 +161,14 @@ public class Tts {
                     setVoiceSpeedFromSettings();
                 } else if (Settings.PREF_VOICE_PITCH.equals(key)) {
                     setVoicePitchFromSettings();
+                } else if (Settings.PREF_VOICE.equals(key)) {
+                    useVoiceFromSettings();
                 }
             };
+
+    private void useVoiceFromSettings() {
+        mVoices.useVoice(mTextToSpeech, mSettingsPrefs.getVoice());
+    }
 
     private void setVoiceSpeedFromSettings() {
         float speed = mSettingsPrefs.getVoiceSpeed() / 100;
@@ -180,12 +186,6 @@ public class Tts {
     public List<Voices.TtsVoice> getVoices() {
         if (!isReady()) return Collections.emptyList();
         return mVoices.getVoices(mTextToSpeech);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public void useVoice(String voiceId) {
-        if (!isReady()) return;
-        mVoices.useVoice(mTextToSpeech, voiceId);
     }
 
     private boolean isReady() {
