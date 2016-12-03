@@ -41,6 +41,7 @@ public class Tts {
     private static final String TAG = Constants.TAG + Tts.class.getSimpleName();
 
     private static final float MIN_VOICE_PITCH = 0.25f;
+    private static final float MIN_VOICE_SPEED = 0.25f;
 
     private final Context mContext;
     private TextToSpeech mTextToSpeech;
@@ -66,10 +67,10 @@ public class Tts {
     public static class OnUtteranceCompleted {
     }
 
-    public Tts(Context context) {
+    public Tts(Context context, SettingsPrefs settingsPrefs) {
         mContext = context;
         mVoices = new Voices(context);
-        mSettingsPrefs = SettingsPrefs.get(context);
+        mSettingsPrefs = settingsPrefs;
         PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(mTtsPrefsListener);
         init();
     }
@@ -144,7 +145,7 @@ public class Tts {
                 mVoices.useVoice(mTextToSpeech, mSettingsPrefs.getVoice());
             }
             if (status == TextToSpeech.SUCCESS) {
-                mTextToSpeech.setSpeechRate(Float.valueOf(mSettingsPrefs.getVoiceSpeed()));
+                setVoiceSpeedFromSettings();
                 setVoicePitchFromSettings();
             }
             EventBus.getDefault().post(new OnTtsInitialized(status));
@@ -154,17 +155,20 @@ public class Tts {
     // This can't be local or it will be removed from the shared prefs manager!
     @SuppressWarnings("FieldCanBeLocal")
     private final SharedPreferences.OnSharedPreferenceChangeListener mTtsPrefsListener
-            = new SharedPreferences.OnSharedPreferenceChangeListener() {
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (!isReady()) return;
-            if (Settings.PREF_VOICE_SPEED.equals(key)) {
-                mTextToSpeech.setSpeechRate(Float.valueOf(mSettingsPrefs.getVoiceSpeed()));
-            } else if (Settings.PREF_VOICE_PITCH.equals(key)) {
-                setVoicePitchFromSettings();
-            }
-        }
-    };
+            = (sharedPreferences, key) -> {
+                if (!isReady()) return;
+                if (Settings.PREF_VOICE_SPEED.equals(key)) {
+                    setVoiceSpeedFromSettings();
+                } else if (Settings.PREF_VOICE_PITCH.equals(key)) {
+                    setVoicePitchFromSettings();
+                }
+            };
+
+    private void setVoiceSpeedFromSettings() {
+        float speed = mSettingsPrefs.getVoiceSpeed() / 100;
+        if (speed < MIN_VOICE_SPEED) speed = MIN_VOICE_SPEED;
+        mTextToSpeech.setSpeechRate(speed);
+    }
 
     private void setVoicePitchFromSettings() {
         float pitch = mSettingsPrefs.getVoicePitch() / 100;

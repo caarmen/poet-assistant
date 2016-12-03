@@ -46,7 +46,7 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
     private final String mQuery;
     private final String mFilter;
-    private final SettingsPrefs mPrefs;
+    @Inject SettingsPrefs mPrefs;
     @Inject Rhymer mRhymer;
     @Inject Thesaurus mThesaurus;
 
@@ -54,7 +54,6 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
         super(context);
         mQuery = query;
         mFilter = filter;
-        mPrefs = SettingsPrefs.get(context);
         DaggerHelper.getAppComponent(context).inject(this);
     }
 

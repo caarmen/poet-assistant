@@ -53,6 +53,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Inject Tts mTts;
     @Inject Dictionary mDictionary;
+    @Inject SettingsPrefs mSettingsPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,16 +76,16 @@ public class SettingsActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         if (Settings.PREF_THEME.equals(key)) {
             // When the theme changes, restart the activity
-            Theme.setThemeFromSettings(getApplicationContext());
+            Theme.setThemeFromSettings(mSettingsPrefs);
             Intent intent = new Intent(SettingsActivity.this, SettingsActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(SettingsActivity.this);
             stackBuilder.addNextIntentWithParentStack(intent);
             stackBuilder.startActivities();
         } else if (Settings.PREF_WOTD_ENABLED.equals(key)) {
-            Wotd.setWotdEnabled(context, mDictionary, SettingsPrefs.get(context).getIsWotdEnabled());
+            Wotd.setWotdEnabled(context, mDictionary, mSettingsPrefs.getIsWotdEnabled());
         } else if (Settings.PREF_VOICE.equals(key)) {
-            mTts.useVoice(SettingsPrefs.get(context).getVoice());
+            mTts.useVoice(mSettingsPrefs.getVoice());
         }
     };
 
@@ -143,7 +144,7 @@ public class SettingsActivity extends AppCompatActivity {
                 VoicePreferenceDialogFragment fragment = VoicePreferenceDialogFragment.newInstance(preference.getKey());
                 fragment.setTargetFragment(this, 0);
                 fragment.show(getFragmentManager(), DIALOG_TAG);
-            } else if (Settings.PREF_VOICE_PITCH.equals(preference.getKey())) {
+            } else if (preference instanceof SeekBarPreference) {
                 if (getFragmentManager().findFragmentByTag(DIALOG_TAG) != null) {
                     return;
                 }

@@ -24,16 +24,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 public class WotdBootReceiver extends BroadcastReceiver {
     private static final String TAG = Constants.TAG + WotdBootReceiver.class.getSimpleName();
+
+    @Inject
+    SettingsPrefs mSettingsPrefs;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive: intent = " + intent);
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-            Wotd.reschedule(context);
+            DaggerHelper.getAppComponent(context).inject(this);
+            Wotd.reschedule(context, mSettingsPrefs);
         }
     }
 

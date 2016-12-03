@@ -50,14 +50,13 @@ public class SuggestionsCursor extends MatrixCursor {
                 SearchManager.SUGGEST_COLUMN_ICON_1,
                 SearchManager.SUGGEST_COLUMN_INTENT_DATA};
 
-    private final SettingsPrefs mSettingsPrefs;
+    @Inject SettingsPrefs mSettingsPrefs;
     @Inject Dictionary mDictionary;
     private final String mFilter;
 
     SuggestionsCursor(Context context, String filter) {
         super(COLUMNS);
         mFilter = filter;
-        mSettingsPrefs = SettingsPrefs.get(context);
         DaggerHelper.getAppComponent(context).inject(this);
         loadHistory();
         loadSimilarWords();

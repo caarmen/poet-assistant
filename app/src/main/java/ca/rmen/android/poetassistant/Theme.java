@@ -19,7 +19,6 @@
 
 package ca.rmen.android.poetassistant;
 
-import android.content.Context;
 import android.support.v7.app.AppCompatDelegate;
 
 import ca.rmen.android.poetassistant.settings.Settings;
@@ -27,8 +26,8 @@ import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 public class Theme {
 
-    public static void setThemeFromSettings(Context context) {
-        String theme = SettingsPrefs.get(context).getTheme();
+    public static void setThemeFromSettings(SettingsPrefs settingsPrefs) {
+        String theme = settingsPrefs.getTheme();
         if (Settings.THEME_DARK.equals(theme)) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         } else if (Settings.THEME_LIGHT.equals(theme)) {

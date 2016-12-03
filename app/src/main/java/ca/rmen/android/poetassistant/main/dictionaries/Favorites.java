@@ -26,6 +26,9 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+
+import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 public class Favorites {
@@ -39,10 +42,10 @@ public class Favorites {
     }
 
     // Maybe some day this will be backed by a DB instead of shared prefs.
-    private final SettingsPrefs mPrefs;
+    @Inject SettingsPrefs mPrefs;
 
     public Favorites(Context context) {
-        mPrefs = SettingsPrefs.get(context.getApplicationContext());
+        DaggerHelper.getAppComponent(context).inject(this);
     }
 
     public Set<String> getFavorites() {

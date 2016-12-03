@@ -31,7 +31,7 @@ import android.widget.SeekBar;
 import java.util.Locale;
 
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.databinding.PreferenceSeekbarBinding;
+import ca.rmen.android.poetassistant.databinding.PreferenceSeekBarBinding;
 
 public class SeekBarPreferenceDialogFragment extends PreferenceDialogFragmentCompat {
 
@@ -39,7 +39,7 @@ public class SeekBarPreferenceDialogFragment extends PreferenceDialogFragmentCom
 
     private static final int SEEK_BAR_MAX = 100;
 
-    PreferenceSeekbarBinding mBinding;
+    private PreferenceSeekBarBinding mBinding;
     private float mValue;
 
     public static SeekBarPreferenceDialogFragment newInstance(String key) {
@@ -70,7 +70,7 @@ public class SeekBarPreferenceDialogFragment extends PreferenceDialogFragmentCom
     @Override
     protected View onCreateDialogView(Context context) {
         SeekBarPreference seekBarPreference = getSeekBarPreference();
-        mBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.preference_seekbar, null, false);
+        mBinding = DataBindingUtil.inflate(LayoutInflater.from(getContext()), R.layout.preference_seek_bar, null, false);
         mBinding.seekBar.setMax(SEEK_BAR_MAX);
         mBinding.seekBarLeftLabel.setText(seekBarPreference.getMinLabel());
         mBinding.seekBarRightLabel.setText(seekBarPreference.getMaxLabel());
@@ -103,7 +103,7 @@ public class SeekBarPreferenceDialogFragment extends PreferenceDialogFragmentCom
 
     private void updateSeekBarProgress(float value) {
         SeekBarPreference seekBarPreference = getSeekBarPreference();
-        PreferenceSeekbarBinding binding = DataBindingUtil.findBinding(mBinding.seekBar);
+        PreferenceSeekBarBinding binding = DataBindingUtil.findBinding(mBinding.seekBar);
         mBinding.seekBar.setProgress((int) (((value - seekBarPreference.getMin()) / seekBarPreference.getMax()) * SEEK_BAR_MAX));
         binding.seekBarProgress.setText(getDisplayProgress(value));
     }
@@ -113,7 +113,7 @@ public class SeekBarPreferenceDialogFragment extends PreferenceDialogFragmentCom
         return ((float) mBinding.seekBar.getProgress() / SEEK_BAR_MAX) * (seekBarPreference.getMax() - seekBarPreference.getMin()) + seekBarPreference.getMin();
     }
 
-    SeekBar.OnSeekBarChangeListener mOnSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+    private final SeekBar.OnSeekBarChangeListener mOnSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             mBinding.seekBarProgress.setText(getDisplayProgress(getSeekBarProgress()));
