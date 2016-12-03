@@ -26,9 +26,11 @@ import javax.inject.Singleton;
 
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
+import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.SuggestionsCursor;
+import ca.rmen.android.poetassistant.main.dictionaries.SuggestionsProvider;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
@@ -39,8 +41,11 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
+import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.android.poetassistant.settings.VoicePreference;
+import ca.rmen.android.poetassistant.wotd.WotdBootReceiver;
 import ca.rmen.android.poetassistant.wotd.WotdBroadcastReceiver;
 import ca.rmen.android.poetassistant.wotd.WotdJobService;
 import dagger.Component;
@@ -66,6 +71,8 @@ public class DaggerHelper {
         void inject(DictionaryLoader dictionaryLoader);
         void inject(PatternLoader patternLoader);
         void inject(SuggestionsCursor suggestionsCursor);
+        void inject(SuggestionsProvider suggestionsProvider);
+        void inject(Favorites favorites);
         void inject(Search search);
 
         // Settings
@@ -76,6 +83,7 @@ public class DaggerHelper {
         // Wotd
         void inject(WotdBroadcastReceiver wotdBroadcastReceiver);
         void inject(WotdJobService wotdJobService);
+        void inject(WotdBootReceiver wotdBootReceiver);
     }
 
     @Module
@@ -91,16 +99,16 @@ public class DaggerHelper {
             return mApplication;
         }
 
-        @Provides @Singleton Tts providesTts(Context context) {
-            return new Tts(context);
+        @Provides @Singleton Tts providesTts(Context context, SettingsPrefs settingsPrefs) {
+            return new Tts(context, settingsPrefs);
         }
 
         @Provides @Singleton DbHelper providesDbHelper(Context context) {
             return new DbHelper(context);
         }
 
-        @Provides @Singleton Rhymer providesRhymer(Context context, DbHelper dbHelper) {
-            return new Rhymer(context, dbHelper);
+        @Provides @Singleton Rhymer providesRhymer(DbHelper dbHelper, SettingsPrefs prefs) {
+            return new Rhymer(dbHelper, prefs);
         }
 
         @Provides @Singleton Thesaurus providesThesaurus(DbHelper dbHelper) {
@@ -109,6 +117,11 @@ public class DaggerHelper {
 
         @Provides @Singleton Dictionary providesDictionary(DbHelper dbHelper) {
             return new Dictionary(dbHelper);
+        }
+
+        @Provides @Singleton SettingsPrefs providesSettingsPrefs(Context context) {
+            Settings.migrateSettings(context);
+            return SettingsPrefs.get(context);
         }
 
     }

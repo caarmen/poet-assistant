@@ -101,6 +101,7 @@
                 android:value="ca.rmen.android.poetassistant.about.AboutActivity" />
         </activity>
         <activity
+            android:theme="@style/AppTheme.Settings"
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".main.MainActivity"

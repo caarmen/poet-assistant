@@ -29,6 +29,7 @@ import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.util.Log;
 
@@ -48,9 +49,11 @@ import ca.rmen.android.poetassistant.wotd.Wotd;
 public class SettingsActivity extends AppCompatActivity {
 
     private static final String TAG = Constants.TAG + SettingsActivity.class.getSimpleName();
+    private static final String PREF_CATEGORY_VOICE = "PREF_CATEGORY_VOICE";
 
     @Inject Tts mTts;
     @Inject Dictionary mDictionary;
+    @Inject SettingsPrefs mSettingsPrefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,16 +76,14 @@ public class SettingsActivity extends AppCompatActivity {
         Context context = getApplicationContext();
         if (Settings.PREF_THEME.equals(key)) {
             // When the theme changes, restart the activity
-            Theme.setThemeFromSettings(getApplicationContext());
+            Theme.setThemeFromSettings(mSettingsPrefs);
             Intent intent = new Intent(SettingsActivity.this, SettingsActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(SettingsActivity.this);
             stackBuilder.addNextIntentWithParentStack(intent);
             stackBuilder.startActivities();
         } else if (Settings.PREF_WOTD_ENABLED.equals(key)) {
-            Wotd.setWotdEnabled(context, mDictionary, SettingsPrefs.get(context).getIsWotdEnabled());
-        } else if (Settings.PREF_VOICE.equals(key)) {
-            mTts.useVoice(SettingsPrefs.get(context).getVoice());
+            Wotd.setWotdEnabled(context, mDictionary, mSettingsPrefs.getIsWotdEnabled());
         }
     };
 
@@ -91,6 +92,7 @@ public class SettingsActivity extends AppCompatActivity {
         private static final String DIALOG_TAG = "dialog_tag";
 
         @Inject Tts mTts;
+        private boolean mRestartTtsOnResume = false;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -110,12 +112,20 @@ public class SettingsActivity extends AppCompatActivity {
                 voicePreference.loadVoices();
             }
             if (voicePreference.getEntries() == null || voicePreference.getEntries().length < 2) {
-                getPreferenceScreen().removePreference(voicePreference);
+                removePreference(PREF_CATEGORY_VOICE, voicePreference);
             }
             Preference systemTtsSettings = findPreference(Settings.PREF_SYSTEM_TTS_SETTINGS);
             Intent intent = systemTtsSettings.getIntent();
             if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
-                getPreferenceScreen().removePreference(systemTtsSettings);
+                removePreference(PREF_CATEGORY_VOICE, systemTtsSettings);
+            } else {
+                systemTtsSettings.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        mRestartTtsOnResume = true;
+                        return false;
+                    }
+                });
             }
         }
 
@@ -123,7 +133,10 @@ public class SettingsActivity extends AppCompatActivity {
         public void onResume() {
             super.onResume();
             EventBus.getDefault().register(this);
-            mTts.restart();
+            if (mRestartTtsOnResume) {
+                mTts.restart();
+                mRestartTtsOnResume = false;
+            }
         }
 
         @Override
@@ -141,6 +154,13 @@ public class SettingsActivity extends AppCompatActivity {
                 VoicePreferenceDialogFragment fragment = VoicePreferenceDialogFragment.newInstance(preference.getKey());
                 fragment.setTargetFragment(this, 0);
                 fragment.show(getFragmentManager(), DIALOG_TAG);
+            } else if (preference instanceof SeekBarPreference) {
+                if (getFragmentManager().findFragmentByTag(DIALOG_TAG) != null) {
+                    return;
+                }
+                SeekBarPreferenceDialogFragment fragment = SeekBarPreferenceDialogFragment.newInstance(preference.getKey());
+                fragment.setTargetFragment(this, 0);
+                fragment.show(getFragmentManager(), DIALOG_TAG);
             } else {
                 super.onDisplayPreferenceDialog(preference);
             }
@@ -152,6 +172,12 @@ public class SettingsActivity extends AppCompatActivity {
             getPreferenceScreen().removeAll();
             loadPreferences();
         }
+
+        private void removePreference(String categoryKey, Preference preference) {
+            PreferenceCategory category = (PreferenceCategory) getPreferenceScreen().findPreference(categoryKey);
+            category.removePreference(preference);
+        }
+
     }
 
 }

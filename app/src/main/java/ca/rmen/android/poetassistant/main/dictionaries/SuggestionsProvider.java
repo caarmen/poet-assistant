@@ -35,6 +35,9 @@ import android.text.TextUtils;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
+
+import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 public class SuggestionsProvider extends ContentProvider {
@@ -46,7 +49,7 @@ public class SuggestionsProvider extends ContentProvider {
     private static final String AUTHORITY = "ca.rmen.android.poetassistant.SuggestionsProvider";
     private static final int URI_MATCH_SUGGEST = 1;
 
-    private SettingsPrefs mSettingsPrefs;
+    @Inject SettingsPrefs mSettingsPrefs;
     private final UriMatcher mUriMatcher;
 
     public SuggestionsProvider() {
@@ -62,7 +65,7 @@ public class SuggestionsProvider extends ContentProvider {
     @Override
     public void attachInfo(Context context, ProviderInfo info) {
         super.attachInfo(context, info);
-        mSettingsPrefs = SettingsPrefs.get(context);
+        DaggerHelper.getAppComponent(context).inject(this);
     }
 
     @Override

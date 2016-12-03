@@ -19,7 +19,6 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -42,14 +41,14 @@ import ca.rmen.rhymer.WordVariant;
 
 public class Rhymer extends ca.rmen.rhymer.Rhymer {
     private static final String TAG = Constants.TAG + Rhymer.class.getSimpleName();
-    private final SettingsPrefs mPrefs;
 
     private final DbHelper mDbHelper;
+    private final SettingsPrefs mPrefs;
 
     @Inject
-    public Rhymer(Context context, DbHelper dbHelper) {
+    public Rhymer(DbHelper dbHelper, SettingsPrefs prefs) {
         mDbHelper = dbHelper;
-        mPrefs = SettingsPrefs.get(context);
+        mPrefs = prefs;
     }
 
     public boolean isLoaded() {
