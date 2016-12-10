@@ -24,9 +24,12 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.annotation.MainThread;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
@@ -58,19 +61,19 @@ public class Search {
     private static final String TAG = Constants.TAG + Search.class.getSimpleName();
     private final ViewPager mViewPager;
     private final PagerAdapter mPagerAdapter;
-    private final Activity mSearchableActivity;
+    private final Context mContext;
     @Inject Dictionary mDictionary;
 
     public Search(Activity searchableActivity, ViewPager viewPager) {
         DaggerHelper.getAppComponent(searchableActivity).inject(this);
-        mSearchableActivity = searchableActivity;
+        mContext = searchableActivity;
         mViewPager = viewPager;
         mPagerAdapter = (PagerAdapter) viewPager.getAdapter();
     }
 
     public void setSearchView(SearchView searchView) {
-        SearchManager searchManager = (SearchManager) mSearchableActivity.getSystemService(Context.SEARCH_SERVICE);
-        ComponentName searchableActivityComponentName = new ComponentName(mSearchableActivity, mSearchableActivity.getClass());
+        SearchManager searchManager = (SearchManager) mContext.getSystemService(Context.SEARCH_SERVICE);
+        ComponentName searchableActivityComponentName = new ComponentName(mContext, mContext.getClass());
         searchView.setSearchableInfo(searchManager.getSearchableInfo(searchableActivityComponentName));
     }
 
@@ -180,14 +183,52 @@ public class Search {
         }.execute();
     }
 
-    public void addSuggestion(String query) {
-        ContentValues contentValues = new ContentValues(1);
-        contentValues.put(SearchManager.QUERY, query);
-        mSearchableActivity.getContentResolver().insert(SuggestionsProvider.CONTENT_URI, contentValues);
+    /**
+     * Adds the given suggestions to the search history, in a background thread.
+     */
+    @MainThread
+    public void addSuggestions(String... suggestions) {
+        new AsyncTask<String, Void, Void> () {
+
+            @Override
+            protected Void doInBackground(String... searchTerms) {
+                ContentValues[] contentValues = new ContentValues[suggestions.length];
+                for (int i = 0; i < suggestions.length; i++) {
+                    ContentValues contentValue = new ContentValues(1);
+                    contentValue.put(SearchManager.QUERY, suggestions[i]);
+                    contentValues[i] = contentValue;
+                }
+                mContext.getContentResolver().bulkInsert(SuggestionsProvider.CONTENT_URI, contentValues);
+                return null;
+            }
+        }.execute(suggestions);
     }
 
-    public void clearSearchHistory() {
-        mSearchableActivity.getContentResolver().delete(SuggestionsProvider.CONTENT_URI, null, null);
+    /**
+     * @return the terms cleared from the search history.
+     */
+    @WorkerThread
+    public String[] clearSearchHistory() {
+        String[] searchHistory = getSearchHistory();
+        mContext.getContentResolver().delete(SuggestionsProvider.CONTENT_URI, null, null);
+        return searchHistory;
+    }
+
+    private String[] getSearchHistory() {
+        Cursor cursor = mContext.getContentResolver().query(SuggestionsProvider.CONTENT_URI, null, null, null, null);
+        if (cursor != null) {
+            try {
+                String[] result = new String[cursor.getCount()];
+                int columnIndex = cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1);
+                while (cursor.moveToNext()) {
+                    result[cursor.getPosition()] = cursor.getString(columnIndex);
+                }
+                return result;
+            } finally {
+                cursor.close();
+            }
+        }
+        return new String[0];
     }
 
 }
