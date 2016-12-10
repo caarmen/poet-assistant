@@ -22,4 +22,6 @@ package ca.rmen.android.poetassistant;
 public class Constants {
     public static final String TAG = "PoetAssistant/";
     public static final String DEEP_LINK_QUERY =  "query";
+    // Give enough time to the user to perform an undo action on the snackbar.
+    public static final int SNACKBAR_UNDO_LENGTH_MS = 8000;
 }
