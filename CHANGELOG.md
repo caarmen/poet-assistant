@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.11.1  *(2016-12-10)*
+--------------------
+* Improved confirmation dialogs for "new poem" and deleting favorites.
+* Allow undoing clearing search history
+
 1.11.0  *(2016-12-03)*
 --------------------
 * Add a setting for the voice pitch
