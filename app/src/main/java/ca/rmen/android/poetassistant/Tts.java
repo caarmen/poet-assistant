@@ -136,20 +136,17 @@ public class Tts {
         }
     }
 
-    private final TextToSpeech.OnInitListener mInitListener = new TextToSpeech.OnInitListener() {
-        @Override
-        public void onInit(int status) {
-            Log.v(TAG, "onInit: status = " + status);
-            mTtsStatus = status;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                useVoiceFromSettings();
-            }
-            if (status == TextToSpeech.SUCCESS) {
-                setVoiceSpeedFromSettings();
-                setVoicePitchFromSettings();
-            }
-            EventBus.getDefault().post(new OnTtsInitialized(status));
+    private final TextToSpeech.OnInitListener mInitListener = status -> {
+        Log.v(TAG, "onInit: status = " + status);
+        mTtsStatus = status;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            useVoiceFromSettings();
         }
+        if (status == TextToSpeech.SUCCESS) {
+            setVoiceSpeedFromSettings();
+            setVoicePitchFromSettings();
+        }
+        EventBus.getDefault().post(new OnTtsInitialized(status));
     };
 
     // This can't be local or it will be removed from the shared prefs manager!
