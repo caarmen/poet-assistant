@@ -152,6 +152,7 @@ public class ReaderFragment extends Fragment implements
         if (item.getItemId() == R.id.action_new) {
             ConfirmDialogFragment.show(ACTION_FILE_NEW,
                     getString(R.string.file_new_confirm_title),
+                    getString(R.string.action_clear),
                     getChildFragmentManager(),
                     DIALOG_TAG);
         } else if (item.getItemId() == R.id.action_open) {

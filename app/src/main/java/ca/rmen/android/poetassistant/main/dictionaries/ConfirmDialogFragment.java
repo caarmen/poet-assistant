@@ -42,17 +42,19 @@ public class ConfirmDialogFragment extends DialogFragment {
 
     private static final String TAG = Constants.TAG + ConfirmDialogFragment.class.getSimpleName();
     private static final String EXTRA_ACTION_ID = "action_id";
-    private static final String EXTRA_TITLE = "title";
+    private static final String EXTRA_MESSAGE = "message";
+    private static final String EXTRA_POSITIVE_ACTION = "positive_action";
 
     public interface ConfirmDialogListener {
         void onOk(int actionId);
     }
 
-    public static void show(int actionId, String title, FragmentManager fragmentManager, String tag) {
+    public static void show(int actionId, String message, String positiveAction, FragmentManager fragmentManager, String tag) {
         ConfirmDialogFragment fragment = new ConfirmDialogFragment();
         Bundle bundle = new Bundle(3);
         bundle.putInt(EXTRA_ACTION_ID, actionId);
-        bundle.putString(EXTRA_TITLE, title);
+        bundle.putString(EXTRA_MESSAGE, message);
+        bundle.putString(EXTRA_POSITIVE_ACTION, positiveAction);
         fragment.setArguments(bundle);
         fragmentManager.beginTransaction().add(fragment, tag).commit();
     }
@@ -78,8 +80,8 @@ public class ConfirmDialogFragment extends DialogFragment {
         };
 
         return new AlertDialog.Builder(context)
-                .setTitle(arguments.getString(EXTRA_TITLE))
-                .setPositiveButton(android.R.string.ok, positiveListener)
+                .setMessage(arguments.getString(EXTRA_MESSAGE))
+                .setPositiveButton(arguments.getString(EXTRA_POSITIVE_ACTION), positiveListener)
                 .setNegativeButton(android.R.string.cancel, null)
                 .create();
     }

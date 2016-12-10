@@ -304,6 +304,7 @@ public class ResultListFragment<T> extends Fragment
             ConfirmDialogFragment.show(
                     ACTION_CLEAR_FAVORITES,
                     getString(R.string.action_clear_favorites),
+                    getString(R.string.action_clear),
                     getChildFragmentManager(),
                     DIALOG_TAG);
         }

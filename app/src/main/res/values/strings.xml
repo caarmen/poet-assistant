@@ -27,6 +27,7 @@
     <string name="tab_dictionary">Dictionary</string>
     <string name="tab_reader">Reader</string>
 
+    <string name="action_clear">Clear</string>
     <string name="action_search">Search</string>
     <string name="action_random_word">Random word</string>
     <string name="action_clear_search_history">Clear search history</string>
