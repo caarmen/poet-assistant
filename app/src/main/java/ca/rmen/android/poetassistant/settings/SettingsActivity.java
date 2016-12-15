@@ -151,13 +151,6 @@ public class SettingsActivity extends AppCompatActivity {
                 VoicePreferenceDialogFragment fragment = VoicePreferenceDialogFragment.newInstance(preference.getKey());
                 fragment.setTargetFragment(this, 0);
                 fragment.show(getFragmentManager(), DIALOG_TAG);
-            } else if (preference instanceof SeekBarPreference) {
-                if (getFragmentManager().findFragmentByTag(DIALOG_TAG) != null) {
-                    return;
-                }
-                SeekBarPreferenceDialogFragment fragment = SeekBarPreferenceDialogFragment.newInstance(preference.getKey());
-                fragment.setTargetFragment(this, 0);
-                fragment.show(getFragmentManager(), DIALOG_TAG);
             } else {
                 super.onDisplayPreferenceDialog(preference);
             }

@@ -33,28 +33,16 @@
             android:summary="@string/pref_voice_summary"
             android:title="@string/pref_voice_title" />
 
-        <!--suppress AndroidElementNotAllowed -->
-        <ca.rmen.android.poetassistant.settings.SeekBarPreference
-            app:min="0"
-            app:max="200"
-            app:minLabel="@string/pref_voice_speed_min_label"
-            app:maxLabel="@string/pref_voice_speed_max_label"
-            app:progressLabel="@string/pref_voice_speed_summary"
+        <SeekBarPreference
+            android:max="200"
             android:defaultValue="100"
-            android:key="PREF_VOICE_SPEED_V2"
-            android:summary="@string/pref_voice_speed_summary"
+            android:key="PREF_VOICE_SPEED_V3"
             android:title="@string/pref_voice_speed_title" />
 
-        <!--suppress AndroidElementNotAllowed -->
-        <ca.rmen.android.poetassistant.settings.SeekBarPreference
-            app:min="0"
-            app:max="200"
-            app:minLabel="@string/pref_voice_pitch_min_label"
-            app:maxLabel="@string/pref_voice_pitch_max_label"
-            app:progressLabel="@string/pref_voice_pitch_summary"
+        <SeekBarPreference
+            android:max="200"
             android:defaultValue="100"
-            android:key="PREF_VOICE_PITCH"
-            android:summary="@string/pref_voice_pitch_summary"
+            android:key="PREF_VOICE_PITCH_V3"
             android:title="@string/pref_voice_pitch_title" />
 
         <Preference
