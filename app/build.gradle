@@ -22,7 +22,7 @@ apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "25.0.2"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -102,10 +102,10 @@ apply plugin: 'com.github.ben-manes.versions'
 dependencies {
     apt 'org.jraf:prefs-compiler:1.1.0'
 
-    compile 'com.android.support:appcompat-v7:25.0.1'
-    compile 'com.android.support:design:25.0.1'
-    compile 'com.android.support:preference-v7:25.0.1'
-    compile 'com.android.support:preference-v14:25.0.1'
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:design:25.1.0'
+    compile 'com.android.support:preference-v7:25.1.0'
+    compile 'com.android.support:preference-v14:25.1.0'
     compile 'net.sourceforge.streamsupport:streamsupport:1.5.2'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'ca.rmen:rhymer:1.1.2'
