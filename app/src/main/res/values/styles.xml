@@ -31,7 +31,11 @@
     </style>
 
     <style name="AppTheme" parent="AppBaseTheme">
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="preferenceTheme">@style/AppPreferenceTheme</item>
+    </style>
+
+    <style name="AppPreferenceTheme" parent="@style/PreferenceThemeOverlay">
+        <item name="android:textAppearanceMedium">?android:attr/textAppearanceListItem</item>
     </style>
 
     <style name="AppTheme.Settings">

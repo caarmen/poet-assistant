@@ -19,7 +19,11 @@
 
 <resources>
     <style name="AppTheme" parent="AppBaseTheme">
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+        <item name="preferenceTheme">@style/AppPreferenceTheme</item>
+    </style>
+
+    <style name="AppPreferenceTheme" parent="@style/PreferenceThemeOverlay.v14.Material">
+        <item name="android:textAppearanceMedium">?android:attr/textAppearanceListItem</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
