@@ -34,6 +34,7 @@
 
         <!--suppress AndroidElementNotAllowed -->
         <SeekBarPreference
+            android:layout="@layout/preference_seekbar_fix"
             android:max="200"
             android:defaultValue="100"
             android:key="PREF_VOICE_SPEED_V3"
@@ -41,6 +42,7 @@
 
         <!--suppress AndroidElementNotAllowed -->
         <SeekBarPreference
+            android:layout="@layout/preference_seekbar_fix"
             android:max="200"
             android:defaultValue="100"
             android:key="PREF_VOICE_PITCH_V3"

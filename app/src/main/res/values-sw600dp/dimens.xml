@@ -18,13 +18,5 @@
   -->
 
 <resources>
-    <item name="wrap_content" format="integer" type="dimen">-2</item>
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="list_rtd_icon_size">44dp</dimen>
-    <dimen name="list_rtd_icon_padding">4dp</dimen>
-    <dimen name="list_rt_item_heading_height">@dimen/wrap_content</dimen>
-    <dimen name="list_rt_item_subheading_height">@dimen/wrap_content</dimen>
-    <dimen name="list_rt_item_word_height">@dimen/wrap_content</dimen>
-    <dimen name="seekbar_horizontal_padding_fix">0dp</dimen>
+    <dimen name="seekbar_horizontal_padding_fix">8dp</dimen>
 </resources>

@@ -17,22 +17,15 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingLeft="@dimen/seekbar_horizontal_padding_fix"
+    android:paddingStart="@dimen/seekbar_horizontal_padding_fix"
+    android:paddingRight="@dimen/seekbar_horizontal_padding_fix"
+    android:paddingEnd="@dimen/seekbar_horizontal_padding_fix"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <LinearLayout
+    <include layout="@layout/preference_widget_seekbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingStart="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingEnd="@dimen/activity_horizontal_margin">
-
-        <fragment
-            android:id="@+id/settings_fragment"
-            android:name="ca.rmen.android.poetassistant.settings.SettingsActivity$GeneralPreferenceFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
-
-</layout>
-
+        android:layout_height="wrap_content"/>
+</FrameLayout>
