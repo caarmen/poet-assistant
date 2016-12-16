@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.11.2  *(2016-12-16)*
+--------------------
+* Use the SeekBarPreference from the support library.
+
 1.11.1  *(2016-12-10)*
 --------------------
 * Improved confirmation dialogs for "new poem" and deleting favorites.
