@@ -22,10 +22,9 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,11 +41,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
 import java.util.Collections;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -56,19 +51,19 @@ import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.VectorCompat;
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
 import ca.rmen.android.poetassistant.main.Tab;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFilterListener;
 
 
 public class ResultListFragment<T> extends Fragment
         implements
         LoaderManager.LoaderCallbacks<ResultListData<T>>,
-        InputDialogFragment.InputDialogListener,
-        ConfirmDialogFragment.ConfirmDialogListener,
-        ResultListHeader.HeaderButtonCallback {
+        OnFilterListener {
     private static final String TAG = Constants.TAG + ResultListFragment.class.getSimpleName();
     private static final String EXTRA_FILTER = "filter";
     public static final String EXTRA_TAB = "tab";
     static final String EXTRA_QUERY = "query";
     private FragmentResultListBinding mBinding;
+    private ResultListHeaderFragment mHeaderFragment;
 
     private Tab mTab;
     private ResultListAdapter<T> mAdapter;
@@ -77,6 +72,7 @@ public class ResultListFragment<T> extends Fragment
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -87,27 +83,13 @@ public class ResultListFragment<T> extends Fragment
         mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
         ResultListFactory.inject(mTab, this);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false);
-        View view = mBinding.getRoot();
-        mBinding.resultListHeader.setResultListHeader(new ResultListHeader(mTab, this));
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mBinding.recyclerView.setHasFixedSize(true);
-
-        ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, TextToSpeech.ERROR);
-        mBinding.resultListHeader.tvFilterLabel.setText(ResultListFactory.getFilterLabel(getActivity(), mTab));
-
-
-        if (savedInstanceState != null) {
-            String query = savedInstanceState.getString(EXTRA_QUERY);
-            String filter = savedInstanceState.getString(EXTRA_FILTER);
-            mBinding.resultListHeader.tvListHeader.setText(query);
-            mBinding.resultListHeader.tvFilter.setText(filter);
-            mBinding.resultListHeader.filter.setVisibility(TextUtils.isEmpty(filter) ? View.GONE : View.VISIBLE);
-        }
-
-        EventBus.getDefault().register(this);
-        return view;
+        FragmentManager fragmentManager = getChildFragmentManager();
+        mHeaderFragment = (ResultListHeaderFragment) fragmentManager.findFragmentById(R.id.result_list_header);
+        mHeaderFragment.setTab(mTab);
+        return mBinding.getRoot();
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -117,29 +99,14 @@ public class ResultListFragment<T> extends Fragment
         mAdapter = (ResultListAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
         mBinding.recyclerView.setAdapter(mAdapter);
         getLoaderManager().initLoader(mTab.ordinal(), getArguments(), this);
-        updatePlayButton();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Log.d(TAG, mTab + ": onSaveInstanceState() called with: " + "outState = [" + outState + "]");
-        outState.putString(EXTRA_QUERY, mBinding.resultListHeader.tvListHeader.getText().toString());
-        outState.putString(EXTRA_FILTER, mBinding.resultListHeader.tvFilter.getText().toString());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_share) {
             Share.share(getActivity(), mTab,
-                    mBinding.resultListHeader.tvListHeader.getText().toString(),
-                    mBinding.resultListHeader.tvFilter.getText().toString(),
+                    mHeaderFragment.getHeader(),
+                    mHeaderFragment.getFilter(),
                     mData.data);
         }
         return super.onOptionsItemSelected(item);
@@ -153,8 +120,8 @@ public class ResultListFragment<T> extends Fragment
 
     public void query(String query) {
         Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
-        mBinding.resultListHeader.tvListHeader.setText(query);
-        mBinding.resultListHeader.filter.setVisibility(View.GONE);
+        mHeaderFragment.setHeader(query);
+        mHeaderFragment.setFilter(null);
         Bundle args = new Bundle(1);
         args.putString(EXTRA_QUERY, query);
         getLoaderManager().restartLoader(mTab.ordinal(), args, this);
@@ -162,13 +129,9 @@ public class ResultListFragment<T> extends Fragment
 
     private void filter(String filter) {
         Bundle args = new Bundle(2);
-        args.putString(EXTRA_QUERY, mBinding.resultListHeader.tvListHeader.getText().toString());
+        args.putString(EXTRA_QUERY, mHeaderFragment.getHeader());
         args.putString(EXTRA_FILTER, filter);
         getLoaderManager().restartLoader(mTab.ordinal(), args, this);
-    }
-
-    private void updatePlayButton() {
-        ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, mTts.getStatus());
     }
 
     @Override
@@ -182,11 +145,11 @@ public class ResultListFragment<T> extends Fragment
         if (args != null) {
             query = args.getString(EXTRA_QUERY);
             filter = args.getString(EXTRA_FILTER);
-            mBinding.resultListHeader.tvListHeader.setText(query);
+            mHeaderFragment.setHeader(query);
             mData = new ResultListData<>(query, false, Collections.emptyList());
         }
         mBinding.empty.setVisibility(View.GONE);
-        mBinding.resultListHeader.listHeader.setVisibility(View.VISIBLE);
+        mHeaderFragment.show();
         mBinding.recyclerView.scrollToPosition(0); // why do I have to do this?
 
         getActivity().supportInvalidateOptionsMenu();
@@ -210,14 +173,30 @@ public class ResultListFragment<T> extends Fragment
         imm.hideSoftInputFromWindow(mBinding.recyclerView.getWindowToken(), 0);
     }
 
+    @Override
+    public void onLoaderReset(Loader<ResultListData<T>> loader) {
+        Log.d(TAG, mTab + ": onLoaderReset() called with: " + "loader = [" + loader + "]");
+        mAdapter.clear();
+        mData = null;
+        updateUi();
+    }
+
+    @Override
+    public void onFilterSubmitted(String filter) {
+        filter(filter);
+    }
+
+
     private void updateUi() {
         Log.d(TAG, mTab + ": updateUi() called with: " + "");
-        int headerVisible = mAdapter.getItemCount() == 0 && TextUtils.isEmpty(mBinding.resultListHeader.tvListHeader.getText().toString()) ?
-                View.GONE : View.VISIBLE;
-        mBinding.resultListHeader.listHeader.setVisibility(headerVisible);
+        if (mAdapter.getItemCount() > 0 || !TextUtils.isEmpty(mHeaderFragment.getHeader())) {
+            mHeaderFragment.show();
+        } else {
+            mHeaderFragment.hide();
+        }
 
         String query = mData == null ? null : mData.matchedWord;
-        mBinding.resultListHeader.tvListHeader.setText(query);
+        mHeaderFragment.setHeader(query);
         // If we have an empty list because the user didn't enter any search term,
         // we'll show a text to tell them to search.
         if (TextUtils.isEmpty(query)) {
@@ -241,53 +220,9 @@ public class ResultListFragment<T> extends Fragment
             mBinding.recyclerView.setVisibility(View.VISIBLE);
         }
 
-        if (mData != null) mBinding.resultListHeader.btnStarQuery.setChecked(mData.isFavorite);
+        if (mData != null) mHeaderFragment.setFavorite(mData.isFavorite);
 
         getActivity().supportInvalidateOptionsMenu();
-    }
-
-    @Override
-    public void onLoaderReset(Loader<ResultListData<T>> loader) {
-        Log.d(TAG, mTab + ": onLoaderReset() called with: " + "loader = [" + loader + "]");
-        mAdapter.clear();
-        mData = null;
-        updateUi();
-    }
-
-    @Override
-    public void onInputSubmitted(int actionId, String input) {
-        if (actionId == ResultListHeader.ACTION_FILTER) {
-            if (!TextUtils.isEmpty(input)) {
-                mBinding.resultListHeader.filter.setVisibility(View.VISIBLE);
-                String normalizedInput = input.toLowerCase(Locale.getDefault()).trim();
-                mBinding.resultListHeader.tvFilter.setText(normalizedInput);
-                filter(normalizedInput);
-            } else {
-                mBinding.resultListHeader.filter.setVisibility(View.GONE);
-                mBinding.resultListHeader.tvFilter.setText(null);
-                filter(null);
-            }
-        }
-    }
-
-    @Override
-    public void onOk(int actionId) {
-        if (actionId == ResultListHeader.ACTION_CLEAR_FAVORITES) {
-            new Favorites(getContext()).clear();
-            Snackbar.make(mBinding.getRoot(), R.string.favorites_cleared, Snackbar.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    public void onFilterCleared() {
-        filter(null);
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onTtsInitialized(Tts.OnTtsInitialized event) {
-        Log.d(TAG, mTab + ": onTtsInitialized() called with: " + "event = [" + event + "]");
-        updatePlayButton();
     }
 
 }

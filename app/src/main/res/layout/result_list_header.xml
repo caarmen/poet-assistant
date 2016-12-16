@@ -24,8 +24,8 @@
     <data>
 
         <variable
-            name="resultListHeader"
-            type="ca.rmen.android.poetassistant.main.dictionaries.ResultListHeader" />
+            name="buttonListener"
+            type="ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderFragment.ButtonListener" />
     </data>
 
     <LinearLayout
@@ -51,6 +51,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
+                android:freezesText="true"
                 android:gravity="start|center_vertical"
                 android:textIsSelectable="true"
                 android:textStyle="bold"
@@ -70,7 +71,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:button="@drawable/ic_star"
                 android:clickable="true"
-                android:onClick="@{resultListHeader.onFavoriteButtonClicked}"
+                android:onClick="@{buttonListener.onFavoriteButtonClicked}"
                 android:padding="8dp"
                 app:buttonTint="@color/primary_dark" />
 
@@ -93,7 +94,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/help"
-                android:onClick="@{resultListHeader.onHelpButtonClicked}"
+                android:onClick="@{buttonListener.onHelpButtonClicked}"
                 android:padding="8dp"
                 android:visibility="gone"
                 app:srcCompat="@drawable/btn_help"
@@ -110,7 +111,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/action_clear_favorites"
-                android:onClick="@{resultListHeader.onDeleteFavoritesButtonClicked}"
+                android:onClick="@{buttonListener.onDeleteFavoritesButtonClicked}"
                 android:padding="8dp"
                 android:visibility="gone"
                 app:srcCompat="@drawable/ic_delete"
@@ -127,7 +128,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/filter_hint"
-                android:onClick="@{resultListHeader.onFilterButtonClicked}"
+                android:onClick="@{buttonListener.onFilterButtonClicked}"
                 android:padding="8dp"
                 android:visibility="gone"
                 app:srcCompat="@drawable/ic_filter_list"
@@ -144,7 +145,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/tts_play"
-                android:onClick="@{resultListHeader.onPlayButtonClicked}"
+                android:onClick="@{buttonListener.onPlayButtonClicked}"
                 android:padding="8dp"
                 app:srcCompat="@drawable/ic_play_circle" />
 
@@ -159,7 +160,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/action_search"
-                android:onClick="@{resultListHeader.onWebSearchButtonClicked}"
+                android:onClick="@{buttonListener.onWebSearchButtonClicked}"
                 android:padding="8dp"
                 app:srcCompat="@drawable/ic_web_search" />
 
@@ -194,6 +195,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
+                android:freezesText="true"
                 android:gravity="center_vertical"
                 android:textColor="#37474f"
                 tools:text="yesterday" />
@@ -204,7 +206,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/filter_clear"
-                android:onClick="@{resultListHeader.onFilterClearButtonClicked}"
+                android:onClick="@{buttonListener.onFilterClearButtonClicked}"
                 app:srcCompat="@drawable/ic_clear" />
         </LinearLayout>
 
