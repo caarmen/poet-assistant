@@ -22,11 +22,9 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
-
 /**
  * Exports the data displayed in a {@link ResultListFragment} to text format.
- * @param <T> must be a List of {@link ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry} or a List of {@link DictionaryEntry.DictionaryEntryDetails}.
+ * @param <T> must be a List of {@link ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry} or a List of {@link ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry.DictionaryEntryDetails}.
  */
 public interface ResultListExporter<T> {
 

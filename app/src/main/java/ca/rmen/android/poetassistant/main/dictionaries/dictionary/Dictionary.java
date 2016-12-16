@@ -57,7 +57,7 @@ public class Dictionary {
         String selection = "word=?";
         String[] selectionArgs = new String[]{word};
         String lookupWord = word;
-        Cursor cursor = mDbHelper.query("dictionary", projection, selection, selectionArgs, null, null, null);
+        Cursor cursor = mDbHelper.query("dictionary", projection, selection, selectionArgs);
 
         if (cursor != null && cursor.getCount() == 0) {
             String closestWord = new WordSimilarities().findClosestWord(word, mDbHelper);
@@ -65,7 +65,7 @@ public class Dictionary {
                 lookupWord = closestWord;
                 cursor.close();
                 selectionArgs = new String[]{lookupWord};
-                cursor = mDbHelper.query("dictionary", projection, selection, selectionArgs, null, null, null);
+                cursor = mDbHelper.query("dictionary", projection, selection, selectionArgs);
             }
         }
         if (cursor != null) {
@@ -92,7 +92,7 @@ public class Dictionary {
         String[] selectionArgs = new String[]{pattern};
         String orderBy = "word";
         String limit = String.valueOf(Patterns.MAX_RESULTS);
-        Cursor cursor = mDbHelper.query(true, "dictionary", projection, selection, selectionArgs, null, null, orderBy, limit);
+        Cursor cursor = mDbHelper.query(true, "dictionary", projection, selection, selectionArgs, orderBy, limit);
         if (cursor != null) {
             try {
                 if (cursor.getCount() > 0) {
@@ -120,7 +120,6 @@ public class Dictionary {
         Cursor cursor = mDbHelper.query(
                 true,
                 "word_variants", projection, selection, selectionArgs,
-                null, null,
                 orderBy, String.valueOf(MAX_PREFIX_MATCHES));
         if (cursor != null) {
             try {
@@ -150,7 +149,7 @@ public class Dictionary {
                         String.valueOf(MIN_INTERESTING_FREQUENCY),
                         String.valueOf(MAX_INTERESTING_FREQUENCY)
                 };
-        Cursor cursor = mDbHelper.query(false, "stems", projection, selection, args, null, null,
+        Cursor cursor = mDbHelper.query(false, "stems", projection, selection, args,
                 orderBy, limit);
         if (cursor != null) {
             String word = null;

@@ -62,12 +62,14 @@ public class DbHelper {
     }
 
     @Nullable
-    public Cursor query(String table, String [] projection, String selection, String[] selectionArgs,
-                        String groupBy, String having, String orderBy) {
+    public Cursor query(String table, String [] projection, String selection, String[] selectionArgs) {
         SQLiteDatabase db = getDb();
         if (db == null) return null;
         try {
-            return db.query(table, projection, selection, selectionArgs, groupBy, having, orderBy);
+            return db.query(table, projection, selection, selectionArgs,
+                    null /*groupBy*/,
+                    null /*having*/,
+                    null /*orderBy*/);
         } catch (SQLiteDatabaseCorruptException e) {
             handleDbCorruptException(e);
             return null;
@@ -77,12 +79,15 @@ public class DbHelper {
     @Nullable
     public Cursor query(boolean distinct,
                         String table, String [] projection, String selection, String[] selectionArgs,
-                        String groupBy, String having, String orderBy,
+                        String orderBy,
                         String limit) {
         SQLiteDatabase db = getDb();
         if (db == null) return null;
         try {
-            return db.query(distinct, table, projection, selection, selectionArgs, groupBy, having, orderBy, limit);
+            return db.query(distinct, table, projection, selection, selectionArgs,
+                    null /*groupBy*/,
+                    null /*having*/,
+                    orderBy, limit);
         } catch (SQLiteDatabaseCorruptException e) {
             handleDbCorruptException(e);
             return null;
@@ -197,13 +202,15 @@ public class DbHelper {
             for (int i = 0; i < DB_VERSION; i++) {
                 deleteDb(i);
             }
-            deleteOldDbs("rhymes", 2);
-            deleteOldDbs("thesaurus", 2);
-            deleteOldDbs("dictionary", 2);
+            deleteOldDbs("rhymes");
+            deleteOldDbs("thesaurus");
+            deleteOldDbs("dictionary");
 
+            InputStream is = null;
+            FileOutputStream os = null;
             try {
-                InputStream is = mContext.getAssets().open(dbFileName);
-                FileOutputStream os = new FileOutputStream(dbPath);
+                is = mContext.getAssets().open(dbFileName);
+                os = new FileOutputStream(dbPath);
                 byte[] buffer = new byte[1024];
                 int read = is.read(buffer);
                 while (read > 0) {
@@ -214,11 +221,21 @@ public class DbHelper {
             } catch (IOException e) {
                 Log.e(TAG, "Error writing to " + dbPath + ": " + e.getMessage(), e);
                 deleteDb(DB_VERSION);
+            } finally {
+                try {
+                    if (is != null) is.close();
+                    if (os != null) os.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "Couldn't close stream", e);
+                }
             }
         }
     }
 
-    private void deleteOldDbs(String name, int maxVersion) {
+    private void deleteOldDbs(String name) {
+        // the max version of all the separate dbs
+        // (rhymes, thesaurus, dictionary) was 2.
+        final int maxVersion = 2;
         for (int i = 0; i <= maxVersion; i++) {
             final String dbFileName;
             if (i == 1) dbFileName = name + ".db";

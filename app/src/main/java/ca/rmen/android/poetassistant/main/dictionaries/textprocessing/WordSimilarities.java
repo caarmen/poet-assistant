@@ -36,7 +36,7 @@ public class WordSimilarities {
         String[] projection = new String[]{"word"};
         String selection = "stem=?";
         String[] selectionArgs = new String[]{stem};
-        Cursor cursor = dbHelper.query(true, "stems", projection, selection, selectionArgs, null, null, null, null);
+        Cursor cursor = dbHelper.query(true, "stems", projection, selection, selectionArgs, null, null);
         return new WordSimilarities().findClosestWord(word, cursor);
     }
 

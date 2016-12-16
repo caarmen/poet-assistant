@@ -116,8 +116,8 @@ public class PagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getItemPosition(Object object) {
         Log.v(TAG, "getItemPosition " + object);
-        if (object instanceof ResultListFragment) {
-            Tab tab = (Tab) ((ResultListFragment)object).getArguments().getSerializable(ResultListFragment.EXTRA_TAB);
+        if (object instanceof ResultListFragment<?>) {
+            Tab tab = (Tab) ((ResultListFragment<?>)object).getArguments().getSerializable(ResultListFragment.EXTRA_TAB);
             return getPositionForTab(tab);
         }
         if (object instanceof ReaderFragment) {

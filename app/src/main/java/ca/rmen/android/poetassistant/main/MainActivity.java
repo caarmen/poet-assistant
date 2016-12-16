@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
     private void showClearHistorySnackbar(String[] searchHistory) {
         Snackbar.make(mBinding.getRoot(), R.string.search_history_cleared, Constants.SNACKBAR_UNDO_LENGTH_MS)
                 .setAction(R.string.action_undo, view -> mSearch.addSuggestions(searchHistory))
-                .setCallback(new Snackbar.Callback() {
+                .addCallback(new Snackbar.Callback() {
                     @Override
                     public void onDismissed(Snackbar snackbar, int event) {
                         mClearedHistory = null;

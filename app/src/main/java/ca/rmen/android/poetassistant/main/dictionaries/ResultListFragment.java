@@ -76,7 +76,7 @@ public class ResultListFragment<T> extends Fragment
     public static final String EXTRA_TAB = "tab";
     static final String EXTRA_QUERY = "query";
     private FragmentResultListBinding mBinding;
-    private final HeaderButtonListener mHeaderButtonListener = new HeaderButtonListener();
+    private final HeaderButtonListener<T> mHeaderButtonListener = new HeaderButtonListener<T>();
 
     private Tab mTab;
     private ResultListAdapter<T> mAdapter;

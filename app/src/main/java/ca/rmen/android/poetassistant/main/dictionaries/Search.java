@@ -87,7 +87,7 @@ public class Search {
         word = word.trim().toLowerCase(Locale.US);
         // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
         // We want to retrieve the existing fragment.
-        ((ResultListFragment) mPagerAdapter.getFragment(mViewPager, tab)).query(word);
+        ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, tab)).query(word);
     }
 
     /**
@@ -100,11 +100,11 @@ public class Search {
         selectTabForSearch(wordTrimmed);
         final Runnable performSearch = () -> {
             if (Patterns.isPattern(wordTrimmed)) {
-                ((ResultListFragment) mPagerAdapter.getFragment(mViewPager, Tab.PATTERN)).query(wordTrimmed);
+                ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.PATTERN)).query(wordTrimmed);
             } else {
-                ((ResultListFragment) mPagerAdapter.getFragment(mViewPager, Tab.RHYMER)).query(wordTrimmed);
-                ((ResultListFragment) mPagerAdapter.getFragment(mViewPager, Tab.THESAURUS)).query(wordTrimmed);
-                ((ResultListFragment) mPagerAdapter.getFragment(mViewPager, Tab.DICTIONARY)).query(wordTrimmed);
+                ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.RHYMER)).query(wordTrimmed);
+                ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.THESAURUS)).query(wordTrimmed);
+                ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.DICTIONARY)).query(wordTrimmed);
             }
         };
         // Issue #19: In a specific scenario, the fragments may not be "ready" yet (onCreateView() may not have been called).

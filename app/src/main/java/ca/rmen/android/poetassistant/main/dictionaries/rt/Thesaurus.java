@@ -51,7 +51,7 @@ public class Thesaurus {
         String selection = "word=?";
         String[] selectionArgs = new String[]{word};
         String lookupWord = word;
-        Cursor cursor = mDbHelper.query("thesaurus", projection, selection, selectionArgs, null, null, null);
+        Cursor cursor = mDbHelper.query("thesaurus", projection, selection, selectionArgs);
 
         if (cursor != null && cursor.getCount() == 0) {
             String closestWord = new WordSimilarities().findClosestWord(word, mDbHelper);
@@ -59,7 +59,7 @@ public class Thesaurus {
                 lookupWord = closestWord;
                 cursor.close();
                 selectionArgs = new String[]{lookupWord};
-                cursor = mDbHelper.query("thesaurus", projection, selection, selectionArgs, null, null, null);
+                cursor = mDbHelper.query("thesaurus", projection, selection, selectionArgs);
             }
         }
 
@@ -92,7 +92,7 @@ public class Thesaurus {
         String[] projection = new String[]{"synonyms"};
         String selection = "word=?";
         String[] selectionArgs = new String[]{word};
-        Cursor cursor = mDbHelper.query("thesaurus", projection, selection, selectionArgs, null, null, null);
+        Cursor cursor = mDbHelper.query("thesaurus", projection, selection, selectionArgs);
         if (cursor != null) {
             try {
                 while (cursor.moveToNext()) {
