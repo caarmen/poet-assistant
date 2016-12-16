@@ -28,6 +28,7 @@ import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.SuggestionsCursor;
 import ca.rmen.android.poetassistant.main.dictionaries.SuggestionsProvider;
@@ -65,6 +66,7 @@ public class DaggerHelper {
         void inject(MainActivity mainActivity);
         void inject(ResultListFragment<RTEntry> resultListFragment);
         void injectDict(ResultListFragment<DictionaryEntry> resultListFragment);
+        void inject(ResultListHeaderFragment resultListHeaderFragment);
         void inject(ReaderFragment readerFragment);
         void inject(RhymerLoader rhymerLoader);
         void inject(ThesaurusLoader thesaurusLoader);
@@ -84,6 +86,7 @@ public class DaggerHelper {
         void inject(WotdBroadcastReceiver wotdBroadcastReceiver);
         void inject(WotdJobService wotdJobService);
         void inject(WotdBootReceiver wotdBootReceiver);
+
     }
 
     @Module
