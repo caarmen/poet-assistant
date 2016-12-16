@@ -24,7 +24,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 
@@ -128,8 +127,7 @@ public class ResultListFactory {
         }
     }
 
-    static void showFilterDialog(Context context, Tab tab, @SuppressWarnings("SameParameterValue") int actionId, String text,
-                                 FragmentManager fragmentManager, String tag) {
+    static InputDialogFragment createFilterDialog(Context context, Tab tab, @SuppressWarnings("SameParameterValue") int actionId, String text) {
         String dialogMessage;
         switch (tab) {
             case RHYMER:
@@ -140,8 +138,7 @@ public class ResultListFactory {
                 dialogMessage = context.getString(R.string.filter_thesaurus_message);
                 break;
         }
-        InputDialogFragment.show(actionId, context.getString(R.string.filter_title), dialogMessage, text,
-                fragmentManager, tag);
+        return InputDialogFragment.newInstance(actionId, context.getString(R.string.filter_title), dialogMessage, text);
     }
 
     static void inject(Tab tab, ResultListFragment<?> fragment) {
@@ -195,23 +192,23 @@ public class ResultListFactory {
     static void updateListHeaderButtonsVisibility(FragmentResultListBinding fragmentResultListBinding, Tab tab, int textToSpeechStatus) {
         switch (tab) {
             case FAVORITES:
-                fragmentResultListBinding.btnPlay.setVisibility(View.GONE);
-                fragmentResultListBinding.btnWebSearch.setVisibility(View.GONE);
-                fragmentResultListBinding.btnStarQuery.setVisibility(View.GONE);
-                fragmentResultListBinding.btnDelete.setVisibility(View.VISIBLE);
+                fragmentResultListBinding.resultListHeader.btnPlay.setVisibility(View.GONE);
+                fragmentResultListBinding.resultListHeader.btnWebSearch.setVisibility(View.GONE);
+                fragmentResultListBinding.resultListHeader.btnStarQuery.setVisibility(View.GONE);
+                fragmentResultListBinding.resultListHeader.btnDelete.setVisibility(View.VISIBLE);
                 break;
             case PATTERN:
-                fragmentResultListBinding.btnHelp.setVisibility(View.VISIBLE);
-                fragmentResultListBinding.btnPlay.setVisibility(View.GONE);
-                fragmentResultListBinding.btnWebSearch.setVisibility(View.GONE);
-                fragmentResultListBinding.btnStarQuery.setVisibility(View.GONE);
+                fragmentResultListBinding.resultListHeader.btnHelp.setVisibility(View.VISIBLE);
+                fragmentResultListBinding.resultListHeader.btnPlay.setVisibility(View.GONE);
+                fragmentResultListBinding.resultListHeader.btnWebSearch.setVisibility(View.GONE);
+                fragmentResultListBinding.resultListHeader.btnStarQuery.setVisibility(View.GONE);
                 break;
             case RHYMER:
             case THESAURUS:
-                fragmentResultListBinding.btnFilter.setVisibility(View.VISIBLE);
+                fragmentResultListBinding.resultListHeader.btnFilter.setVisibility(View.VISIBLE);
             case DICTIONARY:
                 int playButtonVisibility = textToSpeechStatus == TextToSpeech.SUCCESS ? View.VISIBLE : View.GONE;
-                fragmentResultListBinding.btnPlay.setVisibility(playButtonVisibility);
+                fragmentResultListBinding.resultListHeader.btnPlay.setVisibility(playButtonVisibility);
             default:
         }
     }

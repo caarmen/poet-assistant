@@ -19,9 +19,7 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries;
 
-import android.app.SearchManager;
 import android.content.Context;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -42,7 +40,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -58,25 +55,20 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.VectorCompat;
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
-import ca.rmen.android.poetassistant.main.HelpDialogFragment;
 import ca.rmen.android.poetassistant.main.Tab;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFavoriteClickListener;
 
 
 public class ResultListFragment<T> extends Fragment
         implements
         LoaderManager.LoaderCallbacks<ResultListData<T>>,
         InputDialogFragment.InputDialogListener,
-        ConfirmDialogFragment.ConfirmDialogListener {
+        ConfirmDialogFragment.ConfirmDialogListener,
+        ResultListHeader.HeaderButtonCallback {
     private static final String TAG = Constants.TAG + ResultListFragment.class.getSimpleName();
-    private static final int ACTION_FILTER = 0;
-    private static final int ACTION_CLEAR_FAVORITES = 1;
-    private static final String DIALOG_TAG = "dialog";
     private static final String EXTRA_FILTER = "filter";
     public static final String EXTRA_TAB = "tab";
     static final String EXTRA_QUERY = "query";
     private FragmentResultListBinding mBinding;
-    private final HeaderButtonListener<T> mHeaderButtonListener = new HeaderButtonListener<T>();
 
     private Tab mTab;
     private ResultListAdapter<T> mAdapter;
@@ -96,20 +88,20 @@ public class ResultListFragment<T> extends Fragment
         ResultListFactory.inject(mTab, this);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false);
         View view = mBinding.getRoot();
-        mBinding.setHeaderButtonListener(mHeaderButtonListener);
+        mBinding.resultListHeader.setResultListHeader(new ResultListHeader(mTab, this));
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mBinding.recyclerView.setHasFixedSize(true);
 
         ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, TextToSpeech.ERROR);
-        mBinding.tvFilterLabel.setText(ResultListFactory.getFilterLabel(getActivity(), mTab));
+        mBinding.resultListHeader.tvFilterLabel.setText(ResultListFactory.getFilterLabel(getActivity(), mTab));
 
 
         if (savedInstanceState != null) {
             String query = savedInstanceState.getString(EXTRA_QUERY);
             String filter = savedInstanceState.getString(EXTRA_FILTER);
-            mBinding.tvListHeader.setText(query);
-            mBinding.tvFilter.setText(filter);
-            mBinding.filter.setVisibility(TextUtils.isEmpty(filter) ? View.GONE : View.VISIBLE);
+            mBinding.resultListHeader.tvListHeader.setText(query);
+            mBinding.resultListHeader.tvFilter.setText(filter);
+            mBinding.resultListHeader.filter.setVisibility(TextUtils.isEmpty(filter) ? View.GONE : View.VISIBLE);
         }
 
         EventBus.getDefault().register(this);
@@ -138,16 +130,16 @@ public class ResultListFragment<T> extends Fragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d(TAG, mTab + ": onSaveInstanceState() called with: " + "outState = [" + outState + "]");
-        outState.putString(EXTRA_QUERY, mBinding.tvListHeader.getText().toString());
-        outState.putString(EXTRA_FILTER, mBinding.tvFilter.getText().toString());
+        outState.putString(EXTRA_QUERY, mBinding.resultListHeader.tvListHeader.getText().toString());
+        outState.putString(EXTRA_FILTER, mBinding.resultListHeader.tvFilter.getText().toString());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_share) {
             Share.share(getActivity(), mTab,
-                    mBinding.tvListHeader.getText().toString(),
-                    mBinding.tvFilter.getText().toString(),
+                    mBinding.resultListHeader.tvListHeader.getText().toString(),
+                    mBinding.resultListHeader.tvFilter.getText().toString(),
                     mData.data);
         }
         return super.onOptionsItemSelected(item);
@@ -161,8 +153,8 @@ public class ResultListFragment<T> extends Fragment
 
     public void query(String query) {
         Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
-        mBinding.tvListHeader.setText(query);
-        mBinding.filter.setVisibility(View.GONE);
+        mBinding.resultListHeader.tvListHeader.setText(query);
+        mBinding.resultListHeader.filter.setVisibility(View.GONE);
         Bundle args = new Bundle(1);
         args.putString(EXTRA_QUERY, query);
         getLoaderManager().restartLoader(mTab.ordinal(), args, this);
@@ -170,7 +162,7 @@ public class ResultListFragment<T> extends Fragment
 
     private void filter(String filter) {
         Bundle args = new Bundle(2);
-        args.putString(EXTRA_QUERY, mBinding.tvListHeader.getText().toString());
+        args.putString(EXTRA_QUERY, mBinding.resultListHeader.tvListHeader.getText().toString());
         args.putString(EXTRA_FILTER, filter);
         getLoaderManager().restartLoader(mTab.ordinal(), args, this);
     }
@@ -190,11 +182,11 @@ public class ResultListFragment<T> extends Fragment
         if (args != null) {
             query = args.getString(EXTRA_QUERY);
             filter = args.getString(EXTRA_FILTER);
-            mBinding.tvListHeader.setText(query);
+            mBinding.resultListHeader.tvListHeader.setText(query);
             mData = new ResultListData<>(query, false, Collections.emptyList());
         }
         mBinding.empty.setVisibility(View.GONE);
-        mBinding.listHeader.setVisibility(View.VISIBLE);
+        mBinding.resultListHeader.listHeader.setVisibility(View.VISIBLE);
         mBinding.recyclerView.scrollToPosition(0); // why do I have to do this?
 
         getActivity().supportInvalidateOptionsMenu();
@@ -220,12 +212,12 @@ public class ResultListFragment<T> extends Fragment
 
     private void updateUi() {
         Log.d(TAG, mTab + ": updateUi() called with: " + "");
-        int headerVisible = mAdapter.getItemCount() == 0 && TextUtils.isEmpty(mBinding.tvListHeader.getText().toString()) ?
+        int headerVisible = mAdapter.getItemCount() == 0 && TextUtils.isEmpty(mBinding.resultListHeader.tvListHeader.getText().toString()) ?
                 View.GONE : View.VISIBLE;
-        mBinding.listHeader.setVisibility(headerVisible);
+        mBinding.resultListHeader.listHeader.setVisibility(headerVisible);
 
         String query = mData == null ? null : mData.matchedWord;
-        mBinding.tvListHeader.setText(query);
+        mBinding.resultListHeader.tvListHeader.setText(query);
         // If we have an empty list because the user didn't enter any search term,
         // we'll show a text to tell them to search.
         if (TextUtils.isEmpty(query)) {
@@ -249,7 +241,7 @@ public class ResultListFragment<T> extends Fragment
             mBinding.recyclerView.setVisibility(View.VISIBLE);
         }
 
-        if (mData != null) mBinding.btnStarQuery.setChecked(mData.isFavorite);
+        if (mData != null) mBinding.resultListHeader.btnStarQuery.setChecked(mData.isFavorite);
 
         getActivity().supportInvalidateOptionsMenu();
     }
@@ -264,15 +256,15 @@ public class ResultListFragment<T> extends Fragment
 
     @Override
     public void onInputSubmitted(int actionId, String input) {
-        if (actionId == ACTION_FILTER) {
+        if (actionId == ResultListHeader.ACTION_FILTER) {
             if (!TextUtils.isEmpty(input)) {
-                mBinding.filter.setVisibility(View.VISIBLE);
+                mBinding.resultListHeader.filter.setVisibility(View.VISIBLE);
                 String normalizedInput = input.toLowerCase(Locale.getDefault()).trim();
-                mBinding.tvFilter.setText(normalizedInput);
+                mBinding.resultListHeader.tvFilter.setText(normalizedInput);
                 filter(normalizedInput);
             } else {
-                mBinding.filter.setVisibility(View.GONE);
-                mBinding.tvFilter.setText(null);
+                mBinding.resultListHeader.filter.setVisibility(View.GONE);
+                mBinding.resultListHeader.tvFilter.setText(null);
                 filter(null);
             }
         }
@@ -280,67 +272,15 @@ public class ResultListFragment<T> extends Fragment
 
     @Override
     public void onOk(int actionId) {
-        if (actionId == ACTION_CLEAR_FAVORITES) {
+        if (actionId == ResultListHeader.ACTION_CLEAR_FAVORITES) {
             new Favorites(getContext()).clear();
             Snackbar.make(mBinding.getRoot(), R.string.favorites_cleared, Snackbar.LENGTH_SHORT).show();
         }
     }
 
-    /**
-     * @param <T> Needed for the data binding tool to generate a FragmentResultListBinding class which compiles.
-     */
-    public class HeaderButtonListener<T> {
-
-        public void onPlayButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            mTts.speak(mBinding.tvListHeader.getText().toString());
-        }
-
-        public void onFavoriteButtonClicked(View v) {
-            String word = mBinding.tvListHeader.getText().toString();
-            ((OnFavoriteClickListener) getActivity()).onFavoriteToggled(word, ((CheckBox)v).isChecked());
-        }
-
-        public void onDeleteFavoritesButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            ConfirmDialogFragment.show(
-                    ACTION_CLEAR_FAVORITES,
-                    getString(R.string.action_clear_favorites),
-                    getString(R.string.action_clear),
-                    getChildFragmentManager(),
-                    DIALOG_TAG);
-        }
-
-        public void onWebSearchButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            Intent searchIntent = new Intent(Intent.ACTION_WEB_SEARCH);
-            String word = mBinding.tvListHeader.getText().toString();
-            searchIntent.putExtra(SearchManager.QUERY, word);
-            // No apps can handle ACTION_WEB_SEARCH.  We'll try a more generic intent instead
-            if (getActivity().getPackageManager().queryIntentActivities(searchIntent, 0).isEmpty()) {
-                searchIntent = new Intent(Intent.ACTION_SEND);
-                searchIntent.setType("text/plain");
-                searchIntent.putExtra(Intent.EXTRA_TEXT, word);
-            }
-            startActivity(Intent.createChooser(searchIntent, getString(R.string.action_web_search, word)));
-        }
-
-        public void onFilterButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            ResultListFactory.showFilterDialog(
-                    getActivity(),
-                    mTab,
-                    ACTION_FILTER,
-                    mBinding.tvFilter.getText().toString(),
-                    getChildFragmentManager(),
-                    DIALOG_TAG);
-        }
-
-        public void onHelpButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            getFragmentManager().beginTransaction().add(new HelpDialogFragment(), DIALOG_TAG).commit();
-        }
-
-        public void onFilterClearButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            mBinding.tvFilter.setText(null);
-            mBinding.filter.setVisibility(View.GONE);
-            filter(null);
-        }
+    @Override
+    public void onFilterCleared() {
+        filter(null);
     }
 
     @SuppressWarnings("unused")
