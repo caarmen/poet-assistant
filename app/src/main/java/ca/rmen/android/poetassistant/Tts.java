@@ -168,13 +168,13 @@ public class Tts {
     }
 
     private void setVoiceSpeedFromSettings() {
-        float speed = mSettingsPrefs.getVoiceSpeed() / 100;
+        float speed = ((float) mSettingsPrefs.getVoiceSpeed()) / 100;
         if (speed < MIN_VOICE_SPEED) speed = MIN_VOICE_SPEED;
         mTextToSpeech.setSpeechRate(speed);
     }
 
     private void setVoicePitchFromSettings() {
-        float pitch = mSettingsPrefs.getVoicePitch() / 100;
+        float pitch = ((float) mSettingsPrefs.getVoicePitch()) / 100;
         if (pitch < MIN_VOICE_PITCH) pitch = MIN_VOICE_PITCH;
         mTextToSpeech.setPitch(pitch);
     }

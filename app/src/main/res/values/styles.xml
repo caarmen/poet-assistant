@@ -31,7 +31,11 @@
     </style>
 
     <style name="AppTheme" parent="AppBaseTheme">
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="preferenceTheme">@style/AppPreferenceTheme</item>
+    </style>
+
+    <style name="AppPreferenceTheme" parent="@style/PreferenceThemeOverlay">
+        <item name="android:textAppearanceMedium">?android:attr/textAppearanceListItem</item>
     </style>
 
     <style name="AppTheme.Settings">
@@ -60,13 +64,5 @@
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/dialog_accent</item>
     </style>
-
-    <declare-styleable name="SeekBarPreference">
-        <attr name="min" format="float" />
-        <attr name="max" format="float" />
-        <attr name="minLabel" format="string" />
-        <attr name="maxLabel" format="string" />
-        <attr name="progressLabel" format="string" />
-    </declare-styleable>
 
 </resources>
