@@ -17,8 +17,7 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory
         android:key="PREF_CATEGORY_VOICE"
@@ -33,12 +32,14 @@
             android:summary="@string/pref_voice_summary"
             android:title="@string/pref_voice_title" />
 
+        <!--suppress AndroidElementNotAllowed -->
         <SeekBarPreference
             android:max="200"
             android:defaultValue="100"
             android:key="PREF_VOICE_SPEED_V3"
             android:title="@string/pref_voice_speed_title" />
 
+        <!--suppress AndroidElementNotAllowed -->
         <SeekBarPreference
             android:max="200"
             android:defaultValue="100"
