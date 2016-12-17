@@ -5,7 +5,7 @@ Change Log
 --------------------
 * Use the SeekBarPreference from the support library.
 * When saving a poem to a new file, suggest a file name based on the poem content.
-* Added contextual menu when tapping on a dictionary defition word, to look up the selected word in the rhymer, thesaurus or dictionary.
+* Added contextual menu when tapping on a dictionary definition word, to look up the selected word in the rhymer, thesaurus or dictionary.
 
 1.11.1  *(2016-12-10)*
 --------------------
