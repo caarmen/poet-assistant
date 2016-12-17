@@ -26,14 +26,14 @@ import android.widget.TextView;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 
-public class TextViewUtil {
+public class TextPopupMenu {
 
     /**
-     * Create a context menu allowing the user to lookup the selected word in the given text view, in
+     * Create a popup menu allowing the user to lookup the selected word in the given text view, in
      * the rhymer, thesaurus, or dictionary.
      *
-     * @param textView tapping on this textView will bring up the context menu
-     * @param listener this listener will be notified when the user selects one of the context menu items
+     * @param textView if the text view has selected text, tapping on it will bring up the popup menu
+     * @param listener this listener will be notified when the user selects one of the popup menu items
      */
     public static void createPopupMenu(final TextView textView, final OnWordClickListener listener) {
         textView.setOnLongClickListener(v -> {
@@ -61,11 +61,16 @@ public class TextViewUtil {
         int selectionEnd = textView.getSelectionEnd();
         String text = textView.getText().toString();
 
+        // The user selected some text, use that (even if it contains partial words)
         if (selectionStart < selectionEnd) return text.substring(selectionStart, selectionEnd);
+
+        // Cursor at the end of the text: nothing selected
         if (selectionStart == text.length()) return null;
 
+        // Cursor at the beginning of the text: nothing selected
         if (selectionStart == 0 && selectionEnd == 0) return null;
 
+        // The cursor is in the middle of a word. Find the whole word.
         int wordBegin;
         for (wordBegin = selectionStart; wordBegin >= 0; wordBegin--) {
             if (!Character.isLetter(text.charAt(wordBegin))) {

@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.databinding.ListItemDictionaryEntryBinding;
-import ca.rmen.android.poetassistant.main.TextViewUtil;
+import ca.rmen.android.poetassistant.main.TextPopupMenu;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 
@@ -52,7 +52,7 @@ public class DictionaryListAdapter extends ResultListAdapter<DictionaryEntry.Dic
     public void onBindViewHolder(ResultListAdapter.ResultListEntryViewHolder holder, int position) {
         DictionaryEntry.DictionaryEntryDetails entry = getItem(position);
         ListItemDictionaryEntryBinding binding = (ListItemDictionaryEntryBinding) holder.binding;
-        TextViewUtil.createPopupMenu(binding.definition, mListener);
+        TextPopupMenu.createPopupMenu(binding.definition, mListener);
         binding.setEntry(entry);
         binding.executePendingBindings();
     }

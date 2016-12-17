@@ -53,7 +53,7 @@ import ca.rmen.android.poetassistant.HtmlCompat;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding;
-import ca.rmen.android.poetassistant.main.TextViewUtil;
+import ca.rmen.android.poetassistant.main.TextPopupMenu;
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
@@ -108,7 +108,7 @@ public class ReaderFragment extends Fragment implements
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false);
         mBinding.setPlayButtonListener(mPlayButtonListener);
         mBinding.tvText.addTextChangedListener(mTextWatcher);
-        TextViewUtil.createPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
+        TextPopupMenu.createPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
         mHandler = new Handler();
         return mBinding.getRoot();
     }
