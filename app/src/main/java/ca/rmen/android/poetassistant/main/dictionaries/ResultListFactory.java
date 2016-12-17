@@ -40,6 +40,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryList
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesListExporter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternListExporter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
@@ -90,7 +91,7 @@ public class ResultListFactory {
                 return new RTListAdapter(activity);
             case DICTIONARY:
             default:
-                return new DictionaryListAdapter();
+                return new DictionaryListAdapter((OnWordClickListener) activity);
         }
     }
 

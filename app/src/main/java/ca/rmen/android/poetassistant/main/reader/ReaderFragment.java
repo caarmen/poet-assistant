@@ -35,7 +35,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -54,7 +53,7 @@ import ca.rmen.android.poetassistant.HtmlCompat;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding;
-import ca.rmen.android.poetassistant.main.Tab;
+import ca.rmen.android.poetassistant.main.TextViewUtil;
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
@@ -109,7 +108,7 @@ public class ReaderFragment extends Fragment implements
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false);
         mBinding.setPlayButtonListener(mPlayButtonListener);
         mBinding.tvText.addTextChangedListener(mTextWatcher);
-        registerForContextMenu(mBinding.tvText);
+        TextViewUtil.createPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
         mHandler = new Handler();
         return mBinding.getRoot();
     }
@@ -134,17 +133,6 @@ public class ReaderFragment extends Fragment implements
         menu.findItem(R.id.action_new).setEnabled(hasEnteredText);
         menu.findItem(R.id.action_save).setEnabled(mPoemPrefs.hasSavedPoem());
         menu.findItem(R.id.action_save_as).setEnabled(hasEnteredText);
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        String selectedWord = getSelectedWord();
-        if (TextUtils.isEmpty(selectedWord)) return;
-        MenuInflater inflater = getActivity().getMenuInflater();
-        inflater.inflate(R.menu.menu_word_lookup, menu);
-
     }
 
     @Override
@@ -225,27 +213,6 @@ public class ReaderFragment extends Fragment implements
                 Uri uri = data.getData();
                 PoemFile.save(getActivity(), uri, mBinding.tvText.getText().toString(), this);
             }
-        }
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-
-        OnWordClickListener listener = (OnWordClickListener) getActivity();
-        String word = getSelectedWord();
-        if (word == null) return false;
-        switch (item.getItemId()) {
-            case R.id.action_lookup_rhymer:
-                listener.onWordClick(word, Tab.RHYMER);
-                return true;
-            case R.id.action_lookup_thesaurus:
-                listener.onWordClick(word, Tab.THESAURUS);
-                return true;
-            case R.id.action_lookup_dictionary:
-                listener.onWordClick(word, Tab.DICTIONARY);
-                return true;
-            default:
-                return false;
         }
     }
 
@@ -372,33 +339,6 @@ public class ReaderFragment extends Fragment implements
             mBinding.tvText.setText(tempPoemText);
         }
     }
-
-    private String getSelectedWord() {
-        int selectionStart = mBinding.tvText.getSelectionStart();
-        int selectionEnd = mBinding.tvText.getSelectionEnd();
-        String text = mBinding.tvText.getText().toString();
-
-        if (selectionStart < selectionEnd) return text.substring(selectionStart, selectionEnd);
-        if (selectionStart == text.length()) return null;
-
-        int wordBegin;
-        for (wordBegin = selectionStart; wordBegin >= 0; wordBegin--) {
-            if (!Character.isLetter(text.charAt(wordBegin))) {
-                break;
-            }
-        }
-        wordBegin++;
-        int wordEnd;
-        for (wordEnd = selectionEnd; wordEnd < text.length(); wordEnd++) {
-            if (!Character.isLetter(text.charAt(wordEnd))) {
-                break;
-            }
-        }
-
-        if (wordBegin < wordEnd) return text.substring(wordBegin, wordEnd);
-        return null;
-    }
-
 
     private final TextWatcher mTextWatcher = new TextWatcher() {
         @Override
