@@ -4,6 +4,7 @@ Change Log
 1.11.2  *(2016-12-16)*
 --------------------
 * Use the SeekBarPreference from the support library.
+* When saving a poem to a new file, suggest a file name based on the poem content.
 
 1.11.1  *(2016-12-10)*
 --------------------

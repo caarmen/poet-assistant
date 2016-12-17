@@ -187,7 +187,13 @@ public class ReaderFragment extends Fragment implements
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/plain");
         PoemFile poemFile = mPoemPrefs.getSavedPoem();
-        if (poemFile != null) intent.putExtra(Intent.EXTRA_TITLE, poemFile.name);
+        final String fileName;
+        if (poemFile != null) {
+            fileName = poemFile.name;
+        } else {
+            fileName = PoemFile.generateFileName(mBinding.tvText.getText().toString());
+        }
+        if (!TextUtils.isEmpty(fileName)) intent.putExtra(Intent.EXTRA_TITLE, fileName);
         startActivityForResult(intent, ACTION_FILE_SAVE_AS);
     }
 

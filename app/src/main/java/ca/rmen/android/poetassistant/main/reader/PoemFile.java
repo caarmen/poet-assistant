@@ -24,6 +24,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.OpenableColumns;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -33,6 +34,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import ca.rmen.android.poetassistant.Constants;
 
@@ -117,6 +120,41 @@ class PoemFile {
             }
 
         }.execute();
+    }
+
+    /**
+     * Generate a suggested filename based on the first few words of the poem text.
+     */
+    @VisibleForTesting
+    static String generateFileName(String text) {
+        final int minLength = 8;
+        final int maxLength = 16;
+        String textStart;
+        try {
+            textStart = Pattern.compile("[^\\p{L}]+").matcher(text).replaceAll("-");
+            textStart = textStart.replaceAll("^-", "");
+        } catch (PatternSyntaxException e) {
+            // Not sure why \\p{IsAlphabetic} worked on unit tests but not on an android device.
+            // \\p{L} worked on a couple of devices, but let's not take any chances.
+            Log.v(TAG, "Couldn't generate file name for " + text + ": " + e.getMessage(), e);
+            return null;
+        }
+        textStart = textStart.substring(0, Math.min(maxLength, textStart.length()));
+        int lastWordBegin = textStart.length();
+        for (int i = textStart.length() - 1; i > minLength; i--) {
+            if (!Character.isLetter(textStart.charAt(i))) {
+                lastWordBegin = i;
+                break;
+            }
+        }
+        // replace trailing hyphen
+        textStart = textStart.replaceAll("-$", "");
+        // If there's nothing left, give up.
+        if (textStart.length() == 0) return null;
+        if (textStart.length() <= minLength) return textStart + ".txt";
+        lastWordBegin = Math.min(lastWordBegin, textStart.length());
+        textStart = textStart.substring(0, lastWordBegin) + ".txt";
+        return textStart;
     }
 
     private static String readDisplayName(Context context, Uri uri) {
