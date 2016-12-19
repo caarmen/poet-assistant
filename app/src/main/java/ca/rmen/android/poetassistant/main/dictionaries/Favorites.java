@@ -75,7 +75,6 @@ public class Favorites {
                     .executeDeleteWithoutDetachingEntities();
             mDaoSession.clear();
         });
-        EventBus.getDefault().post(new OnFavoritesChanged());
     }
 
     void clear() {

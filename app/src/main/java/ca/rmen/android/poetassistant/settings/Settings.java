@@ -26,11 +26,8 @@ import android.preference.PreferenceManager;
 import org.jraf.android.prefs.DefaultBoolean;
 import org.jraf.android.prefs.DefaultInt;
 import org.jraf.android.prefs.DefaultString;
-import org.jraf.android.prefs.DefaultStringSet;
 import org.jraf.android.prefs.Name;
 import org.jraf.android.prefs.Prefs;
-
-import java.util.Set;
 
 @Prefs
 public class Settings {

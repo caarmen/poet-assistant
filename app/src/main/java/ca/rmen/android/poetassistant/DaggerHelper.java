@@ -106,8 +106,7 @@ public class DaggerHelper {
             return new Tts(mApplication, settingsPrefs);
         }
 
-        @Provides @Singleton
-        EmbeddedDb providesDbHelper() {
+        @Provides @Singleton EmbeddedDb providesDbHelper() {
             return new EmbeddedDb(mApplication);
         }
 
@@ -128,8 +127,7 @@ public class DaggerHelper {
             return SettingsPrefs.get(mApplication);
         }
 
-        @Provides @Singleton
-        DaoSession providesDaoSession() {
+        @Provides @Singleton DaoSession providesDaoSession() {
             UserDb userDb = new UserDb(mApplication);
             Database db = userDb.getWritableDb();
             return new DaoMaster(db).newSession();
