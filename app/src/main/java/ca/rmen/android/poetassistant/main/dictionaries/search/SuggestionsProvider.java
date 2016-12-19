@@ -89,7 +89,13 @@ public class SuggestionsProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         String suggestion = values.getAsString(SearchManager.QUERY);
-        mDaoSession.getSuggestionDao().insert(new Suggestion(suggestion));
+        if (mDaoSession.getSuggestionDao()
+                .queryBuilder()
+                .where(SuggestionDao.Properties.Word.eq(suggestion))
+                .buildCount()
+                .count() == 0) {
+            mDaoSession.getSuggestionDao().insertOrReplace(new Suggestion(suggestion));
+        }
         return null;
     }
 

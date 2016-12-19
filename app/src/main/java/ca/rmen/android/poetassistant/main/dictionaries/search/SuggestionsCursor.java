@@ -75,6 +75,7 @@ public class SuggestionsCursor extends MatrixCursor {
                 .stream(suggestions)
                 .map(Suggestion::getWord)
                 .filter(suggestion -> TextUtils.isEmpty(mFilter) || suggestion.contains(mFilter))
+                .distinct()
                 .sorted()
                 .forEach(suggestion -> addSuggestion(suggestion, iconId));
     }
