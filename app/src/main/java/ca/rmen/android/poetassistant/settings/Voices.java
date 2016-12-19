@@ -17,14 +17,13 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant;
+package ca.rmen.android.poetassistant.settings;
 
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.Voice;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -34,20 +33,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.compat.HtmlCompat;
-import ca.rmen.android.poetassistant.settings.Settings;
-import java8.util.Optional;
 import java8.util.stream.Collectors;
 import java8.util.stream.StreamSupport;
 
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public final class Voices {
+final class Voices {
 
     private static final String TAG = Constants.TAG + Voices.class.getSimpleName();
     private final Context mContext;
 
-    public static class TtsVoice {
+    static class TtsVoice {
         public final String id;
         public final CharSequence name;
 
@@ -98,37 +97,6 @@ public final class Voices {
                 .collect(Collectors.toList());
         ttsVoices.add(0, new TtsVoice(Settings.VOICE_SYSTEM, mContext.getString(R.string.pref_voice_default)));
         return ttsVoices;
-    }
-
-    void useVoice(TextToSpeech textToSpeech, @Nullable String voiceId) {
-        final Voice matchingVoice;
-        try {
-            if (voiceId == null || Settings.VOICE_SYSTEM.equals(voiceId)) {
-                matchingVoice = textToSpeech.getDefaultVoice();
-            } else {
-                Optional<Voice> optionalVoice = StreamSupport.stream(textToSpeech.getVoices())
-                        .filter(voice -> voiceId.equals(voice.getName()))
-                        .findFirst();
-                // If the user changed the tts engine in the system settings, we may not find
-                // the previous voice they selected.
-                if (optionalVoice.isPresent()) {
-                    matchingVoice = optionalVoice.get();
-                } else {
-                    matchingVoice = textToSpeech.getDefaultVoice();
-                }
-
-            }
-        } catch (Throwable t) {
-            // This happens if I choose "SoundAbout TTS" as the preferred engine.
-            // That implementation throws a NullPointerException.
-            Log.w(TAG, "Couldn't load the tts voices: " + t.getMessage(), t);
-            return;
-        }
-
-        if (matchingVoice != null) {
-            Log.v(TAG, "using voice " + matchingVoice);
-            textToSpeech.setVoice(matchingVoice);
-        }
     }
 
     /**

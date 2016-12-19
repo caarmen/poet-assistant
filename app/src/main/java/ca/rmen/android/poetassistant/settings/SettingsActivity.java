@@ -109,7 +109,7 @@ public class SettingsActivity extends AppCompatActivity {
             addPreferencesFromResource(R.xml.pref_general);
             VoicePreference voicePreference = (VoicePreference) findPreference(Settings.PREF_VOICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                voicePreference.loadVoices();
+                voicePreference.loadVoices(getContext());
             }
             if (voicePreference.getEntries() == null || voicePreference.getEntries().length < 2) {
                 removePreference(PREF_CATEGORY_VOICE, voicePreference);
