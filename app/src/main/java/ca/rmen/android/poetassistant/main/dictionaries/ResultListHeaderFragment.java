@@ -124,7 +124,7 @@ public class ResultListHeaderFragment extends Fragment
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        Log.v(TAG, "onViewStateRestored, bundle = " + savedInstanceState);
+        Log.v(TAG, mTab + " onViewStateRestored, bundle = " + savedInstanceState);
         super.onViewStateRestored(savedInstanceState);
         updateUi();
     }

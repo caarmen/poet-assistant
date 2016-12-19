@@ -78,14 +78,17 @@ public class ResultListFragment<T> extends Fragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v(TAG, "onCreateView");
         mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
+        Log.v(TAG, mTab + " onCreateView");
         ResultListFactory.inject(mTab, this);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false);
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mBinding.recyclerView.setHasFixedSize(true);
-        mHeaderFragment = ResultListHeaderFragment.newInstance(mTab);
-        getChildFragmentManager().beginTransaction().replace(R.id.result_list_header, mHeaderFragment).commit();
+        mHeaderFragment = (ResultListHeaderFragment) getChildFragmentManager().findFragmentById(R.id.result_list_header);
+        if (mHeaderFragment == null) {
+            mHeaderFragment = ResultListHeaderFragment.newInstance(mTab);
+            getChildFragmentManager().beginTransaction().replace(R.id.result_list_header, mHeaderFragment).commit();
+        }
         return mBinding.getRoot();
     }
 
