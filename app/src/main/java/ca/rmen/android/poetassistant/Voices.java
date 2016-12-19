@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import ca.rmen.android.poetassistant.compat.HtmlCompat;
 import ca.rmen.android.poetassistant.settings.Settings;
 import java8.util.Optional;
 import java8.util.stream.Collectors;

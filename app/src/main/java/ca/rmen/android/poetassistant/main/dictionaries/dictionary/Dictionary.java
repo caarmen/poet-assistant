@@ -27,7 +27,7 @@ import android.text.TextUtils;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
-import ca.rmen.android.poetassistant.main.dictionaries.Patterns;
+import ca.rmen.android.poetassistant.main.dictionaries.search.Patterns;
 import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities;
 
 public class Dictionary {

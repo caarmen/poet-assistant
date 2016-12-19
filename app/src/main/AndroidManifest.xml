@@ -131,7 +131,7 @@
 
         <provider
             android:exported="false"
-            android:name="ca.rmen.android.poetassistant.main.dictionaries.SuggestionsProvider"
+            android:name="ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider"
             android:authorities="ca.rmen.android.poetassistant.SuggestionsProvider"/>
     </application>
 

@@ -30,7 +30,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.VectorCompat;
+import ca.rmen.android.poetassistant.compat.VectorCompat;
 import ca.rmen.android.poetassistant.databinding.ActivityAboutBinding;
 
 

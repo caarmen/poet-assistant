@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -28,7 +28,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.HtmlCompat;
+import ca.rmen.android.poetassistant.compat.HtmlCompat;
 import ca.rmen.android.poetassistant.R;
 
 

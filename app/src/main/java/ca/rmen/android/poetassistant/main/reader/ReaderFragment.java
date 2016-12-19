@@ -49,7 +49,7 @@ import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.DaggerHelper;
-import ca.rmen.android.poetassistant.HtmlCompat;
+import ca.rmen.android.poetassistant.compat.HtmlCompat;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding;

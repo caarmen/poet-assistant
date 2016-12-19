@@ -45,7 +45,6 @@ import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding;
-import ca.rmen.android.poetassistant.main.HelpDialogFragment;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFavoriteClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFilterListener;
