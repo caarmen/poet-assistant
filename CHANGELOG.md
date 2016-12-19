@@ -5,6 +5,7 @@ Change Log
 --------------------
 * The word of the day will be the same for everybody on a given day.
 * Added a list of the past 100 words of the day.
+* Fixed some minor regressions in suggestions: (sorted, removed duplicates)
 
 1.11.3  *(2016-12-19)*
 --------------------
