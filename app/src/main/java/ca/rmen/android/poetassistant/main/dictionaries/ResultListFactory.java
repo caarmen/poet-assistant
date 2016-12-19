@@ -128,7 +128,7 @@ public class ResultListFactory {
         }
     }
 
-    static InputDialogFragment createFilterDialog(Context context, Tab tab, @SuppressWarnings("SameParameterValue") int actionId, String text) {
+    static FilterDialogFragment createFilterDialog(Context context, Tab tab, String text) {
         String dialogMessage;
         switch (tab) {
             case RHYMER:
@@ -139,7 +139,7 @@ public class ResultListFactory {
                 dialogMessage = context.getString(R.string.filter_thesaurus_message);
                 break;
         }
-        return InputDialogFragment.newInstance(actionId, context.getString(R.string.filter_title), dialogMessage, text);
+        return FilterDialogFragment.newInstance(dialogMessage, text);
     }
 
     static void inject(Tab tab, ResultListFragment<?> fragment) {

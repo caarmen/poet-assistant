@@ -40,27 +40,23 @@ import ca.rmen.android.poetassistant.databinding.InputDialogEditTextBinding;
 
 
 /**
- * Shows a dialog with a title, message, edit text, and ok/cancel button.
+ * Shows a dialog prompting the user enter a word to filter search results.
  * The activity or fragment which adds this dialog must implement the
- * InputDialogListener interface.
+ * FilterDialogListener interface.
  */
-public class InputDialogFragment extends DialogFragment {
+public class FilterDialogFragment extends DialogFragment {
 
-    private static final String TAG = Constants.TAG + InputDialogFragment.class.getSimpleName();
-    private static final String EXTRA_ACTION_ID = "action_id";
-    private static final String EXTRA_TITLE = "title";
+    private static final String TAG = Constants.TAG + FilterDialogFragment.class.getSimpleName();
     private static final String EXTRA_MESSAGE = "message";
     private static final String EXTRA_TEXT = "text";
 
-    public interface InputDialogListener {
-        void onInputSubmitted(int actionId, String input);
+    public interface FilterDialogListener {
+        void onFilterSubmitted(String input);
     }
 
-    public static InputDialogFragment newInstance(int actionId, String title, String message, String text) {
-        InputDialogFragment fragment = new InputDialogFragment();
-        Bundle bundle = new Bundle(3);
-        bundle.putInt(EXTRA_ACTION_ID, actionId);
-        bundle.putString(EXTRA_TITLE, title);
+    public static FilterDialogFragment newInstance(String message, String text) {
+        FilterDialogFragment fragment = new FilterDialogFragment();
+        Bundle bundle = new Bundle(2);
         bundle.putString(EXTRA_MESSAGE, message);
         bundle.putString(EXTRA_TEXT, text);
         fragment.setArguments(bundle);
@@ -81,21 +77,20 @@ public class InputDialogFragment extends DialogFragment {
                 null,
                 false);
         Bundle arguments = getArguments();
-        final int actionId = arguments.getInt(EXTRA_ACTION_ID);
         binding.edit.setText(arguments.getString(EXTRA_TEXT));
 
         OnClickListener positiveListener = (dialog, which) -> {
-            InputDialogListener listener;
+            FilterDialogListener listener;
             Fragment parentFragment = getParentFragment();
-            if (parentFragment instanceof InputDialogListener)
-                listener = (InputDialogListener) parentFragment;
-            else listener = (InputDialogListener) getActivity();
-            listener.onInputSubmitted(actionId, binding.edit.getText().toString());
+            if (parentFragment instanceof FilterDialogListener)
+                listener = (FilterDialogListener) parentFragment;
+            else listener = (FilterDialogListener) getActivity();
+            listener.onFilterSubmitted(binding.edit.getText().toString());
         };
 
         final Dialog dialog = new AlertDialog.Builder(context)
                 .setView(binding.getRoot())
-                .setTitle(arguments.getString(EXTRA_TITLE))
+                .setTitle(R.string.filter_title)
                 .setMessage(arguments.getString(EXTRA_MESSAGE))
                 .setPositiveButton(android.R.string.ok, positiveListener)
                 .setNegativeButton(android.R.string.cancel, null)
