@@ -29,7 +29,6 @@ import android.text.TextUtils;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -37,7 +36,6 @@ import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.DaoSession;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
-import java8.util.stream.Collectors;
 import java8.util.stream.StreamSupport;
 
 /**
@@ -65,8 +63,6 @@ public class SuggestionsCursor extends MatrixCursor {
 
     private void loadHistory() {
 
-        List<Suggestion> suggestions = mDaoSession.getSuggestionDao().loadAll();
-        Set<String> sortedSuggestions = StreamSupport.stream(suggestions).map(Suggestion::getWord).sorted().collect(Collectors.toSet());
         // https://code.google.com/p/android/issues/detail?id=226686
         final @DrawableRes int iconId;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -74,8 +70,12 @@ public class SuggestionsCursor extends MatrixCursor {
         } else {
             iconId = R.drawable.ic_search_history;
         }
-        StreamSupport.stream(sortedSuggestions)
+        List<Suggestion> suggestions = mDaoSession.getSuggestionDao().loadAll();
+        StreamSupport
+                .stream(suggestions)
+                .map(Suggestion::getWord)
                 .filter(suggestion -> TextUtils.isEmpty(mFilter) || suggestion.contains(mFilter))
+                .sorted()
                 .forEach(suggestion -> addSuggestion(suggestion, iconId));
     }
 
