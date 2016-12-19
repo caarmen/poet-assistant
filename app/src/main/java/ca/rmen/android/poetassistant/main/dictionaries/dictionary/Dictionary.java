@@ -24,6 +24,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import java.util.Random;
+
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
@@ -140,21 +142,31 @@ public class Dictionary {
 
     @Nullable
     public DictionaryEntry getRandomEntry() {
+        return getRandomEntry(0);
+    }
+
+    /**
+     * @param seed used for the random selection
+     */
+    @Nullable
+    public DictionaryEntry getRandomEntry(long seed) {
         String[] projection = new String[]{"word"};
-        String limit = "1";
         String selection = "google_ngram_frequency > ? AND google_ngram_frequency < ?";
-        String orderBy = "RANDOM()";
+        String orderBy = "word ASC";
         String[] args = new String[]
                 {
                         String.valueOf(MIN_INTERESTING_FREQUENCY),
                         String.valueOf(MAX_INTERESTING_FREQUENCY)
                 };
         Cursor cursor = mEmbeddedDb.query(false, "stems", projection, selection, args,
-                orderBy, limit);
+                orderBy, null);
         if (cursor != null) {
             String word = null;
             try {
-                if (cursor.moveToNext()) {
+                Random random = new Random();
+                if (seed > 0) random.setSeed(seed);
+                int position = (int) (random.nextFloat() * cursor.getCount());
+                if (cursor.moveToPosition(position)) {
                     word = cursor.getString(0);
                 }
             } finally {

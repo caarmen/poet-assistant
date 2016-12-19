@@ -30,6 +30,8 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import java.util.Calendar;
+
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.compat.HtmlCompat;
 import ca.rmen.android.poetassistant.R;
@@ -98,7 +100,12 @@ public final class Wotd {
 
     static void notifyWotd(Context context, Dictionary dictionary) {
         Log.v(TAG, "notifyWotd");
-        DictionaryEntry entry = dictionary.getRandomEntry();
+        Calendar now = Calendar.getInstance();
+        now.set(Calendar.HOUR_OF_DAY, 0);
+        now.set(Calendar.MINUTE, 0);
+        now.set(Calendar.SECOND, 0);
+        now.set(Calendar.MILLISECOND, 0);
+        DictionaryEntry entry = dictionary.getRandomEntry(now.getTimeInMillis());
         if (entry == null) return;
         String title = context.getString(R.string.wotd_notification_title, entry.word);
         CharSequence content = buildWotdNotificationContent(context, entry);
