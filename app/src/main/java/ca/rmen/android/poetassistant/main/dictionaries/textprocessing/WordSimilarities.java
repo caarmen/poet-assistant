@@ -23,7 +23,7 @@ import android.database.Cursor;
 import android.util.Log;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
+import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import ca.rmen.porterstemmer.PorterStemmer;
 
 public class WordSimilarities {
@@ -31,12 +31,12 @@ public class WordSimilarities {
     private static final String TAG = Constants.TAG + WordSimilarities.class.getSimpleName();
 
     public String findClosestWord(String word,
-                                  DbHelper dbHelper) {
+                                  EmbeddedDb embeddedDb) {
         String stem = new PorterStemmer().stemWord(word);
         String[] projection = new String[]{"word"};
         String selection = "stem=?";
         String[] selectionArgs = new String[]{stem};
-        Cursor cursor = dbHelper.query(true, "stems", projection, selection, selectionArgs, null, null);
+        Cursor cursor = embeddedDb.query(true, "stems", projection, selection, selectionArgs, null, null);
         return new WordSimilarities().findClosestWord(word, cursor);
     }
 

@@ -20,56 +20,70 @@
 package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.content.Context;
+import android.support.annotation.WorkerThread;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.greendao.async.AsyncSession;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.DaggerHelper;
-import ca.rmen.android.poetassistant.settings.SettingsPrefs;
+import java8.util.stream.Collectors;
+import java8.util.stream.StreamSupport;
 
 public class Favorites {
+
+    @Inject
+    DaoSession mDaoSession;
 
     /**
      * Subscribe to this using EventBus to know when favorites are changed.
      */
-    public static class OnFavoritesChanged {
+    static class OnFavoritesChanged {
         OnFavoritesChanged() {
         }
     }
-
-    // Maybe some day this will be backed by a DB instead of shared prefs.
-    @Inject SettingsPrefs mPrefs;
 
     public Favorites(Context context) {
         DaggerHelper.getAppComponent(context).inject(this);
     }
 
+    @WorkerThread
     public Set<String> getFavorites() {
-        return mPrefs.getFavoriteWords();
+        List<Favorite> favorites = mDaoSession.getFavoriteDao().loadAll();
+        return StreamSupport.stream(favorites).map(Favorite::getWord).collect(Collectors.toSet());
     }
 
     public void addFavorite(String favorite) {
-        // We need to make a copy of the string set, or our changes
-        // won't be saved:
-        // https://code.google.com/p/android/issues/detail?id=27801
-        Set<String> favorites = new HashSet<>(mPrefs.getFavoriteWords());
-        favorites.add(favorite);
-        mPrefs.putFavoriteWords(favorites);
-        EventBus.getDefault().post(new OnFavoritesChanged());
-    }
-    public void removeFavorite(String favorite) {
-        Set<String> favorites = new HashSet<>(mPrefs.getFavoriteWords());
-        favorites.remove(favorite);
-        mPrefs.putFavoriteWords(favorites);
-        EventBus.getDefault().post(new OnFavoritesChanged());
+        AsyncSession asyncSession = mDaoSession.startAsyncSession();
+        asyncSession.setListener(operation -> notifyChanged());
+        asyncSession.insert(new Favorite(favorite));
     }
 
-    public void clear() {
-        mPrefs.removeFavoriteWords();
+    public void removeFavorite(String favorite) {
+        AsyncSession asyncSession = mDaoSession.startAsyncSession();
+        asyncSession.setListener(operation -> notifyChanged());
+        asyncSession.runInTx(() -> {
+            mDaoSession
+                    .getFavoriteDao()
+                    .queryBuilder()
+                    .where(FavoriteDao.Properties.Word.eq(favorite))
+                    .buildDelete()
+                    .executeDeleteWithoutDetachingEntities();
+            mDaoSession.clear();
+        });
+    }
+
+    void clear() {
+        AsyncSession asyncSession = mDaoSession.startAsyncSession();
+        asyncSession.setListener(operation -> notifyChanged());
+        asyncSession.deleteAll(FavoriteDao.class);
+    }
+
+    private void notifyChanged() {
         EventBus.getDefault().post(new OnFavoritesChanged());
     }
 

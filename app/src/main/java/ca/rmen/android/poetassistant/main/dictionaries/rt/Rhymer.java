@@ -34,7 +34,7 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
+import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.rhymer.RhymeResult;
 import ca.rmen.rhymer.WordVariant;
@@ -42,17 +42,17 @@ import ca.rmen.rhymer.WordVariant;
 public class Rhymer extends ca.rmen.rhymer.Rhymer {
     private static final String TAG = Constants.TAG + Rhymer.class.getSimpleName();
 
-    private final DbHelper mDbHelper;
+    private final EmbeddedDb mEmbeddedDb;
     private final SettingsPrefs mPrefs;
 
     @Inject
-    public Rhymer(DbHelper dbHelper, SettingsPrefs prefs) {
-        mDbHelper = dbHelper;
+    public Rhymer(EmbeddedDb embeddedDb, SettingsPrefs prefs) {
+        mEmbeddedDb = embeddedDb;
         mPrefs = prefs;
     }
 
     public boolean isLoaded() {
-        return mDbHelper.isLoaded();
+        return mEmbeddedDb.isLoaded();
     }
 
     @NonNull
@@ -62,7 +62,7 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
         String[] projection = new String[]{"variant_number", "stress_syllables", "last_syllable", "last_two_syllables", "last_three_syllables"};
         String selection = "word=?";
         String[] selectionArgs = new String[]{word};
-        Cursor cursor = mDbHelper.query("word_variants", projection, selection, selectionArgs);
+        Cursor cursor = mEmbeddedDb.query("word_variants", projection, selection, selectionArgs);
         if (cursor != null) {
             try {
                 while (cursor.moveToNext()) {
@@ -127,12 +127,12 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
         Log.v(TAG, "getWordsWithDefinitions for " + words.length + " words");
         Set<String> result = new HashSet<>();
         String[] projection = new String[]{"word"};
-        int queryCount = DbHelper.getQueryCount(words.length);
+        int queryCount = EmbeddedDb.getQueryCount(words.length);
         for (int i = 0; i < queryCount; i++) {
-            String[] queryWords = DbHelper.getArgsInQuery(words, i);
+            String[] queryWords = EmbeddedDb.getArgsInQuery(words, i);
             Log.v(TAG, "getWordsWithDefinitions: query " + i + " has " + queryWords.length + " words");
             String selection = "word in " + buildInClause(queryWords.length) + " AND has_definition=1";
-            Cursor cursor = mDbHelper.query("word_variants", projection, selection, queryWords);
+            Cursor cursor = mEmbeddedDb.query("word_variants", projection, selection, queryWords);
             if (cursor != null) {
                 try {
                     while (cursor.moveToNext()) {
@@ -169,7 +169,7 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
             selection += "AND has_definition=1";
         }
         String[] selectionArgs = new String[]{syllables};
-        Cursor cursor = mDbHelper.query("word_variants", projection, selection, selectionArgs);
+        Cursor cursor = mEmbeddedDb.query("word_variants", projection, selection, selectionArgs);
         if (cursor != null) {
             try {
                 while (cursor.moveToNext()) {

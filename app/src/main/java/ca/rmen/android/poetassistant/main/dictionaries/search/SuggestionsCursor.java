@@ -27,16 +27,17 @@ import android.provider.BaseColumns;
 import android.support.annotation.DrawableRes;
 import android.text.TextUtils;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.dictionaries.DaoSession;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
-import ca.rmen.android.poetassistant.settings.SettingsPrefs;
+import java8.util.stream.Collectors;
 import java8.util.stream.StreamSupport;
 
 /**
@@ -50,7 +51,7 @@ public class SuggestionsCursor extends MatrixCursor {
                 SearchManager.SUGGEST_COLUMN_ICON_1,
                 SearchManager.SUGGEST_COLUMN_INTENT_DATA};
 
-    @Inject SettingsPrefs mSettingsPrefs;
+    @Inject DaoSession mDaoSession;
     @Inject Dictionary mDictionary;
     private final String mFilter;
 
@@ -63,9 +64,9 @@ public class SuggestionsCursor extends MatrixCursor {
     }
 
     private void loadHistory() {
-        Set<String> suggestions = mSettingsPrefs.getSuggestedWords();
-        TreeSet<String> sortedSuggestions = new TreeSet<>();
-        sortedSuggestions.addAll(suggestions);
+
+        List<Suggestion> suggestions = mDaoSession.getSuggestionDao().loadAll();
+        Set<String> sortedSuggestions = StreamSupport.stream(suggestions).map(Suggestion::getWord).sorted().collect(Collectors.toSet());
         // https://code.google.com/p/android/issues/detail?id=226686
         final @DrawableRes int iconId;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {

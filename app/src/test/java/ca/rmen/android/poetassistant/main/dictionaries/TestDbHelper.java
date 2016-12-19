@@ -29,24 +29,24 @@ public class TestDbHelper {
 
     @Test
     public void testQueryCount() {
-        Assert.assertEquals(1, DbHelper.getQueryCount(1, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(1, DbHelper.getQueryCount(2, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(1, DbHelper.getQueryCount(3, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(1, DbHelper.getQueryCount(4, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(1, DbHelper.getQueryCount(5, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(2, DbHelper.getQueryCount(6, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(2, DbHelper.getQueryCount(7, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(2, DbHelper.getQueryCount(8, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(2, DbHelper.getQueryCount(9, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(2, DbHelper.getQueryCount(10, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(3, DbHelper.getQueryCount(11, MAX_ARGS_PER_QUERY));
+        Assert.assertEquals(1, EmbeddedDb.getQueryCount(1, MAX_ARGS_PER_QUERY));
+        Assert.assertEquals(1, EmbeddedDb.getQueryCount(2, MAX_ARGS_PER_QUERY));
+        Assert.assertEquals(1, EmbeddedDb.getQueryCount(3, MAX_ARGS_PER_QUERY));
+        Assert.assertEquals(1, EmbeddedDb.getQueryCount(4, MAX_ARGS_PER_QUERY));
+        Assert.assertEquals(1, EmbeddedDb.getQueryCount(5, MAX_ARGS_PER_QUERY));
+        Assert.assertEquals(2, EmbeddedDb.getQueryCount(6, MAX_ARGS_PER_QUERY));
+        Assert.assertEquals(2, EmbeddedDb.getQueryCount(7, MAX_ARGS_PER_QUERY));
+        Assert.assertEquals(2, EmbeddedDb.getQueryCount(8, MAX_ARGS_PER_QUERY));
+        Assert.assertEquals(2, EmbeddedDb.getQueryCount(9, MAX_ARGS_PER_QUERY));
+        Assert.assertEquals(2, EmbeddedDb.getQueryCount(10, MAX_ARGS_PER_QUERY));
+        Assert.assertEquals(3, EmbeddedDb.getQueryCount(11, MAX_ARGS_PER_QUERY));
     }
 
     @Test
     public void testArgCountInQuery() {
-        Assert.assertEquals(MAX_ARGS_PER_QUERY, DbHelper.getArgCountInQuery(11, MAX_ARGS_PER_QUERY, 0));
-        Assert.assertEquals(MAX_ARGS_PER_QUERY, DbHelper.getArgCountInQuery(11, MAX_ARGS_PER_QUERY, 1));
-        Assert.assertEquals(1, DbHelper.getArgCountInQuery(11, MAX_ARGS_PER_QUERY, 2));
+        Assert.assertEquals(MAX_ARGS_PER_QUERY, EmbeddedDb.getArgCountInQuery(11, MAX_ARGS_PER_QUERY, 0));
+        Assert.assertEquals(MAX_ARGS_PER_QUERY, EmbeddedDb.getArgCountInQuery(11, MAX_ARGS_PER_QUERY, 1));
+        Assert.assertEquals(1, EmbeddedDb.getArgCountInQuery(11, MAX_ARGS_PER_QUERY, 2));
     }
 
 
@@ -56,8 +56,8 @@ public class TestDbHelper {
                 "f", "g", "h", "i", "j",
                 "k"
         };
-        Assert.assertArrayEquals(new String[]{"a", "b", "c", "d", "e"}, DbHelper.getArgsInQuery(args, 0, MAX_ARGS_PER_QUERY));
-        Assert.assertArrayEquals(new String[]{"f", "g", "h", "i", "j"}, DbHelper.getArgsInQuery(args, 1, MAX_ARGS_PER_QUERY));
-        Assert.assertArrayEquals(new String[]{"k"}, DbHelper.getArgsInQuery(args, 2, MAX_ARGS_PER_QUERY));
+        Assert.assertArrayEquals(new String[]{"a", "b", "c", "d", "e"}, EmbeddedDb.getArgsInQuery(args, 0, MAX_ARGS_PER_QUERY));
+        Assert.assertArrayEquals(new String[]{"f", "g", "h", "i", "j"}, EmbeddedDb.getArgsInQuery(args, 1, MAX_ARGS_PER_QUERY));
+        Assert.assertArrayEquals(new String[]{"k"}, EmbeddedDb.getArgsInQuery(args, 2, MAX_ARGS_PER_QUERY));
     }
 }

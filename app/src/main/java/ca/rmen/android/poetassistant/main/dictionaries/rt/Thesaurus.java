@@ -29,20 +29,20 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
+import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities;
 
 public class Thesaurus {
 
-    private final DbHelper mDbHelper;
+    private final EmbeddedDb mEmbeddedDb;
 
     @Inject
-    public Thesaurus(DbHelper dbHelper) {
-        mDbHelper = dbHelper;
+    public Thesaurus(EmbeddedDb embeddedDb) {
+        mEmbeddedDb = embeddedDb;
     }
 
     public boolean isLoaded() {
-        return mDbHelper.isLoaded();
+        return mEmbeddedDb.isLoaded();
     }
 
     @NonNull
@@ -51,15 +51,15 @@ public class Thesaurus {
         String selection = "word=?";
         String[] selectionArgs = new String[]{word};
         String lookupWord = word;
-        Cursor cursor = mDbHelper.query("thesaurus", projection, selection, selectionArgs);
+        Cursor cursor = mEmbeddedDb.query("thesaurus", projection, selection, selectionArgs);
 
         if (cursor != null && cursor.getCount() == 0) {
-            String closestWord = new WordSimilarities().findClosestWord(word, mDbHelper);
+            String closestWord = new WordSimilarities().findClosestWord(word, mEmbeddedDb);
             if (closestWord != null) {
                 lookupWord = closestWord;
                 cursor.close();
                 selectionArgs = new String[]{lookupWord};
-                cursor = mDbHelper.query("thesaurus", projection, selection, selectionArgs);
+                cursor = mEmbeddedDb.query("thesaurus", projection, selection, selectionArgs);
             }
         }
 
@@ -92,7 +92,7 @@ public class Thesaurus {
         String[] projection = new String[]{"synonyms"};
         String selection = "word=?";
         String[] selectionArgs = new String[]{word};
-        Cursor cursor = mDbHelper.query("thesaurus", projection, selection, selectionArgs);
+        Cursor cursor = mEmbeddedDb.query("thesaurus", projection, selection, selectionArgs);
         if (cursor != null) {
             try {
                 while (cursor.moveToNext()) {

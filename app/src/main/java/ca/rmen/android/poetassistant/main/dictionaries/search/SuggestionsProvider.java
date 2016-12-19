@@ -32,13 +32,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import java.util.Set;
-import java.util.TreeSet;
-
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.DaggerHelper;
-import ca.rmen.android.poetassistant.settings.SettingsPrefs;
+import ca.rmen.android.poetassistant.main.dictionaries.DaoSession;
 
 public class SuggestionsProvider extends ContentProvider {
     public static final Uri CONTENT_URI = new Uri.Builder()
@@ -49,7 +46,8 @@ public class SuggestionsProvider extends ContentProvider {
     private static final String AUTHORITY = "ca.rmen.android.poetassistant.SuggestionsProvider";
     private static final int URI_MATCH_SUGGEST = 1;
 
-    @Inject SettingsPrefs mSettingsPrefs;
+    @Inject
+    DaoSession mDaoSession;
     private final UriMatcher mUriMatcher;
 
     public SuggestionsProvider() {
@@ -91,19 +89,14 @@ public class SuggestionsProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         String suggestion = values.getAsString(SearchManager.QUERY);
-        Set<String> suggestionsReadOnly = mSettingsPrefs.getSuggestedWords();
-        if (!suggestionsReadOnly.contains(suggestion)) {
-            TreeSet<String> suggestions = new TreeSet<>();
-            suggestions.addAll(suggestionsReadOnly);
-            suggestions.add(suggestion);
-            mSettingsPrefs.putSuggestedWords(suggestions);
-        }
+        mDaoSession.getSuggestionDao().insert(new Suggestion(suggestion));
         return null;
     }
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        mSettingsPrefs.removeSuggestedWords();
+        mDaoSession.getSuggestionDao().deleteAll();
+        mDaoSession.clear();
         return 0;
     }
 
