@@ -130,9 +130,26 @@ public class ReaderFragment extends Fragment implements
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         boolean hasEnteredText = !TextUtils.isEmpty(mBinding.tvText.getText());
-        menu.findItem(R.id.action_new).setEnabled(hasEnteredText);
-        menu.findItem(R.id.action_save).setEnabled(mPoemPrefs.hasSavedPoem());
-        menu.findItem(R.id.action_save_as).setEnabled(hasEnteredText);
+        MenuItem menuItem = menu.findItem(R.id.action_new);
+        if (menuItem == null) {
+            Log.d(TAG, "Unexpected: new menu item missing from reader fragment. Monkey?");
+        } else {
+            menuItem.setEnabled(hasEnteredText);
+        }
+
+        menuItem = menu.findItem(R.id.action_save);
+        if (menuItem == null) {
+            Log.d(TAG, "Unexpected: save menu item missing from reader fragment. Monkey?");
+        } else {
+            menuItem.setEnabled(mPoemPrefs.hasSavedPoem());
+        }
+
+        menuItem = menu.findItem(R.id.action_save_as);
+        if (menuItem == null) {
+            Log.d(TAG, "Unexpected: save as menu item missing from reader fragment. Monkey?");
+        } else {
+            menuItem.setEnabled(hasEnteredText);
+        }
     }
 
     @Override
