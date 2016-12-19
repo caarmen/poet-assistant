@@ -150,22 +150,13 @@ public class Dictionary {
      */
     @Nullable
     public DictionaryEntry getRandomEntry(long seed) {
-        String[] projection = new String[]{"word"};
-        String selection = "google_ngram_frequency > ? AND google_ngram_frequency < ?";
-        String orderBy = "word ASC";
-        String[] args = new String[]
-                {
-                        String.valueOf(MIN_INTERESTING_FREQUENCY),
-                        String.valueOf(MAX_INTERESTING_FREQUENCY)
-                };
-        Cursor cursor = mEmbeddedDb.query(false, "stems", projection, selection, args,
-                orderBy, null);
+        Cursor cursor = getRandomWordCursor();
         if (cursor != null) {
             String word = null;
             try {
                 Random random = new Random();
                 if (seed > 0) random.setSeed(seed);
-                int position = (int) (random.nextFloat() * cursor.getCount());
+                int position = random.nextInt(cursor.getCount());
                 if (cursor.moveToPosition(position)) {
                     word = cursor.getString(0);
                 }
@@ -178,5 +169,19 @@ public class Dictionary {
         }
 
         return null;
+    }
+
+    @Nullable
+    public Cursor getRandomWordCursor() {
+        String[] projection = new String[]{"word"};
+        String selection = "google_ngram_frequency > ? AND google_ngram_frequency < ?";
+        String orderBy = "word ASC";
+        String[] args = new String[]
+                {
+                        String.valueOf(MIN_INTERESTING_FREQUENCY),
+                        String.valueOf(MAX_INTERESTING_FREQUENCY)
+                };
+        return mEmbeddedDb.query(false, "stems", projection, selection, args,
+                orderBy, null);
     }
 }

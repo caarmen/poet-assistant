@@ -31,6 +31,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.compat.HtmlCompat;
@@ -98,14 +99,19 @@ public final class Wotd {
         }
     }
 
-    static void notifyWotd(Context context, Dictionary dictionary) {
-        Log.v(TAG, "notifyWotd");
+    static Calendar getTodayUTC() {
         Calendar now = Calendar.getInstance();
+        now.setTimeZone(TimeZone.getTimeZone("UTC"));
         now.set(Calendar.HOUR_OF_DAY, 0);
         now.set(Calendar.MINUTE, 0);
         now.set(Calendar.SECOND, 0);
         now.set(Calendar.MILLISECOND, 0);
-        DictionaryEntry entry = dictionary.getRandomEntry(now.getTimeInMillis());
+        return now;
+    }
+
+    static void notifyWotd(Context context, Dictionary dictionary) {
+        Log.v(TAG, "notifyWotd");
+        DictionaryEntry entry = dictionary.getRandomEntry(getTodayUTC().getTimeInMillis());
         if (entry == null) return;
         String title = context.getString(R.string.wotd_notification_title, entry.word);
         CharSequence content = buildWotdNotificationContent(context, entry);

@@ -148,12 +148,12 @@ public class Search {
             if (currentTab != Tab.PATTERN) {
                 Fragment patternTab = mPagerAdapter.getFragment(mViewPager, Tab.PATTERN);
                 if (patternTab == null) {
-                    mPagerAdapter.setPatternTabVisible(true);
+                    mPagerAdapter.setExtraTab(Tab.PATTERN);
                 }
                 mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.PATTERN));
             }
         } else {
-            mPagerAdapter.setPatternTabVisible(false);
+            mPagerAdapter.setExtraTab(null);
             // If we're in the pattern tab but not searching for a pattern, go to the rhymer tab.
             if (currentTab != Tab.RHYMER && currentTab != Tab.THESAURUS && currentTab != Tab.DICTIONARY) {
                 mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.RHYMER));

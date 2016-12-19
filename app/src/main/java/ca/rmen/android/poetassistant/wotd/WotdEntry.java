@@ -17,19 +17,21 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.wotd;
 
-public enum Tab {
-    RHYMER, THESAURUS, DICTIONARY, READER, FAVORITES, PATTERN, WOTD;
+import android.support.annotation.ColorInt;
 
-    public static Tab parse(String value) {
-        if (FAVORITES.name().equalsIgnoreCase(value)) return FAVORITES;
-        if (WOTD.name().equalsIgnoreCase(value)) return WOTD;
-        if (PATTERN.name().equalsIgnoreCase(value)) return PATTERN;
-        if (RHYMER.name().equalsIgnoreCase(value)) return RHYMER;
-        if (THESAURUS.name().equalsIgnoreCase(value)) return THESAURUS;
-        if (DICTIONARY.name().equalsIgnoreCase(value)) return DICTIONARY;
-        if (READER.name().equalsIgnoreCase(value)) return READER;
-        return null;
+public final class WotdEntry {
+
+    public final String text;
+    public final String date;
+    public final @ColorInt int backgroundColor;
+    public final boolean isFavorite;
+
+    public WotdEntry(String text, String date, @ColorInt int backgroundColor, boolean isFavorite) {
+        this.text = text;
+        this.date = date;
+        this.backgroundColor = backgroundColor;
+        this.isFavorite = isFavorite;
     }
 }
