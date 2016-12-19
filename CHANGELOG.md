@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.12.0  *(2016-12-19)*
+--------------------
+* The word of the day will be the same for everybody on a given day.
+* Added a list of the past 100 words of the day.
+
 1.11.3  *(2016-12-19)*
 --------------------
 * Fix crash when searching by pattern

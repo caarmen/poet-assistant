@@ -41,8 +41,8 @@ android {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 11103
-        versionName "1.11.3"
+        versionCode 11200
+        versionName "1.12.0"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
@@ -114,7 +114,7 @@ dependencies {
     compile 'com.android.support:design:25.1.0'
     compile 'com.android.support:preference-v7:25.1.0'
     compile 'com.android.support:preference-v14:25.1.0'
-    compile 'net.sourceforge.streamsupport:streamsupport:1.5.2'
+    compile 'net.sourceforge.streamsupport:streamsupport:1.5.3'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'org.greenrobot:greendao:3.2.0'
     compile 'ca.rmen:rhymer:1.1.2'
