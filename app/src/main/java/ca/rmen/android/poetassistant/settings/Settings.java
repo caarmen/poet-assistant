@@ -52,8 +52,6 @@ public class Settings {
     static final String PREF_THEME = "PREF_THEME";
     static final String PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED";
     @SuppressWarnings("unused")
-    private static final String PREF_SUGGESTED_WORDS = "pref_suggestions";
-    @SuppressWarnings("unused")
     private static final String PREF_ALL_RHYMES_ENABLED = "PREF_ALL_RHYMES_ENABLED";
 
     @SuppressWarnings("unused")
@@ -79,11 +77,6 @@ public class Settings {
     @Name(PREF_WOTD_ENABLED)
     @DefaultBoolean(true)
     Boolean isWotdEnabled;
-
-    @SuppressWarnings("unused")
-    @Name(PREF_SUGGESTED_WORDS)
-    @DefaultStringSet({})
-    Set<String> suggestedWords;
 
     @SuppressWarnings("unused")
     @Name(PREF_ALL_RHYMES_ENABLED)
