@@ -49,6 +49,10 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListExporter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusListExporter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
+import ca.rmen.android.poetassistant.wotd.WotdAdapter;
+import ca.rmen.android.poetassistant.wotd.WotdEntry;
+import ca.rmen.android.poetassistant.wotd.WotdListExporter;
+import ca.rmen.android.poetassistant.wotd.WotdLoader;
 
 
 public class ResultListFactory {
@@ -67,6 +71,9 @@ public class ResultListFactory {
             case RHYMER:
             case THESAURUS:
                 fragment = new ResultListFragment<RTEntry>();
+                break;
+            case WOTD:
+                fragment = new ResultListFragment<WotdEntry>();
                 break;
             case DICTIONARY:
             default:
@@ -89,6 +96,8 @@ public class ResultListFactory {
             case RHYMER:
             case THESAURUS:
                 return new RTListAdapter(activity);
+            case WOTD:
+                return new WotdAdapter(activity);
             case DICTIONARY:
             default:
                 return new DictionaryListAdapter((OnWordClickListener) activity);
@@ -101,6 +110,8 @@ public class ResultListFactory {
                 return new PatternLoader(activity, query);
             case FAVORITES:
                 return new FavoritesLoader(activity);
+            case WOTD:
+                return new WotdLoader(activity);
             case RHYMER:
                 return new RhymerLoader(activity, query, filter);
             case THESAURUS:
@@ -118,6 +129,8 @@ public class ResultListFactory {
                 return new PatternListExporter(context);
             case FAVORITES:
                 return new FavoritesListExporter(context);
+            case WOTD:
+                return new WotdListExporter(context);
             case RHYMER:
                 return new RhymerListExporter(context);
             case THESAURUS:
@@ -152,6 +165,10 @@ public class ResultListFactory {
                 DaggerHelper.getAppComponent(fragment.getContext())
                         .inject((ResultListFragment<RTEntry>) fragment);
                 break;
+            case WOTD:
+                //noinspection unchecked
+                DaggerHelper.getAppComponent(fragment.getContext())
+                        .injectWotd((ResultListFragment<WotdEntry>) fragment);
             case DICTIONARY:
                 //noinspection unchecked
                 DaggerHelper.getAppComponent(fragment.getContext())
@@ -198,6 +215,12 @@ public class ResultListFactory {
                 binding.btnStarQuery.setVisibility(View.GONE);
                 binding.btnDelete.setVisibility(View.VISIBLE);
                 break;
+            case WOTD:
+                binding.btnPlay.setVisibility(View.GONE);
+                binding.btnWebSearch.setVisibility(View.GONE);
+                binding.btnStarQuery.setVisibility(View.GONE);
+                binding.btnDelete.setVisibility(View.GONE);
+                break;
             case PATTERN:
                 binding.btnHelp.setVisibility(View.VISIBLE);
                 binding.btnPlay.setVisibility(View.GONE);
@@ -219,6 +242,8 @@ public class ResultListFactory {
             return context.getString(R.string.tab_pattern).toUpperCase(Locale.getDefault());
         else if (tab == Tab.FAVORITES)
             return context.getString(R.string.tab_favorites).toUpperCase(Locale.getDefault());
+        else if (tab == Tab.WOTD)
+            return context.getString(R.string.tab_wotd).toUpperCase(Locale.getDefault());
         else if (tab == Tab.RHYMER)
             return context.getString(R.string.tab_rhymer).toUpperCase(Locale.getDefault());
         else if (tab == Tab.THESAURUS)

@@ -241,6 +241,10 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
+        } else if (item.getItemId() == R.id.action_wotd_history) {
+            mPagerAdapter.setExtraTab(Tab.WOTD);
+            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.WOTD));
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

@@ -48,10 +48,10 @@ import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
  */
 public class PagerAdapter extends FragmentPagerAdapter {
     private static final String TAG = Constants.TAG + PagerAdapter.class.getSimpleName();
-    private static final String EXTRA_IS_PATTERN_TAB_VISIBLE = "is_pattern_tab_visible";
+    private static final String EXTRA_EXTRA_TAB = "extra_tab";
 
     private final Context mContext;
-    private boolean mIsPatternTabVisible;
+    private Tab mExtraTab;
     private String mInitialPatternQuery;
     private String mInitialRhymeQuery;
     private String mInitialThesaurusQuery;
@@ -86,10 +86,10 @@ public class PagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    public void setPatternTabVisible(boolean visible) {
-        Log.v(TAG, "setPatternTabVisible: " + mIsPatternTabVisible + "->" + visible);
-        if (mIsPatternTabVisible != visible) {
-            mIsPatternTabVisible = visible;
+    public void setExtraTab(Tab tab) {
+        Log.v(TAG, "setExtraTab: " + tab);
+        if (mExtraTab != tab) {
+            mExtraTab = tab;
             notifyDataSetChanged();
         }
     }
@@ -101,7 +101,9 @@ public class PagerAdapter extends FragmentPagerAdapter {
         if (tab == Tab.PATTERN) {
             return ResultListFactory.createListFragment(Tab.PATTERN, mInitialPatternQuery);
         } else if (tab == Tab.FAVORITES) {
-                return ResultListFactory.createListFragment(Tab.FAVORITES, null);
+            return ResultListFactory.createListFragment(Tab.FAVORITES, null);
+        } else if (tab == Tab.WOTD) {
+            return ResultListFactory.createListFragment(Tab.WOTD, null);
         } else if (tab == Tab.RHYMER) {
             return ResultListFactory.createListFragment(Tab.RHYMER, mInitialRhymeQuery);
         } else if (tab == Tab.THESAURUS) {
@@ -128,7 +130,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return mIsPatternTabVisible ? 6 : 5;
+        return mExtraTab != null ? 6 : 5;
     }
 
     @Override
@@ -145,6 +147,8 @@ public class PagerAdapter extends FragmentPagerAdapter {
             return getTintedIcon(R.drawable.ic_pattern);
         else if (tab == Tab.FAVORITES)
             return getTintedIcon(R.drawable.ic_star_activated_vector);
+        else if (tab == Tab.WOTD)
+            return getTintedIcon(R.drawable.ic_wotd);
         else if (tab == Tab.RHYMER)
             return getTintedIcon(R.drawable.ic_rhymer);
         else if (tab == Tab.THESAURUS)
@@ -167,15 +171,17 @@ public class PagerAdapter extends FragmentPagerAdapter {
     @Override
     public Parcelable saveState() {
         Bundle bundle = new Bundle(1);
-        bundle.putBoolean(EXTRA_IS_PATTERN_TAB_VISIBLE, mIsPatternTabVisible);
+        if (mExtraTab != null) bundle.putSerializable(EXTRA_EXTRA_TAB, mExtraTab);
         return bundle;
     }
 
     @Override
     public void restoreState(Parcelable state, ClassLoader loader) {
         Bundle bundle = (Bundle) state;
-        boolean isPatternTabVisible = bundle.getBoolean(EXTRA_IS_PATTERN_TAB_VISIBLE);
-        setPatternTabVisible(isPatternTabVisible);
+        if (bundle.containsKey(EXTRA_EXTRA_TAB)) {
+            mExtraTab = (Tab) bundle.getSerializable(EXTRA_EXTRA_TAB);
+            notifyDataSetChanged();
+        }
     }
 
     public Fragment getFragment(ViewGroup viewGroup, Tab tab) {
@@ -194,12 +200,13 @@ public class PagerAdapter extends FragmentPagerAdapter {
     }
 
     public Tab getTabForPosition(int position) {
+        if (mExtraTab != null && position == getCount() - 1) return mExtraTab;
         return Tab.values()[position];
     }
 
     public int getPositionForTab(Tab tab) {
-        if (tab == Tab.PATTERN) {
-            return mIsPatternTabVisible ? tab.ordinal() : POSITION_NONE;
+        if (tab == Tab.PATTERN || tab == Tab.WOTD) {
+            return mExtraTab == tab ? getCount() - 1 : POSITION_NONE;
         }
         return tab.ordinal();
     }

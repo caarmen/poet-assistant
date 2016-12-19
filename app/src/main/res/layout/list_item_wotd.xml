@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2016 Carmen Alvarez
+  ~
+  ~ This file is part of Poet Assistant.
+  ~
+  ~ Poet Assistant is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Poet Assistant is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="entryIconClickListener"
+            type="ca.rmen.android.poetassistant.wotd.WotdAdapter.EntryIconClickListener" />
+
+        <variable
+            name="entry"
+            type="ca.rmen.android.poetassistant.wotd.WotdEntry" />
+    </data>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/listPreferredItemHeight"
+        android:layout_gravity="center_vertical"
+        android:background="@{entry.backgroundColor}"
+        android:gravity="center_vertical">
+
+
+        <CheckBox
+            android:id="@+id/btn_star_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:button="@drawable/ic_star"
+            android:clickable="true"
+            android:checked="@{entry.isFavorite}"
+            android:onClick="@{entryIconClickListener.onFavoriteIconClicked}"
+            android:paddingEnd="8dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="8dp"
+            android:paddingStart="4dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/btn_star_result"
+            android:layout_toLeftOf="@+id/btn_rhymer"
+            android:layout_toRightOf="@id/btn_star_result"
+            android:layout_toStartOf="@+id/btn_rhymer"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:text="@{entry.date}"
+                android:textColor="@color/secondary_text"
+                android:textSize="12sp"
+                android:textStyle="italic"
+                tools:text="yesterday" />
+
+
+            <TextView
+                android:id="@+id/text1"
+                style="?attr/textAppearanceListItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{entry.text}"
+                android:textIsSelectable="true"
+                tools:text="happy" />
+
+        </LinearLayout>
+
+        <!--
+             Define AppCompatImageView instead of ImageView
+             to avoid lint warnings about the app:srcCompat attribute,
+             and to be able to see the image in the design view in
+             Android Studio
+             http://stackoverflow.com/questions/35624562/code-analysis-error-unexpected-namespace-prefix-after-upgrading-android-suppor
+        -->
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@id/btn_rhymer"
+            android:layout_width="@dimen/list_rtd_icon_size"
+            android:layout_height="@dimen/list_rtd_icon_size"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/btn_thesaurus"
+            android:layout_toStartOf="@id/btn_thesaurus"
+            android:background="?selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:contentDescription="@string/tab_rhymer"
+            android:onClick="@{entryIconClickListener.onRhymerIconClicked}"
+            android:paddingEnd="@dimen/list_rtd_icon_padding"
+            android:paddingLeft="@dimen/list_rtd_icon_padding"
+            android:paddingRight="@dimen/list_rtd_icon_padding"
+            android:paddingStart="@dimen/list_rtd_icon_padding"
+            app:srcCompat="@drawable/ic_rhymer" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@id/btn_thesaurus"
+            android:layout_width="@dimen/list_rtd_icon_size"
+            android:layout_height="@dimen/list_rtd_icon_size"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/btn_dictionary"
+            android:layout_toStartOf="@+id/btn_dictionary"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/tab_thesaurus"
+            android:onClick="@{entryIconClickListener.onThesaurusIconClicked}"
+            android:paddingEnd="@dimen/list_rtd_icon_padding"
+            android:paddingLeft="@dimen/list_rtd_icon_padding"
+            android:paddingRight="@dimen/list_rtd_icon_padding"
+            android:paddingStart="@dimen/list_rtd_icon_padding"
+            app:srcCompat="@drawable/ic_thesaurus" />
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@id/btn_dictionary"
+            android:layout_width="@dimen/list_rtd_icon_size"
+            android:layout_height="@dimen/list_rtd_icon_size"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:contentDescription="@string/tab_dictionary"
+            android:onClick="@{entryIconClickListener.onDictionaryIconClicked}"
+            android:paddingEnd="@dimen/list_rtd_icon_padding"
+            android:paddingLeft="@dimen/list_rtd_icon_padding"
+            android:paddingRight="@dimen/list_rtd_icon_padding"
+            android:paddingStart="@dimen/list_rtd_icon_padding"
+            app:srcCompat="@drawable/ic_dictionary" />
+
+    </RelativeLayout>
+</layout>

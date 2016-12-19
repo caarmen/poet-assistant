@@ -52,7 +52,9 @@ import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.android.poetassistant.settings.VoicePreference;
 import ca.rmen.android.poetassistant.wotd.WotdBootReceiver;
 import ca.rmen.android.poetassistant.wotd.WotdBroadcastReceiver;
+import ca.rmen.android.poetassistant.wotd.WotdEntry;
 import ca.rmen.android.poetassistant.wotd.WotdJobService;
+import ca.rmen.android.poetassistant.wotd.WotdLoader;
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
@@ -69,6 +71,7 @@ public class DaggerHelper {
         // Main screen
         void inject(MainActivity mainActivity);
         void inject(ResultListFragment<RTEntry> resultListFragment);
+        void injectWotd(ResultListFragment<WotdEntry> resultListFragment);
         void injectDict(ResultListFragment<DictionaryEntry> resultListFragment);
         void inject(ResultListHeaderFragment resultListHeaderFragment);
         void inject(ReaderFragment readerFragment);
@@ -90,6 +93,7 @@ public class DaggerHelper {
         void inject(WotdBroadcastReceiver wotdBroadcastReceiver);
         void inject(WotdJobService wotdJobService);
         void inject(WotdBootReceiver wotdBootReceiver);
+        void inject(WotdLoader wotdLoader);
 
     }
 
