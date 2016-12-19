@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.settings;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.preference.ListPreference;
 import android.util.AttributeSet;
 
@@ -31,7 +32,6 @@ import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.Tts;
-import ca.rmen.android.poetassistant.Voices;
 import java8.util.stream.StreamSupport;
 
 public class VoicePreference extends ListPreference {
@@ -66,13 +66,16 @@ public class VoicePreference extends ListPreference {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    void loadVoices() {
-        List<Voices.TtsVoice> voices = mTts.getVoices();
-        setEntryValues(StreamSupport.stream(voices)
-                .map(voice -> voice.id)
-                .toArray(size -> new CharSequence[voices.size()]));
-        setEntries(StreamSupport.stream(voices)
-                .map(voice -> voice.name)
-                .toArray(size -> new CharSequence[voices.size()]));
+    void loadVoices(Context context) {
+        TextToSpeech tts = mTts.getTextToSpeech();
+        if (tts != null) {
+            List<Voices.TtsVoice> voices = new Voices(context).getVoices(tts);
+            setEntryValues(StreamSupport.stream(voices)
+                    .map(voice -> voice.id)
+                    .toArray(size -> new CharSequence[voices.size()]));
+            setEntries(StreamSupport.stream(voices)
+                    .map(voice -> voice.name)
+                    .toArray(size -> new CharSequence[voices.size()]));
+        }
     }
 }

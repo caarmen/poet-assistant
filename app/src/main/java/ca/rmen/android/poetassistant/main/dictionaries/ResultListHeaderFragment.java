@@ -45,17 +45,15 @@ import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding;
-import ca.rmen.android.poetassistant.main.HelpDialogFragment;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFavoriteClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFilterListener;
 
 public class ResultListHeaderFragment extends Fragment
-    implements InputDialogFragment.InputDialogListener,
+    implements FilterDialogFragment.FilterDialogListener,
         ConfirmDialogFragment.ConfirmDialogListener {
 
     private static final String TAG = Constants.TAG + ResultListHeaderFragment.class.getSimpleName();
-    private static final int ACTION_FILTER = 0;
     private static final int ACTION_CLEAR_FAVORITES = 1;
     private static final String DIALOG_TAG = "dialog";
     private static final String EXTRA_TAB = "tab";
@@ -137,13 +135,11 @@ public class ResultListHeaderFragment extends Fragment
     }
 
     @Override
-    public void onInputSubmitted(int actionId, String input) {
-        if (actionId == ResultListHeaderFragment.ACTION_FILTER) {
-            OnFilterListener listener = (OnFilterListener) getParentFragment();
-            String normalizedInput = input == null ? null : input.toLowerCase(Locale.getDefault()).trim();
-            setFilter(normalizedInput);
-            listener.onFilterSubmitted(normalizedInput);
-        }
+    public void onFilterSubmitted(String input) {
+        OnFilterListener listener = (OnFilterListener) getParentFragment();
+        String normalizedInput = input == null ? null : input.toLowerCase(Locale.getDefault()).trim();
+        setFilter(normalizedInput);
+        listener.onFilterSubmitted(normalizedInput);
     }
 
     @Override
@@ -201,11 +197,10 @@ public class ResultListHeaderFragment extends Fragment
         }
 
         public void onFilterButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            InputDialogFragment fragment =
+            FilterDialogFragment fragment =
                     ResultListFactory.createFilterDialog(
                             getContext(),
                             mTab,
-                            ACTION_FILTER,
                             mBinding.tvFilter.getText().toString());
             getChildFragmentManager().beginTransaction().add(fragment, DIALOG_TAG).commit();
         }

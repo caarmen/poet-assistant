@@ -48,7 +48,7 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
-import ca.rmen.android.poetassistant.VectorCompat;
+import ca.rmen.android.poetassistant.compat.VectorCompat;
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFilterListener;

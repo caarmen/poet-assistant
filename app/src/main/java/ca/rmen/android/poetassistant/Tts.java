@@ -26,16 +26,18 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
+import android.speech.tts.Voice;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
+import java8.util.Optional;
+import java8.util.stream.StreamSupport;
 
 public class Tts {
     private static final String TAG = Constants.TAG + Tts.class.getSimpleName();
@@ -46,7 +48,6 @@ public class Tts {
     private final Context mContext;
     private TextToSpeech mTextToSpeech;
     private int mTtsStatus = TextToSpeech.ERROR;
-    private final Voices mVoices;
     private final SettingsPrefs mSettingsPrefs;
 
     public static class OnTtsInitialized {
@@ -69,7 +70,6 @@ public class Tts {
 
     public Tts(Context context, SettingsPrefs settingsPrefs) {
         mContext = context;
-        mVoices = new Voices(context);
         mSettingsPrefs = settingsPrefs;
         PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(mTtsPrefsListener);
         init();
@@ -164,7 +164,7 @@ public class Tts {
             };
 
     private void useVoiceFromSettings() {
-        mVoices.useVoice(mTextToSpeech, mSettingsPrefs.getVoice());
+        useVoice(mTextToSpeech, mSettingsPrefs.getVoice());
     }
 
     private void setVoiceSpeedFromSettings() {
@@ -179,11 +179,43 @@ public class Tts {
         mTextToSpeech.setPitch(pitch);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public List<Voices.TtsVoice> getVoices() {
-        if (!isReady()) return Collections.emptyList();
-        return mVoices.getVoices(mTextToSpeech);
+    public TextToSpeech getTextToSpeech() {
+        if (isReady()) return mTextToSpeech;
+        return null;
     }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private void useVoice(TextToSpeech textToSpeech, @Nullable String voiceId) {
+        final Voice matchingVoice;
+        try {
+            if (voiceId == null || Settings.VOICE_SYSTEM.equals(voiceId)) {
+                matchingVoice = textToSpeech.getDefaultVoice();
+            } else {
+                Optional<Voice> optionalVoice = StreamSupport.stream(textToSpeech.getVoices())
+                        .filter(voice -> voiceId.equals(voice.getName()))
+                        .findFirst();
+                // If the user changed the tts engine in the system settings, we may not find
+                // the previous voice they selected.
+                if (optionalVoice.isPresent()) {
+                    matchingVoice = optionalVoice.get();
+                } else {
+                    matchingVoice = textToSpeech.getDefaultVoice();
+                }
+
+            }
+        } catch (Throwable t) {
+            // This happens if I choose "SoundAbout TTS" as the preferred engine.
+            // That implementation throws a NullPointerException.
+            Log.w(TAG, "Couldn't load the tts voices: " + t.getMessage(), t);
+            return;
+        }
+
+        if (matchingVoice != null) {
+            Log.v(TAG, "using voice " + matchingVoice);
+            textToSpeech.setVoice(matchingVoice);
+        }
+    }
+
 
     private boolean isReady() {
         return mTextToSpeech != null && mTtsStatus == TextToSpeech.SUCCESS;

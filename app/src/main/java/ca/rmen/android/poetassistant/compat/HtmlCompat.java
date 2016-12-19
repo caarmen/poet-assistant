@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant;
+package ca.rmen.android.poetassistant.compat;
 
 import android.annotation.TargetApi;
 import android.os.Build;

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.rmen.android.poetassistant.main.dictionaries;
+package ca.rmen.android.poetassistant.main.dictionaries.search;
 
 public class Patterns {
 

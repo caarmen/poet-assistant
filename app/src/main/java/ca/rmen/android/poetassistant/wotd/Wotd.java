@@ -31,7 +31,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.HtmlCompat;
+import ca.rmen.android.poetassistant.compat.HtmlCompat;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;

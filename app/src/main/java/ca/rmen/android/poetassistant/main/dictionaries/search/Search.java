@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries;
+package ca.rmen.android.poetassistant.main.dictionaries.search;
 
 import android.app.Activity;
 import android.app.SearchManager;
@@ -44,6 +44,7 @@ import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.main.PagerAdapter;
 import ca.rmen.android.poetassistant.main.Tab;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
 
