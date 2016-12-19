@@ -64,10 +64,13 @@ public class ResultListHeaderFragment extends Fragment
     @Inject
     Tts mTts;
 
-    public void setTab(Tab tab) {
-        mTab = tab;
-        mBinding.tvFilterLabel.setText(ResultListFactory.getFilterLabel(getContext(), mTab));
-        updateUi();
+
+    public static ResultListHeaderFragment newInstance(Tab tab) {
+        Bundle arguments = new Bundle(1);
+        arguments.putSerializable(EXTRA_TAB, tab);
+        ResultListHeaderFragment fragment = new ResultListHeaderFragment();
+        fragment.setArguments(arguments);
+        return fragment;
     }
 
     public void show() {
@@ -104,11 +107,10 @@ public class ResultListHeaderFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView called with savedInstanceState " + savedInstanceState);
         DaggerHelper.getAppComponent(getContext()).inject(this);
+        mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.result_list_header, container, false);
+        mBinding.tvFilterLabel.setText(ResultListFactory.getFilterLabel(getContext(), mTab));
         mBinding.setButtonListener(new ButtonListener());
-        if (savedInstanceState != null) {
-            mTab = (Tab) savedInstanceState.getSerializable(EXTRA_TAB);
-        }
 
         EventBus.getDefault().register(this);
         return mBinding.getRoot();
@@ -125,13 +127,6 @@ public class ResultListHeaderFragment extends Fragment
         Log.v(TAG, "onViewStateRestored, bundle = " + savedInstanceState);
         super.onViewStateRestored(savedInstanceState);
         updateUi();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Log.d(TAG, mTab + ": onSaveInstanceState() called with: " + "outState = [" + outState + "]");
-        outState.putSerializable(EXTRA_TAB, mTab);
     }
 
     @Override

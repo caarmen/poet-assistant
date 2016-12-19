@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.11.3  *(2016-12-19)*
+--------------------
+* Fix crash when searching by pattern
+
 1.11.2  *(2016-12-16)*
 --------------------
 * Use the SeekBarPreference from the support library.

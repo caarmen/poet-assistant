@@ -24,7 +24,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
@@ -85,9 +84,8 @@ public class ResultListFragment<T> extends Fragment
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false);
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mBinding.recyclerView.setHasFixedSize(true);
-        FragmentManager fragmentManager = getChildFragmentManager();
-        mHeaderFragment = (ResultListHeaderFragment) fragmentManager.findFragmentById(R.id.result_list_header);
-        mHeaderFragment.setTab(mTab);
+        mHeaderFragment = ResultListHeaderFragment.newInstance(mTab);
+        getChildFragmentManager().beginTransaction().replace(R.id.result_list_header, mHeaderFragment).commit();
         return mBinding.getRoot();
     }
 
@@ -98,7 +96,14 @@ public class ResultListFragment<T> extends Fragment
         //noinspection unchecked
         mAdapter = (ResultListAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
         mBinding.recyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onStart() {
+        Log.v(TAG, mTab + " onStart");
+        super.onStart();
         getLoaderManager().initLoader(mTab.ordinal(), getArguments(), this);
+
     }
 
     @Override
