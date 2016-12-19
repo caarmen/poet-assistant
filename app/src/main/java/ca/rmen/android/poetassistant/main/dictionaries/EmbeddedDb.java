@@ -36,8 +36,8 @@ import java.io.InputStream;
 
 import ca.rmen.android.poetassistant.Constants;
 
-public class DbHelper {
-    private static final String TAG = Constants.TAG + DbHelper.class.getSimpleName();
+public class EmbeddedDb {
+    private static final String TAG = Constants.TAG + EmbeddedDb.class.getSimpleName();
     private static final int MAX_QUERY_ARGUMENT_COUNT = 500;
 
     private final Context mContext;
@@ -48,7 +48,7 @@ public class DbHelper {
     private final Object mLock = new Object();
     private int mDbRestoreAttemptCount = 0;
 
-    public DbHelper(Context context) {
+    public EmbeddedDb(Context context) {
         mContext = context;
     }
 

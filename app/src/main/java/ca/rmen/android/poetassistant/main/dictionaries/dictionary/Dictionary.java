@@ -26,7 +26,7 @@ import android.text.TextUtils;
 
 import javax.inject.Inject;
 
-import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
+import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Patterns;
 import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities;
 
@@ -39,15 +39,15 @@ public class Dictionary {
 
     private static final int MAX_PREFIX_MATCHES = 10;
 
-    private final DbHelper mDbHelper;
+    private final EmbeddedDb mEmbeddedDb;
 
     @Inject
-    public Dictionary (DbHelper dbHelper) {
-        mDbHelper = dbHelper;
+    public Dictionary (EmbeddedDb embeddedDb) {
+        mEmbeddedDb = embeddedDb;
     }
 
     public boolean isLoaded() {
-        return mDbHelper.isLoaded();
+        return mEmbeddedDb.isLoaded();
     }
 
     @NonNull
@@ -57,15 +57,15 @@ public class Dictionary {
         String selection = "word=?";
         String[] selectionArgs = new String[]{word};
         String lookupWord = word;
-        Cursor cursor = mDbHelper.query("dictionary", projection, selection, selectionArgs);
+        Cursor cursor = mEmbeddedDb.query("dictionary", projection, selection, selectionArgs);
 
         if (cursor != null && cursor.getCount() == 0) {
-            String closestWord = new WordSimilarities().findClosestWord(word, mDbHelper);
+            String closestWord = new WordSimilarities().findClosestWord(word, mEmbeddedDb);
             if (closestWord != null) {
                 lookupWord = closestWord;
                 cursor.close();
                 selectionArgs = new String[]{lookupWord};
-                cursor = mDbHelper.query("dictionary", projection, selection, selectionArgs);
+                cursor = mEmbeddedDb.query("dictionary", projection, selection, selectionArgs);
             }
         }
         if (cursor != null) {
@@ -92,7 +92,7 @@ public class Dictionary {
         String[] selectionArgs = new String[]{pattern};
         String orderBy = "word";
         String limit = String.valueOf(Patterns.MAX_RESULTS);
-        Cursor cursor = mDbHelper.query(true, "dictionary", projection, selection, selectionArgs, orderBy, limit);
+        Cursor cursor = mEmbeddedDb.query(true, "dictionary", projection, selection, selectionArgs, orderBy, limit);
         if (cursor != null) {
             try {
                 if (cursor.getCount() > 0) {
@@ -117,7 +117,7 @@ public class Dictionary {
         String selection = "has_definition=1 AND word LIKE ?";
         String[] selectionArgs = new String[]{prefix + "%"};
         String orderBy = "word";
-        Cursor cursor = mDbHelper.query(
+        Cursor cursor = mEmbeddedDb.query(
                 true,
                 "word_variants", projection, selection, selectionArgs,
                 orderBy, String.valueOf(MAX_PREFIX_MATCHES));
@@ -149,7 +149,7 @@ public class Dictionary {
                         String.valueOf(MIN_INTERESTING_FREQUENCY),
                         String.valueOf(MAX_INTERESTING_FREQUENCY)
                 };
-        Cursor cursor = mDbHelper.query(false, "stems", projection, selection, args,
+        Cursor cursor = mEmbeddedDb.query(false, "stems", projection, selection, args,
                 orderBy, limit);
         if (cursor != null) {
             String word = null;

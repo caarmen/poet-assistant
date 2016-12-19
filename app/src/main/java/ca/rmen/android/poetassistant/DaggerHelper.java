@@ -22,10 +22,14 @@ package ca.rmen.android.poetassistant;
 import android.app.Application;
 import android.content.Context;
 
+import org.greenrobot.greendao.database.Database;
+
 import javax.inject.Singleton;
 
 import ca.rmen.android.poetassistant.main.MainActivity;
-import ca.rmen.android.poetassistant.main.dictionaries.DbHelper;
+import ca.rmen.android.poetassistant.main.dictionaries.DaoMaster;
+import ca.rmen.android.poetassistant.main.dictionaries.DaoSession;
+import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderFragment;
@@ -98,34 +102,37 @@ public class DaggerHelper {
             mApplication = application;
         }
 
-        @Provides @Singleton Context providesApplicationContext() {
-            return mApplication;
+        @Provides @Singleton Tts providesTts(SettingsPrefs settingsPrefs) {
+            return new Tts(mApplication, settingsPrefs);
         }
 
-        @Provides @Singleton Tts providesTts(Context context, SettingsPrefs settingsPrefs) {
-            return new Tts(context, settingsPrefs);
+        @Provides @Singleton
+        EmbeddedDb providesDbHelper() {
+            return new EmbeddedDb(mApplication);
         }
 
-        @Provides @Singleton DbHelper providesDbHelper(Context context) {
-            return new DbHelper(context);
+        @Provides @Singleton Rhymer providesRhymer(EmbeddedDb embeddedDb, SettingsPrefs prefs) {
+            return new Rhymer(embeddedDb, prefs);
         }
 
-        @Provides @Singleton Rhymer providesRhymer(DbHelper dbHelper, SettingsPrefs prefs) {
-            return new Rhymer(dbHelper, prefs);
+        @Provides @Singleton Thesaurus providesThesaurus(EmbeddedDb embeddedDb) {
+            return new Thesaurus(embeddedDb);
         }
 
-        @Provides @Singleton Thesaurus providesThesaurus(DbHelper dbHelper) {
-            return new Thesaurus(dbHelper);
+        @Provides @Singleton Dictionary providesDictionary(EmbeddedDb embeddedDb) {
+            return new Dictionary(embeddedDb);
         }
 
-        @Provides @Singleton Dictionary providesDictionary(DbHelper dbHelper) {
-            return new Dictionary(dbHelper);
+        @Provides @Singleton SettingsPrefs providesSettingsPrefs() {
+            Settings.migrateSettings(mApplication);
+            return SettingsPrefs.get(mApplication);
         }
 
-        @Provides @Singleton SettingsPrefs providesSettingsPrefs(Context context) {
-            Settings.migrateSettings(context);
-            return SettingsPrefs.get(context);
+        @Provides @Singleton
+        DaoSession providesDaoSession() {
+            UserDb userDb = new UserDb(mApplication);
+            Database db = userDb.getWritableDb();
+            return new DaoMaster(db).newSession();
         }
-
     }
 }

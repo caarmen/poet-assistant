@@ -17,8 +17,12 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+apply plugin: 'org.greenrobot.greendao'
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'com.github.ben-manes.versions'
+
 
 android {
     compileSdkVersion 25
@@ -94,10 +98,14 @@ buildscript {
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
         classpath 'me.tatarka:gradle-retrolambda:3.4.0'
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
     }
 }
-apply plugin: 'com.neenbedankt.android-apt'
-apply plugin: 'com.github.ben-manes.versions'
+
+
+greendao {
+    schemaVersion 1
+}
 
 dependencies {
     apt 'org.jraf:prefs-compiler:1.1.0'
@@ -108,6 +116,7 @@ dependencies {
     compile 'com.android.support:preference-v14:25.1.0'
     compile 'net.sourceforge.streamsupport:streamsupport:1.5.2'
     compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'org.greenrobot:greendao:3.2.0'
     compile 'ca.rmen:rhymer:1.1.2'
     compile 'ca.rmen:porter-stemmer:1.0.0'
     compile 'org.jraf:prefs:1.1.0'
