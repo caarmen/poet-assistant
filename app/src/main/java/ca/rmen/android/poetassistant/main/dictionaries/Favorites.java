@@ -80,7 +80,7 @@ public class Favorites {
     void clear() {
         AsyncSession asyncSession = mDaoSession.startAsyncSession();
         asyncSession.setListener(operation -> notifyChanged());
-        asyncSession.deleteAll(FavoriteDao.class);
+        asyncSession.deleteAll(Favorite.class);
     }
 
     private void notifyChanged() {
