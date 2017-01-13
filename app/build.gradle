@@ -41,8 +41,8 @@ android {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 11200
-        versionName "1.12.0"
+        versionCode 11300
+        versionName "1.13.0"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
@@ -108,7 +108,7 @@ greendao {
 }
 
 dependencies {
-    apt 'org.jraf:prefs-compiler:1.1.0'
+    apt 'org.jraf:prefs-compiler:1.1.1'
 
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:design:25.1.0'
@@ -119,13 +119,13 @@ dependencies {
     compile 'org.greenrobot:greendao:3.2.0'
     compile 'ca.rmen:rhymer:1.1.2'
     compile 'ca.rmen:porter-stemmer:1.0.0'
-    compile 'org.jraf:prefs:1.1.0'
+    compile 'org.jraf:prefs:1.1.1'
     compile 'com.google.dagger:dagger:2.8'
     apt 'com.google.dagger:dagger-compiler:2.8'
 
     testCompile 'junit:junit:4.12'
 
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.3.0'
+    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.4.0'
 }
 
 // Only show real releases with the ben-manes plugin.
