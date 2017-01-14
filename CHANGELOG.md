@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+1.13.0  *(2017-01-14*)
+--------------------
+* Added a layout setting with two options: "Clean" and "Efficient".
+  -  The "Clean" layout has no RTD buttons: you tap on a word to see a popup with the RTD entries and other actions.
+  -  The "Efficient" layout: you have the RTD buttons to more quickly look up a word, and tapping on a word shows additional actions.
+  -  For selectable text (inside the dictionary + reader): the RTD actions are inserted into the system action popup.
+
 1.12.0  *(2016-12-19)*
 --------------------
 * The word of the day will be the same for everybody on a given day.
