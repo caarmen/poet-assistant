@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (c) 2016 Carmen Alvarez
+  ~ Copyright (c) 2016-2017 Carmen Alvarez
   ~
   ~ This file is part of Poet Assistant.
   ~
@@ -45,7 +45,7 @@
             android:textStyle="bold"
             tools:text="v" />
 
-        <TextView
+        <ca.rmen.android.poetassistant.widget.CABTextView
             android:id="@+id/definition"
             style="?attr/textAppearanceListItem"
             android:layout_width="wrap_content"

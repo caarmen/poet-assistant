@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -33,21 +33,23 @@ public class RTEntry {
     public final @ColorInt int backgroundColor;
     public final boolean isFavorite;
     public final boolean hasDefinition;
+    public final boolean showButtons;
 
     public RTEntry(Type type, String text) {
-        this(type, text, 0, false);
+        this(type, text, 0, false, false);
     }
 
-    public RTEntry(Type type, String text, @ColorInt int backgroundColor, boolean isFavorite) {
-        this(type, text, backgroundColor, isFavorite, true);
+    public RTEntry(Type type, String text, @ColorInt int backgroundColor, boolean isFavorite, boolean showButtons) {
+        this(type, text, backgroundColor, isFavorite, true, showButtons);
     }
 
-    public RTEntry(Type type, String text, @ColorInt int backgroundColor, boolean isFavorite, boolean hasDefinition) {
+    public RTEntry(Type type, String text, @ColorInt int backgroundColor, boolean isFavorite, boolean hasDefinition, boolean showButtons) {
         this.type = type;
         this.text = text;
         this.backgroundColor = backgroundColor;
         this.isFavorite = isFavorite;
         this.hasDefinition = hasDefinition;
+        this.showButtons = showButtons;
     }
 
     @Override

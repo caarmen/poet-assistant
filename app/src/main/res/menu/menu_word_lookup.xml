@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2016 Carmen Alvarez
+  ~ Copyright (c) 2016-2017 Carmen Alvarez
   ~
   ~ This file is part of Poet Assistant.
   ~
@@ -20,13 +20,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".main.MainActivity">
-    <item
-        android:id="@+id/action_lookup_rhymer"
-        android:title="@string/menu_lookup_rhymer" />
-    <item
-        android:id="@+id/action_lookup_thesaurus"
-        android:title="@string/menu_lookup_thesaurus" />
-    <item
-        android:id="@+id/action_lookup_dictionary"
-        android:title="@string/menu_lookup_dictionary" />
+
+        <item
+            android:id="@+id/action_lookup_rhymer"
+            android:title="@string/menu_lookup_rhymer" />
+        <item
+            android:id="@+id/action_lookup_thesaurus"
+            android:title="@string/menu_lookup_thesaurus" />
+        <item
+            android:id="@+id/action_lookup_dictionary"
+            android:title="@string/menu_lookup_dictionary" />
 </menu>

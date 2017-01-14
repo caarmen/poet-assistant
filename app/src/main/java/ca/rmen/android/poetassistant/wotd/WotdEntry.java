@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -27,11 +27,13 @@ public final class WotdEntry {
     public final String date;
     public final @ColorInt int backgroundColor;
     public final boolean isFavorite;
+    public final boolean showButtons;
 
-    public WotdEntry(String text, String date, @ColorInt int backgroundColor, boolean isFavorite) {
+    public WotdEntry(String text, String date, @ColorInt int backgroundColor, boolean isFavorite, boolean showButtons) {
         this.text = text;
         this.date = date;
         this.backgroundColor = backgroundColor;
         this.isFavorite = isFavorite;
+        this.showButtons = showButtons;
     }
 }

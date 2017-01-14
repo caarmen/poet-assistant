@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -29,17 +29,24 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
+import ca.rmen.android.poetassistant.settings.Settings;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 public class FavoritesLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
     private static final String TAG = Constants.TAG + FavoritesLoader.class.getSimpleName();
 
+    @Inject SettingsPrefs mPrefs;
     public FavoritesLoader(Context context) {
         super(context);
+        DaggerHelper.getAppComponent(context).inject(this);
     }
 
     @Override
@@ -52,6 +59,7 @@ public class FavoritesLoader extends ResultListLoader<ResultListData<RTEntry>> {
         if (favorites.isEmpty()) return emptyResult();
 
         TreeSet<String> sortedFavorites = new TreeSet<>(favorites);
+        Settings.Layout layout = Settings.getLayout(mPrefs);
         int i = 0;
         for (String favorite : sortedFavorites) {
             @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
@@ -59,7 +67,8 @@ public class FavoritesLoader extends ResultListLoader<ResultListData<RTEntry>> {
                     RTEntry.Type.WORD,
                     favorite,
                     ContextCompat.getColor(getContext(), color),
-                    true));
+                    true,
+                    layout == Settings.Layout.EFFICIENT));
             i++;
         }
         return new ResultListData<>(getContext().getString(R.string.favorites_list_header), false, data);

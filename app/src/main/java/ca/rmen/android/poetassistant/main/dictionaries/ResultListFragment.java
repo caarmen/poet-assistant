@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -51,6 +52,8 @@ import ca.rmen.android.poetassistant.compat.VectorCompat;
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFilterListener;
+import ca.rmen.android.poetassistant.settings.Settings;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 
 public class ResultListFragment<T> extends Fragment
@@ -68,6 +71,7 @@ public class ResultListFragment<T> extends Fragment
     private ResultListAdapter<T> mAdapter;
     private ResultListData<T> mData;
     @Inject Tts mTts;
+    @Inject SettingsPrefs mPrefs;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,6 +93,7 @@ public class ResultListFragment<T> extends Fragment
             mHeaderFragment = ResultListHeaderFragment.newInstance(mTab);
             getChildFragmentManager().beginTransaction().replace(R.id.result_list_header, mHeaderFragment).commit();
         }
+        mPrefs.registerOnSharedPreferenceChangeListener(mPrefsListener);
         return mBinding.getRoot();
     }
 
@@ -106,7 +111,13 @@ public class ResultListFragment<T> extends Fragment
         Log.v(TAG, mTab + " onStart");
         super.onStart();
         getLoaderManager().initLoader(mTab.ordinal(), getArguments(), this);
+    }
 
+    @Override
+    public void onDestroyView() {
+        Log.v(TAG, mTab + " onDestroyView");
+        mPrefs.unregisterOnSharedPreferenceChangeListener(mPrefsListener);
+        super.onDestroyView();
     }
 
     @Override
@@ -232,5 +243,18 @@ public class ResultListFragment<T> extends Fragment
 
         getActivity().supportInvalidateOptionsMenu();
     }
+
+    private final SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (Settings.PREF_LAYOUT.equals(key)) {
+                Bundle args = new Bundle(2);
+                args.putString(EXTRA_QUERY, mHeaderFragment.getHeader());
+                args.putString(EXTRA_FILTER, mHeaderFragment.getFilter());
+                getLoaderManager().restartLoader(mTab.ordinal(), args, ResultListFragment.this);
+            }
+        }
+    };
+
 
 }

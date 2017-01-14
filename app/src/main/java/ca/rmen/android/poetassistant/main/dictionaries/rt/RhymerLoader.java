@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -37,6 +37,7 @@ import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
+import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.rhymer.RhymeResult;
 
@@ -74,9 +75,10 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
             if (synonyms.isEmpty()) return emptyResult();
             rhymeResults = filter(rhymeResults, synonyms);
         }
+        Settings.Layout layout = Settings.getLayout(mPrefs);
         Set<String> favorites = mFavorites.getFavorites();
         if (!favorites.isEmpty()) {
-            addResultSection(favorites, data, R.string.rhyme_section_favorites, getMatchingFavorites(rhymeResults, favorites));
+            addResultSection(favorites, data, R.string.rhyme_section_favorites, getMatchingFavorites(rhymeResults, favorites), layout);
         }
         for (RhymeResult rhymeResult : rhymeResults) {
             // Add the word variant, if there are multiple pronunciations.
@@ -85,10 +87,10 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
                 data.add(new RTEntry(RTEntry.Type.HEADING, heading));
             }
 
-            addResultSection(favorites, data, R.string.rhyme_section_stress_syllables, rhymeResult.strictRhymes);
-            addResultSection(favorites, data, R.string.rhyme_section_three_syllables, rhymeResult.threeSyllableRhymes);
-            addResultSection(favorites, data, R.string.rhyme_section_two_syllables, rhymeResult.twoSyllableRhymes);
-            addResultSection(favorites, data, R.string.rhyme_section_one_syllable, rhymeResult.oneSyllableRhymes);
+            addResultSection(favorites, data, R.string.rhyme_section_stress_syllables, rhymeResult.strictRhymes, layout);
+            addResultSection(favorites, data, R.string.rhyme_section_three_syllables, rhymeResult.threeSyllableRhymes, layout);
+            addResultSection(favorites, data, R.string.rhyme_section_two_syllables, rhymeResult.twoSyllableRhymes, layout);
+            addResultSection(favorites, data, R.string.rhyme_section_one_syllable, rhymeResult.oneSyllableRhymes, layout);
         }
         ResultListData<RTEntry> result = new ResultListData<>(mQuery, favorites.contains(mQuery), data);
         long after = System.currentTimeMillis();
@@ -127,7 +129,7 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
         return new ResultListData<>(mQuery, false, new ArrayList<>());
     }
 
-    private void addResultSection(Set<String> favorites, List<RTEntry> results, int sectionHeadingResId, String[] rhymes) {
+    private void addResultSection(Set<String> favorites, List<RTEntry> results, int sectionHeadingResId, String[] rhymes, Settings.Layout layout) {
         if (rhymes.length > 0) {
 
             Set<String> wordsWithDefinitions = mPrefs.getIsAllRhymesEnabled() ? mRhymer.getWordsWithDefinitions(rhymes) : null;
@@ -140,7 +142,8 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
                         rhymes[i],
                         ContextCompat.getColor(getContext(), color),
                         favorites.contains(rhymes[i]),
-                        hasDefinition));
+                        hasDefinition,
+                        layout == Settings.Layout.EFFICIENT));
             }
         }
     }

@@ -29,7 +29,7 @@ import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.Tab;
 
-final class Share {
+public final class Share {
     private static final String TAG = Constants.TAG + Share.class.getSimpleName();
 
     private Share() {
@@ -49,6 +49,16 @@ final class Share {
         ResultListExporter<T> exporter = (ResultListExporter<T>) ResultListFactory.createExporter(context, tab);
         String text = exporter.export(word, filter, entries);
         Log.v(TAG, "Will share " + text);
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        intent.setType("text/plain");
+        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
+    }
+
+    /**
+     * Allows the user to share the given text.
+     */
+    public static void share(Context context, @NonNull String text) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_TEXT, text);
         intent.setType("text/plain");

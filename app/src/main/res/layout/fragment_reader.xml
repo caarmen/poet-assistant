@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2016 Carmen Alvarez
+  ~ Copyright (c) 2016-2017 Carmen Alvarez
   ~
   ~ This file is part of Poet Assistant.
   ~
@@ -51,7 +51,7 @@
                 android:onClick="@{playButtonListener.onPlayButtonClicked}"
                 app:srcCompat="@drawable/ic_play_disabled" />
 
-            <EditText
+            <ca.rmen.android.poetassistant.widget.CABEditText
                 android:id="@+id/tv_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

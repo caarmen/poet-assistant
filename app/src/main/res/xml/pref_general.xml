@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2016 Carmen Alvarez
+  ~ Copyright (c) 2016-2017 Carmen Alvarez
   ~
   ~ This file is part of Poet Assistant.
   ~
@@ -77,6 +77,16 @@
             android:positiveButtonText="@null"
             android:summary="@string/pref_theme_summary"
             android:title="@string/pref_theme_title" />
+
+        <ListPreference
+            android:defaultValue="Efficient"
+            android:entries="@array/pref_layout_titles"
+            android:entryValues="@array/pref_layout_values"
+            android:key="PREF_LAYOUT"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:summary="@string/pref_layout_summary"
+            android:title="@string/pref_layout_title" />
 
         <!--suppress AndroidElementNotAllowed -->
         <android.support.v7.preference.SwitchPreferenceCompat
