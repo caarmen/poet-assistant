@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2016 Carmen Alvarez
+  ~ Copyright (c) 2016-2017 Carmen Alvarez
   ~
   ~ This file is part of Poet Assistant.
   ~
@@ -98,6 +98,9 @@
     <string name="menu_lookup_rhymer">Rhymer</string>
     <string name="menu_lookup_thesaurus">Thesaurus</string>
     <string name="menu_lookup_dictionary">Dictionary</string>
+    <string name="menu_copy">Copy</string>
+    <string name="menu_more">More…</string>
+    <string name="snackbar_copied_text">Copied text to clipboard</string>
     <string name="title_activity_settings">Settings</string>
     <string name="wotd_setting_title">Word of the day</string>
     <string name="wotd_setting_description">Display a notification once a day with a random word.</string>
@@ -151,13 +154,25 @@
         <item>@string/pref_theme_value_dark</item>
         <item>@string/pref_theme_value_auto</item>
     </string-array>
-    <string name="pref_system_tts_settings_title">System voice settings</string>
-    <string name="pref_system_tts_settings_description">This will leave Poet Assistant and open the system text-to-speech settings on your device.</string>
     <string-array name="pref_theme_values">
         <item>Light</item>
         <item>Dark</item>
         <item>Auto</item>
     </string-array>
+    <string name="pref_layout_title">Layout</string>
+    <string name="pref_layout_summary">%s</string>
+    <string name="pref_layout_value_clean">Clean</string>
+    <string name="pref_layout_value_efficient">Efficient</string>
+    <string-array name="pref_layout_titles">
+        <item>@string/pref_layout_value_clean</item>
+        <item>@string/pref_layout_value_efficient</item>
+    </string-array>
+    <string-array name="pref_layout_values">
+        <item>Clean</item>
+        <item>Efficient</item>
+    </string-array>
+    <string name="pref_system_tts_settings_title">System voice settings</string>
+    <string name="pref_system_tts_settings_description">This will leave Poet Assistant and open the system text-to-speech settings on your device.</string>
     <string name="tts_error"><![CDATA[No voices found! &#128552;]]></string>
     <string name="tts_error_open_system_settings">Voice settings</string>
     <string name="tts_error_open_app_settings">Settings</string>

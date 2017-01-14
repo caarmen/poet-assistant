@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -37,6 +37,8 @@ import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
+import ca.rmen.android.poetassistant.settings.Settings;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
@@ -44,6 +46,7 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
     @Inject Rhymer mRhymer;
     @Inject Thesaurus mThesaurus;
+    @Inject SettingsPrefs mPrefs;
     private final String mQuery;
     private final String mFilter;
 
@@ -69,11 +72,12 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
             entries = filter(entries, rhymes);
         }
 
+        Settings.Layout layout = Settings.getLayout(mPrefs);
         Set<String> favorites = mFavorites.getFavorites();
         for (ThesaurusEntry.ThesaurusEntryDetails entry : entries) {
             data.add(new RTEntry(RTEntry.Type.HEADING, entry.wordType.name().toLowerCase(Locale.US)));
-            addResultSection(favorites, data, R.string.thesaurus_section_synonyms, entry.synonyms);
-            addResultSection(favorites, data, R.string.thesaurus_section_antonyms, entry.antonyms);
+            addResultSection(favorites, data, R.string.thesaurus_section_synonyms, entry.synonyms, layout);
+            addResultSection(favorites, data, R.string.thesaurus_section_antonyms, entry.antonyms, layout);
         }
         return new ResultListData<>(result.word, favorites.contains(result.word), data);
     }
@@ -82,7 +86,7 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
         return new ResultListData<>(mQuery, false, new ArrayList<>());
     }
 
-    private void addResultSection(Set<String> favorites, List<RTEntry> results, int sectionHeadingResId, String[] words) {
+    private void addResultSection(Set<String> favorites, List<RTEntry> results, int sectionHeadingResId, String[] words, Settings.Layout layout) {
         if (words.length > 0) {
             results.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
             for (int i = 0; i < words.length; i++) {
@@ -91,7 +95,8 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
                         RTEntry.Type.WORD,
                         words[i],
                         ContextCompat.getColor(getContext(), color),
-                        favorites.contains(words[i])));
+                        favorites.contains(words[i]),
+                        layout == Settings.Layout.EFFICIENT));
             }
         }
     }

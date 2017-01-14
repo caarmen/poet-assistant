@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -42,13 +42,15 @@ import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
+import ca.rmen.android.poetassistant.settings.Settings;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 public class WotdLoader extends ResultListLoader<ResultListData<WotdEntry>> {
 
     private static final String TAG = Constants.TAG + WotdLoader.class.getSimpleName();
 
-    @Inject
-    Dictionary mDictionary;
+    @Inject Dictionary mDictionary;
+    @Inject SettingsPrefs mPrefs;
 
     public WotdLoader(Context context) {
         super(context);
@@ -69,6 +71,7 @@ public class WotdLoader extends ResultListLoader<ResultListData<WotdEntry>> {
             Calendar calendar = Wotd.getTodayUTC();
             Calendar calendarDisplay = Wotd.getTodayUTC();
             calendarDisplay.setTimeZone(TimeZone.getDefault());
+            Settings.Layout layout = Settings.getLayout(mPrefs);
             for (int i = 0; i < 100; i++) {
                 Random random = new Random();
                 random.setSeed(calendar.getTimeInMillis());
@@ -83,7 +86,8 @@ public class WotdLoader extends ResultListLoader<ResultListData<WotdEntry>> {
                             word,
                             date,
                             ContextCompat.getColor(getContext(), color),
-                            favorites.contains(word)));
+                            favorites.contains(word),
+                            layout == Settings.Layout.EFFICIENT));
                 }
                 calendar.add(Calendar.DAY_OF_YEAR, -1);
                 calendarDisplay.add(Calendar.DAY_OF_YEAR, -1);

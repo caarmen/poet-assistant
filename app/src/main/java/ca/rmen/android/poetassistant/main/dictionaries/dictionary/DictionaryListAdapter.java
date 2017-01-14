@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -52,7 +52,7 @@ public class DictionaryListAdapter extends ResultListAdapter<DictionaryEntry.Dic
     public void onBindViewHolder(ResultListAdapter.ResultListEntryViewHolder holder, int position) {
         DictionaryEntry.DictionaryEntryDetails entry = getItem(position);
         ListItemDictionaryEntryBinding binding = (ListItemDictionaryEntryBinding) holder.binding;
-        TextPopupMenu.createPopupMenu(binding.definition, mListener);
+        TextPopupMenu.addSelectionPopupMenu(binding.definition,  mListener);
         binding.setEntry(entry);
         binding.executePendingBindings();
     }

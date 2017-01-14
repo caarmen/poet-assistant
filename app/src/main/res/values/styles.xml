@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2016 Carmen Alvarez
+  ~ Copyright (c) 2016-2017 Carmen Alvarez
   ~
   ~ This file is part of Poet Assistant.
   ~
@@ -28,6 +28,8 @@
         <item name="android:textColorPrimary">@color/primary_text</item>
         <item name="android:textColorSecondary">@color/secondary_text</item>
         <item name="alertDialogTheme">@style/AppAlertDialog</item>
+        <item name="windowActionModeOverlay">true</item>
+
     </style>
 
     <style name="AppTheme" parent="AppBaseTheme">

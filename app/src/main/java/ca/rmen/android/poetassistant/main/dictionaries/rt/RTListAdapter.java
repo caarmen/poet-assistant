@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -32,6 +32,7 @@ import ca.rmen.android.poetassistant.databinding.ListItemHeadingBinding;
 import ca.rmen.android.poetassistant.databinding.ListItemSubheadingBinding;
 import ca.rmen.android.poetassistant.databinding.ListItemWordBinding;
 import ca.rmen.android.poetassistant.main.Tab;
+import ca.rmen.android.poetassistant.main.TextPopupMenu;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter;
 
 
@@ -79,9 +80,13 @@ public class RTListAdapter extends ResultListAdapter<RTEntry> {
         } else if (entry.type == RTEntry.Type.SUBHEADING) {
             ((ListItemSubheadingBinding) holder.binding).setEntry(entry);
         } else {
-            ((ListItemWordBinding) holder.binding).setEntry(entry);
-            ((ListItemWordBinding) holder.binding).setEntryIconClickListener(mEntryIconClickListener);
-            ((ListItemWordBinding) holder.binding).btnStarResult.setChecked(entry.isFavorite);
+            ListItemWordBinding wordBinding = (ListItemWordBinding) holder.binding;
+            wordBinding.setEntry(entry);
+            wordBinding.setEntryIconClickListener(mEntryIconClickListener);
+            TextPopupMenu.addPopupMenu(
+                    entry.showButtons ? TextPopupMenu.Style.SYSTEM : TextPopupMenu.Style.FULL,
+                    wordBinding.text1,
+                    mWordClickedListener);
         }
         holder.binding.executePendingBindings();
     }
@@ -89,14 +94,14 @@ public class RTListAdapter extends ResultListAdapter<RTEntry> {
     public class EntryIconClickListener {
 
         private String getWord(View v) {
-            ListItemWordBinding binding = DataBindingUtil.getBinding((View)v.getParent());
+            ListItemWordBinding binding = DataBindingUtil.getBinding((View) v.getParent());
             return binding.text1.getText().toString();
         }
 
         public void onFavoriteIconClicked(View v) {
-            mOnFavoriteClickListener.onFavoriteToggled(getWord(v), ((CheckBox)v).isChecked());
-
+            mOnFavoriteClickListener.onFavoriteToggled(getWord(v), ((CheckBox) v).isChecked());
         }
+
         public void onRhymerIconClicked(View v) {
             mWordClickedListener.onWordClick(getWord(v), Tab.RHYMER);
         }

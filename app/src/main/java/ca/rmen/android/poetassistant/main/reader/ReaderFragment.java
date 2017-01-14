@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -108,7 +108,7 @@ public class ReaderFragment extends Fragment implements
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false);
         mBinding.setPlayButtonListener(mPlayButtonListener);
         mBinding.tvText.addTextChangedListener(mTextWatcher);
-        TextPopupMenu.createPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
+        TextPopupMenu.addSelectionPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
         mHandler = new Handler();
         return mBinding.getRoot();
     }

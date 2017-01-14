@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (c) 2016 Carmen Alvarez
+  ~ Copyright (c) 2016-2017 Carmen Alvarez
   ~
   ~ This file is part of Poet Assistant.
   ~
@@ -35,27 +35,25 @@
     </data>
 
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/listPreferredItemHeight"
         android:layout_gravity="center_vertical"
         android:background="@{entry.backgroundColor}"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
 
         <CheckBox
             android:id="@+id/btn_star_result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:background="?selectableItemBackgroundBorderless"
             android:button="@drawable/ic_star"
-            android:clickable="true"
             android:checked="@{entry.isFavorite}"
+            android:clickable="true"
             android:onClick="@{entryIconClickListener.onFavoriteIconClicked}"
             android:paddingEnd="8dp"
             android:paddingLeft="4dp"
@@ -63,13 +61,9 @@
             android:paddingStart="4dp" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/btn_star_result"
-            android:layout_toLeftOf="@+id/btn_rhymer"
-            android:layout_toRightOf="@id/btn_star_result"
-            android:layout_toStartOf="@+id/btn_rhymer"
+            android:layout_weight="1"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -88,10 +82,10 @@
             <TextView
                 android:id="@+id/text1"
                 style="?attr/textAppearanceListItem"
-                android:layout_width="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{entry.text}"
-                android:textIsSelectable="true"
                 tools:text="happy" />
 
         </LinearLayout>
@@ -104,12 +98,9 @@
              http://stackoverflow.com/questions/35624562/code-analysis-error-unexpected-namespace-prefix-after-upgrading-android-suppor
         -->
         <android.support.v7.widget.AppCompatImageView
-            android:id="@id/btn_rhymer"
+            android:id="@+id/btn_rhymer"
             android:layout_width="@dimen/list_rtd_icon_size"
             android:layout_height="@dimen/list_rtd_icon_size"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/btn_thesaurus"
-            android:layout_toStartOf="@id/btn_thesaurus"
             android:background="?selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="@string/tab_rhymer"
@@ -118,15 +109,13 @@
             android:paddingLeft="@dimen/list_rtd_icon_padding"
             android:paddingRight="@dimen/list_rtd_icon_padding"
             android:paddingStart="@dimen/list_rtd_icon_padding"
+            android:visibility="@{entry.showButtons? View.VISIBLE:View.GONE}"
             app:srcCompat="@drawable/ic_rhymer" />
 
         <android.support.v7.widget.AppCompatImageView
-            android:id="@id/btn_thesaurus"
+            android:id="@+id/btn_thesaurus"
             android:layout_width="@dimen/list_rtd_icon_size"
             android:layout_height="@dimen/list_rtd_icon_size"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/btn_dictionary"
-            android:layout_toStartOf="@+id/btn_dictionary"
             android:background="?selectableItemBackgroundBorderless"
             android:contentDescription="@string/tab_thesaurus"
             android:onClick="@{entryIconClickListener.onThesaurusIconClicked}"
@@ -134,15 +123,13 @@
             android:paddingLeft="@dimen/list_rtd_icon_padding"
             android:paddingRight="@dimen/list_rtd_icon_padding"
             android:paddingStart="@dimen/list_rtd_icon_padding"
+            android:visibility="@{entry.showButtons? View.VISIBLE:View.GONE}"
             app:srcCompat="@drawable/ic_thesaurus" />
 
         <android.support.v7.widget.AppCompatImageView
-            android:id="@id/btn_dictionary"
+            android:id="@+id/btn_dictionary"
             android:layout_width="@dimen/list_rtd_icon_size"
             android:layout_height="@dimen/list_rtd_icon_size"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
             android:background="?selectableItemBackgroundBorderless"
@@ -152,7 +139,8 @@
             android:paddingLeft="@dimen/list_rtd_icon_padding"
             android:paddingRight="@dimen/list_rtd_icon_padding"
             android:paddingStart="@dimen/list_rtd_icon_padding"
+            android:visibility="@{entry.showButtons? View.VISIBLE:View.GONE}"
             app:srcCompat="@drawable/ic_dictionary" />
 
-    </RelativeLayout>
+    </LinearLayout>
 </layout>

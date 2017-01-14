@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -29,6 +29,8 @@ import org.jraf.android.prefs.DefaultString;
 import org.jraf.android.prefs.Name;
 import org.jraf.android.prefs.Prefs;
 
+import java.util.Locale;
+
 @Prefs
 public class Settings {
     @SuppressWarnings("unused")
@@ -41,6 +43,7 @@ public class Settings {
     // v2 is a float between 0 and 200
     public static final String PREF_VOICE_SPEED = "PREF_VOICE_SPEED_V3";
     public static final String PREF_VOICE_PITCH = "PREF_VOICE_PITCH_V3";
+    public static final String PREF_LAYOUT = "PREF_LAYOUT";
     @SuppressWarnings("unused")
     private static final int VOICE_SPEED_NORMAL = 100;
     @SuppressWarnings("unused")
@@ -69,6 +72,11 @@ public class Settings {
     @SuppressWarnings("unused")
     @Name(PREF_THEME)
     String theme;
+
+    @SuppressWarnings("unused")
+    @Name(PREF_LAYOUT)
+    @DefaultString("Efficient")
+    String layout;
 
     @SuppressWarnings("unused")
     @Name(PREF_WOTD_ENABLED)
@@ -111,6 +119,15 @@ public class Settings {
                     .apply();
 
         }
+    }
+
+    public static Layout getLayout(SettingsPrefs prefs) {
+        return Layout.valueOf(prefs.getLayout().toUpperCase(Locale.US));
+    }
+
+    public enum Layout {
+        @SuppressWarnings("unused")CLEAN,
+        EFFICIENT
     }
 
 }

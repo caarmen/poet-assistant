@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -29,10 +29,10 @@ import android.widget.CheckBox;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.databinding.ListItemWotdBinding;
 import ca.rmen.android.poetassistant.main.Tab;
+import ca.rmen.android.poetassistant.main.TextPopupMenu;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFavoriteClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
-
 
 public class WotdAdapter extends ResultListAdapter<WotdEntry> {
 
@@ -67,6 +67,10 @@ public class WotdAdapter extends ResultListAdapter<WotdEntry> {
         ListItemWotdBinding binding = (ListItemWotdBinding) holder.binding;
         binding.setEntry(entry);
         binding.setEntryIconClickListener(mEntryIconClickListener);
+        TextPopupMenu.addPopupMenu(
+                entry.showButtons ? TextPopupMenu.Style.SYSTEM : TextPopupMenu.Style.FULL,
+                binding.text1,
+                mWordClickedListener);
         binding.executePendingBindings();
     }
 

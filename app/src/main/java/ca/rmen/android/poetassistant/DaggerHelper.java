@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -33,6 +33,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderFragment;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsCursor;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider;
@@ -79,6 +80,7 @@ public class DaggerHelper {
         void inject(ThesaurusLoader thesaurusLoader);
         void inject(DictionaryLoader dictionaryLoader);
         void inject(PatternLoader patternLoader);
+        void inject(FavoritesLoader favoritesLoader);
         void inject(SuggestionsCursor suggestionsCursor);
         void inject(SuggestionsProvider suggestionsProvider);
         void inject(Favorites favorites);

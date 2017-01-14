@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -40,6 +40,8 @@ import ca.rmen.android.poetassistant.main.dictionaries.search.Patterns;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
+import ca.rmen.android.poetassistant.settings.Settings;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 public class PatternLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
@@ -47,6 +49,7 @@ public class PatternLoader extends ResultListLoader<ResultListData<RTEntry>> {
 
     private final String mQuery;
     @Inject Dictionary mDictionary;
+    @Inject SettingsPrefs mPrefs;
 
     public PatternLoader(Context context, String query) {
         super(context);
@@ -72,13 +75,15 @@ public class PatternLoader extends ResultListLoader<ResultListData<RTEntry>> {
             Arrays.sort(matches, new MatchComparator(favorites));
         }
 
+        Settings.Layout layout = Settings.getLayout(mPrefs);
         for (int i=0; i < matches.length; i++) {
             @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
             data.add(new RTEntry(
                     RTEntry.Type.WORD,
                     matches[i],
                     ContextCompat.getColor(getContext(), color),
-                    favorites.contains(matches[i])));
+                    favorites.contains(matches[i]),
+                    layout == Settings.Layout.EFFICIENT));
         }
         if (matches.length == Patterns.MAX_RESULTS) {
             data.add(new RTEntry(
