@@ -27,13 +27,13 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.PopupMenu;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import java.util.List;
@@ -42,6 +42,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.Share;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.widget.HackFor23381;
+import ca.rmen.android.poetassistant.widget.PopupMenuHelper;
 
 public class TextPopupMenu {
     public enum Style {
@@ -79,6 +80,7 @@ public class TextPopupMenu {
                 SubMenu systemMenu = popupMenu.getMenu().addSubMenu(R.string.menu_more);
                 addSystemMenuItems(textView.getContext(), popupMenu.getMenuInflater(), systemMenu, text);
             }
+            PopupMenuHelper.insertMenuItemIcons(textView.getContext(), popupMenu);
             popupMenu.show();
         });
     }

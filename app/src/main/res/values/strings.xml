@@ -99,7 +99,7 @@
     <string name="menu_lookup_thesaurus">Thesaurus</string>
     <string name="menu_lookup_dictionary">Dictionary</string>
     <string name="menu_copy">Copy</string>
-    <string name="menu_more">More…</string>
+    <string name="menu_more">More</string>
     <string name="snackbar_copied_text">Copied text to clipboard</string>
     <string name="title_activity_settings">Settings</string>
     <string name="wotd_setting_title">Word of the day</string>

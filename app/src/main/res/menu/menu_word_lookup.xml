@@ -22,12 +22,15 @@
     tools:context=".main.MainActivity">
 
         <item
+            android:icon="@drawable/ic_rhymer"
             android:id="@+id/action_lookup_rhymer"
             android:title="@string/menu_lookup_rhymer" />
         <item
+            android:icon="@drawable/ic_thesaurus"
             android:id="@+id/action_lookup_thesaurus"
             android:title="@string/menu_lookup_thesaurus" />
         <item
+            android:icon="@drawable/ic_dictionary"
             android:id="@+id/action_lookup_dictionary"
             android:title="@string/menu_lookup_dictionary" />
 </menu>
