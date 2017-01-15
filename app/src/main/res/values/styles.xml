@@ -29,6 +29,7 @@
         <item name="android:textColorSecondary">@color/secondary_text</item>
         <item name="alertDialogTheme">@style/AppAlertDialog</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="textAppearancePopupMenuHeader">@style/AppPopupMenuHeader</item>
 
     </style>
 
@@ -67,4 +68,7 @@
         <item name="colorAccent">@color/dialog_accent</item>
     </style>
 
+    <style name="AppPopupMenuHeader" parent="TextAppearance.AppCompat.Widget.PopupMenu.Header">
+        <item name="android:textColor">@color/dialog_accent</item>
+    </style>
 </resources>
