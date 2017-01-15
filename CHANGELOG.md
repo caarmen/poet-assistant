@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.13.1  *(2017-01-15*)
+--------------------
+* Added the R, T, D icons to the popup menu.
+
 1.13.0  *(2017-01-14*)
 --------------------
 * Added a layout setting with two options: "Clean" and "Efficient".
