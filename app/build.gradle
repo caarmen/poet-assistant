@@ -41,8 +41,8 @@ android {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 11301
-        versionName "1.13.1"
+        versionCode 11302
+        versionName "1.13.2"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
@@ -53,6 +53,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    // Attempted workaround for build failure for f-droid
+    // https://gitlab.com/fdroid/fdroiddata/issues/585
+    // https://github.com/greenrobot/greenDAO/issues/352
+    sourceSets {
+        main.java.srcDirs += 'build/generated/source/greendao'
+    }
+
     File signFile = rootProject.file('signing.properties')
     if (signFile.exists()) {
         Properties p = new Properties();

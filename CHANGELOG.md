@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.13.2  *(2017-01-21*)
+--------------------
+* Attempt a fix for the project to compile for F-droid.
+
 1.13.1  *(2017-01-15*)
 --------------------
 * Added the R, T, D icons to the popup menu.
