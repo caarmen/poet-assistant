@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 import ca.rmen.android.poetassistant.settings.Settings;
@@ -50,6 +51,7 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
     @Inject SettingsPrefs mPrefs;
     @Inject Rhymer mRhymer;
     @Inject Thesaurus mThesaurus;
+    @Inject Favorites mFavorites;
 
     public RhymerLoader(Context context, String query, String filter) {
         super(context);

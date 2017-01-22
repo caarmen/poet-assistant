@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -20,49 +20,34 @@
 package ca.rmen.android.poetassistant;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
-import org.greenrobot.greendao.database.Database;
-import org.greenrobot.greendao.database.DatabaseStatement;
+import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions;
 
-import java.util.Set;
 
-import ca.rmen.android.poetassistant.main.dictionaries.DaoMaster;
-import ca.rmen.android.poetassistant.main.dictionaries.FavoriteDao;
-import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionDao;
+public class UserDb extends SQLiteOpenHelper {
 
-class UserDb extends DaoMaster.OpenHelper {
+    private static final String TAG = Constants.TAG + UserDb.class.getSimpleName();
+
     private static final String DB_NAME = "userdata.db";
+    private static final int DB_VERSION = 1;
     private final Context mContext;
 
     UserDb(Context context) {
-        super(context, DB_NAME);
+        super(context, DB_NAME, null, DB_VERSION);
         mContext = context;
     }
 
     @Override
-    public void onCreate(Database db) {
-        super.onCreate(db);
-        // Migrate our data from shared prefs to the db.
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
-        Set<String> favorites = prefs.getStringSet("PREF_FAVORITE_WORDS", null);
-        if (favorites != null) {
-            for (String favorite : favorites) {
-                DatabaseStatement stmt = db.compileStatement("INSERT INTO " + FavoriteDao.TABLENAME + "(" + FavoriteDao.Properties.Word.columnName + ") VALUES (?)");
-                stmt.bindString(1, favorite);
-                stmt.executeInsert();
-            }
-        }
+    public void onCreate(SQLiteDatabase db) {
+        Favorites.createTable(mContext, db);
+        Suggestions.createTable(mContext, db);
+    }
 
-        Set<String> suggestions = prefs.getStringSet("pref_suggestions", null);
-        if (suggestions != null) {
-            for (String suggestion : suggestions) {
-                DatabaseStatement stmt = db.compileStatement("INSERT INTO " + SuggestionDao.TABLENAME + "(" + SuggestionDao.Properties.Word.columnName + ") VALUES (?)");
-                stmt.bindString(1, suggestion);
-                stmt.executeInsert();
-            }
-        }
-        prefs.edit().remove("pref_suggestions").apply();
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.v(TAG, "onUpgrade: oldVersion = " + oldVersion + ", newVersion = " + newVersion);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,7 +17,6 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-apply plugin: 'org.greenrobot.greendao'
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.neenbedankt.android-apt'
@@ -41,8 +40,8 @@ android {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 11302
-        versionName "1.13.2"
+        versionCode 11400
+        versionName "1.14.0"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
@@ -52,13 +51,6 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-    }
-
-    // Attempted workaround for build failure for f-droid
-    // https://gitlab.com/fdroid/fdroiddata/issues/585
-    // https://github.com/greenrobot/greenDAO/issues/352
-    sourceSets {
-        main.java.srcDirs += 'build/generated/source/greendao'
     }
 
     File signFile = rootProject.file('signing.properties')
@@ -106,13 +98,7 @@ buildscript {
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.13.0'
         classpath 'me.tatarka:gradle-retrolambda:3.4.0'
-        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
     }
-}
-
-
-greendao {
-    schemaVersion 1
 }
 
 dependencies {
@@ -124,7 +110,6 @@ dependencies {
     compile 'com.android.support:preference-v14:25.1.0'
     compile 'net.sourceforge.streamsupport:streamsupport:1.5.3'
     compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'org.greenrobot:greendao:3.2.0'
     compile 'ca.rmen:rhymer:1.1.2'
     compile 'ca.rmen:porter-stemmer:1.0.0'
     compile 'org.jraf:prefs:1.1.1'

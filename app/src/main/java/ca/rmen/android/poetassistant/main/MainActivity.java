@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -54,7 +54,7 @@ import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.about.AboutActivity;
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding;
-import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
+import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFavoriteClickListener;
@@ -73,12 +73,12 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
 
     private Search mSearch;
     private ActivityMainBinding mBinding;
-    private Favorites mFavorites;
     private PagerAdapter mPagerAdapter;
     private String[] mClearedHistory;
     @Inject Rhymer mRhymer;
     @Inject Thesaurus mThesaurus;
     @Inject Dictionary mDictionary;
+    @Inject Favorites mFavorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         }
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
-        mFavorites = new Favorites(getApplicationContext());
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         setSupportActionBar(mBinding.toolbar);
         Intent intent = getIntent();

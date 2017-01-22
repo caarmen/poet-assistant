@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -100,7 +100,6 @@ public class AboutActivity extends AppCompatActivity {
         hackSetIcon(mBinding.tvDictionaryLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvGoogleNgramDatasetLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvEventBusLicense, R.drawable.ic_bullet);
-        hackSetIcon(mBinding.tvGreendaoLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvRetrolambdaLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvStreamsupportLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvDaggerLicense, R.drawable.ic_bullet);

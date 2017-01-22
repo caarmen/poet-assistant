@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+1.14.0  *(2017-01-22*)
+--------------------
+* Removed the greendao library, for these issues:
+  - https://gitlab.com/fdroid/fdroiddata/issues/585
+  - https://github.com/greenrobot/greenDAO/issues/498
+  - https://github.com/greenrobot/greenDAO/issues/412
+
 1.13.2  *(2017-01-21*)
 --------------------
 * Attempt a fix for the project to compile for F-droid.

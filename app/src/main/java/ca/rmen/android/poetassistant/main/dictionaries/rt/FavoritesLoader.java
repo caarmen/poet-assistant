@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 import ca.rmen.android.poetassistant.settings.Settings;
@@ -44,6 +45,7 @@ public class FavoritesLoader extends ResultListLoader<ResultListData<RTEntry>> {
     private static final String TAG = Constants.TAG + FavoritesLoader.class.getSimpleName();
 
     @Inject SettingsPrefs mPrefs;
+    @Inject Favorites mFavorites;
     public FavoritesLoader(Context context) {
         super(context);
         DaggerHelper.getAppComponent(context).inject(this);

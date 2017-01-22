@@ -38,7 +38,7 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
+import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
@@ -51,6 +51,7 @@ public class WotdLoader extends ResultListLoader<ResultListData<WotdEntry>> {
 
     @Inject Dictionary mDictionary;
     @Inject SettingsPrefs mPrefs;
+    @Inject Favorites mFavorites;
 
     public WotdLoader(Context context) {
         super(context);
@@ -67,7 +68,7 @@ public class WotdLoader extends ResultListLoader<ResultListData<WotdEntry>> {
         if (cursor == null || cursor.getCount() == 0) return emptyResult();
 
         try {
-            Set<String> favorites = new Favorites(getContext()).getFavorites();
+            Set<String> favorites = mFavorites.getFavorites();
             Calendar calendar = Wotd.getTodayUTC();
             Calendar calendarDisplay = Wotd.getTodayUTC();
             calendarDisplay.setTimeZone(TimeZone.getDefault());

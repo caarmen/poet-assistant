@@ -73,7 +73,6 @@
     <string name="about_license_dictionary">WordNet Dictionary License</string>
     <string name="about_license_google_ngram_dataset">Google Ngram Dataset License</string>
     <string name="about_license_event_bus">Green Robot Event Bus License (Apache2): http://greenrobot.org/eventbus/license/</string>
-    <string name="about_license_greendao">Green Robot greenDao License (Apache2): http://greenrobot.org/greendao/documentation/faq/</string>
     <string name="about_license_retrolambda">Gradle Retrolambda Plugin License (Apache2): https://github.com/evant/gradle-retrolambda/blob/master/LICENSE.txt</string>
     <string name="about_license_streamsupport">Streamsupport License (GPLv2CE): https://github.com/streamsupport/streamsupport/blob/master/LICENSE.txt</string>
     <string name="about_license_dagger">Dagger License (Apache2): https://github.com/google/dagger/blob/master/LICENSE.txt</string>

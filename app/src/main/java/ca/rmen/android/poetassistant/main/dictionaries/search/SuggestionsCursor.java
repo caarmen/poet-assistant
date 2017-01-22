@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -34,7 +34,6 @@ import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.dictionaries.DaoSession;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import java8.util.stream.StreamSupport;
 
@@ -49,8 +48,8 @@ public class SuggestionsCursor extends MatrixCursor {
                 SearchManager.SUGGEST_COLUMN_ICON_1,
                 SearchManager.SUGGEST_COLUMN_INTENT_DATA};
 
-    @Inject DaoSession mDaoSession;
     @Inject Dictionary mDictionary;
+    @Inject Suggestions mSuggestions;
     private final String mFilter;
 
     SuggestionsCursor(Context context, String filter) {
@@ -70,10 +69,9 @@ public class SuggestionsCursor extends MatrixCursor {
         } else {
             iconId = R.drawable.ic_search_history;
         }
-        List<Suggestion> suggestions = mDaoSession.getSuggestionDao().loadAll();
+        List<String> suggestions = mSuggestions.getSuggestions();
         StreamSupport
                 .stream(suggestions)
-                .map(Suggestion::getWord)
                 .filter(suggestion -> TextUtils.isEmpty(mFilter) || suggestion.contains(mFilter))
                 .distinct()
                 .sorted()
