@@ -22,19 +22,15 @@ package ca.rmen.android.poetassistant;
 import android.app.Application;
 import android.content.Context;
 
-import org.greenrobot.greendao.database.Database;
-
 import javax.inject.Singleton;
 
 import ca.rmen.android.poetassistant.main.MainActivity;
-import ca.rmen.android.poetassistant.main.dictionaries.DaoMaster;
-import ca.rmen.android.poetassistant.main.dictionaries.DaoSession;
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
-import ca.rmen.android.poetassistant.main.dictionaries.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
+import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsCursor;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
@@ -83,7 +79,6 @@ public class DaggerHelper {
         void inject(FavoritesLoader favoritesLoader);
         void inject(SuggestionsCursor suggestionsCursor);
         void inject(SuggestionsProvider suggestionsProvider);
-        void inject(Favorites favorites);
         void inject(Search search);
 
         // Settings
@@ -103,9 +98,11 @@ public class DaggerHelper {
     static class AppModule {
 
         private final Application mApplication;
+        private final UserDb mUserDb;
 
         AppModule(Application application) {
             mApplication = application;
+            mUserDb = new UserDb(application);
         }
 
         @Provides @Singleton Tts providesTts(SettingsPrefs settingsPrefs) {
@@ -133,10 +130,12 @@ public class DaggerHelper {
             return SettingsPrefs.get(mApplication);
         }
 
-        @Provides @Singleton DaoSession providesDaoSession() {
-            UserDb userDb = new UserDb(mApplication);
-            Database db = userDb.getWritableDb();
-            return new DaoMaster(db).newSession();
+        @Provides Favorites providesFavorites() {
+            return new Favorites(mUserDb);
+        }
+
+        @Provides Suggestions providesSuggestions() {
+            return new Suggestions(mUserDb);
         }
     }
 }

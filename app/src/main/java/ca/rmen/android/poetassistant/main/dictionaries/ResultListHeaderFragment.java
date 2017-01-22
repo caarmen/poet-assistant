@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -42,6 +42,7 @@ import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding;
@@ -61,8 +62,8 @@ public class ResultListHeaderFragment extends Fragment
     private Tab mTab;
     private ResultListHeaderBinding mBinding;
 
-    @Inject
-    Tts mTts;
+    @Inject Tts mTts;
+    @Inject Favorites mFavorites;
 
 
     public static ResultListHeaderFragment newInstance(Tab tab) {
@@ -140,7 +141,7 @@ public class ResultListHeaderFragment extends Fragment
     @Override
     public void onOk(int actionId) {
         if (actionId == ACTION_CLEAR_FAVORITES) {
-            new Favorites(getContext()).clear();
+            mFavorites.clear();
             Snackbar.make(mBinding.getRoot(), R.string.favorites_cleared, Snackbar.LENGTH_SHORT).show();
         }
     }

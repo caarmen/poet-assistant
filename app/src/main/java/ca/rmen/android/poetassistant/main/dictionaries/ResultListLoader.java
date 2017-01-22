@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -27,17 +27,16 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.Favorites;
 
 public abstract class ResultListLoader<T> extends AsyncTaskLoader<T> {
 
     private static final String TAG = Constants.TAG + ResultListLoader.class.getSimpleName();
 
-    protected final Favorites mFavorites;
     private T mResult;
 
     protected ResultListLoader(Context context) {
         super(context);
-        mFavorites = new Favorites(context);
     }
 
     @Override

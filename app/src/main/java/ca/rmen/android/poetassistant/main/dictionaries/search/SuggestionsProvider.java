@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -35,7 +35,6 @@ import android.text.TextUtils;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.DaggerHelper;
-import ca.rmen.android.poetassistant.main.dictionaries.DaoSession;
 
 public class SuggestionsProvider extends ContentProvider {
     public static final Uri CONTENT_URI = new Uri.Builder()
@@ -46,8 +45,7 @@ public class SuggestionsProvider extends ContentProvider {
     private static final String AUTHORITY = "ca.rmen.android.poetassistant.SuggestionsProvider";
     private static final int URI_MATCH_SUGGEST = 1;
 
-    @Inject
-    DaoSession mDaoSession;
+    @Inject Suggestions mSuggestions;
     private final UriMatcher mUriMatcher;
 
     public SuggestionsProvider() {
@@ -89,20 +87,13 @@ public class SuggestionsProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         String suggestion = values.getAsString(SearchManager.QUERY);
-        if (mDaoSession.getSuggestionDao()
-                .queryBuilder()
-                .where(SuggestionDao.Properties.Word.eq(suggestion))
-                .buildCount()
-                .count() == 0) {
-            mDaoSession.getSuggestionDao().insertOrReplace(new Suggestion(suggestion));
-        }
+        mSuggestions.addSuggestion(suggestion);
         return null;
     }
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        mDaoSession.getSuggestionDao().deleteAll();
-        mDaoSession.clear();
+        mSuggestions.clear();
         return 0;
     }
 

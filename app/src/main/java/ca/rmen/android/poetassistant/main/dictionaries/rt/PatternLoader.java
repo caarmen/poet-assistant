@@ -36,6 +36,7 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Patterns;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
@@ -50,6 +51,7 @@ public class PatternLoader extends ResultListLoader<ResultListData<RTEntry>> {
     private final String mQuery;
     @Inject Dictionary mDictionary;
     @Inject SettingsPrefs mPrefs;
+    @Inject Favorites mFavorites;
 
     public PatternLoader(Context context, String query) {
         super(context);

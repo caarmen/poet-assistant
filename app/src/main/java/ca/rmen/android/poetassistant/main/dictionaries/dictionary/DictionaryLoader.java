@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -32,6 +32,7 @@ import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 
@@ -41,6 +42,7 @@ public class DictionaryLoader extends ResultListLoader<ResultListData<Dictionary
 
     private final String mQuery;
     @Inject Dictionary mDictionary;
+    @Inject Favorites mFavorites;
 
     public DictionaryLoader(Context context, String query) {
         super(context);

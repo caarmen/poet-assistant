@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 import ca.rmen.android.poetassistant.settings.Settings;
@@ -47,6 +48,7 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
     @Inject Rhymer mRhymer;
     @Inject Thesaurus mThesaurus;
     @Inject SettingsPrefs mPrefs;
+    @Inject Favorites mFavorites;
     private final String mQuery;
     private final String mFilter;
 
