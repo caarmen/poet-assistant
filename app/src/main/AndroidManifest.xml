@@ -80,6 +80,30 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <activity android:name=".main.dictionaries.search.RhymerRouterActivity"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter android:icon="@drawable/ic_rhymer" android:label="@string/tab_rhymer">
+                <action android:name="android.intent.action.PROCESS_TEXT"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".main.dictionaries.search.ThesaurusRouterActivity"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter android:icon="@drawable/ic_thesaurus" android:label="@string/tab_thesaurus">
+                <action android:name="android.intent.action.PROCESS_TEXT"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".main.dictionaries.search.DictionaryRouterActivity"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter android:icon="@drawable/ic_dictionary" android:label="@string/tab_dictionary">
+                <action android:name="android.intent.action.PROCESS_TEXT"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".about.AboutActivity"
             android:label="@string/app_name"
@@ -132,7 +156,7 @@
         <provider
             android:exported="false"
             android:name="ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider"
-            android:authorities="ca.rmen.android.poetassistant.SuggestionsProvider"/>
+            android:authorities="${applicationId}.SuggestionsProvider"/>
     </application>
 
 </manifest>

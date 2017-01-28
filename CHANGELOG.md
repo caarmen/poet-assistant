@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.15.0  *(2017-01-28)*
+--------------------
+* Added possibility to lookup words in Poet Assistant from other compatible applications.
+
 1.14.0  *(2017-01-22*)
 --------------------
 * Removed the greendao library, for these issues:
