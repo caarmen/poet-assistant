@@ -47,7 +47,7 @@ final class ProcessTextRouter {
                             text.toString());
                     Intent mainActivityIntent = new Intent(Intent.ACTION_VIEW);
                     mainActivityIntent.setData(uri);
-                    Log.v(TAG, "Launching intent " + intent);
+                    Log.v(TAG, "Launching intent " + mainActivityIntent);
                     context.startActivity(mainActivityIntent);
                 }
             }

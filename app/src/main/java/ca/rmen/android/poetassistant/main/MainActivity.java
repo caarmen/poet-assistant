@@ -44,8 +44,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
-import java.util.Locale;
-
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.BuildConfig;
@@ -104,15 +102,11 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         mBinding.tabs.setupWithViewPager(mBinding.viewPager);
         mAdapterChangeListener.onChanged();
 
-        // If the app was launched with a query for the thesaurus, focus on that tab.
+        // If the app was launched with a query for the a particular tab, focus on that tab.
         if (data != null && data.getHost() != null) {
-            if (data.getHost().equalsIgnoreCase(Constants.DEEP_LINK_QUERY)) {
-                mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY));
-            } else if (data.getHost().equalsIgnoreCase(Tab.RHYMER.name().toLowerCase(Locale.US))) {
-                mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.RHYMER));
-            } else if (data.getHost().equalsIgnoreCase(Tab.THESAURUS.name().toLowerCase(Locale.US))) {
-                mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.THESAURUS));
-            }
+            Tab tab = Tab.parse(data.getHost());
+            if (tab == null) tab = Tab.DICTIONARY;
+            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab));
         } else if (Intent.ACTION_SEND.equals(intent.getAction())) {
             mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER));
         }
