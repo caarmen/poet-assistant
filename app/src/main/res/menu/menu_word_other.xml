@@ -24,9 +24,11 @@
 
         <item
             android:id="@+id/action_copy"
+            android:icon="@drawable/ic_copy_vector"
             android:title="@string/menu_copy" />
         <item
             android:id="@+id/action_share"
+            android:icon="@drawable/ic_share_vector"
             android:title="@string/share" />
     </group>
 </menu>

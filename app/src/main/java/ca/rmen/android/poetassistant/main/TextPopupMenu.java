@@ -44,6 +44,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.Share;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.widget.HackFor23381;
+import java8.util.stream.StreamSupport;
 
 public class TextPopupMenu {
     public enum Style {
@@ -75,15 +76,14 @@ public class TextPopupMenu {
             MenuPopupHelper menuHelper = new MenuPopupHelper(textView.getContext(), (MenuBuilder) popupMenu.getMenu(), textView);
             if (style == Style.APP) {
                 addAppMenuItems(popupMenu);
-                menuHelper.setForceShowIcon(true);
             } else if (style == Style.SYSTEM) {
                 addSystemMenuItems(textView.getContext(), popupMenu.getMenuInflater(), popupMenu.getMenu(), text);
             } else if (style == Style.FULL) {
                 addAppMenuItems(popupMenu);
-                menuHelper.setForceShowIcon(true);
                 SubMenu systemMenu = popupMenu.getMenu().addSubMenu(R.string.menu_more);
                 addSystemMenuItems(textView.getContext(), popupMenu.getMenuInflater(), systemMenu, text);
             }
+            menuHelper.setForceShowIcon(true);
             menuHelper.show();
         });
     }
@@ -108,6 +108,16 @@ public class TextPopupMenu {
             public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
                 // https://code.google.com/p/android/issues/detail?id=23381
                 if (textView instanceof HackFor23381) ((HackFor23381) textView).setWindowFocusWait(true);
+                for (int i = 0; i < menu.size(); i++) {
+                    MenuItem menuItem = menu.getItem(i);
+                    Intent intent = menuItem.getIntent();
+                    // Hide our own process text action meant for other apps.
+                    if (intent != null
+                            && Intent.ACTION_PROCESS_TEXT.equals(intent.getAction())
+                            && textView.getContext().getApplicationInfo().packageName.equals(intent.getComponent().getPackageName())) {
+                        menuItem.setVisible(false);
+                    }
+                }
                 return false;
             }
 
@@ -162,13 +172,15 @@ public class TextPopupMenu {
         menuInflater.inflate(R.menu.menu_word_other, menu);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            for (ResolveInfo resolveInfo : getSupportedActivities(context, text)) {
-                menu.add(R.id.group_system_popup_menu_items, Menu.NONE,
-                        Menu.NONE,
-                        resolveInfo.loadLabel(context.getPackageManager()))
-                        .setIntent(createProcessTextIntentForResolveInfo(resolveInfo, text))
-                        .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-            }
+            StreamSupport.stream(getSupportedActivities(context, text))
+                    .filter(resolveInfo -> !context.getApplicationInfo().packageName.equals(resolveInfo.activityInfo.packageName))
+                    .forEach(resolveInfo -> menu.add(
+                            R.id.group_system_popup_menu_items, Menu.NONE,
+                            Menu.NONE,
+                            resolveInfo.loadLabel(context.getPackageManager()))
+                            .setIcon(resolveInfo.loadIcon(context.getPackageManager()))
+                            .setIntent(createProcessTextIntentForResolveInfo(resolveInfo, text))
+                            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM));
         }
     }
 
