@@ -30,6 +30,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -40,6 +41,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -49,16 +51,16 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.BuildConfig;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.about.AboutActivity;
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding;
-import ca.rmen.android.poetassistant.Favorites;
-import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFavoriteClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus;
+import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 
@@ -100,6 +102,10 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener);
 
         mBinding.tabs.setupWithViewPager(mBinding.viewPager);
+        if (getResources().getBoolean(R.bool.toolbar_autohide)) {
+            setScrollFlags(mBinding.toolbar);
+            setScrollFlags(mBinding.tabs);
+        }
         mAdapterChangeListener.onChanged();
 
         // If the app was launched with a query for the a particular tab, focus on that tab.
@@ -114,6 +120,12 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         mSearch = new Search(this, mBinding.viewPager);
         loadDictionaries();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
+    }
+
+    private void setScrollFlags(View view) {
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) view.getLayoutParams();
+        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
+        view.setLayoutParams(params);
     }
 
     @Override

@@ -19,11 +19,13 @@
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android.support.design="http://schemas.android.com/apk/res-auto">
 
     <data>
         <import type="android.view.View"/>
         <import type="android.support.design.widget.TabLayout"/>
+        <import type="android.support.design.widget.AppBarLayout.LayoutParams"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -39,7 +41,6 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                app:layout_scrollFlags="scroll|enterAlways|snap"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary" />
 
@@ -47,7 +48,6 @@
                 android:id="@+id/tabs"
                 app:tabMode="@{@bool/tab_text? TabLayout.MODE_SCROLLABLE : TabLayout.MODE_FIXED}"
                 app:tabTextAppearance="@style/AppTheme.TextAppearance.Design.Tab"
-                app:layout_scrollFlags="scroll|enterAlways|snap"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

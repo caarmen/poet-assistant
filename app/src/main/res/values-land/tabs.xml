@@ -18,6 +18,7 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
+    <bool name="toolbar_autohide">true</bool>
     <bool name="tab_icons">false</bool>
     <bool name="tab_text">true</bool>
     <dimen name="tab_text_size">10dp</dimen>
