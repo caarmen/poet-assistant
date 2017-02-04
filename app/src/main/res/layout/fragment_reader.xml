@@ -27,7 +27,7 @@
             type="ca.rmen.android.poetassistant.main.reader.ReaderFragment.PlayButtonListener" />
     </data>
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
@@ -60,5 +60,5 @@
 
 
         </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 </layout>

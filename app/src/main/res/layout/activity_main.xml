@@ -26,11 +26,9 @@
         <import type="android.support.design.widget.TabLayout"/>
     </data>
 
-    <LinearLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        android:orientation="vertical"
         tools:context=".main.MainActivity">
 
         <android.support.design.widget.AppBarLayout
@@ -41,6 +39,7 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary" />
 
@@ -48,6 +47,7 @@
                 android:id="@+id/tabs"
                 app:tabMode="@{@bool/tab_text? TabLayout.MODE_SCROLLABLE : TabLayout.MODE_FIXED}"
                 app:tabTextAppearance="@style/AppTheme.TextAppearance.Design.Tab"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -55,6 +55,7 @@
 
         <android.support.v4.view.ViewPager
             android:id="@+id/view_pager"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
             <android.support.v4.view.PagerTitleStrip
@@ -66,7 +67,7 @@
                 android:textColor="#fff"
                 android:textSize="12sp"
                 android:visibility="@{@bool/tab_text? View.GONE:View.VISIBLE}" />
-            </android.support.v4.view.ViewPager>
+        </android.support.v4.view.ViewPager>
 
-    </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
 </layout>
