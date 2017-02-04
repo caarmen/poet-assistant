@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.16.0  *(2017-02-04)*
+--------------------
+* Made the toolbar collapsible when scrolling down.
+
 1.15.0  *(2017-01-28)*
 --------------------
 * Added possibility to lookup words in Poet Assistant from other compatible applications.
