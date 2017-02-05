@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2016 Carmen Alvarez
+  ~ Copyright (c) 2016-2017 Carmen Alvarez
   ~
   ~ This file is part of Poet Assistant.
   ~
@@ -18,7 +18,7 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <resources>
-    <bool name="toolbar_autohide">false</bool>
+    <bool name="toolbar_auto_hide">false</bool>
     <bool name="tab_icons">true</bool>
     <bool name="tab_text">true</bool>
 </resources>

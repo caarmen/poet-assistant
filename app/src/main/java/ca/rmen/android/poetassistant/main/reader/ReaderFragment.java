@@ -57,6 +57,7 @@ import ca.rmen.android.poetassistant.main.TextPopupMenu;
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
+import ca.rmen.android.poetassistant.widget.CABEditText;
 
 
 public class ReaderFragment extends Fragment implements
@@ -108,6 +109,10 @@ public class ReaderFragment extends Fragment implements
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false);
         mBinding.setPlayButtonListener(mPlayButtonListener);
         mBinding.tvText.addTextChangedListener(mTextWatcher);
+        mBinding.tvText.setImeListener(() -> {
+            Activity activity = getActivity();
+            if (activity instanceof CABEditText.ImeListener) ((CABEditText.ImeListener)activity).onImeClosed();
+        });
         TextPopupMenu.addSelectionPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
         mHandler = new Handler();
         return mBinding.getRoot();

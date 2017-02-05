@@ -30,7 +30,6 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -41,7 +40,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -63,9 +61,10 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
+import ca.rmen.android.poetassistant.widget.CABEditText;
 
 
-public class MainActivity extends AppCompatActivity implements OnWordClickListener, OnFavoriteClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener {
+public class MainActivity extends AppCompatActivity implements OnWordClickListener, OnFavoriteClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener, CABEditText.ImeListener {
 
     private static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
     private static final String DIALOG_TAG = "dialog";
@@ -102,10 +101,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener);
 
         mBinding.tabs.setupWithViewPager(mBinding.viewPager);
-        if (getResources().getBoolean(R.bool.toolbar_autohide)) {
-            setScrollFlags(mBinding.toolbar);
-            setScrollFlags(mBinding.tabs);
-        }
+        AppBarLayoutHelper.enableAutoHide(mBinding);
         mAdapterChangeListener.onChanged();
 
         // If the app was launched with a query for the a particular tab, focus on that tab.
@@ -120,12 +116,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         mSearch = new Search(this, mBinding.viewPager);
         loadDictionaries();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-    }
-
-    private void setScrollFlags(View view) {
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) view.getLayoutParams();
-        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
-        view.setLayoutParams(params);
     }
 
     @Override
@@ -273,6 +263,15 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         finish();
     }
 
+    @Override
+    public void onImeClosed() {
+        // In the reader fragment, when the user taps on the EditText, the soft keyboard is opened, and UI scrolls up, hiding the AppBarLayout.
+        // When the user taps back to close the soft keyboard, we should show the AppBarLayout again, or else the only way
+        // for the user to access the actionbar + tabs would be to swipe left or right to another fragment.
+        AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
+    }
+
+
     /**
      * Clears the search history, and shows a snackbar allowing to undo this clear.
      */
@@ -306,16 +305,20 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
                 .show();
     }
 
-
-    // Hide the keyboard when we navigate to any tab other than the reader tab.
     private final ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
         @Override
         public void onPageSelected(int position) {
             super.onPageSelected(position);
+
             Tab tab = mPagerAdapter.getTabForPosition(position);
+
             if (tab != Tab.READER) {
+                // Hide the keyboard when we navigate to any tab other than the reader tab.
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mBinding.viewPager.getWindowToken(), 0);
+            }
+            if (AppBarLayoutHelper.shouldForceExpandAppBarLayout(mPagerAdapter.getFragment(mBinding.viewPager, tab))) {
+                AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
             }
         }
     };

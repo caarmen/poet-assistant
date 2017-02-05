@@ -46,20 +46,14 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="4dp">
 
-            <android.support.v4.widget.NestedScrollView
-                android:fillViewport="true"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-                <TextView
-                    android:id="@+id/empty"
-                    style="?attr/textAppearanceSearchResultTitle"
-                    android:paddingBottom="?attr/actionBarSize"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    tools:text="Empty text here"
-                    android:text="@null" />
-            </android.support.v4.widget.NestedScrollView>
+            <TextView
+                android:id="@+id/empty"
+                style="?attr/textAppearanceSearchResultTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                tools:text="Empty text here"
+                android:text="@null" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view"
