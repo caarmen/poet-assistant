@@ -19,4 +19,5 @@
 
 <resources>
     <dimen name="seekbar_horizontal_padding_fix">8dp</dimen>
+    <dimen name="empty_text_margin_bottom">0dp</dimen>
 </resources>

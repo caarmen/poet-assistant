@@ -49,6 +49,7 @@
             <TextView
                 android:id="@+id/empty"
                 style="?attr/textAppearanceSearchResultTitle"
+                android:layout_marginBottom="@dimen/empty_text_margin_bottom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
