@@ -30,19 +30,16 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -64,9 +61,10 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
+import ca.rmen.android.poetassistant.widget.CABEditText;
 
 
-public class MainActivity extends AppCompatActivity implements OnWordClickListener, OnFavoriteClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener {
+public class MainActivity extends AppCompatActivity implements OnWordClickListener, OnFavoriteClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener, CABEditText.ImeListener {
 
     private static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
     private static final String DIALOG_TAG = "dialog";
@@ -103,10 +101,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener);
 
         mBinding.tabs.setupWithViewPager(mBinding.viewPager);
-        if (getResources().getBoolean(R.bool.toolbar_autohide)) {
-            setScrollFlags(mBinding.toolbar);
-            setScrollFlags(mBinding.tabs);
-        }
+        AppBarLayoutHelper.enableAutoHide(mBinding);
         mAdapterChangeListener.onChanged();
 
         // If the app was launched with a query for the a particular tab, focus on that tab.
@@ -121,12 +116,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         mSearch = new Search(this, mBinding.viewPager);
         loadDictionaries();
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
-    }
-
-    private void setScrollFlags(View view) {
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) view.getLayoutParams();
-        params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
-        view.setLayoutParams(params);
     }
 
     @Override
@@ -314,15 +303,9 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
             super.onPageSelected(position);
 
             Tab tab = mPagerAdapter.getTabForPosition(position);
-            // If we're in a page which doesn't have a list of data, show the app bar layout again (in case it's hiding).
-            Fragment page = mPagerAdapter.getFragment(mBinding.viewPager, tab);
-            View fragmentView = page.getView();
-            if (fragmentView != null) {
-                RecyclerView recyclerView = (RecyclerView) fragmentView.findViewById(R.id.recycler_view);
-                if (recyclerView == null ||
-                        recyclerView.getAdapter() == null || recyclerView.getAdapter().getItemCount() == 0) {
-                    mBinding.appBarLayout.setExpanded(true, true);
-                }
+
+            if (!AppBarLayoutHelper.shouldAllowAutoHide(mPagerAdapter.getFragment(mBinding.viewPager, tab))) {
+                mBinding.appBarLayout.setExpanded(true, true);
             }
 
             if (tab != Tab.READER) {
@@ -351,4 +334,8 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         }
     };
 
+    @Override
+    public void onImeClosed() {
+        mBinding.appBarLayout.setExpanded(true, true);
+    }
 }
