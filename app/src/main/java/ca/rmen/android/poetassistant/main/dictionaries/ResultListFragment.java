@@ -169,7 +169,6 @@ public class ResultListFragment<T> extends Fragment
         }
         mBinding.empty.setVisibility(View.GONE);
         mHeaderFragment.show();
-        mBinding.recyclerView.scrollToPosition(0); // why do I have to do this?
 
         getActivity().supportInvalidateOptionsMenu();
 

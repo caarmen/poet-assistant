@@ -84,7 +84,7 @@ public class Search {
      */
     public void search(String word, Tab tab) {
         Log.d(TAG, "search() called with: " + "word = [" + word + "], tab = [" + tab + "]");
-        mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab));
+        mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false);
         word = word.trim().toLowerCase(Locale.US);
         // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
         // We want to retrieve the existing fragment.
@@ -150,13 +150,13 @@ public class Search {
                 if (patternTab == null) {
                     mPagerAdapter.setExtraTab(Tab.PATTERN);
                 }
-                mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.PATTERN));
+                mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.PATTERN), false);
             }
         } else {
             mPagerAdapter.setExtraTab(null);
             // If we're in the pattern tab but not searching for a pattern, go to the rhymer tab.
             if (currentTab != Tab.RHYMER && currentTab != Tab.THESAURUS && currentTab != Tab.DICTIONARY) {
-                mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.RHYMER));
+                mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.RHYMER), false);
             }
         }
 
@@ -178,7 +178,7 @@ public class Search {
             protected void onPostExecute(@Nullable String word) {
                 if (word != null) {
                     search(word);
-                    mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY));
+                    mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false);
                 }
             }
         }.execute();

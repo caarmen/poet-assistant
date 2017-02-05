@@ -21,8 +21,6 @@ package ca.rmen.android.poetassistant.main;
 
 import android.content.Context;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import ca.rmen.android.poetassistant.R;
@@ -45,23 +43,6 @@ final class AppBarLayoutHelper {
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) view.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
         view.setLayoutParams(params);
-    }
-
-    /**
-     * @return true if this is a phone and the fragment needs the AppBarLayout to be visible
-     */
-    static boolean shouldForceExpandAppBarLayout(Fragment fragment) {
-        if (!fragment.getResources().getBoolean(R.bool.toolbar_auto_hide)) return false;
-
-        // If we're in a fragment which doesn't have a list of data, show the app bar layout again (in case it's hiding).
-        View fragmentView = fragment.getView();
-        if (fragmentView != null) {
-            RecyclerView recyclerView = (RecyclerView) fragmentView.findViewById(R.id.recycler_view);
-            return recyclerView == null
-                    || recyclerView.getAdapter() == null
-                    || recyclerView.getAdapter().getItemCount() == 0;
-        }
-        return false;
     }
 
     static void forceExpandAppBarLayout(final AppBarLayout appBarLayout) {

@@ -108,9 +108,9 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         if (data != null && data.getHost() != null) {
             Tab tab = Tab.parse(data.getHost());
             if (tab == null) tab = Tab.DICTIONARY;
-            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab));
+            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false);
         } else if (Intent.ACTION_SEND.equals(intent.getAction())) {
-            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER));
+            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false);
         }
 
         mSearch = new Search(this, mBinding.viewPager);
@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         }
         // Play some text in the tts tab
         else if (Intent.ACTION_SEND.equals(intent.getAction())) {
-            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER));
+            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false);
             String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
             ReaderFragment readerFragment = (ReaderFragment) mPagerAdapter.getFragment(mBinding.viewPager, Tab.READER);
             readerFragment.setText(sharedText);
@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         String word = uri.getLastPathSegment();
         if(Constants.DEEP_LINK_QUERY.equals(uri.getHost())) {
             mSearch.search(word);
-            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY));
+            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false);
         } else {
             Tab tab = Tab.parse(uri.getHost());
             if (tab != null) mSearch.search(word, tab);
@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
             return true;
         } else if (item.getItemId() == R.id.action_wotd_history) {
             mPagerAdapter.setExtraTab(Tab.WOTD);
-            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.WOTD));
+            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.WOTD), false);
             return true;
         }
 
@@ -317,9 +317,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mBinding.viewPager.getWindowToken(), 0);
             }
-            if (AppBarLayoutHelper.shouldForceExpandAppBarLayout(mPagerAdapter.getFragment(mBinding.viewPager, tab))) {
-                AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
-            }
+            AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
         }
     };
 
