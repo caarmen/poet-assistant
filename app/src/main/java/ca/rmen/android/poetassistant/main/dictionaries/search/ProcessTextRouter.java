@@ -42,9 +42,10 @@ final class ProcessTextRouter {
             if (Intent.ACTION_PROCESS_TEXT.equals(intent.getAction())) {
                 CharSequence text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT);
                 if (!TextUtils.isEmpty(text)) {
+                    String query = text.toString().trim().toLowerCase(Locale.US);
                     Uri uri = Uri.withAppendedPath(
                             Uri.parse("poetassistant://" + tab.name().toLowerCase(Locale.US)),
-                            text.toString());
+                            query);
                     Intent mainActivityIntent = new Intent(Intent.ACTION_VIEW);
                     mainActivityIntent.setData(uri);
                     Log.v(TAG, "Launching intent " + mainActivityIntent);
