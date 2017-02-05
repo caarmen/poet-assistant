@@ -36,6 +36,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -307,13 +308,25 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
     }
 
 
-    // Hide the keyboard when we navigate to any tab other than the reader tab.
     private final ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
         @Override
         public void onPageSelected(int position) {
             super.onPageSelected(position);
+
             Tab tab = mPagerAdapter.getTabForPosition(position);
+            // If we're in a page which doesn't have a list of data, show the app bar layout again (in case it's hiding).
+            Fragment page = mPagerAdapter.getFragment(mBinding.viewPager, tab);
+            View fragmentView = page.getView();
+            if (fragmentView != null) {
+                RecyclerView recyclerView = (RecyclerView) fragmentView.findViewById(R.id.recycler_view);
+                if (recyclerView == null ||
+                        recyclerView.getAdapter() == null || recyclerView.getAdapter().getItemCount() == 0) {
+                    mBinding.appBarLayout.setExpanded(true, true);
+                }
+            }
+
             if (tab != Tab.READER) {
+                // Hide the keyboard when we navigate to any tab other than the reader tab.
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mBinding.viewPager.getWindowToken(), 0);
             }
