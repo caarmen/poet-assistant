@@ -9,9 +9,14 @@ import android.view.KeyEvent;
  * https://code.google.com/p/android/issues/detail?id=23381
  */
 public class CABEditText extends AppCompatEditText implements HackFor23381 {
+
     public interface ImeListener {
+        /**
+         * The soft keyboard was just closed.
+         */
         void onImeClosed();
     }
+
     private boolean shouldWindowFocusWait;
     private ImeListener mImeListener;
 

@@ -35,20 +35,11 @@ final class AppBarLayoutHelper {
 
     static void enableAutoHide(ActivityMainBinding binding) {
         Context context = binding.getRoot().getContext();
-        if (context.getResources().getBoolean(R.bool.toolbar_autohide)) {
+        if (context.getResources().getBoolean(R.bool.toolbar_auto_hide)) {
             enableAutoHide(binding.toolbar);
             enableAutoHide(binding.tabs);
         }
     }
-
-    static void disableAutoHide(ActivityMainBinding binding) {
-        Context context = binding.getRoot().getContext();
-        if (context.getResources().getBoolean(R.bool.toolbar_autohide)) {
-            disableAutoHide(binding.toolbar);
-            disableAutoHide(binding.tabs);
-        }
-    }
-
 
     private static void enableAutoHide(View view) {
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) view.getLayoutParams();
@@ -56,24 +47,33 @@ final class AppBarLayoutHelper {
         view.setLayoutParams(params);
     }
 
-    private static void disableAutoHide(View view) {
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) view.getLayoutParams();
-        params.setScrollFlags(0);
-        view.setLayoutParams(params);
-    }
-
     /**
-     * @return true if the given fragment can function with the AppBarLayout hidden.
+     * @return true if this is a phone and the fragment needs the AppBarLayout to be visible
      */
-    static boolean shouldAllowAutoHide(Fragment fragment) {
+    static boolean shouldForceExpandAppBarLayout(Fragment fragment) {
+        if (!fragment.getResources().getBoolean(R.bool.toolbar_auto_hide)) return false;
+
         // If we're in a fragment which doesn't have a list of data, show the app bar layout again (in case it's hiding).
         View fragmentView = fragment.getView();
         if (fragmentView != null) {
             RecyclerView recyclerView = (RecyclerView) fragmentView.findViewById(R.id.recycler_view);
-            return recyclerView != null
-                    && recyclerView.getAdapter() != null
-                    && recyclerView.getAdapter().getItemCount() > 0;
+            return recyclerView == null
+                    || recyclerView.getAdapter() == null
+                    || recyclerView.getAdapter().getItemCount() == 0;
         }
         return false;
+    }
+
+    static void forceExpandAppBarLayout(final AppBarLayout appBarLayout) {
+        if (!appBarLayout.getContext().getResources().getBoolean(R.bool.toolbar_auto_hide)) return;
+        // Add a 100ms delay to prevent this issue:
+        // * The user is in the reader tab, with the keyboard open
+        // * The user swipes quickly right to the empty favorites tab
+        // * While we try to display the app bar layout, the soft keyboard is hidden by the app
+        // * We have a glitch: the app bar layout seems to appear briefly but becomes hidden again.
+        // With a small delay we try to make sure the event to show the app bar layout is done after
+        // the soft keyboard is hidden.
+        // I don't like this arbitrary delay :(
+        appBarLayout.postDelayed(()->appBarLayout.setExpanded(true, true), 100);
     }
 }

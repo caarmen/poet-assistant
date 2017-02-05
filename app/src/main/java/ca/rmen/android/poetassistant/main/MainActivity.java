@@ -263,6 +263,15 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         finish();
     }
 
+    @Override
+    public void onImeClosed() {
+        // In the reader fragment, when the user taps on the EditText, the soft keyboard is opened, and UI scrolls up, hiding the AppBarLayout.
+        // When the user taps back to close the soft keyboard, we should show the AppBarLayout again, or else the only way
+        // for the user to access the actionbar + tabs would be to swipe left or right to another fragment.
+        AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
+    }
+
+
     /**
      * Clears the search history, and shows a snackbar allowing to undo this clear.
      */
@@ -296,7 +305,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
                 .show();
     }
 
-
     private final ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
         @Override
         public void onPageSelected(int position) {
@@ -304,14 +312,13 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
 
             Tab tab = mPagerAdapter.getTabForPosition(position);
 
-            if (!AppBarLayoutHelper.shouldAllowAutoHide(mPagerAdapter.getFragment(mBinding.viewPager, tab))) {
-                mBinding.appBarLayout.setExpanded(true, true);
-            }
-
             if (tab != Tab.READER) {
                 // Hide the keyboard when we navigate to any tab other than the reader tab.
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mBinding.viewPager.getWindowToken(), 0);
+            }
+            if (AppBarLayoutHelper.shouldForceExpandAppBarLayout(mPagerAdapter.getFragment(mBinding.viewPager, tab))) {
+                AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
             }
         }
     };
@@ -334,8 +341,4 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         }
     };
 
-    @Override
-    public void onImeClosed() {
-        mBinding.appBarLayout.setExpanded(true, true);
-    }
 }
