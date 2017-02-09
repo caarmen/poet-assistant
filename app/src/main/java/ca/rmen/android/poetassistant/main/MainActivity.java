@@ -119,6 +119,17 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        Log.v(TAG, "onResume");
+        // Weird bug that I don't understand :(
+        // Open about (or settings) and come back to the main activity:
+        // the AppBarLayout is hidden (even if it wasn't hidden before).
+        // We'll force it to be shown again here.
+        AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
+    }
+
+    @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         // If the user cleared search history and rotated the device before the snackbar
