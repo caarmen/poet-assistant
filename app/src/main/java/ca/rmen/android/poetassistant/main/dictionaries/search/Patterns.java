@@ -20,8 +20,6 @@ package ca.rmen.android.poetassistant.main.dictionaries.search;
 
 public class Patterns {
 
-    public static final int MAX_RESULTS = 500;
-
     /**
      * USER_PATTERN_SYMBOLS are symbols the user can type for pattern matching.
      * These are mapped 1-to-1 to SQLITE_PATTERN_SYMBOLS which will be used in

@@ -88,7 +88,7 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
      * syllables.
      */
     Set<String> getFlatRhymes(String word) {
-        List<RhymeResult> rhymeResults = super.getRhymingWords(word);
+        List<RhymeResult> rhymeResults = super.getRhymingWords(word, Constants.MAX_RESULTS);
         Set<String> flatRhymes = new HashSet<>();
         for (RhymeResult rhymeResult : rhymeResults) {
             Collections.addAll(flatRhymes, rhymeResult.strictRhymes);

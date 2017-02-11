@@ -87,10 +87,10 @@ public class PatternLoader extends ResultListLoader<ResultListData<RTEntry>> {
                     favorites.contains(matches[i]),
                     layout == Settings.Layout.EFFICIENT));
         }
-        if (matches.length == Patterns.MAX_RESULTS) {
+        if (matches.length == Constants.MAX_RESULTS) {
             data.add(new RTEntry(
                     RTEntry.Type.SUBHEADING,
-                    getContext().getString(R.string.max_results, Patterns.MAX_RESULTS))
+                    getContext().getString(R.string.max_results, Constants.MAX_RESULTS))
             );
         }
         return new ResultListData<>(mQuery, favorites.contains(mQuery), data);
