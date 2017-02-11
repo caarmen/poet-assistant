@@ -28,8 +28,8 @@ import java.util.Random;
 
 import javax.inject.Inject;
 
+import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
-import ca.rmen.android.poetassistant.main.dictionaries.search.Patterns;
 import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities;
 
 public class Dictionary {
@@ -93,7 +93,7 @@ public class Dictionary {
         String selection = "word LIKE ?";
         String[] selectionArgs = new String[]{pattern};
         String orderBy = "word";
-        String limit = String.valueOf(Patterns.MAX_RESULTS);
+        String limit = String.valueOf(Constants.MAX_RESULTS);
         Cursor cursor = mEmbeddedDb.query(true, "dictionary", projection, selection, selectionArgs, orderBy, limit);
         if (cursor != null) {
             try {
