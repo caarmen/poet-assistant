@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.16.1  *(2017-02-11)*
+--------------------
+* Fix issue #41: crash when opening the word of the day notification just after changing the theme.
+
 1.16.0  *(2017-02-04)*
 --------------------
 * Made the toolbar collapsible when scrolling down.

@@ -120,7 +120,7 @@ public class Search {
                         @Override
                         public void onGlobalLayout() {
                             Log.d(TAG, "searching after layout");
-                            performSearch.run();
+                            mViewPager.post(performSearch);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                                 mViewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                             } else {
