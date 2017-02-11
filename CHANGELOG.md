@@ -4,6 +4,7 @@ Change Log
 1.16.1  *(2017-02-11)*
 --------------------
 * Fix issue #41: crash when opening the word of the day notification just after changing the theme.
+* Limit rhyme results: With version 1.2.0 of the rhymer lib, all rhyme results are returned.  Now we filter the results to 500.  This means that now, when searching for "happy", the user will see up to 500 "last syllable" matches.  Previously, the user would see none.
 
 1.16.0  *(2017-02-04)*
 --------------------
