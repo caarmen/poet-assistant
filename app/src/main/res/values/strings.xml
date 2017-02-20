@@ -28,11 +28,11 @@
     <string name="tab_dictionary">Dictionary</string>
     <string name="tab_reader">Reader</string>
 
-    <string name="action_undo">Undo</string>
     <string name="action_clear">Clear</string>
     <string name="action_search">Search</string>
     <string name="action_random_word">Random word</string>
     <string name="action_clear_search_history">Clear search history</string>
+    <string name="confirm_clear_search_history">Clear the search history?</string>
     <string name="action_wotd_history">Words of the day</string>
     <string name="action_clear_favorites">Clear all favorite words?</string>
     <string name="search_history_cleared">Search history cleared</string>
@@ -80,6 +80,7 @@
     <string name="license_title">Licensing Information</string>
     <string name="file_clear">Clear text</string>
     <string name="file_new_confirm_title">Clear current poem?</string>
+    <string name="file">File</string>
     <string name="file_new">New</string>
     <string name="file_open">Open</string>
     <string name="file_save">Save</string>

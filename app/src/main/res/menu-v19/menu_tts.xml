@@ -21,8 +21,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".main.MainActivity">
-    <item
-        android:id="@+id/action_new"
-        android:title="@string/file_clear"
-        app:showAsAction="never" />
+    <item android:id="@+id/action_file"
+        android:title="@string/file"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/action_new"
+                android:title="@string/file_new"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_open"
+                android:title="@string/file_open"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_save"
+                android:title="@string/file_save"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_save_as"
+                android:title="@string/file_save_as"
+                app:showAsAction="never" />
+        </menu>
+    </item>
 </menu>

@@ -123,12 +123,6 @@ public class ReaderFragment extends Fragment implements
         super.onCreateOptionsMenu(menu, inflater);
         Log.d(TAG, "onCreateOptionsMenu() called with: " + "menu = [" + menu + "], inflater = [" + inflater + "]");
         inflater.inflate(R.menu.menu_tts, menu);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            menu.findItem(R.id.action_new).setTitle(R.string.file_clear);
-            menu.findItem(R.id.action_open).setVisible(false);
-            menu.findItem(R.id.action_save).setVisible(false);
-            menu.findItem(R.id.action_save_as).setVisible(false);
-        }
     }
 
     @Override

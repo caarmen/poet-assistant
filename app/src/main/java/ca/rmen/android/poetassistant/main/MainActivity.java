@@ -30,7 +30,6 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -68,12 +67,10 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
 
     private static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
     private static final String DIALOG_TAG = "dialog";
-    private static final String EXTRA_CLEARED_HISTORY = "cleared_history";
 
     private Search mSearch;
     private ActivityMainBinding mBinding;
     private PagerAdapter mPagerAdapter;
-    private String[] mClearedHistory;
     @Inject Rhymer mRhymer;
     @Inject Thesaurus mThesaurus;
     @Inject Dictionary mDictionary;
@@ -127,28 +124,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         // the AppBarLayout is hidden (even if it wasn't hidden before).
         // We'll force it to be shown again here.
         AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        // If the user cleared search history and rotated the device before the snackbar
-        // disappeared, let's show the snackbar again to let them undo.
-        if (savedInstanceState.containsKey(EXTRA_CLEARED_HISTORY)) {
-            String[] clearedHistory = savedInstanceState.getStringArray(EXTRA_CLEARED_HISTORY);
-            mClearedHistory = clearedHistory;
-            showClearHistorySnackbar(clearedHistory);
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        // If the user cleared the search history, let's save this info in case the device
-        // is rotated, so we can show the snackbar again.
-        if (mClearedHistory != null) {
-            outState.putStringArray(EXTRA_CLEARED_HISTORY, mClearedHistory);
-        }
     }
 
     /**
@@ -240,9 +215,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         } else if (item.getItemId() == R.id.action_random_word) {
             mSearch.lookupRandom();
             return true;
-        } else if (item.getItemId() == R.id.action_clear_search_history) {
-            clearSearchHistory();
-            return true;
         } else if (item.getItemId() == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
@@ -282,39 +254,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
     }
 
-
-    /**
-     * Clears the search history, and shows a snackbar allowing to undo this clear.
-     */
-    private void clearSearchHistory() {
-        new AsyncTask<Void, Void, String[]>() {
-
-            @Override
-            protected String[] doInBackground(Void... voids) {
-                return mSearch.clearSearchHistory();
-            }
-
-            @Override
-            protected void onPostExecute(String[] searchHistory) {
-                if (searchHistory.length > 0) {
-                    mClearedHistory = searchHistory;
-                    showClearHistorySnackbar(searchHistory);
-                }
-            }
-        }.execute();
-    }
-
-    private void showClearHistorySnackbar(String[] searchHistory) {
-        Snackbar.make(mBinding.getRoot(), R.string.search_history_cleared, Constants.SNACKBAR_UNDO_LENGTH_MS)
-                .setAction(R.string.action_undo, view -> mSearch.addSuggestions(searchHistory))
-                .addCallback(new Snackbar.Callback() {
-                    @Override
-                    public void onDismissed(Snackbar snackbar, int event) {
-                        mClearedHistory = null;
-                    }
-                })
-                .show();
-    }
 
     private final ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
         @Override

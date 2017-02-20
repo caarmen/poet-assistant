@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -22,9 +22,12 @@ package ca.rmen.android.poetassistant.settings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.databinding.DataBindingUtil;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -43,23 +46,29 @@ import ca.rmen.android.poetassistant.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Theme;
 import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.databinding.ActivitySettingsBinding;
+import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
+import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider;
 import ca.rmen.android.poetassistant.wotd.Wotd;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity implements ConfirmDialogFragment.ConfirmDialogListener {
 
     private static final String TAG = Constants.TAG + SettingsActivity.class.getSimpleName();
+    private static final int ACTION_CLEAR_SEARCH_HISTORY = 1;
     private static final String PREF_CATEGORY_VOICE = "PREF_CATEGORY_VOICE";
+    private static final String PREF_CLEAR_SEARCH_HISTORY = "PREF_CLEAR_SEARCH_HISTORY";
 
     @Inject Tts mTts;
     @Inject Dictionary mDictionary;
     @Inject SettingsPrefs mSettingsPrefs;
+    private ActivitySettingsBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DaggerHelper.getAppComponent(this).inject(this);
-        setContentView(R.layout.activity_settings);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_settings);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(mListener);
@@ -87,6 +96,25 @@ public class SettingsActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    public void onOk(int actionId) {
+        if (actionId == ACTION_CLEAR_SEARCH_HISTORY) {
+            new AsyncTask<Void, Void, Void>() {
+
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    getContentResolver().delete(SuggestionsProvider.CONTENT_URI, null, null);
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void result) {
+                    Snackbar.make(mBinding.getRoot(), R.string.search_history_cleared, Snackbar.LENGTH_SHORT).show();
+                }
+            }.execute();
+        }
+    }
+
     public static class GeneralPreferenceFragment extends PreferenceFragmentCompat {
 
         private static final String DIALOG_TAG = "dialog_tag";
@@ -107,6 +135,15 @@ public class SettingsActivity extends AppCompatActivity {
 
         private void loadPreferences() {
             addPreferencesFromResource(R.xml.pref_general);
+            getPreferenceScreen().findPreference(PREF_CLEAR_SEARCH_HISTORY).setOnPreferenceClickListener(preference -> {
+                ConfirmDialogFragment.show(
+                        ACTION_CLEAR_SEARCH_HISTORY,
+                        getString(R.string.confirm_clear_search_history),
+                        getString(R.string.action_clear),
+                        getFragmentManager(),
+                        DIALOG_TAG);
+                return true;
+            });
             VoicePreference voicePreference = (VoicePreference) findPreference(Settings.PREF_VOICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 voicePreference.loadVoices(getContext());
@@ -155,6 +192,7 @@ public class SettingsActivity extends AppCompatActivity {
                 super.onDisplayPreferenceDialog(preference);
             }
         }
+
         @SuppressWarnings("unused")
         @Subscribe
         public void onTtsInitialized(Tts.OnTtsInitialized event) {
