@@ -21,6 +21,8 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -63,6 +65,14 @@ public final class Share {
         intent.putExtra(Intent.EXTRA_TEXT, text);
         intent.setType("text/plain");
         context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
+    }
+
+    @DrawableRes public static int getShareIconId() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? R.drawable.ic_share_vector : R.drawable.ic_share;
+    }
+
+    @DrawableRes public static int getNotificationIcon() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? R.drawable.ic_book_vector : R.drawable.ic_book;
     }
 
 }

@@ -43,4 +43,12 @@
                 app:showAsAction="never" />
         </menu>
     </item>
+    <item
+        android:id="@+id/action_share_poem_text"
+        android:title="@string/share_poem_text"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_share_poem_audio"
+        android:title="@string/share_poem_audio"
+        app:showAsAction="never" />
 </menu>

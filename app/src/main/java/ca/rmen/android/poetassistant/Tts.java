@@ -66,6 +66,21 @@ public class Tts {
     }
 
     public static class OnUtteranceCompleted {
+        final String utteranceId;
+        final boolean success;
+
+        OnUtteranceCompleted(String utteranceId, boolean success) {
+            this.utteranceId = utteranceId;
+            this.success = success;
+        }
+
+        @Override
+        public String toString() {
+            return "OnUtteranceCompleted{" +
+                    "success=" + success +
+                    ", utteranceId='" + utteranceId + '\'' +
+                    '}';
+        }
     }
 
     public Tts(Context context, SettingsPrefs settingsPrefs) {
@@ -119,6 +134,14 @@ public class Tts {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void speak21(String text) {
         mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, TAG);
+    }
+
+    public void speakToFile(String text) {
+        if (!isReady()) return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            PoemAudioExport poemAudioExport = new PoemAudioExport(mContext);
+            poemAudioExport.speakToFile(mTextToSpeech, text);
+        }
     }
 
     public void stop() {
@@ -225,40 +248,39 @@ public class Tts {
     private static class UtteranceListener extends UtteranceProgressListener
             implements TextToSpeech.OnUtteranceCompletedListener {
 
-        private void onUtteranceCompleted() {
-            EventBus.getDefault().post(new OnUtteranceCompleted());
-        }
-
         @Override
         public void onStart(String utteranceId) {
-            onUtteranceCompleted();
         }
 
         @Override
         public void onDone(String utteranceId) {
-            onUtteranceCompleted();
+            onUtteranceCompleted(utteranceId);
         }
 
         @Override
         public void onError(String utteranceId) {
-            onUtteranceCompleted();
+            onUtteranceError(utteranceId);
         }
 
         @Override
         public void onError(String utteranceId, int errorCode) {
             super.onError(utteranceId, errorCode);
-            onUtteranceCompleted();
+            onUtteranceError(utteranceId);
         }
 
         @Override
         public void onStop(String utteranceId, boolean interrupted) {
             super.onStop(utteranceId, interrupted);
-            onUtteranceCompleted();
+            onUtteranceCompleted(utteranceId);
         }
 
         @Override
         public void onUtteranceCompleted(String utteranceId) {
-            onUtteranceCompleted();
+            EventBus.getDefault().post(new OnUtteranceCompleted(utteranceId, true));
+        }
+
+        private void onUtteranceError(String utteranceId) {
+            EventBus.getDefault().post(new OnUtteranceCompleted(utteranceId, false));
         }
     }
 
