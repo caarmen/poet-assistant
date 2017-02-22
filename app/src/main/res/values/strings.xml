@@ -109,6 +109,15 @@
     <string name="all_rhymes_setting_title">Show all rhymes</string>
     <string name="all_rhymes_setting_description">Display all rhymes, even if words have no definitions (search may be slower)</string>
     <string name="share">Share</string>
+    <string name="share_poem_text">Share poem text</string>
+    <string name="share_poem_audio">Share poem audio</string>
+    <string name="share_poem_audio_snackbar">Saving poem to audio file</string>
+    <string name="share_poem_audio_progress_notification_title">Saving poem</string>
+    <string name="share_poem_audio_progress_notification_message">Saving poem to audio file…</string>
+    <string name="share_poem_audio_ready_notification_title">Poem audio ready</string>
+    <string name="share_poem_audio_ready_notification_message">Tap to share the poem audio</string>
+    <string name="share_poem_audio_error_notification_title">Error saving poem audio</string>
+    <string name="share_poem_audio_error_notification_message">There was a problem saving the poem audio</string>
     <string name="share_patterns_title">Words matching %s:\n</string>
     <string name="share_favorites_title">My favorite words:\n</string>
     <string name="share_wotd_title">The last words of the day:\n</string>

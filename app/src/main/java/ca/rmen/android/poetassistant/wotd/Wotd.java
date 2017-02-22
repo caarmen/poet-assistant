@@ -37,6 +37,7 @@ import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.compat.HtmlCompat;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.MainActivity;
+import ca.rmen.android.poetassistant.main.dictionaries.Share;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
@@ -122,16 +123,15 @@ public final class Wotd {
                 .setData(uri)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-        int iconId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? R.drawable.ic_book_vector : R.drawable.ic_book;
         Notification notification = new NotificationCompat.Builder(context)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setContentText(content)
                 .setContentTitle(title)
-                .setSmallIcon(iconId)
+                .setSmallIcon(Share.getNotificationIcon())
                 .setStyle(bigTextStyle)
                 .addAction(
-                        getShareIconId(),
+                        Share.getShareIconId(),
                         context.getString(R.string.share),
                         getShareIntent(context, entry))
                 .build();
@@ -154,10 +154,6 @@ public final class Wotd {
             builder.append(context.getString(R.string.share_dictionary_entry, details.partOfSpeech, details.definition));
         }
         return builder.toString();
-    }
-
-    private static int getShareIconId() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? R.drawable.ic_share_vector : R.drawable.ic_share;
     }
 
     private static PendingIntent getShareIntent(Context context, DictionaryEntry entry) {

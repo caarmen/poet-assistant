@@ -28,6 +28,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -123,31 +124,29 @@ public class ReaderFragment extends Fragment implements
         super.onCreateOptionsMenu(menu, inflater);
         Log.d(TAG, "onCreateOptionsMenu() called with: " + "menu = [" + menu + "], inflater = [" + inflater + "]");
         inflater.inflate(R.menu.menu_tts, menu);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) menu.findItem(R.id.action_share).setVisible(false);
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        boolean hasEnteredText = !TextUtils.isEmpty(mBinding.tvText.getText());
-        MenuItem menuItem = menu.findItem(R.id.action_new);
-        if (menuItem == null) {
-            Log.d(TAG, "Unexpected: new menu item missing from reader fragment. Monkey?");
-        } else {
-            menuItem.setEnabled(hasEnteredText);
-        }
-
-        menuItem = menu.findItem(R.id.action_save);
+        prepareMenuItemsRequiringEnteredText(menu, R.id.action_new, R.id.action_save_as,
+                R.id.action_share, R.id.action_share_poem_text, R.id.action_share_poem_audio);
+        MenuItem menuItem = menu.findItem(R.id.action_save);
         if (menuItem == null) {
             Log.d(TAG, "Unexpected: save menu item missing from reader fragment. Monkey?");
         } else {
             menuItem.setEnabled(mPoemPrefs.hasSavedPoem());
         }
+    }
 
-        menuItem = menu.findItem(R.id.action_save_as);
-        if (menuItem == null) {
-            Log.d(TAG, "Unexpected: save as menu item missing from reader fragment. Monkey?");
-        } else {
-            menuItem.setEnabled(hasEnteredText);
+    private void prepareMenuItemsRequiringEnteredText(Menu menu, @IdRes int ...menuIds) {
+        boolean hasEnteredText = !TextUtils.isEmpty(mBinding.tvText.getText());
+        for (@IdRes int menuId : menuIds) {
+            MenuItem menuItem = menu.findItem(menuId);
+            if (menuItem != null) {
+                menuItem.setEnabled(hasEnteredText);
+            }
         }
     }
 
@@ -166,11 +165,14 @@ public class ReaderFragment extends Fragment implements
             PoemFile.save(getActivity(), poemFile.uri, mBinding.tvText.getText().toString(), this);
         } else if (item.getItemId() == R.id.action_save_as) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) saveAs();
-        } else if (item.getItemId() == R.id.action_share) {
+        } else if (item.getItemId() == R.id.action_share_poem_text || item.getItemId() == R.id.action_share) {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.putExtra(Intent.EXTRA_TEXT, mBinding.tvText.getText().toString());
             intent.setType("text/plain");
             startActivity(Intent.createChooser(intent, getString(R.string.share)));
+        } else if (item.getItemId() == R.id.action_share_poem_audio) {
+            mTts.speakToFile(mBinding.tvText.getText().toString());
+            Snackbar.make(mBinding.getRoot(), R.string.share_poem_audio_snackbar, Snackbar.LENGTH_LONG).show();
         }
         return true;
     }
