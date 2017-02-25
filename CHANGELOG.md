@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+1.17.0  *(2017-02-25)*
+--------------------
+* Added option to export the poem as an audio file.
+* Simplify the menu items:
+  - Moved "clear search history" to the settings screen.
+  - Moved "New", "Open", "Save", "Save as" to a "File" submenu.
+
 1.16.1  *(2017-02-11)*
 --------------------
 * Fix issue #41: crash when opening the word of the day notification just after changing the theme.
