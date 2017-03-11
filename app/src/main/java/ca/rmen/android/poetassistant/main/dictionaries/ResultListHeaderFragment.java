@@ -41,7 +41,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
@@ -107,7 +107,7 @@ public class ResultListHeaderFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView called with savedInstanceState " + savedInstanceState);
-        DaggerHelper.getAppComponent(getContext()).inject(this);
+        DaggerHelper.getMainScreenComponent(getContext()).inject(this);
         mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.result_list_header, container, false);
         mBinding.tvFilterLabel.setText(ResultListFactory.getFilterLabel(getContext(), mTab));

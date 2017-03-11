@@ -17,35 +17,25 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant;
-
-import android.app.Application;
-import android.content.Context;
+package ca.rmen.android.poetassistant.dagger;
 
 import javax.inject.Singleton;
 
 import ca.rmen.android.poetassistant.main.MainActivity;
-import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderFragment;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLoader;
-import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
-import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions;
-import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsCursor;
-import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider;
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
+import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsCursor;
+import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider;
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
-import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
-import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.android.poetassistant.settings.VoicePreference;
 import ca.rmen.android.poetassistant.wotd.WotdBootReceiver;
 import ca.rmen.android.poetassistant.wotd.WotdBroadcastReceiver;
@@ -53,19 +43,18 @@ import ca.rmen.android.poetassistant.wotd.WotdEntry;
 import ca.rmen.android.poetassistant.wotd.WotdJobService;
 import ca.rmen.android.poetassistant.wotd.WotdLoader;
 import dagger.Component;
-import dagger.Module;
-import dagger.Provides;
+import dagger.Subcomponent;
 
-public class DaggerHelper {
-    public static AppComponent getAppComponent(Context context) {
-        return ((PoetAssistantApplication) context.getApplicationContext()).getAppComponent();
-    }
+@Singleton
+@Component(modules = AppModule.class)
+public interface AppComponent {
 
-    @Singleton
-    @Component(modules=AppModule.class)
-    public interface AppComponent {
+    MainScreenComponent getMainScreenComponent();
+    SettingsComponent getSettingsComponent();
+    WotdComponent getWotdComponent();
 
-        // Main screen
+    @Subcomponent
+    interface MainScreenComponent {
         void inject(MainActivity mainActivity);
         void inject(ResultListFragment<RTEntry> resultListFragment);
         void injectWotd(ResultListFragment<WotdEntry> resultListFragment);
@@ -80,62 +69,20 @@ public class DaggerHelper {
         void inject(SuggestionsCursor suggestionsCursor);
         void inject(SuggestionsProvider suggestionsProvider);
         void inject(Search search);
+    }
 
-        // Settings
+    @Subcomponent
+    interface SettingsComponent {
         void inject(SettingsActivity settingsActivity);
         void inject(SettingsActivity.GeneralPreferenceFragment generalPreferenceFragment);
         void inject(VoicePreference voicePreference);
+    }
 
-        // Wotd
+    @Subcomponent
+    interface WotdComponent {
         void inject(WotdBroadcastReceiver wotdBroadcastReceiver);
         void inject(WotdJobService wotdJobService);
         void inject(WotdBootReceiver wotdBootReceiver);
         void inject(WotdLoader wotdLoader);
-
-    }
-
-    @Module
-    static class AppModule {
-
-        private final Application mApplication;
-        private final UserDb mUserDb;
-
-        AppModule(Application application) {
-            mApplication = application;
-            mUserDb = new UserDb(application);
-        }
-
-        @Provides @Singleton Tts providesTts(SettingsPrefs settingsPrefs) {
-            return new Tts(mApplication, settingsPrefs);
-        }
-
-        @Provides @Singleton EmbeddedDb providesDbHelper() {
-            return new EmbeddedDb(mApplication);
-        }
-
-        @Provides @Singleton Rhymer providesRhymer(EmbeddedDb embeddedDb, SettingsPrefs prefs) {
-            return new Rhymer(embeddedDb, prefs);
-        }
-
-        @Provides @Singleton Thesaurus providesThesaurus(EmbeddedDb embeddedDb) {
-            return new Thesaurus(embeddedDb);
-        }
-
-        @Provides @Singleton Dictionary providesDictionary(EmbeddedDb embeddedDb) {
-            return new Dictionary(embeddedDb);
-        }
-
-        @Provides @Singleton SettingsPrefs providesSettingsPrefs() {
-            Settings.migrateSettings(mApplication);
-            return SettingsPrefs.get(mApplication);
-        }
-
-        @Provides Favorites providesFavorites() {
-            return new Favorites(mUserDb);
-        }
-
-        @Provides Suggestions providesSuggestions() {
-            return new Suggestions(mUserDb);
-        }
     }
 }

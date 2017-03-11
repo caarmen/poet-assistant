@@ -42,7 +42,7 @@ import org.greenrobot.eventbus.Subscribe;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Theme;
 import ca.rmen.android.poetassistant.Tts;
@@ -67,7 +67,7 @@ public class SettingsActivity extends AppCompatActivity implements ConfirmDialog
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHelper.getAppComponent(this).inject(this);
+        DaggerHelper.getSettingsComponent(this).inject(this);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_settings);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
@@ -125,7 +125,7 @@ public class SettingsActivity extends AppCompatActivity implements ConfirmDialog
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            DaggerHelper.getAppComponent(getContext()).inject(this);
+            DaggerHelper.getSettingsComponent(getContext()).inject(this);
         }
 
         @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -29,7 +29,7 @@ import android.util.Log;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -40,7 +40,7 @@ public class WotdJobService extends JobService {
     @Override
     public void onCreate() {
         super.onCreate();
-        DaggerHelper.getAppComponent(this).inject(this);
+        DaggerHelper.getWotdComponent(this).inject(this);
     }
 
     @Override

@@ -33,7 +33,7 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
@@ -57,7 +57,7 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
         super(context);
         mQuery = query;
         mFilter = filter;
-        DaggerHelper.getAppComponent(context).inject(this);
+        DaggerHelper.getMainScreenComponent(context).inject(this);
     }
 
     @Override

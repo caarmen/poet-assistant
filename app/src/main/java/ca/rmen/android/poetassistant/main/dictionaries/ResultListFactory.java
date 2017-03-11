@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -30,7 +30,7 @@ import android.view.View;
 import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding;
 import ca.rmen.android.poetassistant.main.Tab;
@@ -162,16 +162,16 @@ public class ResultListFactory {
             case PATTERN:
             case FAVORITES:
                 //noinspection unchecked
-                DaggerHelper.getAppComponent(fragment.getContext())
+                DaggerHelper.getMainScreenComponent(fragment.getContext())
                         .inject((ResultListFragment<RTEntry>) fragment);
                 break;
             case WOTD:
                 //noinspection unchecked
-                DaggerHelper.getAppComponent(fragment.getContext())
+                DaggerHelper.getMainScreenComponent(fragment.getContext())
                         .injectWotd((ResultListFragment<WotdEntry>) fragment);
             case DICTIONARY:
                 //noinspection unchecked
-                DaggerHelper.getAppComponent(fragment.getContext())
+                DaggerHelper.getMainScreenComponent(fragment.getContext())
                         .injectDict((ResultListFragment<DictionaryEntry>) fragment);
                 break;
             default:

@@ -31,7 +31,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
@@ -47,7 +47,7 @@ public class DictionaryLoader extends ResultListLoader<ResultListData<Dictionary
     public DictionaryLoader(Context context, String query) {
         super(context);
         mQuery = query;
-        DaggerHelper.getAppComponent(context).inject(this);
+        DaggerHelper.getMainScreenComponent(context).inject(this);
     }
 
     @Override

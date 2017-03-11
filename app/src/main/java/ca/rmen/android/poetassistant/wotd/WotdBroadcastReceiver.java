@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -28,7 +28,7 @@ import android.util.Log;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 
 public class WotdBroadcastReceiver extends BroadcastReceiver {
@@ -39,7 +39,7 @@ public class WotdBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive: intent = " + intent);
-        DaggerHelper.getAppComponent(context).inject(this);
+        DaggerHelper.getWotdComponent(context).inject(this);
         mTask.execute(context);
     }
 

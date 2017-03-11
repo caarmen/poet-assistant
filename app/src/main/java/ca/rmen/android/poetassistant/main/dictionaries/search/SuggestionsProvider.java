@@ -34,7 +34,7 @@ import android.text.TextUtils;
 
 import javax.inject.Inject;
 
-import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 
 public class SuggestionsProvider extends ContentProvider {
     public static final Uri CONTENT_URI = new Uri.Builder()
@@ -61,7 +61,7 @@ public class SuggestionsProvider extends ContentProvider {
     @Override
     public void attachInfo(Context context, ProviderInfo info) {
         super.attachInfo(context, info);
-        DaggerHelper.getAppComponent(context).inject(this);
+        DaggerHelper.getMainScreenComponent(context).inject(this);
     }
 
     @Override

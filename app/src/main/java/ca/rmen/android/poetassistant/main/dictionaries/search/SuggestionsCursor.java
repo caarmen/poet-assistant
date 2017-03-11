@@ -32,7 +32,7 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import java8.util.stream.StreamSupport;
@@ -55,7 +55,7 @@ public class SuggestionsCursor extends MatrixCursor {
     SuggestionsCursor(Context context, String filter) {
         super(COLUMNS);
         mFilter = filter;
-        DaggerHelper.getAppComponent(context).inject(this);
+        DaggerHelper.getMainScreenComponent(context).inject(this);
         loadHistory();
         loadSimilarWords();
     }
