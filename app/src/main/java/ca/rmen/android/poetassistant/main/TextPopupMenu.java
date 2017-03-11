@@ -27,8 +27,6 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.PopupMenu;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -44,6 +42,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.Share;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.widget.HackFor23381;
+import ca.rmen.android.poetassistant.widget.PopupMenuHelper;
 import java8.util.stream.StreamSupport;
 
 public class TextPopupMenu {
@@ -73,18 +72,18 @@ public class TextPopupMenu {
         textView.setOnClickListener(v -> {
             String text = textView.getText().toString();
             PopupMenu popupMenu = createPopupMenu(textView, text, listener);
-            MenuPopupHelper menuHelper = new MenuPopupHelper(textView.getContext(), (MenuBuilder) popupMenu.getMenu(), textView);
             if (style == Style.APP) {
                 addAppMenuItems(popupMenu);
+                PopupMenuHelper.insertMenuItemIcons(textView.getContext(), popupMenu);
             } else if (style == Style.SYSTEM) {
                 addSystemMenuItems(textView.getContext(), popupMenu.getMenuInflater(), popupMenu.getMenu(), text);
+                PopupMenuHelper.insertMenuItemIcons(textView.getContext(), popupMenu);
             } else if (style == Style.FULL) {
                 addAppMenuItems(popupMenu);
                 SubMenu systemMenu = popupMenu.getMenu().addSubMenu(R.string.menu_more);
                 addSystemMenuItems(textView.getContext(), popupMenu.getMenuInflater(), systemMenu, text);
             }
-            menuHelper.setForceShowIcon(true);
-            menuHelper.show();
+            popupMenu.show();
         });
     }
 

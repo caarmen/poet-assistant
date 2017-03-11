@@ -27,4 +27,5 @@
     <dimen name="list_rt_item_subheading_height">@dimen/wrap_content</dimen>
     <dimen name="seekbar_horizontal_padding_fix">0dp</dimen>
     <dimen name="empty_text_margin_bottom">56dp</dimen>
+    <dimen name="menu_item_icon_size">24dp</dimen>
 </resources>
