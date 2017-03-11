@@ -39,7 +39,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.PagerAdapter;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
@@ -64,7 +64,7 @@ public class Search {
     @Inject Dictionary mDictionary;
 
     public Search(Activity searchableActivity, ViewPager viewPager) {
-        DaggerHelper.getAppComponent(searchableActivity).inject(this);
+        DaggerHelper.getMainScreenComponent(searchableActivity).inject(this);
         mContext = searchableActivity;
         mViewPager = viewPager;
         mPagerAdapter = (PagerAdapter) viewPager.getAdapter();

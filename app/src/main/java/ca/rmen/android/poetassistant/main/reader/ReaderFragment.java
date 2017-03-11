@@ -49,7 +49,7 @@ import org.greenrobot.eventbus.Subscribe;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.compat.HtmlCompat;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
@@ -91,7 +91,7 @@ public class ReaderFragment extends Fragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         super.onCreate(savedInstanceState);
-        DaggerHelper.getAppComponent(getContext()).inject(this);
+        DaggerHelper.getMainScreenComponent(getContext()).inject(this);
         setHasOptionsMenu(true);
         mPoemPrefs = new PoemPrefs(getActivity());
         EventBus.getDefault().register(this);

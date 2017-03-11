@@ -47,7 +47,7 @@ import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.BuildConfig;
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.about.AboutActivity;
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
-                DaggerHelper.getAppComponent(MainActivity.this).inject(MainActivity.this);
+                DaggerHelper.getMainScreenComponent(MainActivity.this).inject(MainActivity.this);
                 return mRhymer.isLoaded() && mThesaurus.isLoaded() && mDictionary.isLoaded();
             }
 

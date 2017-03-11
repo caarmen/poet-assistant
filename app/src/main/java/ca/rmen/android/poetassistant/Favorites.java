@@ -50,7 +50,7 @@ public class Favorites {
         }
     }
 
-    Favorites(UserDb userDb) {
+    public Favorites(UserDb userDb) {
         mUserDb = userDb;
     }
 

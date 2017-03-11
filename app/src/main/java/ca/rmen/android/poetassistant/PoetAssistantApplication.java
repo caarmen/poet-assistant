@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -20,20 +20,23 @@ package ca.rmen.android.poetassistant;
 
 import android.app.Application;
 
+import ca.rmen.android.poetassistant.dagger.AppComponent;
+import ca.rmen.android.poetassistant.dagger.AppModule;
+import ca.rmen.android.poetassistant.dagger.DaggerAppComponent;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 public class PoetAssistantApplication extends Application {
-    private DaggerHelper.AppComponent mAppComponent;
+    private AppComponent mAppComponent;
     @Override
     public void onCreate() {
         super.onCreate();
         Theme.setThemeFromSettings(SettingsPrefs.get(this));
     }
 
-    DaggerHelper.AppComponent getAppComponent() {
+    public AppComponent getAppComponent() {
         if (mAppComponent == null) {
-            mAppComponent = DaggerDaggerHelper_AppComponent.builder()
-                    .appModule(new DaggerHelper.AppModule(this))
+            mAppComponent = DaggerAppComponent.builder()
+                    .appModule(new AppModule(this))
                     .build();
         }
         return mAppComponent;

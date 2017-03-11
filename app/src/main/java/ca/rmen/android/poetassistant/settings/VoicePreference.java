@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -30,7 +30,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import ca.rmen.android.poetassistant.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.Tts;
 import java8.util.stream.StreamSupport;
 
@@ -62,7 +62,7 @@ public class VoicePreference extends ListPreference {
     }
 
     private void init() {
-        DaggerHelper.getAppComponent(getContext()).inject(this);
+        DaggerHelper.getSettingsComponent(getContext()).inject(this);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

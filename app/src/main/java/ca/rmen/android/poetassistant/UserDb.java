@@ -35,7 +35,7 @@ public class UserDb extends SQLiteOpenHelper {
     private static final int DB_VERSION = 1;
     private final Context mContext;
 
-    UserDb(Context context) {
+    public UserDb(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
         mContext = context;
     }
