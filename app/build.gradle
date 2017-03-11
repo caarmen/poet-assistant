@@ -18,7 +18,6 @@
  */
 
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.github.ben-manes.versions'
 
 
@@ -44,6 +43,9 @@ android {
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
+        jackOptions {
+            enabled true
+        }
     }
     buildTypes {
         release {
@@ -95,7 +97,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
-        classpath 'me.tatarka:gradle-retrolambda:3.6.0'
     }
 }
 
@@ -115,8 +116,6 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.9'
 
     testCompile 'junit:junit:4.12'
-
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.5.1'
 }
 
 // Only show real releases with the ben-manes plugin.
