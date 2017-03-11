@@ -24,7 +24,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.OpenableColumns;
-import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -125,7 +124,6 @@ class PoemFile {
     /**
      * Generate a suggested filename based on the first few words of the poem text.
      */
-    @VisibleForTesting
     static String generateFileName(String text) {
         final int minLength = 8;
         final int maxLength = 16;

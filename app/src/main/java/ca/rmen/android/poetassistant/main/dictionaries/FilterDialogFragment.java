@@ -28,8 +28,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Window;
 import android.view.WindowManager;
@@ -50,7 +50,7 @@ public class FilterDialogFragment extends DialogFragment {
     private static final String EXTRA_MESSAGE = "message";
     private static final String EXTRA_TEXT = "text";
 
-    public interface FilterDialogListener {
+    interface FilterDialogListener {
         void onFilterSubmitted(String input);
     }
 
