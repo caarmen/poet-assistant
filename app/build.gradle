@@ -19,7 +19,6 @@
 
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.github.ben-manes.versions'
 
 
@@ -95,14 +94,13 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
-        classpath 'me.tatarka:gradle-retrolambda:3.5.0'
+        classpath 'me.tatarka:gradle-retrolambda:3.6.0'
     }
 }
 
 dependencies {
-    apt 'org.jraf:prefs-compiler:1.1.1'
+    annotationProcessor 'org.jraf:prefs-compiler:1.1.1'
 
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support:design:25.2.0'
@@ -114,11 +112,11 @@ dependencies {
     compile 'ca.rmen:porter-stemmer:1.0.0'
     compile 'org.jraf:prefs:1.1.1'
     compile 'com.google.dagger:dagger:2.9'
-    apt 'com.google.dagger:dagger-compiler:2.9'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.9'
 
     testCompile 'junit:junit:4.12'
 
-    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.5.0'
+    retrolambdaConfig 'net.orfjackal.retrolambda:retrolambda:2.5.1'
 }
 
 // Only show real releases with the ben-manes plugin.

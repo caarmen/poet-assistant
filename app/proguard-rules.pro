@@ -35,6 +35,7 @@
 
 # streamsupport:
 -dontwarn java8.util.**
+-dontnote java8.util.**
 
 # retrolambda:
 -dontwarn java.lang.invoke.*

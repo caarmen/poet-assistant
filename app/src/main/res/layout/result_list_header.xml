@@ -71,7 +71,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:button="@drawable/ic_star"
                 android:clickable="true"
-                android:onClick="@{buttonListener.onFavoriteButtonClicked}"
+                android:onClick="@{buttonListener::onFavoriteButtonClicked}"
                 android:padding="8dp"
                 app:buttonTint="@color/primary_dark" />
 
@@ -94,7 +94,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/help"
-                android:onClick="@{buttonListener.onHelpButtonClicked}"
+                android:onClick="@{buttonListener::onHelpButtonClicked}"
                 android:padding="8dp"
                 android:visibility="gone"
                 app:srcCompat="@drawable/btn_help"
@@ -111,7 +111,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/action_clear_favorites"
-                android:onClick="@{buttonListener.onDeleteFavoritesButtonClicked}"
+                android:onClick="@{buttonListener::onDeleteFavoritesButtonClicked}"
                 android:padding="8dp"
                 android:visibility="gone"
                 app:srcCompat="@drawable/ic_delete"
@@ -128,7 +128,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/filter_hint"
-                android:onClick="@{buttonListener.onFilterButtonClicked}"
+                android:onClick="@{buttonListener::onFilterButtonClicked}"
                 android:padding="8dp"
                 android:visibility="gone"
                 app:srcCompat="@drawable/ic_filter_list"
@@ -145,7 +145,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/tts_play"
-                android:onClick="@{buttonListener.onPlayButtonClicked}"
+                android:onClick="@{buttonListener::onPlayButtonClicked}"
                 android:padding="8dp"
                 app:srcCompat="@drawable/ic_play_circle" />
 
@@ -160,7 +160,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/action_search"
-                android:onClick="@{buttonListener.onWebSearchButtonClicked}"
+                android:onClick="@{buttonListener::onWebSearchButtonClicked}"
                 android:padding="8dp"
                 app:srcCompat="@drawable/ic_web_search" />
 
@@ -206,7 +206,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/filter_clear"
-                android:onClick="@{buttonListener.onFilterClearButtonClicked}"
+                android:onClick="@{buttonListener::onFilterClearButtonClicked}"
                 app:srcCompat="@drawable/ic_clear" />
         </LinearLayout>
 

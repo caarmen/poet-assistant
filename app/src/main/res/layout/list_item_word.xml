@@ -54,7 +54,7 @@
             android:paddingEnd="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{entryIconClickListener.onFavoriteIconClicked}" />
+            android:onClick="@{entryIconClickListener::onFavoriteIconClicked}" />
         <TextView
             android:id="@+id/text1"
             style="?attr/textAppearanceListItem"
@@ -81,7 +81,7 @@
             android:background="?selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="@string/tab_rhymer"
-            android:onClick="@{entryIconClickListener.onRhymerIconClicked}"
+            android:onClick="@{entryIconClickListener::onRhymerIconClicked}"
             android:paddingLeft="@dimen/list_rtd_icon_padding"
             android:paddingRight="@dimen/list_rtd_icon_padding"
             android:paddingStart="@dimen/list_rtd_icon_padding"
@@ -96,7 +96,7 @@
             android:background="?selectableItemBackgroundBorderless"
             android:clickable="@{entry.hasDefinition}"
             android:contentDescription="@string/tab_thesaurus"
-            android:onClick="@{entryIconClickListener.onThesaurusIconClicked}"
+            android:onClick="@{entryIconClickListener::onThesaurusIconClicked}"
             android:paddingLeft="@dimen/list_rtd_icon_padding"
             android:paddingRight="@dimen/list_rtd_icon_padding"
             android:paddingStart="@dimen/list_rtd_icon_padding"
@@ -118,7 +118,7 @@
             android:paddingStart="@dimen/list_rtd_icon_padding"
             android:paddingEnd="@dimen/list_rtd_icon_padding"
             android:contentDescription="@string/tab_dictionary"
-            android:onClick="@{entryIconClickListener.onDictionaryIconClicked}"
+            android:onClick="@{entryIconClickListener::onDictionaryIconClicked}"
             android:alpha="@{entry.hasDefinition ? 0xff: 0x44}"
             android:visibility="@{entry.showButtons? View.VISIBLE:View.GONE}"
             app:srcCompat="@drawable/ic_dictionary" />
