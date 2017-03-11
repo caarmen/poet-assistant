@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@string/tts_play"
-                android:onClick="@{playButtonListener.onPlayButtonClicked}"
+                android:onClick="@{playButtonListener::onPlayButtonClicked}"
                 app:srcCompat="@drawable/ic_play_disabled" />
 
             <ca.rmen.android.poetassistant.widget.CABEditText
