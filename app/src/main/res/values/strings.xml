@@ -180,6 +180,9 @@
         <item>Clean</item>
         <item>Efficient</item>
     </string-array>
+    <string name="pref_voice_preview_title">Preview</string>
+    <string name="pref_voice_preview_summary">Listen to a voice sample</string>
+    <string name="pref_voice_preview_text">To be, or not to be, that is the question.</string>
     <string name="pref_system_tts_settings_title">System voice settings</string>
     <string name="pref_system_tts_settings_description">This will leave Poet Assistant and open the system text-to-speech settings on your device.</string>
     <string name="tts_error"><![CDATA[No voices found! &#128552;]]></string>
