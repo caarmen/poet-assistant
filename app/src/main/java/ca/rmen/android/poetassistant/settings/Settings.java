@@ -49,6 +49,7 @@ public class Settings {
     @SuppressWarnings("unused")
     private static final int VOICE_PITCH_NORMAL = 100;
     static final String PREF_SYSTEM_TTS_SETTINGS = "PREF_SYSTEM_TTS_SETTINGS";
+    static final String PREF_VOICE_PREVIEW = "PREF_VOICE_PREVIEW";
     static final String PREF_THEME = "PREF_THEME";
     static final String PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED";
     @SuppressWarnings("unused")

@@ -1,6 +1,17 @@
 Change Log
 ==========
 
+1.18.0  *(2017-03-12)*
+--------------------
+* Added function in the setting screen to preview the voice.
+
+1.17.1  *(2017-03-11)*
+--------------------
+* Maintenance release:
+  - Update build environment
+  - Dagger refactoring
+  - Removed use of hidden MenuPopupHelper class
+
 1.17.0  *(2017-02-25)*
 --------------------
 * Added option to export the poem as an audio file.

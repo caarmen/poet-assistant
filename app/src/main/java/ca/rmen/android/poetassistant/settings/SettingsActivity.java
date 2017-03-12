@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
+import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -72,6 +73,13 @@ public class SettingsActivity extends AppCompatActivity implements ConfirmDialog
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(mListener);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+    }
+
+    @Override
+    protected void onPause() {
+        mTts.stop();
+        super.onPause();
     }
 
     @Override
@@ -151,6 +159,12 @@ public class SettingsActivity extends AppCompatActivity implements ConfirmDialog
             if (voicePreference.getEntries() == null || voicePreference.getEntries().length < 2) {
                 removePreference(PREF_CATEGORY_VOICE, voicePreference);
             }
+            Preference voicePreview = findPreference(Settings.PREF_VOICE_PREVIEW);
+            voicePreview.setOnPreferenceClickListener(preference -> {
+                if (mTts.isSpeaking()) mTts.stop();
+                else mTts.speak(getString(R.string.pref_voice_preview_text));
+                return false;
+            });
             Preference systemTtsSettings = findPreference(Settings.PREF_SYSTEM_TTS_SETTINGS);
             Intent intent = systemTtsSettings.getIntent();
             if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
