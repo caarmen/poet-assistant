@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.content.Context;
 import android.support.annotation.ColorRes;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -103,7 +104,8 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
         }
     }
 
-    private static ThesaurusEntry.ThesaurusEntryDetails[] filter(ThesaurusEntry.ThesaurusEntryDetails[] entries, Set<String> filter) {
+    @VisibleForTesting
+    static ThesaurusEntry.ThesaurusEntryDetails[] filter(ThesaurusEntry.ThesaurusEntryDetails[] entries, Set<String> filter) {
         List<ThesaurusEntry.ThesaurusEntryDetails> filteredEntries = new ArrayList<>();
         for (ThesaurusEntry.ThesaurusEntryDetails entry : entries) {
             ThesaurusEntry.ThesaurusEntryDetails filteredEntry = filter(entry, filter);
