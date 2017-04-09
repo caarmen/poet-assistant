@@ -20,6 +20,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.getkeepsafe.dexcount'
+apply plugin: 'me.tatarka.retrolambda'
 
 
 android {
@@ -45,7 +46,7 @@ android {
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
         jackOptions {
-            enabled true
+            enabled false // too slow! :(
         }
     }
     buildTypes {
@@ -99,6 +100,7 @@ buildscript {
     dependencies {
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.4'
+        classpath 'me.tatarka:gradle-retrolambda:3.6.0'
     }
 }
 
