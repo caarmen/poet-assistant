@@ -34,8 +34,8 @@ public class ThesaurusLoaderTest {
 
     @Test
     public void testHogwashSynonymsWhichRhymeWithCot() {
-        Set<String> rhhymes = new HashSet<>();
-        rhhymes.addAll(Arrays.asList(
+        Set<String> rhymes = new HashSet<>();
+        rhymes.addAll(Arrays.asList(
                 "allot", "baht", "blot", "clot", "dot", "hot", "jot", "khat", "knot", "lat", "lot", "lott", "lotte", "montserrat", "mott", "motte", "not", "plot", "polyglot", "pot", "rot", "sadat", "scot", "scott", "shot", "slot", "spot", "squat", "swat", "tot", "trot", "watt", "yacht"
         ));
         ThesaurusEntry.ThesaurusEntryDetails[] thesaurusEntryDetails = new ThesaurusEntry.ThesaurusEntryDetails[] {
@@ -43,7 +43,7 @@ public class ThesaurusLoaderTest {
                         new String[]{"garbage", "buncombe", "drivel", "bunk", "rot", "guff", "bunkim"}, new String[0])
         };
 
-        ThesaurusEntry.ThesaurusEntryDetails[] actual = ThesaurusLoader.filter(thesaurusEntryDetails, rhhymes);
+        ThesaurusEntry.ThesaurusEntryDetails[] actual = ThesaurusLoader.filter(thesaurusEntryDetails, rhymes);
         assertNotNull(actual);
         assertEquals(1, actual.length);
         assertNotNull(actual[0].antonyms);
