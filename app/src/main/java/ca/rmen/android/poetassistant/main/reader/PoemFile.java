@@ -22,8 +22,9 @@ package ca.rmen.android.poetassistant.main.reader;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.provider.OpenableColumns;
+import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -37,13 +38,18 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import ca.rmen.android.poetassistant.Constants;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 
 class PoemFile {
     private static final String TAG = Constants.TAG + PoemFile.class.getSimpleName();
 
     interface PoemFileCallback {
-        void onPoemLoaded(PoemFile poemFile);
+        // Suppress fake Android Studio warning: it doesn't understand that we call this
+        // with a non-null value from a method reference (callback::onPoemLoaded)
+        void onPoemLoaded(@SuppressWarnings("SameParameterValue") PoemFile poemFile);
 
         void onPoemSaved(PoemFile poemFile);
     }
@@ -58,67 +64,55 @@ class PoemFile {
         this.text = text;
     }
 
-    public static void open(final Context context, final Uri uri, final PoemFileCallback callback) {
+    static void open(final Context context, final Uri uri, final PoemFileCallback callback) {
         Log.d(TAG, "open() called with: " + "uri = [" + uri + "]");
-        new AsyncTask<Void, Void, PoemFile>() {
-            @Override
-            protected PoemFile doInBackground(Void... params) {
-                try {
-                    InputStream inputStream = context.getContentResolver().openInputStream(uri);
-                    if (inputStream == null) return null;
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        stringBuilder.append(line).append('\n');
-                    }
-                    String text = stringBuilder.toString();
-                    reader.close();
-                    String displayName = readDisplayName(context, uri);
-                    return new PoemFile(uri, displayName, text);
+        Single.fromCallable(() -> readPoemFile(context, uri))
+                .doOnError(throwable-> Log.w(TAG, "Couldn't open file", throwable))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(callback::onPoemLoaded,
+                        throwable -> callback.onPoemLoaded(null));
+    }
 
-                } catch (IOException e) {
-                    Log.w(TAG, "Couldn't open file", e);
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(PoemFile poemFile) {
-                callback.onPoemLoaded(poemFile);
-            }
-        }.execute();
+    @WorkerThread
+    private static PoemFile readPoemFile(Context context, Uri uri) throws IOException {
+        InputStream inputStream = context.getContentResolver().openInputStream(uri);
+        if (inputStream == null) return null;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        StringBuilder stringBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            stringBuilder.append(line).append('\n');
+        }
+        String text = stringBuilder.toString();
+        reader.close();
+        String displayName = readDisplayName(context, uri);
+        return new PoemFile(uri, displayName, text);
     }
 
     static void save(final Context context, final Uri uri, final String text, final PoemFileCallback callback) {
         Log.d(TAG, "save() called with: " + "uri = [" + uri + "], text = [" + text + "]");
-        new AsyncTask<Void, Void, PoemFile>() {
+        Single.fromCallable(() -> savePoemFile(context, uri, text))
+                // Catch the SecurityException because of some crash
+                // reported which I couldn't reproduce: https://github.com/caarmen/poet-assistant/issues/18
+                .doOnError(throwable -> Log.v(TAG, "Couldn't save file", throwable))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(poemFile -> {
+                    if (uri != null) callback.onPoemSaved(poemFile);
+                }, throwable -> callback.onPoemSaved(null));
+    }
 
-            @Override
-            protected PoemFile doInBackground(Void... params) {
-                try {
-                    OutputStream outputStream = context.getContentResolver().openOutputStream(uri, "w");
-                    if (outputStream == null) return null;
-                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
-                    writer.write(text);
-                    writer.close();
-                    String displayName = readDisplayName(context, uri);
-                    return new PoemFile(uri, displayName, text);
-                }
-                catch (IOException | SecurityException e) {
-                    // Catch the SecurityException because of some crash
-                    // reported which I couldn't reproduce: https://github.com/caarmen/poet-assistant/issues/18
-                    Log.w(TAG, "Couldn't save file", e);
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(PoemFile poemFile) {
-                if (uri != null) callback.onPoemSaved(poemFile);
-            }
-
-        }.execute();
+    @NonNull
+    @WorkerThread
+    private static PoemFile savePoemFile(Context context, Uri uri, String text) throws IOException, SecurityException {
+        OutputStream outputStream = context.getContentResolver().openOutputStream(uri, "w");
+        if (outputStream == null) throw new IOException("Couldn't open OutputStream to uri " + uri);
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+        writer.write(text);
+        writer.close();
+        String displayName = readDisplayName(context, uri);
+        return new PoemFile(uri, displayName, text);
     }
 
     /**

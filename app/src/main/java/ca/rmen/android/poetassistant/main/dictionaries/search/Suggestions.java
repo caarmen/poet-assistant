@@ -24,8 +24,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
-import android.support.annotation.MainThread;
 import android.support.annotation.WorkerThread;
 import android.support.v7.preference.PreferenceManager;
 
@@ -69,26 +67,23 @@ public class Suggestions {
         return result;
     }
 
-    @MainThread
+    @WorkerThread
     void addSuggestion(final String suggestion) {
-        executeDbOperation(() -> {
-            // We should have defined a unique constraint in v1 of the db,
-            // but we didn't :(  Too late now.  Don't want to do a db upgrade
-            // for that.  So instead we check if a suggestion exists before adding
-            // it.
-            if (!hasSuggestion(suggestion)) {
-                ContentValues values = new ContentValues(1);
-                values.put(COLUMN_WORD, suggestion);
-                mUserDb.getWritableDatabase().insert(
-                        TABLE_SUGGESTION, null, values);
-            }
-        });
+        // We should have defined a unique constraint in v1 of the db,
+        // but we didn't :(  Too late now.  Don't want to do a db upgrade
+        // for that.  So instead we check if a suggestion exists before adding
+        // it.
+        if (!hasSuggestion(suggestion)) {
+            ContentValues values = new ContentValues(1);
+            values.put(COLUMN_WORD, suggestion);
+            mUserDb.getWritableDatabase().insert(
+                    TABLE_SUGGESTION, null, values);
+        }
     }
 
-    @MainThread
+    @WorkerThread
     void clear() {
-        executeDbOperation(() -> mUserDb.getWritableDatabase()
-                .delete(TABLE_SUGGESTION, null, null));
+        mUserDb.getWritableDatabase().delete(TABLE_SUGGESTION, null, null);
     }
 
     @WorkerThread
@@ -109,11 +104,6 @@ public class Suggestions {
             }
         }
         return false;
-    }
-
-    @MainThread
-    private static void executeDbOperation(final Runnable dbOperation) {
-        AsyncTask.execute(dbOperation);
     }
 
     public static void createTable(Context context, SQLiteDatabase db) {

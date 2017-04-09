@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 import android.support.annotation.MainThread;
 import android.support.annotation.WorkerThread;
 import android.support.v7.preference.PreferenceManager;
@@ -34,6 +33,10 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
+
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class Favorites {
 
@@ -106,20 +109,11 @@ public class Favorites {
     }
 
     @MainThread
-    private static void executeDbOperation(final Runnable dbOperation) {
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                dbOperation.run();
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                EventBus.getDefault().post(new OnFavoritesChanged());
-            }
-        }.execute();
+    private static void executeDbOperation(Runnable dbOperation) {
+        Completable.fromRunnable(dbOperation)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> EventBus.getDefault().post(new OnFavoritesChanged()));
     }
 
     static void createTable(Context context, SQLiteDatabase db) {

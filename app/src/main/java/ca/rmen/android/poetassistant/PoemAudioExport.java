@@ -26,12 +26,13 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.MainThread;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -44,6 +45,9 @@ import java.util.HashMap;
 
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.dictionaries.Share;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
 class PoemAudioExport {
@@ -69,30 +73,31 @@ class PoemAudioExport {
         } else {
             EventBus.getDefault().register(this);
             notifyPoemAudioInProgress();
-            final String textToRead = text.substring(0, Math.min(text.length(), TextToSpeech.getMaxSpeechInputLength()));
-            new AsyncTask<Void, Void, Void>(){
-                @Override
-                protected Void doInBackground(Void... params) {
-                    if (audioFile.exists()) {
-                        if (audioFile.delete()) {
-                            Log.v(TAG, "Deleted existing file " + audioFile + ".");
+            String textToRead = text.substring(0, Math.min(text.length(), TextToSpeech.getMaxSpeechInputLength()));
+            Completable.fromRunnable(() -> deleteExistingAudioFile(audioFile))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(()-> speakToFile(textToSpeech, textToRead, audioFile));
+        }
+    }
 
-                        } else {
-                            Log.v(TAG, "Couldn't delete existing file " + audioFile + ". What will happen next?");
-                        }
-                    }
-                    return null;
-                }
+    @WorkerThread
+    private void deleteExistingAudioFile(File audioFile) {
+        if (audioFile.exists()) {
+            if (audioFile.delete()) {
+                Log.v(TAG, "Deleted existing file " + audioFile + ".");
+            } else {
+                Log.v(TAG, "Couldn't delete existing file " + audioFile + ". What will happen next?");
+            }
+        }
+    }
 
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        speakToFile21(textToSpeech, textToRead, audioFile);
-                    } else {
-                        speakToFile4(textToSpeech, textToRead, audioFile);
-                    }
-                }
-            }.execute();
+    @MainThread
+    private void speakToFile(TextToSpeech textToSpeech, String textToRead, File audioFile) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            speakToFile21(textToSpeech, textToRead, audioFile);
+        } else {
+            speakToFile4(textToSpeech, textToRead, audioFile);
         }
     }
 
