@@ -24,7 +24,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.media.AudioManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -52,6 +51,9 @@ import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider;
 import ca.rmen.android.poetassistant.wotd.Wotd;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class SettingsActivity extends AppCompatActivity implements ConfirmDialogFragment.ConfirmDialogListener {
 
@@ -107,19 +109,10 @@ public class SettingsActivity extends AppCompatActivity implements ConfirmDialog
     @Override
     public void onOk(int actionId) {
         if (actionId == ACTION_CLEAR_SEARCH_HISTORY) {
-            new AsyncTask<Void, Void, Void>() {
-
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    getContentResolver().delete(SuggestionsProvider.CONTENT_URI, null, null);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void result) {
-                    Snackbar.make(mBinding.getRoot(), R.string.search_history_cleared, Snackbar.LENGTH_SHORT).show();
-                }
-            }.execute();
+            Completable.fromRunnable(() -> getContentResolver().delete(SuggestionsProvider.CONTENT_URI, null, null))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(() -> Snackbar.make(mBinding.getRoot(), R.string.search_history_cleared, Snackbar.LENGTH_SHORT).show());
         }
     }
 

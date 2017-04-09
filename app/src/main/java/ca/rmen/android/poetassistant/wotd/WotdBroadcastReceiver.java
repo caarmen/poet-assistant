@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.wotd;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import javax.inject.Inject;
@@ -30,6 +29,7 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
+import io.reactivex.schedulers.Schedulers;
 
 public class WotdBroadcastReceiver extends BroadcastReceiver {
     private static final String TAG = Constants.TAG + WotdBroadcastReceiver.class.getSimpleName();
@@ -40,16 +40,7 @@ public class WotdBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive: intent = " + intent);
         DaggerHelper.getWotdComponent(context).inject(this);
-        mTask.execute(context);
+        Schedulers.io().scheduleDirect(() -> Wotd.notifyWotd(context, mDictionary));
     }
-
-    private final AsyncTask<Context, Void, Void> mTask = new AsyncTask<Context, Void, Void>() {
-
-        @Override
-        protected Void doInBackground(Context... params) {
-            Wotd.notifyWotd(params[0], mDictionary);
-            return null;
-        }
-    };
 
 }

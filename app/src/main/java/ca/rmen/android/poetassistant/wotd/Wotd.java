@@ -25,7 +25,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -41,6 +40,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.Share;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Word of the day system notification.
@@ -82,14 +82,7 @@ public final class Wotd {
         } else {
             WotdAlarm.schedule(context);
         }
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                notifyWotd(context, dictionary);
-                return null;
-            }
-        }.execute();
+        Schedulers.io().scheduleDirect(() -> notifyWotd(context, dictionary));
     }
 
     private static void disableWotd(Context context) {

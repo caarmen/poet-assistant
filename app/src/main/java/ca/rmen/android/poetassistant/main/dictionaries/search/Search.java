@@ -24,10 +24,8 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.MainThread;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
@@ -44,7 +42,9 @@ import ca.rmen.android.poetassistant.main.PagerAdapter;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
+import io.reactivex.Maybe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Glue between the fragments, activity, and view pager, for executing searches.
@@ -165,42 +165,27 @@ public class Search {
      */
     public void lookupRandom() {
         Log.d(TAG, "lookupRandom");
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... voids) {
-                DictionaryEntry entry = mDictionary.getRandomEntry();
-                return entry == null ? null : entry.word;
-            }
 
-            @Override
-            protected void onPostExecute(@Nullable String word) {
-                if (word != null) {
+        Maybe.fromCallable(() -> mDictionary.getRandomEntry())
+                .map(entry -> entry.word)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(word -> {
                     search(word);
                     mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false);
-                }
-            }
-        }.execute();
+                });
     }
 
     /**
      * Adds the given suggestions to the search history, in a background thread.
      */
     @MainThread
-    public void addSuggestions(String... suggestions) {
-        new AsyncTask<String, Void, Void> () {
-
-            @Override
-            protected Void doInBackground(String... searchTerms) {
-                ContentValues[] contentValues = new ContentValues[suggestions.length];
-                for (int i = 0; i < suggestions.length; i++) {
-                    ContentValues contentValue = new ContentValues(1);
-                    contentValue.put(SearchManager.QUERY, suggestions[i]);
-                    contentValues[i] = contentValue;
-                }
-                mContext.getContentResolver().bulkInsert(SuggestionsProvider.CONTENT_URI, contentValues);
-                return null;
-            }
-        }.execute(suggestions);
+    public void addSuggestions(String suggestion) {
+        Schedulers.io().scheduleDirect(()->{
+            ContentValues contentValues = new ContentValues(1);
+            contentValues.put(SearchManager.QUERY, suggestion);
+            mContext.getContentResolver().insert(SuggestionsProvider.CONTENT_URI, contentValues);
+        });
     }
 
 }

@@ -22,8 +22,8 @@ package ca.rmen.android.poetassistant.about;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.WorkerThread;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -36,6 +36,9 @@ import java.io.InputStreamReader;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.databinding.ActivityLicenseBinding;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class LicenseActivity extends AppCompatActivity {
@@ -67,42 +70,35 @@ public class LicenseActivity extends AppCompatActivity {
         String title = intent.getStringExtra(EXTRA_TITLE);
         String licenseFile = intent.getStringExtra(EXTRA_LICENSE_TEXT_ASSET_FILE);
         mBinding.tvTitle.setText(title);
-        loadLicenseFile(licenseFile);
+        Single.fromCallable(() -> readFile(licenseFile))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(licenseText -> mBinding.tvLicenseText.setText(licenseText));
     }
 
-    private void loadLicenseFile(String fileName) {
-        new AsyncTask<String, Void, String>() {
-            @Override
-            protected String doInBackground(String... params) {
-                BufferedReader reader = null;
+    @WorkerThread
+    private String readFile(String fileName) {
+        BufferedReader reader = null;
+        try {
+            InputStream is = getAssets().open(fileName);
+            reader = new BufferedReader(new InputStreamReader(is));
+            StringBuilder builder = new StringBuilder();
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                builder.append(line).append('\n');
+            }
+            return builder.toString();
+        } catch (IOException e) {
+            Log.e(TAG, "Couldn't read license file " + fileName + ": " + e.getMessage(), e);
+            return "";
+        } finally {
+            if (reader != null) {
                 try {
-                    InputStream is = getAssets().open(params[0]);
-                    reader = new BufferedReader(new InputStreamReader(is));
-                    StringBuilder builder = new StringBuilder();
-                    for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                        builder.append(line).append('\n');
-                    }
-                    return builder.toString();
+                    reader.close();
                 } catch (IOException e) {
-                    Log.e(TAG, "Couldn't read license file " + params[0] + ": " + e.getMessage(), e);
-                    return "";
-                } finally {
-                    if (reader != null) {
-                        try {
-                            reader.close();
-                        } catch (IOException e) {
-                            Log.wtf(TAG, e.getMessage(), e);
-                        }
-                    }
+                    Log.wtf(TAG, e.getMessage(), e);
                 }
             }
-
-            @Override
-            protected void onPostExecute(String licenseText) {
-                mBinding.tvLicenseText.setText(licenseText);
-            }
-        }.execute(fileName);
-
+        }
     }
 }
 

@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.wotd;
 import android.annotation.TargetApi;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 
@@ -31,6 +30,7 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
+import io.reactivex.schedulers.Schedulers;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class WotdJobService extends JobService {
@@ -46,7 +46,10 @@ public class WotdJobService extends JobService {
     @Override
     public boolean onStartJob(JobParameters params) {
         Log.v(TAG, "onStartJob: params " + params);
-        mTask.execute(params);
+        Schedulers.io().scheduleDirect(() -> {
+            Wotd.notifyWotd(getApplicationContext(), mDictionary);
+            jobFinished(params, false);
+        });
         return true;
     }
 
@@ -55,13 +58,4 @@ public class WotdJobService extends JobService {
         return false;
     }
 
-    private final AsyncTask<JobParameters, Void, Void> mTask = new AsyncTask<JobParameters, Void, Void>() {
-
-        @Override
-        protected Void doInBackground(JobParameters... params) {
-            Wotd.notifyWotd(getApplicationContext(), mDictionary);
-            jobFinished(params[0], false);
-            return null;
-        }
-    };
 }

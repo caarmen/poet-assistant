@@ -28,8 +28,9 @@ import android.databinding.DataBindingUtil;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
+import android.support.annotation.WorkerThread;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -61,6 +62,9 @@ import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 import ca.rmen.android.poetassistant.widget.CABEditText;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class MainActivity extends AppCompatActivity implements OnWordClickListener, OnFavoriteClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener, CABEditText.ImeListener {
@@ -111,7 +115,11 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         }
 
         mSearch = new Search(this, mBinding.viewPager);
-        loadDictionaries();
+        // Load our dictionaries when the activity starts, so that the first search can already be fast.
+        Single.fromCallable(this::loadDatabase)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::onDatabaseLoadResult);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
@@ -126,30 +134,22 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
     }
 
-    /**
-     * Load our dictionaries when the activity starts, so that the first search
-     * can already be fast.
-     */
-    private void loadDictionaries() {
-        new AsyncTask<Void, Void, Boolean>() {
-            @Override
-            protected Boolean doInBackground(Void... params) {
-                DaggerHelper.getMainScreenComponent(MainActivity.this).inject(MainActivity.this);
-                return mRhymer.isLoaded() && mThesaurus.isLoaded() && mDictionary.isLoaded();
-            }
+    @WorkerThread
+    private boolean loadDatabase() {
+        DaggerHelper.getMainScreenComponent(MainActivity.this).inject(MainActivity.this);
+        return mRhymer.isLoaded() && mThesaurus.isLoaded() && mDictionary.isLoaded();
+    }
 
-            @Override
-            protected void onPostExecute(Boolean allDictionariesAreLoaded) {
-                Fragment warningNoSpaceDialogFragment = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG);
-                if (!allDictionariesAreLoaded
-                        && warningNoSpaceDialogFragment == null) {
-                    getSupportFragmentManager().beginTransaction().add(new WarningNoSpaceDialogFragment(), DIALOG_TAG).commit();
-                } else if (allDictionariesAreLoaded
-                        && warningNoSpaceDialogFragment != null){
-                    getSupportFragmentManager().beginTransaction().remove(warningNoSpaceDialogFragment).commit();
-                }
-            }
-        }.execute();
+    @MainThread
+    private void onDatabaseLoadResult(boolean databaseIsLoaded) {
+        Fragment warningNoSpaceDialogFragment = getSupportFragmentManager().findFragmentByTag(DIALOG_TAG);
+        if (!databaseIsLoaded
+                && warningNoSpaceDialogFragment == null) {
+            getSupportFragmentManager().beginTransaction().add(new WarningNoSpaceDialogFragment(), DIALOG_TAG).commit();
+        } else if (databaseIsLoaded
+                && warningNoSpaceDialogFragment != null){
+            getSupportFragmentManager().beginTransaction().remove(warningNoSpaceDialogFragment).commit();
+        }
     }
 
     @Override
