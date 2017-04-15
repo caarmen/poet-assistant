@@ -37,6 +37,13 @@ allprojects {
     repositories {
         jcenter()
     }
+
+    // Show a report in the log when running tests
+    tasks.withType(Test) {
+        testLogging {
+            events "passed", "skipped", "failed", "standardOut", "standardError"
+        }
+    }
 }
 
 task clean(type: Delete) {
