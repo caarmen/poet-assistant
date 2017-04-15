@@ -36,6 +36,12 @@ android {
         enabled = true
     }
 
+    lintOptions {
+        abortOnError true
+        textReport true
+        ignoreWarnings true
+    }
+
     defaultConfig {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 15
@@ -49,6 +55,7 @@ android {
             enabled false // too slow! :(
         }
     }
+
     buildTypes {
         release {
             minifyEnabled true
@@ -126,14 +133,14 @@ dependencies {
 
 // Only show real releases with the ben-manes plugin.
 dependencyUpdates.resolutionStrategy = {
-  componentSelection { rules ->
-    rules.all { ComponentSelection selection ->
-      boolean rejected = ['alpha', 'alpha-preview', 'beta', 'rc', 'cr', 'm'].any { qualifier ->
-        selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
-      }
-      if (rejected) {
-        selection.reject('Release candidate')
-      }
+    componentSelection { rules ->
+        rules.all { ComponentSelection selection ->
+            boolean rejected = ['alpha', 'alpha-preview', 'beta', 'rc', 'cr', 'm'].any { qualifier ->
+                selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
+            }
+            if (rejected) {
+                selection.reject('Release candidate')
+            }
+        }
     }
-  }
 }

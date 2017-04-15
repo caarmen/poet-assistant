@@ -19,6 +19,8 @@
 
 package ca.rmen.android.poetassistant;
 
+import java.util.HashMap;
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -31,8 +33,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.util.HashMap;
 
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
@@ -215,7 +215,9 @@ public class Tts {
                 matchingVoice = textToSpeech.getDefaultVoice();
             } else {
                 Optional<Voice> optionalVoice = StreamSupport.stream(textToSpeech.getVoices())
-                        .filter(voice -> voiceId.equals(voice.getName()))
+                        .filter(voice ->
+                                // The SDK check is here because lint currently ignores @TargetApi in nested lambdas
+                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && voiceId.equals(voice.getName()))
                         .findFirst();
                 // If the user changed the tts engine in the system settings, we may not find
                 // the previous voice they selected.
