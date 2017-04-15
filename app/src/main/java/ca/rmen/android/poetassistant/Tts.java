@@ -215,7 +215,9 @@ public class Tts {
                 matchingVoice = textToSpeech.getDefaultVoice();
             } else {
                 Optional<Voice> optionalVoice = StreamSupport.stream(textToSpeech.getVoices())
-                        .filter(voice -> Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && voiceId.equals(voice.getName()))
+                        .filter(voice ->
+                                // The SDK check is here because lint currently ignores @TargetApi in nested lambdas
+                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && voiceId.equals(voice.getName()))
                         .findFirst();
                 // If the user changed the tts engine in the system settings, we may not find
                 // the previous voice they selected.
