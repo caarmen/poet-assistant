@@ -97,7 +97,7 @@ public class MainActivityTest {
     }
 
     @Test
-    public void mainActivityTest() {
+    public void mainActivityTest1() {
         clearSearchHistory();
         search("howdy");
         checkRhymes("cloudy", "dowdy");
@@ -113,6 +113,26 @@ public class MainActivityTest {
         swipeViewPagerLeft();
         swipeViewPagerLeft();
         typePoem("To be or not to be, that is the question");
+        clearPoem();
+    }
+
+    @Test
+    public void mainActivityTest2() {
+        clearSearchHistory();
+        search("beholden");
+        checkRhymes("embolden", "golden");
+        openThesaurus("golden", "gold");
+        openDictionary("gilt", "having the deep slightly brownish color of gold");
+        starQueryWord();
+        swipeViewPagerRight();
+        verifyStarredInList("gilt");
+        filter("stilt", "gilt", "gold");
+        swipeViewPagerRight();
+        filter("wildness", "abandon", "embolden");
+        swipeViewPagerLeft();
+        swipeViewPagerLeft();
+        swipeViewPagerLeft();
+        typePoem("roses are red, violets are blue\nespresso tests will find bugs for you");
         clearPoem();
     }
 
