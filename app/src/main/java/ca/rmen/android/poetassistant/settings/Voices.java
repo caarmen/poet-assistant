@@ -27,18 +27,14 @@ import android.speech.tts.Voice;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.compat.HtmlCompat;
-import java8.util.stream.Collectors;
-import java8.util.stream.StreamSupport;
-
+import io.reactivex.Observable;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 final class Voices {
@@ -68,7 +64,7 @@ final class Voices {
         mContext = context;
     }
 
-    List<TtsVoice> getVoices(TextToSpeech textToSpeech) {
+    Observable<TtsVoice> getVoices(TextToSpeech textToSpeech) {
 
         Set<Voice> voices;
         try {
@@ -77,13 +73,13 @@ final class Voices {
             // This happens if I choose "SoundAbout TTS" as the preferred engine.
             // That implementation throws a NullPointerException.
             Log.w(TAG, "Couldn't load the tts voices: " + t.getMessage(), t);
-            return Collections.emptyList();
+            return Observable.empty();
         }
         if (voices == null) {
             Log.w(TAG, "No voices found");
-            return Collections.emptyList();
+            return Observable.empty();
         }
-        List<TtsVoice> ttsVoices = StreamSupport.stream(voices)
+        return Observable.fromIterable(voices)
                 .filter(voice ->
                         !voice.isNetworkConnectionRequired()
                                 && !voice.getFeatures().contains(TextToSpeech.Engine.KEY_FEATURE_NOT_INSTALLED)
@@ -94,9 +90,7 @@ final class Voices {
                 .sorted(new VoiceComparator())
                 .map(voice ->
                         new TtsVoice(voice.getName(), parseVoiceName(voice)))
-                .collect(Collectors.toList());
-        ttsVoices.add(0, new TtsVoice(Settings.VOICE_SYSTEM, mContext.getString(R.string.pref_voice_default)));
-        return ttsVoices;
+                .startWith(new TtsVoice(Settings.VOICE_SYSTEM, mContext.getString(R.string.pref_voice_default)));
     }
 
     /**

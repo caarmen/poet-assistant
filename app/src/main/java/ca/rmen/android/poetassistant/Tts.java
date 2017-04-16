@@ -28,7 +28,6 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
-import android.speech.tts.Voice;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -36,8 +35,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
-import java8.util.Optional;
-import java8.util.stream.StreamSupport;
+import io.reactivex.Observable;
 
 public class Tts {
     private static final String TAG = Constants.TAG + Tts.class.getSimpleName();
@@ -209,35 +207,25 @@ public class Tts {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void useVoice(TextToSpeech textToSpeech, @Nullable String voiceId) {
-        final Voice matchingVoice;
         try {
             if (voiceId == null || Settings.VOICE_SYSTEM.equals(voiceId)) {
-                matchingVoice = textToSpeech.getDefaultVoice();
+                textToSpeech.setVoice(textToSpeech.getDefaultVoice());
+                Log.v(TAG, "Using default voice " + textToSpeech.getDefaultVoice());
             } else {
-                Optional<Voice> optionalVoice = StreamSupport.stream(textToSpeech.getVoices())
+                Observable.fromIterable(textToSpeech.getVoices())
                         .filter(voice ->
                                 // The SDK check is here because lint currently ignores @TargetApi in nested lambdas
                                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && voiceId.equals(voice.getName()))
-                        .findFirst();
-                // If the user changed the tts engine in the system settings, we may not find
-                // the previous voice they selected.
-                if (optionalVoice.isPresent()) {
-                    matchingVoice = optionalVoice.get();
-                } else {
-                    matchingVoice = textToSpeech.getDefaultVoice();
-                }
-
+                        // If the user changed the tts engine in the system settings, we may not find
+                        // the previous voice they selected.
+                        .first(textToSpeech.getDefaultVoice())
+                        .doOnSuccess(voice -> Log.v(TAG, "using selected voice " + voice))
+                        .subscribe(textToSpeech::setVoice);
             }
         } catch (Throwable t) {
             // This happens if I choose "SoundAbout TTS" as the preferred engine.
             // That implementation throws a NullPointerException.
             Log.w(TAG, "Couldn't load the tts voices: " + t.getMessage(), t);
-            return;
-        }
-
-        if (matchingVoice != null) {
-            Log.v(TAG, "using voice " + matchingVoice);
-            textToSpeech.setVoice(matchingVoice);
         }
     }
 

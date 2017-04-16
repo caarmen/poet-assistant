@@ -35,7 +35,7 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
-import java8.util.stream.StreamSupport;
+import io.reactivex.Observable;
 
 /**
  * SharedPreferences and db-backed cursor to read suggestions.  Suggestions include
@@ -70,8 +70,7 @@ public class SuggestionsCursor extends MatrixCursor {
             iconId = R.drawable.ic_search_history;
         }
         List<String> suggestions = mSuggestions.getSuggestions();
-        StreamSupport
-                .stream(suggestions)
+        Observable.fromIterable(suggestions)
                 .filter(suggestion -> TextUtils.isEmpty(mFilter) || suggestion.contains(mFilter))
                 .distinct()
                 .sorted()

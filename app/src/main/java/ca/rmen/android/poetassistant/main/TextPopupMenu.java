@@ -43,7 +43,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.Share;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.widget.HackFor23381;
 import ca.rmen.android.poetassistant.widget.PopupMenuHelper;
-import java8.util.stream.StreamSupport;
+import io.reactivex.Observable;
 
 public class TextPopupMenu {
     public enum Style {
@@ -171,7 +171,7 @@ public class TextPopupMenu {
         menuInflater.inflate(R.menu.menu_word_other, menu);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            StreamSupport.stream(getSupportedActivities(context, text))
+            Observable.fromIterable(getSupportedActivities(context, text))
                     .filter(resolveInfo -> !context.getApplicationInfo().packageName.equals(resolveInfo.activityInfo.packageName))
                     .forEach(resolveInfo -> menu.add(
                             R.id.group_system_popup_menu_items, Menu.NONE,

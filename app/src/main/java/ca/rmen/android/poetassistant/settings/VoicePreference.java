@@ -26,13 +26,11 @@ import android.speech.tts.TextToSpeech;
 import android.support.v7.preference.ListPreference;
 import android.util.AttributeSet;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.Tts;
-import java8.util.stream.StreamSupport;
+import io.reactivex.Observable;
 
 public class VoicePreference extends ListPreference {
     @Inject Tts mTts;
@@ -69,13 +67,13 @@ public class VoicePreference extends ListPreference {
     void loadVoices(Context context) {
         TextToSpeech tts = mTts.getTextToSpeech();
         if (tts != null) {
-            List<Voices.TtsVoice> voices = new Voices(context).getVoices(tts);
-            setEntryValues(StreamSupport.stream(voices)
-                    .map(voice -> voice.id)
-                    .toArray(size -> new CharSequence[voices.size()]));
-            setEntries(StreamSupport.stream(voices)
-                    .map(voice -> voice.name)
-                    .toArray(size -> new CharSequence[voices.size()]));
+            Observable<Voices.TtsVoice> voices = new Voices(context).getVoices(tts);
+            voices.map(voice -> voice.id)
+                    .toList()
+                    .subscribe(voiceIds -> setEntryValues(voiceIds.toArray(new CharSequence[voiceIds.size()])));
+            voices.map(voice -> voice.name)
+                    .toList()
+                    .subscribe(voiceNames -> setEntries(voiceNames.toArray(new CharSequence[voiceNames.size()])));
         }
     }
 }
