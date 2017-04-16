@@ -101,7 +101,6 @@ public class AboutActivity extends AppCompatActivity {
         hackSetIcon(mBinding.tvGoogleNgramDatasetLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvEventBusLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvRetrolambdaLicense, R.drawable.ic_bullet);
-        hackSetIcon(mBinding.tvStreamsupportLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvDaggerLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvRxJavaLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvStemmerLicense, R.drawable.ic_bullet);

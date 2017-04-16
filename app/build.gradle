@@ -119,7 +119,6 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support:preference-v7:25.3.1'
     compile 'com.android.support:preference-v14:25.3.1'
-    compile 'net.sourceforge.streamsupport:streamsupport:1.5.4'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'ca.rmen:rhymer:1.2.0'
     compile 'ca.rmen:porter-stemmer:1.0.0'
