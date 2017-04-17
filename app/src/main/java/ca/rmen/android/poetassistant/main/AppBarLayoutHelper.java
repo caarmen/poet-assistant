@@ -55,6 +55,6 @@ final class AppBarLayoutHelper {
         // With a small delay we try to make sure the event to show the app bar layout is done after
         // the soft keyboard is hidden.
         // I don't like this arbitrary delay :(
-        appBarLayout.postDelayed(()->appBarLayout.setExpanded(true, true), 100);
+        appBarLayout.postDelayed(()->appBarLayout.setExpanded(true, true), 500);
     }
 }
