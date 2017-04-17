@@ -59,4 +59,5 @@ before_script:
   - android-wait-for-emulator
 script:
   - ./gradlew -Dorg.gradle.parallel=true -Dorg.gradle.daemon=false lintDebug testDebug
+  - adb shell input keyevent 82
   - ./gradlew -Dorg.gradle.parallel=true -Dorg.gradle.daemon=false connectedAndroidTest
