@@ -362,8 +362,9 @@ public class MainActivityTest {
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.tv_text), isDisplayed()));
         appCompatEditText.perform(typeText(poem));
+        SystemClock.sleep(1000);
         pressBack();
-        SystemClock.sleep(100);
+        SystemClock.sleep(1000);
     }
 
     private void clearPoem() {
