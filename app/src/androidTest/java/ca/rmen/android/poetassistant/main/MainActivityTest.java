@@ -55,7 +55,6 @@ import static android.support.test.espresso.action.ViewActions.pressImeActionBut
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
-import static android.support.test.espresso.action.ViewActions.swipeUp;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
@@ -109,7 +108,6 @@ public class MainActivityTest {
 
     @Test
     public void mainActivityTest1() {
-        clearSearchHistory();
         search("howdy");
         checkRhymes("cloudy", "dowdy");
         openThesaurus("cloudy", "nebulose");
@@ -129,7 +127,6 @@ public class MainActivityTest {
 
     @Test
     public void mainActivityTest2() {
-        clearSearchHistory();
         search("beholden");
         checkRhymes("embolden", "golden");
         openThesaurus("embolden", "hearten");
@@ -145,34 +142,6 @@ public class MainActivityTest {
         swipeViewPagerLeft();
         typePoem("roses are red, violets are blue\nespresso tests will find bugs for you");
         clearPoem();
-    }
-
-    private void clearSearchHistory() {
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        SystemClock.sleep(1000);
-
-        openMenu();
-
-        ViewInteraction appCompatTextView = onView(
-                allOf(withId(R.id.title), withText(R.string.action_settings), isDisplayed()));
-        appCompatTextView.perform(click());
-
-        ViewInteraction recyclerView = onView(
-                allOf(withId(R.id.list),
-                        withParent(allOf(withId(android.R.id.list_container),
-                                withParent(withId(R.id.settings_fragment)))),
-                        isDisplayed()));
-        recyclerView.perform(swipeUp(), swipeUp(), swipeUp(), swipeUp());
-
-        onView(withText(R.string.action_clear_search_history)).perform(click());
-
-        ViewInteraction appCompatButton = onView(
-                allOf(withId(android.R.id.button1), withText(R.string.action_clear)));
-        appCompatButton.perform(scrollTo(), click());
-        pressBack();
     }
 
     private void search(String query) {
