@@ -55,7 +55,7 @@ env:
 before_script:
   - mkdir -p $HOME/.android/avd
   - echo no | $ANDROID_HOME/tools/bin/avdmanager -v create avd --force -n test -g default --abi arm64-v8a --package 'system-images;android-24;default;arm64-v8a' -p $HOME/.android/avd
-  - $ANDROID_HOME/tools/emulator -avd test -skin 320x550 -no-audio -no-window &
+  - $ANDROID_HOME/tools/emulator -avd test -skin 280x380 -no-audio -no-window &
   - android-wait-for-emulator
 script:
   - ./gradlew -Dorg.gradle.parallel=true -Dorg.gradle.daemon=false lintDebug testDebug
