@@ -60,7 +60,6 @@ before_script:
 script:
   - ./gradlew -Dorg.gradle.parallel=true -Dorg.gradle.daemon=false lintDebug testDebug
   - ./gradlew -Dorg.gradle.parallel=true -Dorg.gradle.daemon=false assembleDebugAndroidTest assembleDebug
-  - ./gradlew -Dorg.gradle.parallel=true -Dorg.gradle.daemon=false connectedDebugAndroidTest
   - adb install -r app/build/outputs/apk/app-debug.apk
   - adb install -r app/build/outputs/apk/app-debug-androidTest.apk
   - adb shell input keyevent 82
