@@ -47,7 +47,6 @@ import ca.rmen.android.poetassistant.UserDb;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -55,21 +54,26 @@ import static android.support.test.espresso.action.ViewActions.pressImeActionBut
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.action.ViewActions.swipeUp;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.withChild;
+import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.endsWith;
 
 /**
- * Tested on an Emulator: Nexus_5_API_25
+ * Tested on:
+ * - emulator Nexus_5_API_25
+ * - emulator 280x380
+ * - Huawei P9 Lite
  */
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -121,12 +125,12 @@ public class MainActivityTest {
         clearSearchHistory();
         search("beholden");
         checkRhymes("embolden", "golden");
-        openThesaurus("golden", "gold");
-        openDictionary("gilt", "having the deep slightly brownish color of gold");
+        openThesaurus("embolden", "hearten");
+        openDictionary("recreate", "create anew");
         starQueryWord();
         swipeViewPagerRight();
-        verifyStarredInList("gilt");
-        filter("stilt", "gilt", "gold");
+        verifyStarredInList("recreate");
+        filter("beer", "cheer", "hearten");
         swipeViewPagerRight();
         filter("wildness", "abandon", "embolden");
         swipeViewPagerLeft();
@@ -143,7 +147,7 @@ public class MainActivityTest {
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         SystemClock.sleep(1000);
 
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        openMenu();
 
         ViewInteraction appCompatTextView = onView(
                 allOf(withId(R.id.title), withText(R.string.action_settings), isDisplayed()));
@@ -154,7 +158,9 @@ public class MainActivityTest {
                         withParent(allOf(withId(android.R.id.list_container),
                                 withParent(withId(R.id.settings_fragment)))),
                         isDisplayed()));
-        recyclerView.perform(actionOnItemAtPosition(11, click()));
+        recyclerView.perform(swipeUp(), swipeUp(), swipeUp(), swipeUp());
+
+        onView(withText(R.string.action_clear_search_history)).perform(click());
 
         ViewInteraction appCompatButton = onView(
                 allOf(withId(android.R.id.button1), withText(R.string.action_clear)));
@@ -311,6 +317,7 @@ public class MainActivityTest {
         ViewInteraction filterIcon = onView(
                 allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()));
         filterIcon.perform(click());
+        SystemClock.sleep(500);
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.edit), isDisplayed()));
         appCompatEditText.perform(typeText(filter), closeSoftKeyboard());
@@ -350,6 +357,7 @@ public class MainActivityTest {
     }
 
     private void typePoem(String poem) {
+        SystemClock.sleep(500);
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.tv_text), isDisplayed()));
         appCompatEditText.perform(typeText(poem));
@@ -358,7 +366,7 @@ public class MainActivityTest {
     }
 
     private void clearPoem() {
-        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        openMenu();
 
         ViewInteraction menuItem = onView(
                 allOf(withId(R.id.title), withText(R.string.file), isDisplayed()));
@@ -375,16 +383,16 @@ public class MainActivityTest {
         appCompatEditText.check(matches(withText("")));
     }
 
+    private void openMenu() {
+        onView(allOf(isDisplayed(), withClassName(endsWith("OverflowMenuButton")))).perform(click());
+    }
+
     private void swipeViewPagerRight() {
-        ViewInteraction viewPager = onView(
-                allOf(withId(R.id.view_pager), isDisplayed()));
-        viewPager.perform(swipeRight());
+        onView(allOf(withId(android.R.id.content), isDisplayed())).perform(swipeRight());
     }
 
     private void swipeViewPagerLeft() {
-        ViewInteraction viewPager = onView(
-                allOf(withId(R.id.view_pager), isDisplayed()));
-        viewPager.perform(swipeLeft());
+        onView(allOf(withId(android.R.id.content), isDisplayed())).perform(swipeLeft());
     }
 
     private static Matcher<View> childAtPosition(
