@@ -67,6 +67,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.endsWith;
 
 /**
@@ -384,7 +385,7 @@ public class MainActivityTest {
     }
 
     private void openMenu() {
-        onView(allOf(isDisplayed(), withClassName(endsWith("OverflowMenuButton")))).perform(click());
+        onView(allOf(isDisplayed(), anyOf(withClassName(endsWith("OverflowMenuButton")), withClassName(endsWith("MenuDropDownListView"))))).perform(click());
     }
 
     private void swipeViewPagerRight() {
