@@ -47,14 +47,14 @@ install:
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'build-tools;25.0.2'
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platforms;android-25'
   - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'extras;android;m2repository'
-  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'system-images;android-21;default;x86'
+  - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'system-images;android-21;default;armeabi-v7a'
 
 env:
   - ANDROID_HOME=$HOME/android-sdk PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools:$ANDROID_HOME/tools/bin:$PATH
 
 before_script:
   - mkdir -p $HOME/.android/avd
-  - echo no | $ANDROID_HOME/tools/bin/avdmanager -v create avd --force -n test -g default --abi x86 --package 'system-images;android-21;default;x86' -p $HOME/.android/avd
+  - echo no | $ANDROID_HOME/tools/bin/avdmanager -v create avd --force -n test -g default --abi armeabi-v7a --package 'system-images;android-21;default;armeabi-v7a' -p $HOME/.android/avd
   - $ANDROID_HOME/tools/emulator -avd test -skin 540x960 -no-audio -no-window &
   - android-wait-for-emulator
 script: ./gradlew -Dorg.gradle.parallel=true -Dorg.gradle.daemon=false lintDebug testDebug connectedAndroidTest
