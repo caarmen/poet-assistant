@@ -187,6 +187,16 @@ public class MainActivityTest {
     }
 
     @Test
+    public void openAboutScreenTest() {
+        openMenu();
+        onView(allOf(withId(R.id.title), withText(R.string.action_about), isDisplayed())).perform(click());
+        // Don't know what to test here.  Just make sure one of the strings we expect is here.
+        onView(withId(R.id.tv_source_code))
+                .check(matches(isCompletelyDisplayed()))
+                .check(matches(withText(R.string.about_projectUrl)));
+    }
+
+    @Test
     public void exportAudioTest() {
         swipeViewPagerLeft();
         swipeViewPagerLeft();
