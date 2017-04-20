@@ -23,6 +23,7 @@ package ca.rmen.android.poetassistant.main;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
@@ -44,6 +45,8 @@ import java.util.Locale;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.UserDb;
+import io.reactivex.Scheduler;
+import io.reactivex.plugins.RxJavaPlugins;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
@@ -51,9 +54,7 @@ import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.Espresso.registerIdlingResources;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
@@ -73,7 +74,7 @@ import static ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.verifyAllStarredWords;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.verifyStarredInList;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenu;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.verifyTitleStripCenterTitle;
@@ -81,6 +82,8 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Tested on:
@@ -100,8 +103,12 @@ public class MainActivityTest {
             super.beforeActivityLaunched();
             registerIdlingResources(new TtsIdlingResource(getInstrumentation().getTargetContext()));
             mDevice = UiDevice.getInstance(getInstrumentation());
-
             cleanup();
+            RxJavaPlugins.setIoSchedulerHandler(scheduler -> {
+                IdlingScheduler idlingScheduler = new IdlingScheduler(scheduler);
+                registerIdlingResources(new RxSchedulerIdlingResource(idlingScheduler));
+                return idlingScheduler;
+            });
         }
 
         @Override
@@ -197,8 +204,7 @@ public class MainActivityTest {
 
     @Test
     public void openWotdListTest() {
-        openMenu();
-        onView(allOf(withId(R.id.title), withText(R.string.action_wotd_history), isDisplayed())).perform(click());
+        openMenuItem(R.string.action_wotd_history);
         ViewInteraction latestEntryDateView = onView(allOf(withId(R.id.date), withParent(childAtPosition(childAtPosition(withId(R.id.recycler_view), 0), 1))));
         // Check that the date field in the first (most recent) entry in the Wotd list contains today's date.
         Calendar cal = Calendar.getInstance();
@@ -207,9 +213,16 @@ public class MainActivityTest {
     }
 
     @Test
+    public void randomWordTest() {
+        openMenuItem(R.string.action_random_word);
+        verifyTitleStripCenterTitle(mActivityTestRule.getActivity(), R.string.tab_dictionary);
+        //SystemClock.sleep(1000);
+        onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(not(isEmptyOrNullString()))));
+    }
+
+    @Test
     public void openAboutScreenTest() {
-        openMenu();
-        onView(allOf(withId(R.id.title), withText(R.string.action_about), isDisplayed())).perform(click());
+        openMenuItem(R.string.action_about);
         onView(withId(R.id.tv_poet_assistant_license))
                 .check(matches(isCompletelyDisplayed()))
                 .check(matches(withText(R.string.about_license_app)))
@@ -231,8 +244,7 @@ public class MainActivityTest {
         File exportDir = new File(mActivityTestRule.getActivity().getFilesDir(), "export");
         File poemFile = new File(exportDir, "poem.wav");
         assertFalse(poemFile.exists());
-        openMenu();
-        onView(allOf(withId(R.id.title), withText(R.string.share_poem_audio), isDisplayed())).perform(click());
+        openMenuItem(R.string.share_poem_audio);
         assertTrue(poemFile.exists());
     }
 
@@ -249,45 +261,20 @@ public class MainActivityTest {
 
         // Select the "rhymer" popup
         mDevice.findObject(By.text("Rhymer")).click();
-
         verifyTitleStripCenterTitle(mActivityTestRule.getActivity(), R.string.tab_rhymer);
-        // Complicated to find the right tv_list_header, as this view appears in a few fragments.
-        // We find the root of the fragment layout, then make sure we have the right fragment by looking
-        // for the descendant view of the empty text which is hidden and should say "Sorry, no rhymes for 'here'".
-        onView(allOf(
-                withId(R.id.tv_list_header),
-                isDescendantOfA(
-                        allOf(
-                                withId(R.id.result_list_root),
-                                hasDescendant(allOf(withId(R.id.empty), withText(mActivityTestRule.getActivity().getString(R.string.empty_rhymer_list_with_query, firstWord)))))
-                )
-        )).check(matches(withText(firstWord)));
+        onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)));
 
         // Look up in the thesaurus
         swipeViewPagerLeft(3);
         onView(withId(R.id.tv_text)).perform(longTap(1, 0));
         mDevice.findObject(By.text("Thesaurus")).click();
-        onView(allOf(
-                withId(R.id.tv_list_header),
-                isDescendantOfA(
-                        allOf(
-                                withId(R.id.result_list_root),
-                                hasDescendant(allOf(withId(R.id.empty), withText(mActivityTestRule.getActivity().getString(R.string.empty_thesaurus_list_with_query, firstWord)))))
-                )
-        )).check(matches(withText(firstWord)));
+        onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)));
 
         // Look up in the dictionary
         swipeViewPagerLeft(2);
         onView(withId(R.id.tv_text)).perform(longTap(1, 0));
         mDevice.findObject(By.text("Dictionary")).click();
-        onView(allOf(
-                withId(R.id.tv_list_header),
-                isDescendantOfA(
-                        allOf(
-                                withId(R.id.result_list_root),
-                                hasDescendant(allOf(withId(R.id.empty), withText(mActivityTestRule.getActivity().getString(R.string.empty_dictionary_list_with_query, firstWord)))))
-                )
-        )).check(matches(withText(firstWord)));
+        onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)));
     }
 
     @Test

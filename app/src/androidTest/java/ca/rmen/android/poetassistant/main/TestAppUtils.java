@@ -52,7 +52,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withChildCount;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenu;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.verifyTitleStripCenterTitle;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
@@ -73,10 +73,9 @@ class TestAppUtils {
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         SystemClock.sleep(1000);
 
-        openMenu();
 
         // click on the settings menu item
-        onView(allOf(withId(R.id.title), withText(R.string.action_settings), isDisplayed())).perform(click());
+        openMenuItem(R.string.action_settings);
 
         // Scroll down to the bottom of the settings
         ViewInteraction recyclerView = onView(
@@ -322,8 +321,7 @@ class TestAppUtils {
     }
 
     static void clearPoem() {
-        openMenu();
-        onView(allOf(withId(R.id.title), withText(R.string.file), isDisplayed())).perform(click());
+        openMenuItem(R.string.file);
         onView(allOf(withId(R.id.title), withText(R.string.file_new), isDisplayed())).perform(click());
         onView(allOf(withId(android.R.id.button1), withText(R.string.action_clear))).perform(scrollTo(), click());
         onView(allOf(withId(R.id.tv_text), isDisplayed())).check(matches(withText("")));

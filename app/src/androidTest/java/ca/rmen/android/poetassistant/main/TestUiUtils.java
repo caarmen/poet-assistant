@@ -48,8 +48,9 @@ class TestUiUtils {
         // prevent instantiation
     }
 
-    static void openMenu() {
+    static void openMenuItem(@StringRes int titleRes) {
         onView(allOf(isDisplayed(), withClassName(endsWith("OverflowMenuButton")))).perform(click());
+        onView(allOf(withId(R.id.title), withText(titleRes), isDisplayed())).perform(click());
     }
 
     static void swipeViewPagerRight(int count) {
