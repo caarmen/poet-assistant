@@ -54,7 +54,9 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.Espresso.registerIdlingResources;
+import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
 import static android.support.test.espresso.action.ViewActions.swipeUp;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -73,6 +75,7 @@ import static ca.rmen.android.poetassistant.main.TestAppUtils.clearSearchHistory
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearStarredWords;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.filter;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openDictionary;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.openSearchView;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openThesaurus;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord;
@@ -94,8 +97,6 @@ import static org.hamcrest.Matchers.not;
 
 /**
  * Tested on:
- * - emulator Nexus_5_API_25
- * - emulator 280x380
  * - Huawei P9 Lite
  */
 @LargeTest
@@ -211,12 +212,52 @@ public class MainActivityTest {
 
     @Test
     public void searchSuggestionsTest() {
+        openSearchView();
         ViewInteraction searchAutoComplete = typeQuery("heavy");
         verifySearchSuggestions("heavy", "heavyset", "heavyweight", "heavyweights");
+
         searchAutoComplete.perform(typeText("s"));
         verifySearchSuggestions("heavyset");
+
         searchAutoComplete.perform(typeText("z"));
         verifySearchSuggestions();
+    }
+
+    @Test
+    public void searchHistoryTest() {
+        openSearchView();
+        verifySearchSuggestions();
+
+        ViewInteraction searchAutoComplete = typeQuery("carmen");
+        verifySearchSuggestions();
+
+        searchAutoComplete.perform(pressImeActionButton());
+
+        openSearchView();
+        verifySearchSuggestions("carmen");
+
+        typeQuery("benoit");
+        verifySearchSuggestions();
+        searchAutoComplete.perform(pressImeActionButton());
+
+        openSearchView();
+        verifySearchSuggestions("benoit", "carmen");
+
+        typeQuery("awes");
+        verifySearchSuggestions("awesome", "awesomely", "awestruck");
+        searchAutoComplete.perform(typeText("o"));
+        verifySearchSuggestions("awesome", "awesomely");
+
+        searchAutoComplete.perform(clearText());
+        searchAutoComplete.perform(typeText("carme"));
+        verifySearchSuggestions("carmen", "carmelite");
+
+        clearSearchHistory();
+
+        openSearchView();
+        verifySearchSuggestions();
+        typeQuery("carme");
+        verifySearchSuggestions("carmelite");
     }
 
     @Test

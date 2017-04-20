@@ -92,10 +92,12 @@ class TestAppUtils {
         pressBack();
     }
 
-    static ViewInteraction typeQuery(String query) {
+    static void openSearchView() {
         // Tap on the search icon in the action bar
         onView(allOf(withId(R.id.action_search), withContentDescription(R.string.action_search), isDisplayed())).perform(click());
+    }
 
+    static ViewInteraction typeQuery(String query) {
         // Type the query term and search
         ViewInteraction searchAutoComplete = onView(allOf(withId(R.id.search_src_text), isDisplayed()));
         searchAutoComplete.check(matches(isDisplayed()));
@@ -108,6 +110,7 @@ class TestAppUtils {
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         SystemClock.sleep(1000);
+        openSearchView();
 
         // Type the query term and search
         typeQuery(query).perform(pressImeActionButton());
