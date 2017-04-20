@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import android.support.test.espresso.PerformException;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -36,6 +37,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewActions.longTap;
@@ -79,21 +81,32 @@ public class PoemTest extends BaseTest {
         onView(withId(R.id.tv_text)).perform(longTap(1, 0));
 
         // Select the "rhymer" popup
-        onView(withText(equalToIgnoringCase("rhymer"))).inRoot(isPlatformPopup()).perform(click());
+        clickPopupView("rhymer");
         checkTitleStripCenterTitle(mActivityTestRule.getActivity(), R.string.tab_rhymer);
         onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)));
 
         // Look up in the thesaurus
         swipeViewPagerLeft(3);
         onView(withId(R.id.tv_text)).perform(longTap(1, 0));
-        onView(withText(equalToIgnoringCase("thesaurus"))).inRoot(isPlatformPopup()).perform(click());
+        clickPopupView("thesaurus");
         onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)));
 
         // Look up in the dictionary
         swipeViewPagerLeft(2);
         onView(withId(R.id.tv_text)).perform(longTap(1, 0));
-        onView(withText(equalToIgnoringCase("dictionary"))).inRoot(isPlatformPopup()).perform(click());
+        clickPopupView("dictionary");
         onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)));
+    }
+
+    private void clickPopupView(String label) {
+        try {
+            onView(withText(equalToIgnoringCase(label))).inRoot(isPlatformPopup()).perform(click());
+        } catch (PerformException e) {
+            // I haven't yet found a better way to handle this :(
+            // On smaller screens the items are hidden behind an overflow item with id "overflow" which is inaccessible
+            onView(withContentDescription("More options")).inRoot(isPlatformPopup()).perform(click());
+            onView(withText(equalToIgnoringCase(label))).inRoot(isPlatformPopup()).perform(click());
+        }
     }
 
 }
