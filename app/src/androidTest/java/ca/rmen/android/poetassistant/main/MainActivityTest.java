@@ -287,6 +287,14 @@ public class MainActivityTest {
         )).check(matches(withText(firstWord)));
     }
 
+    @Test
+    public void patternSearchTest() {
+        search("h*llo");
+        checkPatterns("h*llo", "hello", "hermosillo", "hollo", "hullo");
+        search("h*llz");
+        checkPatterns("h*llz");
+    }
+
     private void clearSearchHistory() {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
@@ -368,7 +376,25 @@ public class MainActivityTest {
                                 1),
                         isDisplayed()));
         secondRhymeWord.check(matches(withText(secondRhyme)));
+    }
 
+    private void checkPatterns(String query, String... patterns) {
+        verifyTitleStripCenterTitle(R.string.tab_pattern);
+        Matcher<View> emptyViewMatch = allOf(withId(R.id.empty), withText(mActivityTestRule.getActivity().getString(R.string.empty_pattern_list_with_query, query)));
+        ViewInteraction emptyView = onView(emptyViewMatch);
+        if (patterns.length > 0) {
+            emptyView.check(matches(not(isDisplayed())));
+        } else {
+            emptyView.check(matches(isDisplayed()));
+            Matcher<View> recyclerViewMatch = allOf(withId(R.id.recycler_view), hasSibling(emptyViewMatch));
+            onView(recyclerViewMatch).check(matches(withChildCount(patterns.length)));
+            for (int i = 0; i < patterns.length; i++) {
+                onView(allOf(withId(R.id.text1), withText(patterns[i]),
+                        childAtPosition(childAtPosition(recyclerViewMatch, i), 1),
+                        isDisplayed()))
+                        .check(matches(withText(patterns[i])));
+            }
+        }
     }
 
     private void openThesaurus(String entry, String expectedFirstSynonym) {
