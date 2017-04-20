@@ -20,10 +20,14 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import android.annotation.TargetApi;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.service.notification.StatusBarNotification;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.ViewInteraction;
@@ -51,8 +55,10 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.Espresso.registerIdlingResources;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeUp;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
@@ -215,6 +221,30 @@ public class MainActivityTest {
         openMenuItem(R.string.action_random_word);
         verifyTitleStripCenterTitle(mActivityTestRule.getActivity(), R.string.tab_dictionary);
         onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(not(isEmptyOrNullString()))));
+    }
+
+    @Test
+    @TargetApi(Build.VERSION_CODES.M)
+    public void wotdNotificaitonTest() {
+        openMenuItem(R.string.action_settings);
+        onView(allOf(withId(R.id.list),
+                isDescendantOfA(withId(R.id.settings_fragment)),
+                isDisplayed()))
+                .perform(swipeUp(), swipeUp(), swipeUp(), swipeUp());
+        onView(withText(R.string.wotd_setting_title)).perform(click());
+        NotificationManager notificationManager = (NotificationManager) getInstrumentation().getTargetContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
+        boolean foundNotification = false;
+        for (StatusBarNotification statusBarNotification : activeNotifications) {
+            statusBarNotification.getNotification();
+            CharSequence title = statusBarNotification.getNotification().extras.getCharSequence("android.title");
+            if (title != null && title.toString().startsWith(mActivityTestRule.getActivity().getString(R.string.wotd_setting_title))) {
+                foundNotification = true;
+                break;
+            }
+        }
+        assertTrue("Didn't find a Wotd notification", foundNotification);
+
     }
 
     @Test

@@ -41,6 +41,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
@@ -72,12 +73,10 @@ class TestAppUtils {
         openMenuItem(R.string.action_settings);
 
         // Scroll down to the bottom of the settings
-        ViewInteraction recyclerView = onView(
-                allOf(withId(R.id.list),
-                        withParent(allOf(withId(android.R.id.list_container),
-                                withParent(withId(R.id.settings_fragment)))),
-                        isDisplayed()));
-        recyclerView.perform(swipeUp(), swipeUp(), swipeUp(), swipeUp());
+        onView(allOf(withId(R.id.list),
+                isDescendantOfA(withId(R.id.settings_fragment)),
+                isDisplayed()))
+                .perform(swipeUp(), swipeUp(), swipeUp(), swipeUp());
 
         // Tap on "clear search history"
         onView(withText(R.string.action_clear_search_history)).perform(click());
