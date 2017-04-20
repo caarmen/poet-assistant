@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main;
 import android.content.Context;
 import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
+import android.support.test.espresso.NoMatchingRootException;
 import android.support.test.espresso.ViewInteraction;
 import android.view.View;
 
@@ -38,6 +39,7 @@ import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.swipeUp;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
@@ -55,7 +57,9 @@ import static ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosit
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withChildCount;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.verifyTitleStripCenterTitle;
+import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -88,19 +92,25 @@ class TestAppUtils {
         pressBack();
     }
 
-    static void search(String query) {
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        SystemClock.sleep(1000);
-
+    static ViewInteraction typeQuery(String query) {
         // Tap on the search icon in the action bar
         onView(allOf(withId(R.id.action_search), withContentDescription(R.string.action_search), isDisplayed())).perform(click());
 
         // Type the query term and search
         ViewInteraction searchAutoComplete = onView(allOf(withId(R.id.search_src_text), isDisplayed()));
         searchAutoComplete.check(matches(isDisplayed()));
-        searchAutoComplete.perform(typeText(query), pressImeActionButton());
+        searchAutoComplete.perform(typeText(query));
+        return searchAutoComplete;
+    }
+
+    static void search(String query) {
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        SystemClock.sleep(1000);
+
+        // Type the query term and search
+        typeQuery(query).perform(pressImeActionButton());
     }
 
     static void checkRhymes(Context context, String firstRhyme, String secondRhyme) {
@@ -291,6 +301,31 @@ class TestAppUtils {
         onView(allOf(withId(R.id.title), withText(R.string.file_new), isDisplayed())).perform(click());
         onView(allOf(withId(android.R.id.button1), withText(R.string.action_clear))).perform(scrollTo(), click());
         onView(allOf(withId(R.id.tv_text), isDisplayed())).check(matches(withText("")));
+    }
+
+    static void verifySearchSuggestions(String... suggestions) {
+        SystemClock.sleep(500);
+        Matcher<View> searchListMatcher = withClassName(endsWith("DropDownListView"));
+        try {
+            ViewInteraction searchSuggestionsList = onView(searchListMatcher)
+                    .inRoot(isPlatformPopup());
+            searchSuggestionsList.check(matches(withChildCount(suggestions.length)));
+            for (int i = 0; i < suggestions.length; i++) {
+                onView(allOf(withId(android.R.id.text1), withParent(childAtPosition(searchListMatcher, i))))
+                        .inRoot(isPlatformPopup())
+                        .check(matches(withText(suggestions[i])));
+            }
+        } catch (NoMatchingRootException e) {
+            if (suggestions.length == 0) {
+                // this is correct
+                return;
+            } else {
+                throw e;
+            }
+        }
+         if (suggestions.length == 0) {
+             assertTrue("Found search suggestions but didn't expect to", false);
+         }
     }
 
 

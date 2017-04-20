@@ -56,6 +56,7 @@ import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.Espresso.registerIdlingResources;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeUp;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
@@ -76,7 +77,9 @@ import static ca.rmen.android.poetassistant.main.TestAppUtils.openThesaurus;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.typeQuery;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.verifyAllStarredWords;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.verifySearchSuggestions;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.verifyStarredInList;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
@@ -204,6 +207,16 @@ public class MainActivityTest {
         verifyAllStarredWords(context, "recreate");
         clearStarredWords();
         verifyAllStarredWords(context);
+    }
+
+    @Test
+    public void searchSuggestionsTest() {
+        ViewInteraction searchAutoComplete = typeQuery("heavy");
+        verifySearchSuggestions("heavy", "heavyset", "heavyweight", "heavyweights");
+        searchAutoComplete.perform(typeText("s"));
+        verifySearchSuggestions("heavyset");
+        searchAutoComplete.perform(typeText("z"));
+        verifySearchSuggestions();
     }
 
     @Test
