@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.SystemClock;
@@ -42,6 +43,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.util.List;
 
 import ca.rmen.android.poetassistant.R;
@@ -71,6 +73,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withContentDesc
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.is;
@@ -92,6 +96,7 @@ public class MainActivityTest {
         @Override
         protected void beforeActivityLaunched() {
             super.beforeActivityLaunched();
+            registerIdlingResources(new TtsIdlingResource(getInstrumentation().getTargetContext()));
             cleanup();
         }
 
@@ -109,11 +114,23 @@ public class MainActivityTest {
     };
 
     private void cleanup() {
-        SQLiteDatabase db = new UserDb(getInstrumentation().getTargetContext()).getWritableDatabase();
+        Context context = getInstrumentation().getTargetContext();
+        SQLiteDatabase db = new UserDb(context).getWritableDatabase();
         db.delete("SUGGESTION", null, null);
         db.delete("FAVORITE", null, null);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getInstrumentation().getTargetContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit().clear().apply();
+        File filesDir = context.getFilesDir();
+        if (filesDir.exists()) {
+            deleteFiles(filesDir);
+        }
+    }
+
+    private void deleteFiles(File folder) {
+        for (File file : folder.listFiles()) {
+            if (file.isDirectory()) deleteFiles(file);
+            else assertTrue("couldn't delete file " + file, file.delete());
+        }
     }
 
     @Test
@@ -133,6 +150,7 @@ public class MainActivityTest {
         swipeViewPagerLeft();
         swipeViewPagerLeft();
         typePoem("To be or not to be, that is the question");
+        exportAudio();
         clearPoem();
     }
 
@@ -153,6 +171,7 @@ public class MainActivityTest {
         swipeViewPagerLeft();
         swipeViewPagerLeft();
         typePoem("roses are red, violets are blue\nespresso tests will find bugs for you");
+        exportAudio();
         clearPoem();
     }
 
@@ -379,25 +398,23 @@ public class MainActivityTest {
     private void speakPoem() {
         ViewInteraction fab = onView(allOf(withClassName(is(FloatingActionButton.class.getName())), isEnabled()));
         fab.perform(click());
-        registerIdlingResources(new TtsIdlingResource(getInstrumentation().getTargetContext()));
     }
 
     private void clearPoem() {
         openMenu();
+        onView(allOf(withId(R.id.title), withText(R.string.file), isDisplayed())).perform(click());
+        onView(allOf(withId(R.id.title), withText(R.string.file_new), isDisplayed())).perform(click());
+        onView(allOf(withId(android.R.id.button1), withText(R.string.action_clear))).perform(scrollTo(), click());
+        onView(allOf(withId(R.id.tv_text), isDisplayed())).check(matches(withText("")));
+    }
 
-        ViewInteraction menuItem = onView(
-                allOf(withId(R.id.title), withText(R.string.file), isDisplayed()));
-        menuItem.perform(click());
-        menuItem = onView(
-                allOf(withId(R.id.title), withText(R.string.file_new), isDisplayed()));
-        menuItem.perform(click());
-        ViewInteraction appCompatButton = onView(
-                allOf(withId(android.R.id.button1), withText(R.string.action_clear)));
-        appCompatButton.perform(scrollTo(), click());
-
-        ViewInteraction appCompatEditText = onView(
-                allOf(withId(R.id.tv_text), isDisplayed()));
-        appCompatEditText.check(matches(withText("")));
+    private void exportAudio() {
+        File exportDir = new File(mActivityTestRule.getActivity().getFilesDir(), "export");
+        File poemFile = new File(exportDir, "poem.wav");
+        assertFalse(poemFile.exists());
+        openMenu();
+        onView(allOf(withId(R.id.title), withText(R.string.share_poem_audio), isDisplayed())).perform(click());
+        assertTrue(poemFile.exists());
     }
 
     private void openMenu() {
