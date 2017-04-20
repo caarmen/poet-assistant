@@ -29,10 +29,16 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
+import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.ViewInteraction;
+import android.support.test.espresso.action.GeneralClickAction;
+import android.support.test.espresso.action.Press;
+import android.support.test.espresso.action.Tap;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.test.uiautomator.By;
+import android.support.test.uiautomator.UiDevice;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -47,6 +53,7 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.UserDb;
@@ -64,9 +71,11 @@ import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.action.ViewActions.swipeUp;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
@@ -95,12 +104,15 @@ import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTest {
 
+    private UiDevice mDevice;
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<MainActivity>(MainActivity.class) {
         @Override
         protected void beforeActivityLaunched() {
             super.beforeActivityLaunched();
             registerIdlingResources(new TtsIdlingResource(getInstrumentation().getTargetContext()));
+            mDevice = UiDevice.getInstance(getInstrumentation());
+
             cleanup();
         }
 
@@ -221,6 +233,60 @@ public class MainActivityTest {
         exportAudio();
     }
 
+    @Test
+    public void lookupFromPoemTest() {
+        swipeViewPagerLeft(3);
+        String poemText = "Here is a poem";
+        typePoem(poemText);
+
+        // Look up in the rhymer
+        // Long press on the left part of the edittext, to select the first word
+        String firstWord = poemText.substring(0, poemText.indexOf(' ')).toLowerCase(Locale.getDefault());
+        onView(withId(R.id.tv_text)).perform(longTap(1, 0));
+
+        // Select the "rhymer" popup
+        mDevice.findObject(By.text("Rhymer")).click();
+
+        verifyTitleStripCenterTitle(R.string.tab_rhymer);
+        // Complicated to find the right tv_list_header, as this view appears in a few fragments.
+        // We find the root of the fragment layout, then make sure we have the right fragment by looking
+        // for the descendant view of the empty text which is hidden and should say "Sorry, no rhymes for 'here'".
+        onView(allOf(
+                withId(R.id.tv_list_header),
+                isDescendantOfA(
+                        allOf(
+                                withId(R.id.result_list_root),
+                                hasDescendant(allOf(withId(R.id.empty), withText(mActivityTestRule.getActivity().getString(R.string.empty_rhymer_list_with_query, firstWord)))))
+                )
+        )).check(matches(withText(firstWord)));
+
+        // Look up in the thesaurus
+        swipeViewPagerLeft(3);
+        onView(withId(R.id.tv_text)).perform(longTap(1, 0));
+        mDevice.findObject(By.text("Thesaurus")).click();
+        onView(allOf(
+                withId(R.id.tv_list_header),
+                isDescendantOfA(
+                        allOf(
+                                withId(R.id.result_list_root),
+                                hasDescendant(allOf(withId(R.id.empty), withText(mActivityTestRule.getActivity().getString(R.string.empty_thesaurus_list_with_query, firstWord)))))
+                )
+        )).check(matches(withText(firstWord)));
+
+        // Look up in the dictionary
+        swipeViewPagerLeft(2);
+        onView(withId(R.id.tv_text)).perform(longTap(1, 0));
+        mDevice.findObject(By.text("Dictionary")).click();
+        onView(allOf(
+                withId(R.id.tv_list_header),
+                isDescendantOfA(
+                        allOf(
+                                withId(R.id.result_list_root),
+                                hasDescendant(allOf(withId(R.id.empty), withText(mActivityTestRule.getActivity().getString(R.string.empty_dictionary_list_with_query, firstWord)))))
+                )
+        )).check(matches(withText(firstWord)));
+    }
+
     private void clearSearchHistory() {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
@@ -243,7 +309,7 @@ public class MainActivityTest {
         // Tap on "clear search history"
         onView(withText(R.string.action_clear_search_history)).perform(click());
 
-        // Top ok on the confirmation dialog
+        // Tap ok on the confirmation dialog
         onView(allOf(withId(android.R.id.button1), withText(R.string.action_clear))).perform(scrollTo(), click());
 
         // Exit settings
@@ -520,7 +586,8 @@ public class MainActivityTest {
         };
     }
 
-    public static Matcher<View> withChildCount(final int size) {
+    // inspired from http://stackoverflow.com/questions/30361068/assert-proper-number-of-items-in-list-with-espresso
+    private static Matcher<View> withChildCount(final int size) {
         return new TypeSafeMatcher<View> () {
             @Override public boolean matchesSafely (final View view) {
                 return ((ViewGroup) view).getChildCount() == size;
@@ -530,5 +597,20 @@ public class MainActivityTest {
                 description.appendText ("ViewGroup should have " + size + " children");
             }
         };
+    }
+
+    // thanks to http://stackoverflow.com/questions/33382344/espresso-test-click-x-y-coordinates
+    private static ViewAction longTap(final int x, final int y){
+        return new GeneralClickAction(
+                Tap.LONG,
+                view -> {
+                    final int[] screenPos = new int[2];
+                    view.getLocationOnScreen(screenPos);
+                    final float screenX = screenPos[0] + x;
+                    final float screenY = screenPos[1] + y;
+
+                    return new float[]{screenX, screenY};
+                },
+                Press.FINGER);
     }
 }
