@@ -68,12 +68,6 @@ class TestAppUtils {
     }
 
     static void clearSearchHistory() {
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        SystemClock.sleep(1000);
-
-
         // click on the settings menu item
         openMenuItem(R.string.action_settings);
 
@@ -105,26 +99,12 @@ class TestAppUtils {
         onView(allOf(withId(R.id.action_search), withContentDescription(R.string.action_search), isDisplayed())).perform(click());
 
         // Type the query term and search
-        ViewInteraction searchAutoComplete = onView(
-                allOf(
-                        withId(R.id.search_src_text),
-                        withParent(
-                                allOf(
-                                        withId(R.id.search_plate),
-                                        withParent(
-                                                withId(R.id.search_edit_frame))
-                                )
-                        ),
-                        isDisplayed()));
+        ViewInteraction searchAutoComplete = onView(allOf(withId(R.id.search_src_text), isDisplayed()));
+        searchAutoComplete.check(matches(isDisplayed()));
         searchAutoComplete.perform(typeText(query), pressImeActionButton());
     }
 
     static void checkRhymes(Context context, String firstRhyme, String secondRhyme) {
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        SystemClock.sleep(100);
-
         // Make sure we're in the rhymer tab
         verifyTitleStripCenterTitle(context, R.string.tab_rhymer);
 
@@ -179,11 +159,6 @@ class TestAppUtils {
                                 3)));
         thesaurusIcon.perform(click());
 
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        SystemClock.sleep(100);
-
         ViewInteraction firstSynonymWord = onView(
                 allOf(withId(R.id.text1), withText(expectedFirstSynonym),
                         childAtPosition(
@@ -208,11 +183,6 @@ class TestAppUtils {
                                 4)));
 
         dictionaryIcon.perform(click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        SystemClock.sleep(100);
 
         verifyTitleStripCenterTitle(context, R.string.tab_dictionary);
 
@@ -239,7 +209,6 @@ class TestAppUtils {
         ViewInteraction filterIcon = onView(
                 allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()));
         filterIcon.perform(click());
-        SystemClock.sleep(500);
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.edit), isDisplayed()));
         appCompatEditText.perform(typeText(filter), closeSoftKeyboard());
@@ -300,7 +269,6 @@ class TestAppUtils {
     }
 
     static void typePoem(String poem) {
-        SystemClock.sleep(500);
         // The fab should be disabled until there is text
         ViewInteraction fab = onView(withClassName(is(FloatingActionButton.class.getName())));
         fab.check(matches(not(isEnabled())));
@@ -312,7 +280,6 @@ class TestAppUtils {
         fab.check(matches(isEnabled()));
         speakPoem();
         pressBack();
-        SystemClock.sleep(100);
     }
 
     private static void speakPoem() {

@@ -23,7 +23,6 @@ package ca.rmen.android.poetassistant.main;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
@@ -45,7 +44,6 @@ import java.util.Locale;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.UserDb;
-import io.reactivex.Scheduler;
 import io.reactivex.plugins.RxJavaPlugins;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -216,7 +214,6 @@ public class MainActivityTest {
     public void randomWordTest() {
         openMenuItem(R.string.action_random_word);
         verifyTitleStripCenterTitle(mActivityTestRule.getActivity(), R.string.tab_dictionary);
-        //SystemClock.sleep(1000);
         onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(not(isEmptyOrNullString()))));
     }
 
