@@ -143,14 +143,12 @@ public class MainActivityTest {
         openThesaurus("cloudy", "nebulose");
         openDictionary("nebulous", "lacking definite form or limits");
         starQueryWord();
-        swipeViewPagerRight();
+        swipeViewPagerRight(1);
         verifyStarredInList("nebulous");
         filter("bloody", "muddy", "nebulose");
-        swipeViewPagerRight();
+        swipeViewPagerRight(1);
         filter("bully", "rowdy", "cloudy");
-        swipeViewPagerLeft();
-        swipeViewPagerLeft();
-        swipeViewPagerLeft();
+        swipeViewPagerLeft(3);
         typePoem("To be or not to be, that is the question");
         clearPoem();
     }
@@ -163,14 +161,12 @@ public class MainActivityTest {
         openThesaurus("embolden", "hearten");
         openDictionary("recreate", "create anew");
         starQueryWord();
-        swipeViewPagerRight();
+        swipeViewPagerRight(1);
         verifyStarredInList("recreate");
         filter("beer", "cheer", "hearten");
-        swipeViewPagerRight();
+        swipeViewPagerRight(1);
         filter("wildness", "abandon", "embolden");
-        swipeViewPagerLeft();
-        swipeViewPagerLeft();
-        swipeViewPagerLeft();
+        swipeViewPagerLeft(3);
         typePoem("roses are red, violets are blue\nespresso tests will find bugs for you");
         clearPoem();
     }
@@ -198,9 +194,7 @@ public class MainActivityTest {
 
     @Test
     public void exportAudioTest() {
-        swipeViewPagerLeft();
-        swipeViewPagerLeft();
-        swipeViewPagerLeft();
+        swipeViewPagerLeft(3);
         typePoem("Will export some text");
         exportAudio();
     }
@@ -451,12 +445,16 @@ public class MainActivityTest {
         onView(allOf(isDisplayed(), withClassName(endsWith("OverflowMenuButton")))).perform(click());
     }
 
-    private void swipeViewPagerRight() {
-        onView(allOf(withId(android.R.id.content), isDisplayed())).perform(swipeRight());
+    private void swipeViewPagerRight(int count) {
+        for (int i = 0; i < count; i++) {
+            onView(allOf(withId(android.R.id.content), isDisplayed())).perform(swipeRight());
+        }
     }
 
-    private void swipeViewPagerLeft() {
-        onView(allOf(withId(android.R.id.content), isDisplayed())).perform(swipeLeft());
+    private void swipeViewPagerLeft(int count) {
+        for (int i = 0; i < count; i++) {
+            onView(allOf(withId(android.R.id.content), isDisplayed())).perform(swipeLeft());
+        }
     }
 
     private static Matcher<View> childAtPosition(
