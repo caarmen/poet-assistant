@@ -25,6 +25,7 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
@@ -63,6 +64,7 @@ import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.action.ViewActions.swipeUp;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -138,12 +140,17 @@ public class MainActivityTest {
     @Test
     public void mainActivityTest1() {
         clearSearchHistory();
+        swipeViewPagerLeft(4);
+        verifyAllStarredWords();
+        swipeViewPagerRight(4);
         search("howdy");
         checkRhymes("cloudy", "dowdy");
         openThesaurus("cloudy", "nebulose");
         openDictionary("nebulous", "lacking definite form or limits");
         starQueryWord();
-        swipeViewPagerRight(1);
+        swipeViewPagerLeft(2);
+        verifyAllStarredWords("nebulous");
+        swipeViewPagerRight(3);
         verifyStarredInList("nebulous");
         filter("bloody", "muddy", "nebulose");
         swipeViewPagerRight(1);
@@ -156,12 +163,17 @@ public class MainActivityTest {
     @Test
     public void mainActivityTest2() {
         clearSearchHistory();
+        swipeViewPagerLeft(4);
+        verifyAllStarredWords();
+        swipeViewPagerRight(4);
         search("beholden");
         checkRhymes("embolden", "golden");
         openThesaurus("embolden", "hearten");
         openDictionary("recreate", "create anew");
         starQueryWord();
-        swipeViewPagerRight(1);
+        swipeViewPagerLeft(2);
+        verifyAllStarredWords("recreate");
+        swipeViewPagerRight(3);
         verifyStarredInList("recreate");
         filter("beer", "cheer", "hearten");
         swipeViewPagerRight(1);
@@ -259,7 +271,7 @@ public class MainActivityTest {
         SystemClock.sleep(100);
 
         // Make sure we're in the rhymer tab
-        verifyTitleStripCenterTitle("RHYMER");
+        verifyTitleStripCenterTitle(R.string.tab_rhymer);
 
         ViewInteraction firstRhymeWord = onView(
                 allOf(withId(R.id.text1), withText(firstRhyme),
@@ -309,7 +321,7 @@ public class MainActivityTest {
                         isDisplayed()));
         firstSynonymWord.check(matches(withText(expectedFirstSynonym)));
 
-        verifyTitleStripCenterTitle("THESAURUS");
+        verifyTitleStripCenterTitle(R.string.tab_thesaurus);
     }
 
     private void openDictionary(String entry, String expectedFirstDefinition) {
@@ -329,7 +341,7 @@ public class MainActivityTest {
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         SystemClock.sleep(100);
 
-        verifyTitleStripCenterTitle("DICTIONARY");
+        verifyTitleStripCenterTitle(R.string.tab_dictionary);
 
         ViewInteraction firstDefinition = onView(
                 allOf(withId(R.id.definition), withText(expectedFirstDefinition),
@@ -394,8 +406,24 @@ public class MainActivityTest {
         star.check(matches(isChecked()));
     }
 
-    private void verifyTitleStripCenterTitle(String title) {
-        onView(allOf(withText(title),
+    private void verifyAllStarredWords(String... expectedStarredWords) {
+        verifyTitleStripCenterTitle(R.string.tab_favorites);
+        Matcher<View> emptyViewMatch = allOf(withId(R.id.empty), withText(R.string.empty_favorites_list));
+        ViewInteraction emptyView = onView(emptyViewMatch);
+        if (expectedStarredWords == null || expectedStarredWords.length == 0) {
+            emptyView.check(matches(isCompletelyDisplayed()));
+        } else {
+            emptyView.check(matches(not(isDisplayed())));
+            Matcher<View> recyclerViewMatch = allOf(withId(R.id.recycler_view), hasSibling(emptyViewMatch));
+            onView(recyclerViewMatch).check(matches(withChildCount(expectedStarredWords.length)));
+            for (String word : expectedStarredWords) {
+                onView(allOf(withId(R.id.text1), withParent(withParent(recyclerViewMatch)), withText(word))).check(matches(isCompletelyDisplayed()));
+            }
+        }
+    }
+
+    private void verifyTitleStripCenterTitle(@StringRes int titleRes) {
+        onView(allOf(withText(equalToIgnoringCase(mActivityTestRule.getActivity().getString(titleRes))),
                         childAtPosition(
                                 allOf(withId(R.id.pager_title_strip),
                                         withParent(withId(R.id.view_pager))),
@@ -472,6 +500,18 @@ public class MainActivityTest {
                 ViewParent parent = view.getParent();
                 return parent instanceof ViewGroup && parentMatcher.matches(parent)
                         && view.equals(((ViewGroup) parent).getChildAt(position));
+            }
+        };
+    }
+
+    public static Matcher<View> withChildCount(final int size) {
+        return new TypeSafeMatcher<View> () {
+            @Override public boolean matchesSafely (final View view) {
+                return ((ViewGroup) view).getChildCount() == size;
+            }
+
+            @Override public void describeTo (final Description description) {
+                description.appendText ("ViewGroup should have " + size + " children");
             }
         };
     }
