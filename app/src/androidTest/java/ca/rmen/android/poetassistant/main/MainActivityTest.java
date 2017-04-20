@@ -47,6 +47,7 @@ import ca.rmen.android.poetassistant.UserDb;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.Espresso.registerIdlingResources;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -209,7 +210,15 @@ public class MainActivityTest {
     public void openAboutScreenTest() {
         openMenu();
         onView(allOf(withId(R.id.title), withText(R.string.action_about), isDisplayed())).perform(click());
-        // Don't know what to test here.  Just make sure one of the strings we expect is here.
+        onView(withId(R.id.tv_poet_assistant_license))
+                .check(matches(isCompletelyDisplayed()))
+                .check(matches(withText(R.string.about_license_app)))
+                .perform(click());
+
+        onView(withId(R.id.tv_license_text))
+                .check(matches(isDisplayed()))
+                .check(matches(withText(containsString("GNU GENERAL"))));
+        pressBack();
         onView(withId(R.id.tv_source_code))
                 .check(matches(isCompletelyDisplayed()))
                 .check(matches(withText(R.string.about_projectUrl)));
@@ -234,7 +243,7 @@ public class MainActivityTest {
         typePoem(poemText);
 
         // Look up in the rhymer
-        // Long press on the left part of the edittext, to select the first word
+        // Long press on the left part of the EditText, to select the first word
         String firstWord = poemText.substring(0, poemText.indexOf(' ')).toLowerCase(Locale.getDefault());
         onView(withId(R.id.tv_text)).perform(longTap(1, 0));
 

@@ -21,9 +21,6 @@ package ca.rmen.android.poetassistant.main;
 
 import android.content.Context;
 import android.support.annotation.StringRes;
-import android.view.View;
-
-import org.hamcrest.Matcher;
 
 import ca.rmen.android.poetassistant.R;
 

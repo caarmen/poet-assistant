@@ -62,7 +62,7 @@ import static org.hamcrest.Matchers.not;
 /**
  * Utility functions specific to the functionality of this app.
  */
-public class TestAppUtils {
+class TestAppUtils {
     private TestAppUtils() {
         // prevent instantiation
     }
@@ -316,7 +316,7 @@ public class TestAppUtils {
         SystemClock.sleep(100);
     }
 
-    static void speakPoem() {
+    private static void speakPoem() {
         ViewInteraction fab = onView(allOf(withClassName(is(FloatingActionButton.class.getName())), isEnabled()));
         fab.perform(click());
     }
