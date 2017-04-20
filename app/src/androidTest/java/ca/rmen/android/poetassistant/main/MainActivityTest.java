@@ -44,6 +44,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.List;
 
 import ca.rmen.android.poetassistant.R;
@@ -76,6 +77,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -150,7 +152,6 @@ public class MainActivityTest {
         swipeViewPagerLeft();
         swipeViewPagerLeft();
         typePoem("To be or not to be, that is the question");
-        exportAudio();
         clearPoem();
     }
 
@@ -171,8 +172,27 @@ public class MainActivityTest {
         swipeViewPagerLeft();
         swipeViewPagerLeft();
         typePoem("roses are red, violets are blue\nespresso tests will find bugs for you");
-        exportAudio();
         clearPoem();
+    }
+
+    @Test
+    public void openWotdListTest() {
+        openMenu();
+        onView(allOf(withId(R.id.title), withText(R.string.action_wotd_history), isDisplayed())).perform(click());
+        ViewInteraction latestEntryDateView = onView(allOf(withId(R.id.date), withParent(childAtPosition(childAtPosition(withId(R.id.recycler_view), 0), 1))));
+        // Check that the date field in the first (most recent) entry in the Wotd list contains today's date.
+        Calendar cal = Calendar.getInstance();
+        int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+        latestEntryDateView.check(matches(withText(containsString(String.valueOf(dayOfMonth)))));
+    }
+
+    @Test
+    public void exportAudioTest() {
+        swipeViewPagerLeft();
+        swipeViewPagerLeft();
+        swipeViewPagerLeft();
+        typePoem("Will export some text");
+        exportAudio();
     }
 
     private void clearSearchHistory() {
