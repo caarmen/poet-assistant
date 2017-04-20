@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.main;
 
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.test.uiautomator.By;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +32,9 @@ import java.util.Locale;
 import ca.rmen.android.poetassistant.R;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -45,6 +46,7 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 
 /**
  * Tested on:
@@ -77,20 +79,20 @@ public class PoemTest extends BaseTest {
         onView(withId(R.id.tv_text)).perform(longTap(1, 0));
 
         // Select the "rhymer" popup
-        mDevice.findObject(By.text("Rhymer")).click();
+        onView(withText(equalToIgnoringCase("rhymer"))).inRoot(isPlatformPopup()).perform(click());
         checkTitleStripCenterTitle(mActivityTestRule.getActivity(), R.string.tab_rhymer);
         onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)));
 
         // Look up in the thesaurus
         swipeViewPagerLeft(3);
         onView(withId(R.id.tv_text)).perform(longTap(1, 0));
-        mDevice.findObject(By.text("Thesaurus")).click();
+        onView(withText(equalToIgnoringCase("thesaurus"))).inRoot(isPlatformPopup()).perform(click());
         onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)));
 
         // Look up in the dictionary
         swipeViewPagerLeft(2);
         onView(withId(R.id.tv_text)).perform(longTap(1, 0));
-        mDevice.findObject(By.text("Dictionary")).click();
+        onView(withText(equalToIgnoringCase("dictionary"))).inRoot(isPlatformPopup()).perform(click());
         onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)));
     }
 

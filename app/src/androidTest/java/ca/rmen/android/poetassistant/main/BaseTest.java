@@ -28,7 +28,6 @@ import android.preference.PreferenceManager;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.rule.ActivityTestRule;
-import android.support.test.uiautomator.UiDevice;
 
 import org.junit.Rule;
 
@@ -48,15 +47,12 @@ import static junit.framework.Assert.assertTrue;
  */
 class BaseTest {
 
-    UiDevice mDevice;
-
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<MainActivity>(MainActivity.class) {
         @Override
         protected void beforeActivityLaunched() {
             super.beforeActivityLaunched();
             registerIdlingResources(new TtsIdlingResource(getInstrumentation().getTargetContext()));
-            mDevice = UiDevice.getInstance(getInstrumentation());
             cleanup();
             RxJavaPlugins.setIoSchedulerHandler(scheduler -> {
                 IdlingScheduler idlingScheduler = new IdlingScheduler(scheduler);
