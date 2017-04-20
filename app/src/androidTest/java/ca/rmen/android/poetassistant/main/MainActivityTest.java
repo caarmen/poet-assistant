@@ -138,8 +138,7 @@ public class MainActivityTest {
     }
 
     @Test
-    public void mainActivityTest1() {
-        clearSearchHistory();
+    public void integrationTest1() {
         swipeViewPagerLeft(4);
         verifyAllStarredWords();
         swipeViewPagerRight(4);
@@ -158,11 +157,16 @@ public class MainActivityTest {
         swipeViewPagerLeft(3);
         typePoem("To be or not to be, that is the question");
         clearPoem();
+        // clearing the search history doesn't erase starred words
+        clearSearchHistory();
+        swipeViewPagerLeft(1);
+        verifyAllStarredWords("nebulous");
+        clearStarredWords();
+        verifyAllStarredWords();
     }
 
     @Test
-    public void mainActivityTest2() {
-        clearSearchHistory();
+    public void integrationTest2() {
         swipeViewPagerLeft(4);
         verifyAllStarredWords();
         swipeViewPagerRight(4);
@@ -181,6 +185,12 @@ public class MainActivityTest {
         swipeViewPagerLeft(3);
         typePoem("roses are red, violets are blue\nespresso tests will find bugs for you");
         clearPoem();
+
+        clearSearchHistory();
+        swipeViewPagerLeft(1);
+        verifyAllStarredWords("recreate");
+        clearStarredWords();
+        verifyAllStarredWords();
     }
 
     @Test
@@ -420,6 +430,12 @@ public class MainActivityTest {
                 onView(allOf(withId(R.id.text1), withParent(withParent(recyclerViewMatch)), withText(word))).check(matches(isCompletelyDisplayed()));
             }
         }
+    }
+
+    private void clearStarredWords() {
+        onView(allOf(withId(R.id.btn_delete), withContentDescription(R.string.action_clear_favorites), isDisplayed())).perform(click());
+        // Top ok on the confirmation dialog
+        onView(allOf(withId(android.R.id.button1), withText(R.string.action_clear))).perform(scrollTo(), click());
     }
 
     private void verifyTitleStripCenterTitle(@StringRes int titleRes) {
