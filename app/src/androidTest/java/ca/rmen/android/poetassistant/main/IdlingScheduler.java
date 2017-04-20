@@ -10,9 +10,9 @@ import io.reactivex.disposables.Disposable;
 // copy/paste/adapt from https://github.com/ReactiveX/RxAndroid/issues/149
 class IdlingScheduler extends Scheduler {
 
-    private CountingIdlingResource countingIdlingResource;
+    private final CountingIdlingResource countingIdlingResource;
 
-    private Scheduler scheduler;
+    private final Scheduler scheduler;
 
     IdlingScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
@@ -31,7 +31,7 @@ class IdlingScheduler extends Scheduler {
 
     private class IdlingWorker extends Worker {
 
-        private Worker worker;
+        private final Worker worker;
         private boolean recursive;
 
         IdlingWorker(Worker worker) {

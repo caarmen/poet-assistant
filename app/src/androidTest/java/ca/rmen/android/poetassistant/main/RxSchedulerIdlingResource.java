@@ -26,7 +26,7 @@ import ca.rmen.android.poetassistant.Constants;
 
 class RxSchedulerIdlingResource implements IdlingResource {
     private static final String TAG = Constants.TAG + RxSchedulerIdlingResource.class.getSimpleName();
-    private IdlingScheduler mScheduler;
+    private final IdlingScheduler mScheduler;
     private ResourceCallback mCallback;
 
 

@@ -22,11 +22,7 @@ package ca.rmen.android.poetassistant.main;
 import android.content.Context;
 import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
-import android.support.test.espresso.NoMatchingRootException;
 import android.support.test.espresso.ViewInteraction;
-import android.view.View;
-
-import org.hamcrest.Matcher;
 
 import ca.rmen.android.poetassistant.R;
 
@@ -39,10 +35,7 @@ import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.swipeUp;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.RootMatchers.isPlatformPopup;
-import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
-import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
@@ -54,12 +47,9 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition;
-import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withChildCount;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripCenterTitle;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.verifyTitleStripCenterTitle;
-import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -116,50 +106,6 @@ class TestAppUtils {
         typeQuery(query).perform(pressImeActionButton());
     }
 
-    static void checkRhymes(Context context, String firstRhyme, String secondRhyme) {
-        // Make sure we're in the rhymer tab
-        verifyTitleStripCenterTitle(context, R.string.tab_rhymer);
-
-        ViewInteraction firstRhymeWord = onView(
-                allOf(withId(R.id.text1), withText(firstRhyme),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.recycler_view),
-                                        1),
-                                1),
-                        isDisplayed()));
-        firstRhymeWord.check(matches(withText(firstRhyme)));
-
-        ViewInteraction secondRhymeWord = onView(
-                allOf(withId(R.id.text1), withText(secondRhyme),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.recycler_view),
-                                        2),
-                                1),
-                        isDisplayed()));
-        secondRhymeWord.check(matches(withText(secondRhyme)));
-    }
-
-    static void checkPatterns(Context context, String query, String... patterns) {
-        verifyTitleStripCenterTitle(context, R.string.tab_pattern);
-        Matcher<View> emptyViewMatch = allOf(withId(R.id.empty), withText(context.getString(R.string.empty_pattern_list_with_query, query)));
-        ViewInteraction emptyView = onView(emptyViewMatch);
-        if (patterns.length > 0) {
-            emptyView.check(matches(not(isDisplayed())));
-        } else {
-            emptyView.check(matches(isDisplayed()));
-            Matcher<View> recyclerViewMatch = allOf(withId(R.id.recycler_view), hasSibling(emptyViewMatch));
-            onView(recyclerViewMatch).check(matches(withChildCount(patterns.length)));
-            for (int i = 0; i < patterns.length; i++) {
-                onView(allOf(withId(R.id.text1), withText(patterns[i]),
-                        childAtPosition(childAtPosition(recyclerViewMatch, i), 1),
-                        isDisplayed()))
-                        .check(matches(withText(patterns[i])));
-            }
-        }
-    }
-
     static void openThesaurus(Context context, String entry, String expectedFirstSynonym) {
         ViewInteraction thesaurusIcon = onView(
                 allOf(
@@ -181,7 +127,7 @@ class TestAppUtils {
                         isDisplayed()));
         firstSynonymWord.check(matches(withText(expectedFirstSynonym)));
 
-        verifyTitleStripCenterTitle(context, R.string.tab_thesaurus);
+        checkTitleStripCenterTitle(context, R.string.tab_thesaurus);
     }
 
     static void openDictionary(Context context, String entry, String expectedFirstDefinition) {
@@ -196,7 +142,7 @@ class TestAppUtils {
 
         dictionaryIcon.perform(click());
 
-        verifyTitleStripCenterTitle(context, R.string.tab_dictionary);
+        checkTitleStripCenterTitle(context, R.string.tab_dictionary);
 
         ViewInteraction firstDefinition = onView(
                 allOf(withId(R.id.definition), withText(expectedFirstDefinition),
@@ -248,32 +194,6 @@ class TestAppUtils {
 
     }
 
-    static void verifyStarredInList(String entry) {
-        ViewInteraction star = onView(
-                allOf(withId(R.id.btn_star_result),
-                        childAtPosition(
-                                withChild(withText(entry)),
-                                0),
-                        isDisplayed()));
-        star.check(matches(isChecked()));
-    }
-
-    static void verifyAllStarredWords(Context context, String... expectedStarredWords) {
-        verifyTitleStripCenterTitle(context, R.string.tab_favorites);
-        Matcher<View> emptyViewMatch = allOf(withId(R.id.empty), withText(R.string.empty_favorites_list));
-        ViewInteraction emptyView = onView(emptyViewMatch);
-        if (expectedStarredWords == null || expectedStarredWords.length == 0) {
-            emptyView.check(matches(isCompletelyDisplayed()));
-        } else {
-            emptyView.check(matches(not(isDisplayed())));
-            Matcher<View> recyclerViewMatch = allOf(withId(R.id.recycler_view), hasSibling(emptyViewMatch));
-            onView(recyclerViewMatch).check(matches(withChildCount(expectedStarredWords.length)));
-            for (String word : expectedStarredWords) {
-                onView(allOf(withId(R.id.text1), withParent(withParent(recyclerViewMatch)), withText(word))).check(matches(isCompletelyDisplayed()));
-            }
-        }
-    }
-
     static void clearStarredWords() {
         onView(allOf(withId(R.id.btn_delete), withContentDescription(R.string.action_clear_favorites), isDisplayed())).perform(click());
         // Top ok on the confirmation dialog
@@ -305,31 +225,4 @@ class TestAppUtils {
         onView(allOf(withId(android.R.id.button1), withText(R.string.action_clear))).perform(scrollTo(), click());
         onView(allOf(withId(R.id.tv_text), isDisplayed())).check(matches(withText("")));
     }
-
-    static void verifySearchSuggestions(String... suggestions) {
-        SystemClock.sleep(500);
-        Matcher<View> searchListMatcher = withClassName(endsWith("DropDownListView"));
-        try {
-            ViewInteraction searchSuggestionsList = onView(searchListMatcher)
-                    .inRoot(isPlatformPopup());
-            searchSuggestionsList.check(matches(withChildCount(suggestions.length)));
-            for (int i = 0; i < suggestions.length; i++) {
-                onView(allOf(withId(android.R.id.text1), withParent(childAtPosition(searchListMatcher, i))))
-                        .inRoot(isPlatformPopup())
-                        .check(matches(withText(suggestions[i])));
-            }
-        } catch (NoMatchingRootException e) {
-            if (suggestions.length == 0) {
-                // this is correct
-                return;
-            } else {
-                throw e;
-            }
-        }
-         if (suggestions.length == 0) {
-             assertTrue("Found search suggestions but didn't expect to", false);
-         }
-    }
-
-
 }

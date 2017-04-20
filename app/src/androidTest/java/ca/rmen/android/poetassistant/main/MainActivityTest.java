@@ -68,8 +68,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewActions.longTap;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.checkPatterns;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.checkRhymes;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkPatterns;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearSearchHistory;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearStarredWords;
@@ -81,13 +81,13 @@ import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typeQuery;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.verifyAllStarredWords;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.verifySearchSuggestions;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.verifyStarredInList;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkAllStarredWords;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkSearchSuggestions;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkStarredInList;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.verifyTitleStripCenterTitle;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripCenterTitle;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
@@ -156,7 +156,7 @@ public class MainActivityTest {
     public void integrationTest1() {
         Context context = mActivityTestRule.getActivity();
         swipeViewPagerLeft(4);
-        verifyAllStarredWords(context);
+        checkAllStarredWords(context);
         swipeViewPagerRight(4);
         search("howdy");
         checkRhymes(context, "cloudy", "dowdy");
@@ -164,9 +164,9 @@ public class MainActivityTest {
         openDictionary(context, "nebulous", "lacking definite form or limits");
         starQueryWord();
         swipeViewPagerLeft(2);
-        verifyAllStarredWords(context, "nebulous");
+        checkAllStarredWords(context, "nebulous");
         swipeViewPagerRight(3);
-        verifyStarredInList("nebulous");
+        checkStarredInList("nebulous");
         filter("bloody", "muddy", "nebulose");
         swipeViewPagerRight(1);
         filter("bully", "rowdy", "cloudy");
@@ -176,16 +176,16 @@ public class MainActivityTest {
         // clearing the search history doesn't erase starred words
         clearSearchHistory();
         swipeViewPagerLeft(1);
-        verifyAllStarredWords(context, "nebulous");
+        checkAllStarredWords(context, "nebulous");
         clearStarredWords();
-        verifyAllStarredWords(context);
+        checkAllStarredWords(context);
     }
 
     @Test
     public void integrationTest2() {
         Context context = mActivityTestRule.getActivity();
         swipeViewPagerLeft(4);
-        verifyAllStarredWords(context);
+        checkAllStarredWords(context);
         swipeViewPagerRight(4);
         search("beholden");
         checkRhymes(context, "embolden", "golden");
@@ -193,9 +193,9 @@ public class MainActivityTest {
         openDictionary(context, "recreate", "create anew");
         starQueryWord();
         swipeViewPagerLeft(2);
-        verifyAllStarredWords(context, "recreate");
+        checkAllStarredWords(context, "recreate");
         swipeViewPagerRight(3);
-        verifyStarredInList("recreate");
+        checkStarredInList("recreate");
         filter("beer", "cheer", "hearten");
         swipeViewPagerRight(1);
         filter("wildness", "abandon", "embolden");
@@ -205,59 +205,59 @@ public class MainActivityTest {
 
         clearSearchHistory();
         swipeViewPagerLeft(1);
-        verifyAllStarredWords(context, "recreate");
+        checkAllStarredWords(context, "recreate");
         clearStarredWords();
-        verifyAllStarredWords(context);
+        checkAllStarredWords(context);
     }
 
     @Test
     public void searchSuggestionsTest() {
         openSearchView();
         ViewInteraction searchAutoComplete = typeQuery("heavy");
-        verifySearchSuggestions("heavy", "heavyset", "heavyweight", "heavyweights");
+        checkSearchSuggestions("heavy", "heavyset", "heavyweight", "heavyweights");
 
         searchAutoComplete.perform(typeText("s"));
-        verifySearchSuggestions("heavyset");
+        checkSearchSuggestions("heavyset");
 
         searchAutoComplete.perform(typeText("z"));
-        verifySearchSuggestions();
+        checkSearchSuggestions();
     }
 
     @Test
     public void searchHistoryTest() {
         openSearchView();
-        verifySearchSuggestions();
+        checkSearchSuggestions();
 
         ViewInteraction searchAutoComplete = typeQuery("carmen");
-        verifySearchSuggestions();
+        checkSearchSuggestions();
 
         searchAutoComplete.perform(pressImeActionButton());
 
         openSearchView();
-        verifySearchSuggestions("carmen");
+        checkSearchSuggestions("carmen");
 
         typeQuery("benoit");
-        verifySearchSuggestions();
+        checkSearchSuggestions();
         searchAutoComplete.perform(pressImeActionButton());
 
         openSearchView();
-        verifySearchSuggestions("benoit", "carmen");
+        checkSearchSuggestions("benoit", "carmen");
 
         typeQuery("awes");
-        verifySearchSuggestions("awesome", "awesomely", "awestruck");
+        checkSearchSuggestions("awesome", "awesomely", "awestruck");
         searchAutoComplete.perform(typeText("o"));
-        verifySearchSuggestions("awesome", "awesomely");
+        checkSearchSuggestions("awesome", "awesomely");
 
         searchAutoComplete.perform(clearText());
         searchAutoComplete.perform(typeText("carme"));
-        verifySearchSuggestions("carmen", "carmelite");
+        checkSearchSuggestions("carmen", "carmelite");
 
         clearSearchHistory();
 
         openSearchView();
-        verifySearchSuggestions();
+        checkSearchSuggestions();
         typeQuery("carme");
-        verifySearchSuggestions("carmelite");
+        checkSearchSuggestions("carmelite");
     }
 
     @Test
@@ -273,13 +273,13 @@ public class MainActivityTest {
     @Test
     public void randomWordTest() {
         openMenuItem(R.string.action_random_word);
-        verifyTitleStripCenterTitle(mActivityTestRule.getActivity(), R.string.tab_dictionary);
+        checkTitleStripCenterTitle(mActivityTestRule.getActivity(), R.string.tab_dictionary);
         onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(not(isEmptyOrNullString()))));
     }
 
     @Test
     @TargetApi(Build.VERSION_CODES.M)
-    public void wotdNotificaitonTest() {
+    public void wotdNotificationTest() {
         openMenuItem(R.string.action_settings);
         onView(allOf(withId(R.id.list),
                 isDescendantOfA(withId(R.id.settings_fragment)),
@@ -342,7 +342,7 @@ public class MainActivityTest {
 
         // Select the "rhymer" popup
         mDevice.findObject(By.text("Rhymer")).click();
-        verifyTitleStripCenterTitle(mActivityTestRule.getActivity(), R.string.tab_rhymer);
+        checkTitleStripCenterTitle(mActivityTestRule.getActivity(), R.string.tab_rhymer);
         onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)));
 
         // Look up in the thesaurus

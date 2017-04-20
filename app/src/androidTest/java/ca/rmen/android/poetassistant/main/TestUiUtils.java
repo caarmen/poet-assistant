@@ -65,7 +65,7 @@ class TestUiUtils {
         }
     }
 
-   static void verifyTitleStripCenterTitle(Context context, @StringRes int titleRes) {
+   static void checkTitleStripCenterTitle(Context context, @StringRes int titleRes) {
         onView(allOf(withText(equalToIgnoringCase(context.getString(titleRes))),
                 childAtPosition(
                         allOf(withId(R.id.pager_title_strip),
