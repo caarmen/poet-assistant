@@ -143,6 +143,8 @@ public class MainActivityTest {
         if (filesDir.exists()) {
             deleteFiles(filesDir);
         }
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
 
     private void deleteFiles(File folder) {
