@@ -25,6 +25,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
@@ -40,12 +42,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.List;
+
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.UserDb;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
+import static android.support.test.espresso.Espresso.registerIdlingResources;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
@@ -68,7 +73,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
@@ -94,6 +98,12 @@ public class MainActivityTest {
         @Override
         protected void afterActivityFinished() {
             cleanup();
+            List<IdlingResource> idlingResourceList = Espresso.getIdlingResources();
+            if (idlingResourceList != null) {
+                for (int i = 0; i < idlingResourceList.size(); i++) {
+                    Espresso.unregisterIdlingResources(idlingResourceList.get(i));
+                }
+            }
             super.afterActivityFinished();
         }
     };
@@ -369,6 +379,7 @@ public class MainActivityTest {
     private void speakPoem() {
         ViewInteraction fab = onView(allOf(withClassName(is(FloatingActionButton.class.getName())), isEnabled()));
         fab.perform(click());
+        registerIdlingResources(new TtsIdlingResource(getInstrumentation().getTargetContext()));
     }
 
     private void clearPoem() {
