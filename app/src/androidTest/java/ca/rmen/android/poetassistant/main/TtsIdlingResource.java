@@ -40,6 +40,7 @@ class TtsIdlingResource implements IdlingResource {
         mTts = new TextToSpeech(context, mTtsListener);
 
     }
+
     @Override
     public String getName() {
         return TAG;
