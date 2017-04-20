@@ -24,7 +24,7 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.test.InstrumentationRegistry;
+import android.support.design.widget.FloatingActionButton;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
@@ -58,7 +58,9 @@ import static android.support.test.espresso.action.ViewActions.swipeUp;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
+import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.withChild;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
@@ -68,6 +70,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Tested on:
@@ -80,13 +84,19 @@ import static org.hamcrest.Matchers.endsWith;
 public class MainActivityTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<MainActivity>(MainActivity.class) {
+        @Override
+        protected void beforeActivityLaunched() {
+            super.beforeActivityLaunched();
+            cleanup();
+        }
+    };
 
     private void cleanup() {
         SQLiteDatabase db = new UserDb(getInstrumentation().getTargetContext()).getWritableDatabase();
         db.delete("SUGGESTION", null, null);
         db.delete("FAVORITE", null, null);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(InstrumentationRegistry.getTargetContext());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getInstrumentation().getTargetContext());
         prefs.edit().clear().apply();
     }
 
@@ -141,7 +151,6 @@ public class MainActivityTest {
     }
 
     private void clearSearchHistory() {
-
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
@@ -149,10 +158,10 @@ public class MainActivityTest {
 
         openMenu();
 
-        ViewInteraction appCompatTextView = onView(
-                allOf(withId(R.id.title), withText(R.string.action_settings), isDisplayed()));
-        appCompatTextView.perform(click());
+        // click on the settings menu item
+        onView(allOf(withId(R.id.title), withText(R.string.action_settings), isDisplayed())).perform(click());
 
+        // Scroll down to the bottom of the settings
         ViewInteraction recyclerView = onView(
                 allOf(withId(R.id.list),
                         withParent(allOf(withId(android.R.id.list_container),
@@ -160,11 +169,13 @@ public class MainActivityTest {
                         isDisplayed()));
         recyclerView.perform(swipeUp(), swipeUp(), swipeUp(), swipeUp());
 
+        // Tap on "clear search history"
         onView(withText(R.string.action_clear_search_history)).perform(click());
 
-        ViewInteraction appCompatButton = onView(
-                allOf(withId(android.R.id.button1), withText(R.string.action_clear)));
-        appCompatButton.perform(scrollTo(), click());
+        // Top ok on the confirmation dialog
+        onView(allOf(withId(android.R.id.button1), withText(R.string.action_clear))).perform(scrollTo(), click());
+
+        // Exit settings
         pressBack();
     }
 
@@ -174,10 +185,10 @@ public class MainActivityTest {
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         SystemClock.sleep(1000);
 
-        ViewInteraction searchIcon = onView(
-                allOf(withId(R.id.action_search), withContentDescription(R.string.action_search), isDisplayed()));
-        searchIcon.perform(click());
+        // Tap on the search icon in the action bar
+        onView(allOf(withId(R.id.action_search), withContentDescription(R.string.action_search), isDisplayed())).perform(click());
 
+        // Type the query term and search
         ViewInteraction searchAutoComplete = onView(
                 allOf(
                         withId(R.id.search_src_text),
@@ -198,14 +209,8 @@ public class MainActivityTest {
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         SystemClock.sleep(100);
 
-        ViewInteraction titleStrip = onView(
-                allOf(withText("RHYMER"),
-                        childAtPosition(
-                                allOf(withId(R.id.pager_title_strip),
-                                        withParent(withId(R.id.view_pager))),
-                                1),
-                        isDisplayed()));
-        titleStrip.check(matches(withText("RHYMER")));
+        // Make sure we're in the rhymer tab
+        verifyTitleStripCenterTitle("RHYMER");
 
         ViewInteraction firstRhymeWord = onView(
                 allOf(withId(R.id.text1), withText(firstRhyme),
@@ -255,15 +260,7 @@ public class MainActivityTest {
                         isDisplayed()));
         firstSynonymWord.check(matches(withText(expectedFirstSynonym)));
 
-        ViewInteraction titleStrip = onView(
-                allOf(withText("THESAURUS"),
-                        childAtPosition(
-                                allOf(withId(R.id.pager_title_strip),
-                                        withParent(withId(R.id.view_pager))),
-                                1),
-                        isDisplayed()));
-        titleStrip.check(matches(withText("THESAURUS")));
-
+        verifyTitleStripCenterTitle("THESAURUS");
     }
 
     private void openDictionary(String entry, String expectedFirstDefinition) {
@@ -283,14 +280,7 @@ public class MainActivityTest {
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         SystemClock.sleep(100);
 
-        ViewInteraction titleStrip = onView(
-                allOf(withText("DICTIONARY"),
-                        childAtPosition(
-                                allOf(withId(R.id.pager_title_strip),
-                                        withParent(withId(R.id.view_pager))),
-                                1),
-                        isDisplayed()));
-        titleStrip.check(matches(withText("DICTIONARY")));
+        verifyTitleStripCenterTitle("DICTIONARY");
 
         ViewInteraction firstDefinition = onView(
                 allOf(withId(R.id.definition), withText(expectedFirstDefinition),
@@ -353,16 +343,36 @@ public class MainActivityTest {
                                 0),
                         isDisplayed()));
         star.check(matches(isChecked()));
+    }
 
+    private void verifyTitleStripCenterTitle(String title) {
+        onView(allOf(withText(title),
+                        childAtPosition(
+                                allOf(withId(R.id.pager_title_strip),
+                                        withParent(withId(R.id.view_pager))),
+                                1),
+                        isCompletelyDisplayed()));
     }
 
     private void typePoem(String poem) {
         SystemClock.sleep(500);
+        // The fab should be disabled until there is text
+        ViewInteraction fab = onView(withClassName(is(FloatingActionButton.class.getName())));
+        fab.check(matches(not(isEnabled())));
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.tv_text), isDisplayed()));
+        appCompatEditText.check(matches(withText("")));
         appCompatEditText.perform(typeText(poem));
+        appCompatEditText.check(matches(withText(poem)));
+        fab.check(matches(isEnabled()));
+        speakPoem();
         pressBack();
         SystemClock.sleep(100);
+    }
+
+    private void speakPoem() {
+        ViewInteraction fab = onView(allOf(withClassName(is(FloatingActionButton.class.getName())), isEnabled()));
+        fab.perform(click());
     }
 
     private void clearPoem() {
