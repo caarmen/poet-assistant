@@ -36,8 +36,6 @@ import android.view.ViewParent;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -70,8 +68,10 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.equalToIgnoringWhiteSpace;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
 
 /**
  * Tested on:
@@ -90,6 +90,12 @@ public class MainActivityTest {
             super.beforeActivityLaunched();
             cleanup();
         }
+
+        @Override
+        protected void afterActivityFinished() {
+            cleanup();
+            super.afterActivityFinished();
+        }
     };
 
     private void cleanup() {
@@ -98,16 +104,6 @@ public class MainActivityTest {
         db.delete("FAVORITE", null, null);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getInstrumentation().getTargetContext());
         prefs.edit().clear().apply();
-    }
-
-    @Before
-    public void setup() {
-        cleanup();
-    }
-
-    @After
-    public void tearDown() {
-        cleanup();
     }
 
     @Test
@@ -363,7 +359,7 @@ public class MainActivityTest {
                 allOf(withId(R.id.tv_text), isDisplayed()));
         appCompatEditText.check(matches(withText("")));
         appCompatEditText.perform(typeText(poem));
-        appCompatEditText.check(matches(withText(poem)));
+        appCompatEditText.check(matches(withText(equalToIgnoringCase(poem))));
         fab.check(matches(isEnabled()));
         speakPoem();
         pressBack();

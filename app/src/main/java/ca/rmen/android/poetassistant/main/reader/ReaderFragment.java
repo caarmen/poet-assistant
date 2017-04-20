@@ -94,6 +94,7 @@ public class ReaderFragment extends Fragment implements
         DaggerHelper.getMainScreenComponent(getContext()).inject(this);
         setHasOptionsMenu(true);
         mPoemPrefs = new PoemPrefs(getActivity());
+        mHandler = new Handler();
         EventBus.getDefault().register(this);
     }
 
@@ -115,7 +116,6 @@ public class ReaderFragment extends Fragment implements
             if (activity instanceof CABEditText.ImeListener) ((CABEditText.ImeListener)activity).onImeClosed();
         });
         TextPopupMenu.addSelectionPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
-        mHandler = new Handler();
         return mBinding.getRoot();
     }
 
@@ -374,7 +374,7 @@ public class ReaderFragment extends Fragment implements
     };
 
     @SuppressWarnings("unused")
-    @Subscribe
+    @Subscribe(sticky = true)
     public void onTtsInitialized(Tts.OnTtsInitialized event) {
         Log.d(TAG, "onTtsInitialized() called with: " + "event = [" + event + "]");
 

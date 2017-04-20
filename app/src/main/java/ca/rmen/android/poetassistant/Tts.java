@@ -153,6 +153,7 @@ public class Tts {
             mTextToSpeech.setOnUtteranceCompletedListener(null);
             mTextToSpeech.shutdown();
             mTtsStatus = TextToSpeech.ERROR;
+            EventBus.getDefault().removeStickyEvent(OnTtsInitialized.class);
             mTextToSpeech = null;
         }
     }
@@ -167,7 +168,7 @@ public class Tts {
             setVoiceSpeedFromSettings();
             setVoicePitchFromSettings();
         }
-        EventBus.getDefault().post(new OnTtsInitialized(status));
+        EventBus.getDefault().postSticky(new OnTtsInitialized(status));
     };
 
     // This can't be local or it will be removed from the shared prefs manager!
