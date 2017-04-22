@@ -39,12 +39,16 @@ import ca.rmen.android.poetassistant.Tts;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static ca.rmen.android.poetassistant.main.CustomViewActions.clickLastChild;
+import static ca.rmen.android.poetassistant.main.CustomViewActions.scrollToEnd;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
@@ -93,6 +97,16 @@ public class TtsTest {
         assertThat("expected speech time to be slower after scrolling seekbar to the left",
                 slowSpeechTime,
                 greaterThan(defaultSpeechTime));
+    }
+
+    @Test
+    public void voiceSelectionTest() {
+        openMenuItem(R.string.action_settings);
+        clickPreference(R.string.pref_voice_title);
+        // We don't know what voices will be available on the device.  Just select the last one.
+        onView(withClassName(endsWith("RecycleListView")))
+                .perform(scrollToEnd(), clickLastChild());
+        clickPreference(R.string.pref_voice_preview_title);
     }
 
     private long timeTtsPreview() {

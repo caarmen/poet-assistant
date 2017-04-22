@@ -19,10 +19,21 @@
 
 package ca.rmen.android.poetassistant.main;
 
+import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.GeneralClickAction;
+import android.support.test.espresso.action.GeneralLocation;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+
+import org.hamcrest.Matcher;
+
+import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static org.hamcrest.Matchers.allOf;
 
 final class CustomViewActions {
     private CustomViewActions() {
@@ -42,6 +53,55 @@ final class CustomViewActions {
                     return new float[]{screenX, screenY};
                 },
                 Press.FINGER);
+    }
+
+    static ViewAction scrollToEnd() {
+        return new ViewAction() {
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public Matcher<View> getConstraints() {
+                return allOf(isAssignableFrom(AdapterView.class), isDisplayed());
+            }
+
+            @Override
+            public String getDescription() {
+                return "scroll AdapterView to the end";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                AdapterView adapterView = (AdapterView) view;
+                int count = adapterView.getAdapter().getCount();
+                adapterView.setSelection(count - 1);
+            }
+        };
+    }
+
+    static ViewAction clickLastChild() {
+        return new ViewAction() {
+
+            @SuppressWarnings("unchecked")
+            @Override
+            public Matcher<View> getConstraints() {
+                return allOf(isAssignableFrom(ViewGroup.class), isDisplayed());
+            }
+
+            @Override
+            public String getDescription() {
+                return "Click the last child in a ViewGroup";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                ViewGroup viewGroup = (ViewGroup) view;
+                View lastChild = viewGroup.getChildAt(viewGroup.getChildCount() - 1);
+                new GeneralClickAction(Tap.SINGLE,
+                        view1 -> GeneralLocation.CENTER.calculateCoordinates(lastChild),
+                        Press.FINGER)
+                        .perform(uiController, view);
+            }
+        };
     }
 
 }
