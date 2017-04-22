@@ -115,7 +115,7 @@ class TestAppUtils {
         checkTitleStripCenterTitle(context, R.string.tab_thesaurus);
     }
 
-    private static void verifyFirstSynonym(String expectedFirstSynonym) {
+    static void verifyFirstSynonym(String expectedFirstSynonym) {
         ViewInteraction firstSynonymWord = onView(
                 allOf(withId(R.id.text1), withText(expectedFirstSynonym),
                         childAtPosition(
@@ -143,7 +143,7 @@ class TestAppUtils {
         verifyFirstDefinition(expectedFirstDefinition);
     }
 
-    private static void verifyFirstDefinition(String expectedFirstDefinition) {
+    static void verifyFirstDefinition(String expectedFirstDefinition) {
         ViewInteraction firstDefinition = onView(
                 allOf(withId(R.id.definition), withText(expectedFirstDefinition),
                         childAtPosition(

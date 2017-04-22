@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
             Uri data = getIntent().getData();
             handleDeepLink(data);
         }
-        // Play some text in the tts tab
+        // Load some shared text into the reader tab
         else if (Intent.ACTION_SEND.equals(intent.getAction())) {
             mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false);
             String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
