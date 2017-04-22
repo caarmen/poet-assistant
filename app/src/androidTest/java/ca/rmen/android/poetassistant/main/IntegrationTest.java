@@ -61,124 +61,121 @@ import static org.hamcrest.Matchers.containsString;
 @RunWith(AndroidJUnit4.class)
 public class IntegrationTest extends BaseTest {
 
-    @Test
-    public void integrationTest1() {
+    private static class IntegrationTestScenario {
+        final String query;
+        final String firstRhyme;
+        final String secondRhyme;
+        final String firstSynonymForFirstRhyme;
+        final String secondSynonymForFirstRhyme;
+        final String firstDefinitionForSecondSynonym;
+        final String thesaurusFilter;
+        final String thesaurusFilterMatch;
+        final String rhymerFilter;
+        final String rhymerFilterMatch;
+        final String poem;
+
+        IntegrationTestScenario(String query,
+                                String firstRhyme, String secondRhyme, String firstSynonymForFirstRhyme, String secondSynonymForFirstRhyme, String firstDefinitionForSecondSynonym,
+                                String thesaurusFilter, String thesaurusFilterMatch, String rhymerFilter, String rhymerFilterMatch,
+                                String poem) {
+            this.query = query;
+            this.firstRhyme = firstRhyme;
+            this.secondRhyme = secondRhyme;
+            this.firstSynonymForFirstRhyme = firstSynonymForFirstRhyme;
+            this.secondSynonymForFirstRhyme = secondSynonymForFirstRhyme;
+            this.firstDefinitionForSecondSynonym = firstDefinitionForSecondSynonym;
+            this.thesaurusFilter = thesaurusFilter;
+            this.thesaurusFilterMatch = thesaurusFilterMatch;
+            this.rhymerFilter = rhymerFilter;
+            this.rhymerFilterMatch = rhymerFilterMatch;
+            this.poem = poem;
+        }
+    }
+    private static final IntegrationTestScenario SCENARIO1 =
+                new IntegrationTestScenario("howdy", "cloudy", "dowdy", "nebulose", "nebulous", "lacking definite form or limits",
+                                                    "bloody", "muddy", "bully", "rowdy",
+                                                    "Forever is composed of nows"); // Emily Dickinson
+
+    private static final IntegrationTestScenario SCENARIO2 =
+                new IntegrationTestScenario("beholden", "embolden", "golden", "hearten", "recreate", "create anew",
+                                                    "beer", "cheer", "wildness", "abandon",
+                                                    "roses are red, violets are blue\nespresso tests will find bugs for you");
+
+    private void runIntegrationTest(IntegrationTestScenario data) {
         Context context = mActivityTestRule.getActivity();
         swipeViewPagerLeft(4);
         checkAllStarredWords(context);
         swipeViewPagerRight(4);
-        search("howdy");
-        checkRhymes(context, "cloudy", "dowdy");
-        openThesaurus(context, "cloudy", "nebulose");
-        openDictionary(context, "nebulous", "lacking definite form or limits");
+        search(data.query);
+        checkRhymes(context, data.firstRhyme, data.secondRhyme);
+        openThesaurus(context, data.firstRhyme, data.firstSynonymForFirstRhyme);
+        openDictionary(context, data.secondSynonymForFirstRhyme, data.firstDefinitionForSecondSynonym);
         starQueryWord();
         swipeViewPagerLeft(2);
-        checkAllStarredWords(context, "nebulous");
+        checkAllStarredWords(context, data.secondSynonymForFirstRhyme);
         swipeViewPagerRight(3);
-        checkStarredInList("nebulous");
-        filter("bloody", "muddy", "nebulose");
+        checkStarredInList(data.secondSynonymForFirstRhyme);
+        filter(data.thesaurusFilter, data.thesaurusFilterMatch, data.firstSynonymForFirstRhyme);
         swipeViewPagerRight(1);
-        filter("bully", "rowdy", "cloudy");
+        filter(data.rhymerFilter, data.rhymerFilterMatch, data.firstRhyme);
         swipeViewPagerLeft(3);
-        typePoem("Forever is composed of nows");
+        typePoem(data.poem);
         clearPoem();
         // clearing the search history doesn't erase starred words
         clearSearchHistory();
         swipeViewPagerLeft(1);
-        checkAllStarredWords(context, "nebulous");
+        checkAllStarredWords(context, data.secondSynonymForFirstRhyme);
         clearStarredWords();
         checkAllStarredWords(context);
+    }
+
+    private void runCleanLayoutIntegrationTest(IntegrationTestScenario data) {
+        Context context = mActivityTestRule.getActivity();
+        useCleanLayout();
+        swipeViewPagerLeft(4);
+        checkAllStarredWords(context);
+        swipeViewPagerRight(4);
+        search(data.query);
+        checkRhymes(context, data.firstRhyme, data.secondRhyme);
+        openThesaurusCleanLayout(context, data.firstRhyme, data.firstSynonymForFirstRhyme);
+        openDictionaryCleanLayout(context, data.secondSynonymForFirstRhyme, data.firstDefinitionForSecondSynonym);
+        starQueryWord();
+        swipeViewPagerLeft(2);
+        checkAllStarredWords(context, data.secondSynonymForFirstRhyme);
+        swipeViewPagerRight(3);
+        checkStarredInList(data.secondSynonymForFirstRhyme);
+        filter(data.thesaurusFilter, data.thesaurusFilterMatch, data.firstSynonymForFirstRhyme);
+        swipeViewPagerRight(1);
+        filter(data.rhymerFilter, data.rhymerFilterMatch, data.firstRhyme);
+        swipeViewPagerLeft(3);
+        typePoem(data.poem);
+        clearPoem();
+        // clearing the search history doesn't erase starred words
+        clearSearchHistory();
+        swipeViewPagerLeft(1);
+        checkAllStarredWords(context, data.secondSynonymForFirstRhyme);
+        clearStarredWords();
+        checkAllStarredWords(context);
+    }
+
+    @Test
+    public void integrationTest1() {
+        runIntegrationTest(SCENARIO1);
     }
 
     @Test
     public void integrationTest2() {
-        Context context = mActivityTestRule.getActivity();
-        swipeViewPagerLeft(4);
-        checkAllStarredWords(context);
-        swipeViewPagerRight(4);
-        search("beholden");
-        checkRhymes(context, "embolden", "golden");
-        openThesaurus(context, "embolden", "hearten");
-        openDictionary(context, "recreate", "create anew");
-        starQueryWord();
-        swipeViewPagerLeft(2);
-        checkAllStarredWords(context, "recreate");
-        swipeViewPagerRight(3);
-        checkStarredInList("recreate");
-        filter("beer", "cheer", "hearten");
-        swipeViewPagerRight(1);
-        filter("wildness", "abandon", "embolden");
-        swipeViewPagerLeft(3);
-        typePoem("roses are red, violets are blue\nespresso tests will find bugs for you");
-        clearPoem();
-
-        clearSearchHistory();
-        swipeViewPagerLeft(1);
-        checkAllStarredWords(context, "recreate");
-        clearStarredWords();
-        checkAllStarredWords(context);
+        runIntegrationTest(SCENARIO2);
     }
 
     @Test
     public void cleanLayout1Test() {
-        Context context = mActivityTestRule.getActivity();
-        useCleanLayout();
-
-        swipeViewPagerLeft(4);
-        checkAllStarredWords(context);
-        swipeViewPagerRight(4);
-        search("howdy");
-        checkRhymes(context, "cloudy", "dowdy");
-        openThesaurusCleanLayout(context, "cloudy", "nebulose");
-        openDictionaryCleanLayout(context, "nebulous", "lacking definite form or limits");
-        starQueryWord();
-        swipeViewPagerLeft(2);
-        checkAllStarredWords(context, "nebulous");
-        swipeViewPagerRight(3);
-        checkStarredInList("nebulous");
-        filter("bloody", "muddy", "nebulose");
-        swipeViewPagerRight(1);
-        filter("bully", "rowdy", "cloudy");
-        swipeViewPagerLeft(3);
-        typePoem("Forever is composed of nows");
-        clearPoem();
-        // clearing the search history doesn't erase starred words
-        clearSearchHistory();
-        swipeViewPagerLeft(1);
-        checkAllStarredWords(context, "nebulous");
-        clearStarredWords();
-        checkAllStarredWords(context);
+        runCleanLayoutIntegrationTest(SCENARIO1);
     }
 
     @Test
     public void cleanLayout2Test() {
-        Context context = mActivityTestRule.getActivity();
-        useCleanLayout();
-
-        swipeViewPagerLeft(4);
-        checkAllStarredWords(context);
-        swipeViewPagerRight(4);
-        search("beholden");
-        checkRhymes(context, "embolden", "golden");
-        openThesaurusCleanLayout(context, "embolden", "hearten");
-        openDictionaryCleanLayout(context, "recreate", "create anew");
-        starQueryWord();
-        swipeViewPagerLeft(2);
-        checkAllStarredWords(context, "recreate");
-        swipeViewPagerRight(3);
-        checkStarredInList("recreate");
-        filter("beer", "cheer", "hearten");
-        swipeViewPagerRight(1);
-        filter("wildness", "abandon", "embolden");
-        swipeViewPagerLeft(3);
-        typePoem("roses are red, violets are blue\nespresso tests will find bugs for you");
-        clearPoem();
-
-        clearSearchHistory();
-        swipeViewPagerLeft(1);
-        checkAllStarredWords(context, "recreate");
-        clearStarredWords();
-        checkAllStarredWords(context);
+        runCleanLayoutIntegrationTest(SCENARIO2);
     }
 
     @Test
