@@ -163,6 +163,14 @@ class TestAppUtils {
         starIcon.check(matches(isChecked()));
     }
 
+    static void unStarQueryWord() {
+        ViewInteraction starIcon = onView(
+                allOf(withId(R.id.btn_star_query), isDisplayed()));
+        starIcon.check(matches(isChecked()));
+        starIcon.perform(click());
+        starIcon.check(matches(isNotChecked()));
+    }
+
     static void filter(String filter, String firstExpectedFilteredMatch, String firstExpectedNonFilteredMatch) {
         ViewInteraction filterIcon = onView(
                 allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()));
