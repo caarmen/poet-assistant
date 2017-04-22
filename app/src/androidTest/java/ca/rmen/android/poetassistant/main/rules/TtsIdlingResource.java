@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.main.rules;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;

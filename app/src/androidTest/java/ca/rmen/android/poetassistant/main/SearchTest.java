@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.clearText;

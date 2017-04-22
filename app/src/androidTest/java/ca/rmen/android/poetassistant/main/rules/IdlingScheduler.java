@@ -1,4 +1,4 @@
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.main.rules;
 
 import android.support.test.espresso.idling.CountingIdlingResource;
 
