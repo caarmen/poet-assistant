@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import android.support.annotation.StringRes;
 import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.GeneralLocation;
 import android.support.test.espresso.action.Press;
@@ -62,21 +63,28 @@ public class TtsTest extends BaseTest {
     }
 
     @Test
+    public void voicePitchTest() {
+        openMenuItem(R.string.action_settings);
+        clickPreference(R.string.pref_voice_preview_title);
+        slideSeekbar(R.string.pref_voice_pitch_title, GeneralLocation.CENTER_RIGHT);
+        clickPreference(R.string.pref_voice_preview_title);
+        slideSeekbar(R.string.pref_voice_pitch_title, GeneralLocation.CENTER_LEFT);
+        clickPreference(R.string.pref_voice_preview_title);
+    }
+
+    @Test
     public void voiceSpeedTest() {
         openMenuItem(R.string.action_settings);
 
         long defaultSpeechTime = timeTtsPreview();
-        //http://stackoverflow.com/questions/23659367/espresso-set-seekbar
-        onView(allOf(withId(R.id.seekbar), withParent(withParent(hasDescendant(withText(R.string.pref_voice_speed_title))))))
-                .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_RIGHT, Press.FINGER));
+        slideSeekbar(R.string.pref_voice_speed_title, GeneralLocation.CENTER_RIGHT);
 
         long fastSpeechTime = timeTtsPreview();
         assertThat("expected speech time to be faster after scrolling seekbar to the right",
                 fastSpeechTime,
                 lessThan(defaultSpeechTime));
 
-        onView(allOf(withId(R.id.seekbar), withParent(withParent(hasDescendant(withText(R.string.pref_voice_speed_title))))))
-                .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER));
+        slideSeekbar(R.string.pref_voice_speed_title, GeneralLocation.CENTER_LEFT);
 
         long slowSpeechTime = timeTtsPreview();
         assertThat("expected speech time to be slower after scrolling seekbar to the left",
@@ -92,6 +100,12 @@ public class TtsTest extends BaseTest {
         long defaultSpeechTime = receiver.timeUtteranceCompleted - before;
         EventBus.getDefault().unregister(receiver);
         return defaultSpeechTime;
+    }
+
+    private void slideSeekbar(@StringRes int prefTitleId, GeneralLocation location) {
+        //http://stackoverflow.com/questions/23659367/espresso-set-seekbar
+        onView(allOf(withId(R.id.seekbar), withParent(withParent(hasDescendant(withText(prefTitleId))))))
+                .perform(new GeneralClickAction(Tap.SINGLE, location, Press.FINGER));
     }
 
 }
