@@ -34,6 +34,7 @@ import java.util.Locale;
 import ca.rmen.android.poetassistant.R;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.isPlatformPopup;
@@ -50,6 +51,8 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.lessThan;
+import static org.junit.Assert.assertThat;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -67,6 +70,19 @@ public class PoemTest {
         assertFalse(poemFile.exists());
         openMenuItem(R.string.share_poem_audio);
         assertTrue(poemFile.exists());
+        long length1 = poemFile.length();
+        long fileDate1 = poemFile.lastModified();
+
+        // Try another one
+
+        onView(allOf(withId(R.id.tv_text), isDisplayed())).perform(clearText());
+        typePoem("Will export some text which is a bit longer");
+        openMenuItem(R.string.share_poem_audio);
+        assertTrue(poemFile.exists());
+        long length2 = poemFile.length();
+        long fileDate2 = poemFile.lastModified();
+        assertThat("Expected second file to be newer than first file", fileDate1, lessThan(fileDate2));
+        assertThat("Expected second file to be larger than first file", length1, lessThan(length2));
     }
 
     @Test

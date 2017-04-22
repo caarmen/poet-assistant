@@ -38,6 +38,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -45,8 +46,10 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewActions.clickLastChild;
 import static ca.rmen.android.poetassistant.main.CustomViewActions.scrollToEnd;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.greaterThan;
@@ -107,6 +110,9 @@ public class TtsTest {
         onView(withClassName(endsWith("RecycleListView")))
                 .perform(scrollToEnd(), clickLastChild());
         clickPreference(R.string.pref_voice_preview_title);
+        pressBack();
+        swipeViewPagerLeft(3);
+        typePoem("Do I have an accent?");
     }
 
     private long timeTtsPreview() {
