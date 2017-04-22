@@ -54,6 +54,7 @@ import ca.rmen.android.poetassistant.compat.HtmlCompat;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding;
+import ca.rmen.android.poetassistant.main.AppBarLayoutHelper;
 import ca.rmen.android.poetassistant.main.TextPopupMenu;
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
@@ -294,6 +295,10 @@ public class ReaderFragment extends Fragment implements
         if (actionId == ACTION_FILE_NEW) {
             mPoemPrefs.clear();
             mBinding.tvText.setText("");
+            // Hack for https://github.com/caarmen/poet-assistant/issues/72
+            // On some devices, clearing the poem text auto-hides the app bar layout.
+            // Let's expand it again.
+            AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
             getActivity().supportInvalidateOptionsMenu();
         }
     }
