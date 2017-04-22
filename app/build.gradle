@@ -133,6 +133,7 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 
+    androidTestCompile 'org.jacoco:org.jacoco.ant:0.7.9'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
@@ -156,4 +157,31 @@ dependencyUpdates.resolutionStrategy = {
             }
         }
     }
+}
+task jacocoTestReport(type: JacocoReport, dependsOn: "createDebugCoverageReport") {
+    reports {
+        html.enabled = true
+        html.destination "${buildDir}/reports/jacoco"
+    }
+    jacocoClasspath=project.getConfigurations().getAt("androidTestCompile")
+    classDirectories = fileTree(
+            dir: "${buildDir}/intermediates/classes/debug",
+            excludes: ["**/R.class", "**/R*.class", "**/Manifest.class", "**/Manifest*.class", "**/BuildConfig.class",
+                       // ignore databinding generated code:
+                       "ca/rmen/android/poetassistant/databinding/*.class",
+                       "ca/rmen/android/poetassistant/BR.class",
+                       // ignore dagger generated code:
+                       "ca/rmen/android/poetassistant/settings/SettingsEditorWrapper.class",
+                       "ca/rmen/android/poetassistant/settings/SettingsPrefs.class",
+                       "ca/rmen/android/poetassistant/**/DaggerAppComponent.class",
+                       "ca/rmen/android/poetassistant/**/_Factory.class",
+                       "ca/rmen/android/poetassistant/**/_Provides*.class",
+                       "ca/rmen/android/poetassistant/**/*Injector.class",
+                       // ignore generated code not in our package
+                       "android/databinding/**/*.class",
+                       "com/android/**/*.class"])
+    sourceDirectories = files("${project.projectDir}/src/main/java")
+    executionData = fileTree(
+            dir: "${buildDir}",
+            includes: [ "outputs/code-coverage/connected/*coverage.ec" ])
 }
