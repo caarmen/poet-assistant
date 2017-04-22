@@ -34,6 +34,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -180,6 +181,30 @@ public class IntegrationTest {
     @Test
     public void cleanLayout2Test() {
         runCleanLayoutIntegrationTest(SCENARIO2);
+    }
+
+    @Test
+    public void themeTest() {
+        openMenuItem(R.string.action_settings);
+        clickPreference(R.string.pref_theme_title);
+        onView(withText(R.string.pref_theme_value_light)).check(matches(isChecked()));
+        onView(withText(R.string.pref_theme_value_dark)).perform(click());
+        pressBack();
+
+        openMenuItem(R.string.action_settings);
+        clickPreference(R.string.pref_theme_title);
+        onView(withText(R.string.pref_theme_value_dark)).check(matches(isChecked()));
+        onView(withText(R.string.pref_theme_value_auto)).perform(click());
+        pressBack();
+
+        openMenuItem(R.string.action_settings);
+        clickPreference(R.string.pref_theme_title);
+        onView(withText(R.string.pref_theme_value_auto)).check(matches(isChecked()));
+        onView(withText(R.string.pref_theme_value_light)).perform(click());
+        pressBack();
+
+        openMenuItem(R.string.action_settings);
+        clickPreference(R.string.pref_theme_title);
     }
 
     @Test
