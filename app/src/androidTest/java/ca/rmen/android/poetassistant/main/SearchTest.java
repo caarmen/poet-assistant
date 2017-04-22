@@ -27,15 +27,21 @@ import android.support.test.runner.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import ca.rmen.android.poetassistant.R;
+
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkPatterns;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkSearchSuggestions;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearSearchHistory;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openSearchView;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typeQuery;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 
 /**
  * Tested on:
@@ -101,6 +107,17 @@ public class SearchTest extends BaseTest {
         checkPatterns(mActivityTestRule.getActivity(), "h*llo", "hello", "hermosillo", "hollo", "hullo");
         search("h*llz");
         checkPatterns(mActivityTestRule.getActivity(), "h*llz");
+    }
+
+    @Test
+    public void showAllRhymesTest() {
+        search("faith");
+        checkRhymes(mActivityTestRule.getActivity(), "eighth", "interfaith");
+        openMenuItem(R.string.action_settings);
+        clickPreference(R.string.all_rhymes_setting_title);
+        pressBack();
+        search("faith");
+        checkRhymes(mActivityTestRule.getActivity(), "eighth", "haith");
     }
 
 }
