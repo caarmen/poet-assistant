@@ -61,7 +61,7 @@ import static org.junit.Assert.assertThat;
 public class TtsTest {
 
     @Rule
-    public MainActivityTestRule mActivityTestRule = new MainActivityTestRule(true);
+    public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 
     public static class EventBusReceiver {
         long timeUtteranceCompleted;

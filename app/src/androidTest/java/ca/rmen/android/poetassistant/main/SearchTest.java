@@ -48,7 +48,7 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 @RunWith(AndroidJUnit4.class)
 public class SearchTest {
     @Rule
-    public MainActivityTestRule mActivityTestRule = new MainActivityTestRule(true);
+    public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 
     @Test
     public void searchSuggestionsTest() {

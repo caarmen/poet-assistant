@@ -52,7 +52,7 @@ import static org.hamcrest.Matchers.allOf;
 public class IntentTest {
 
     @Rule
-    public MainActivityTestRule mActivityTestRule = new MainActivityTestRule(false);
+    public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, false);
 
     @Test
     public void onNewIntentQueryTest() {

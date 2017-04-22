@@ -21,6 +21,8 @@ package ca.rmen.android.poetassistant.main;
 
 
 import android.content.Context;
+import android.support.annotation.IdRes;
+import android.support.annotation.StringRes;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -33,6 +35,7 @@ import ca.rmen.android.poetassistant.R;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
@@ -64,7 +67,7 @@ import static org.hamcrest.Matchers.containsString;
 public class IntegrationTest {
 
     @Rule
-    public MainActivityTestRule mActivityTestRule = new MainActivityTestRule(true);
+    public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 
     private static class IntegrationTestScenario {
         final String query;
@@ -210,18 +213,28 @@ public class IntegrationTest {
     @Test
     public void openAboutScreenTest() {
         openMenuItem(R.string.action_about);
-        onView(withId(R.id.tv_poet_assistant_license))
+        checkLicense(R.id.tv_poet_assistant_license, R.string.about_license_app, "GNU GENERAL");
+        checkLicense(R.id.tv_rhymer_license, R.string.about_license_rhyming_dictionary, "Carnegie Mellon University");
+        checkLicense(R.id.tv_thesaurus_license, R.string.about_license_thesaurus, "WordNet Release 2.1");
+        checkLicense(R.id.tv_dictionary_license, R.string.about_license_dictionary, "WordNet 3.0");
+        checkLicense(R.id.tv_google_ngram_dataset_license, R.string.about_license_google_ngram_dataset, "Google Ngram Viewer");
+        onView(withId(R.id.tv_source_code))
                 .check(matches(isCompletelyDisplayed()))
-                .check(matches(withText(R.string.about_license_app)))
+                .check(matches(withText(R.string.about_projectUrl)));
+    }
+
+    private void checkLicense(@IdRes int linkResId, @StringRes int linkTitle, String licenseContent) {
+        onView(withId(linkResId))
+                .check(matches(withText(linkTitle)))
+                .perform(scrollTo())
+                .check(matches(isCompletelyDisplayed()))
                 .perform(click());
 
         onView(withId(R.id.tv_license_text))
                 .check(matches(isDisplayed()))
-                .check(matches(withText(containsString("GNU GENERAL"))));
+                .check(matches(withText(containsString(licenseContent))));
         pressBack();
-        onView(withId(R.id.tv_source_code))
-                .check(matches(isCompletelyDisplayed()))
-                .check(matches(withText(R.string.about_projectUrl)));
+
     }
 
     private void useCleanLayout() {

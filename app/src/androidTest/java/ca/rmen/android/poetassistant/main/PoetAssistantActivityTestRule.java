@@ -18,6 +18,7 @@
  */
 package ca.rmen.android.poetassistant.main;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -37,10 +38,10 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.registerIdlingResources;
 import static junit.framework.Assert.assertTrue;
 
-class MainActivityTestRule extends ActivityTestRule<MainActivity> {
+class PoetAssistantActivityTestRule<T extends Activity> extends ActivityTestRule<T> {
 
-    MainActivityTestRule(boolean launchActivity) {
-        super(MainActivity.class, false, launchActivity);
+    PoetAssistantActivityTestRule(Class<T> clazz, boolean launchActivity) {
+        super(clazz, false, launchActivity);
     }
 
     @Override

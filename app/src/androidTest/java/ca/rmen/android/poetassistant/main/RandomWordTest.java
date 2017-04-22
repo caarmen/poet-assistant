@@ -58,7 +58,7 @@ import static org.hamcrest.Matchers.not;
 @RunWith(AndroidJUnit4.class)
 public class RandomWordTest {
     @Rule
-    public MainActivityTestRule mActivityTestRule = new MainActivityTestRule(true);
+    public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 
     @Test
     public void openWotdListTest() {

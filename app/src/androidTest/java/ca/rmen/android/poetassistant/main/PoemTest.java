@@ -59,7 +59,7 @@ import static org.junit.Assert.assertThat;
 public class PoemTest {
 
     @Rule
-    public MainActivityTestRule mActivityTestRule = new MainActivityTestRule(true);
+    public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 
     @Test
     public void exportAudioTest() {
