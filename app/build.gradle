@@ -21,6 +21,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'jacoco'
+
 
 
 android {
@@ -64,6 +66,14 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    testOptions {
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
         }
     }
 
@@ -133,7 +143,6 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 
-    androidTestCompile 'org.jacoco:org.jacoco.ant:0.7.9'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
@@ -158,12 +167,10 @@ dependencyUpdates.resolutionStrategy = {
         }
     }
 }
-task jacocoTestReport(type: JacocoReport, dependsOn: "createDebugCoverageReport") {
+task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", "createDebugCoverageReport"]) {
     reports {
         html.enabled = true
-        html.destination "${buildDir}/reports/jacoco"
     }
-    jacocoClasspath=project.getConfigurations().getAt("androidTestCompile")
     classDirectories = fileTree(
             dir: "${buildDir}/intermediates/classes/debug",
             excludes: ["**/R.class", "**/R*.class", "**/Manifest.class", "**/Manifest*.class", "**/BuildConfig.class",
@@ -183,5 +190,8 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "createDebugCoverageReport"
     sourceDirectories = files("${project.projectDir}/src/main/java")
     executionData = fileTree(
             dir: "${buildDir}",
-            includes: [ "outputs/code-coverage/connected/*coverage.ec" ])
+            includes: [
+                    "jacoco/testDebugUnitTest.exec",
+                    "outputs/code-coverage/connected/*coverage.ec"
+            ])
 }
