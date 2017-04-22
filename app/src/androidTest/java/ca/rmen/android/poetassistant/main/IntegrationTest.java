@@ -33,6 +33,7 @@ import org.junit.runner.RunWith;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -198,7 +199,7 @@ public class IntegrationTest {
         String wordToCopy = "swanky";
         onView(allOf(withText(wordToCopy), isDisplayed())).perform(click());
         onView(allOf(withText(endsWith(context.getString(R.string.menu_copy))), isDisplayed())).perform(click());
-        checkClipboard(context, wordToCopy);
+        getInstrumentation().runOnMainSync(() -> checkClipboard(context, wordToCopy));
     }
 
     @Test
@@ -210,7 +211,7 @@ public class IntegrationTest {
         onView(allOf(withText(wordToCopy), isDisplayed())).perform(click());
         onView(allOf(withText(endsWith(context.getString(R.string.menu_more))), isDisplayed())).perform(click());
         onView(allOf(withText(endsWith(context.getString(R.string.menu_copy))), isDisplayed())).perform(click());
-        checkClipboard(context, wordToCopy);
+        getInstrumentation().runOnMainSync(() -> checkClipboard(context, wordToCopy));
     }
 
     @Test
