@@ -29,6 +29,7 @@ import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -55,7 +56,9 @@ import static org.hamcrest.Matchers.not;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class RandomWordTest extends BaseTest {
+public class RandomWordTest {
+    @Rule
+    public MainActivityTestRule mActivityTestRule = new MainActivityTestRule(true);
 
     @Test
     public void openWotdListTest() {

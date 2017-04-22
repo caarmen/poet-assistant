@@ -30,6 +30,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -50,8 +51,10 @@ import static org.junit.Assert.assertThat;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class TtsTest extends BaseTest {
+public class TtsTest {
 
+    @Rule
+    public MainActivityTestRule mActivityTestRule = new MainActivityTestRule(true);
 
     public static class EventBusReceiver {
         long timeUtteranceCompleted;

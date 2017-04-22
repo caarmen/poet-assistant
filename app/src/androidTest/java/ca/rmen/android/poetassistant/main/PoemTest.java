@@ -24,6 +24,7 @@ import android.support.test.espresso.PerformException;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -52,7 +53,10 @@ import static org.hamcrest.Matchers.equalToIgnoringCase;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class PoemTest extends BaseTest {
+public class PoemTest {
+
+    @Rule
+    public MainActivityTestRule mActivityTestRule = new MainActivityTestRule(true);
 
     @Test
     public void exportAudioTest() {

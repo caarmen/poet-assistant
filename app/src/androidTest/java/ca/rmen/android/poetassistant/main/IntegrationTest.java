@@ -24,6 +24,7 @@ import android.content.Context;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -59,7 +60,10 @@ import static org.hamcrest.Matchers.containsString;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class IntegrationTest extends BaseTest {
+public class IntegrationTest {
+
+    @Rule
+    public MainActivityTestRule mActivityTestRule = new MainActivityTestRule(true);
 
     private static class IntegrationTestScenario {
         final String query;

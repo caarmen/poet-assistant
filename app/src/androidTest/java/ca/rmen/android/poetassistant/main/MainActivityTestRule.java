@@ -16,9 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package ca.rmen.android.poetassistant.main;
-
 
 import android.app.NotificationManager;
 import android.content.Context;
@@ -28,8 +26,6 @@ import android.preference.PreferenceManager;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.rule.ActivityTestRule;
-
-import org.junit.Rule;
 
 import java.io.File;
 import java.util.List;
@@ -41,38 +37,35 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.registerIdlingResources;
 import static junit.framework.Assert.assertTrue;
 
-/**
- * Tested on:
- * - Huawei P9 Lite
- */
-class BaseTest {
+class MainActivityTestRule extends ActivityTestRule<MainActivity> {
 
-    @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<MainActivity>(MainActivity.class) {
-        @Override
-        protected void beforeActivityLaunched() {
-            super.beforeActivityLaunched();
-            registerIdlingResources(new TtsIdlingResource(getInstrumentation().getTargetContext()));
-            cleanup();
-            RxJavaPlugins.setIoSchedulerHandler(scheduler -> {
-                IdlingScheduler idlingScheduler = new IdlingScheduler(scheduler);
-                registerIdlingResources(new RxSchedulerIdlingResource(idlingScheduler));
-                return idlingScheduler;
-            });
-        }
+    MainActivityTestRule(boolean launchActivity) {
+        super(MainActivity.class, false, launchActivity);
+    }
 
-        @Override
-        protected void afterActivityFinished() {
-            cleanup();
-            List<IdlingResource> idlingResourceList = Espresso.getIdlingResources();
-            if (idlingResourceList != null) {
-                for (int i = 0; i < idlingResourceList.size(); i++) {
-                    Espresso.unregisterIdlingResources(idlingResourceList.get(i));
-                }
+    @Override
+    protected void beforeActivityLaunched() {
+        super.beforeActivityLaunched();
+        registerIdlingResources(new TtsIdlingResource(getInstrumentation().getTargetContext()));
+        cleanup();
+        RxJavaPlugins.setIoSchedulerHandler(scheduler -> {
+            IdlingScheduler idlingScheduler = new IdlingScheduler(scheduler);
+            registerIdlingResources(new RxSchedulerIdlingResource(idlingScheduler));
+            return idlingScheduler;
+        });
+    }
+
+    @Override
+    protected void afterActivityFinished() {
+        cleanup();
+        List<IdlingResource> idlingResourceList = Espresso.getIdlingResources();
+        if (idlingResourceList != null) {
+            for (int i = 0; i < idlingResourceList.size(); i++) {
+                Espresso.unregisterIdlingResources(idlingResourceList.get(i));
             }
-            super.afterActivityFinished();
         }
-    };
+        super.afterActivityFinished();
+    }
 
     private void cleanup() {
         Context context = getInstrumentation().getTargetContext();
@@ -95,5 +88,4 @@ class BaseTest {
             else assertTrue("couldn't delete file " + file, file.delete());
         }
     }
-
 }

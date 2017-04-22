@@ -24,6 +24,7 @@ import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -45,7 +46,9 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class SearchTest extends BaseTest {
+public class SearchTest {
+    @Rule
+    public MainActivityTestRule mActivityTestRule = new MainActivityTestRule(true);
 
     @Test
     public void searchSuggestionsTest() {
