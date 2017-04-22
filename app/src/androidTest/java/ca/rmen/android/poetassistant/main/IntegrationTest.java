@@ -43,6 +43,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkAllStarredWords;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkClipboard;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkStarredInList;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem;
@@ -60,7 +61,9 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.endsWith;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -99,15 +102,16 @@ public class IntegrationTest {
             this.poem = poem;
         }
     }
+
     private static final IntegrationTestScenario SCENARIO1 =
-                new IntegrationTestScenario("howdy", "cloudy", "dowdy", "nebulose", "nebulous", "lacking definite form or limits",
-                                                    "bloody", "muddy", "bully", "rowdy",
-                                                    "Forever is composed of nows"); // Emily Dickinson
+            new IntegrationTestScenario("howdy", "cloudy", "dowdy", "nebulose", "nebulous", "lacking definite form or limits",
+                    "bloody", "muddy", "bully", "rowdy",
+                    "Forever is composed of nows"); // Emily Dickinson
 
     private static final IntegrationTestScenario SCENARIO2 =
-                new IntegrationTestScenario("beholden", "embolden", "golden", "hearten", "recreate", "create anew",
-                                                    "beer", "cheer", "wildness", "abandon",
-                                                    "roses are red, violets are blue\nespresso tests will find bugs for you");
+            new IntegrationTestScenario("beholden", "embolden", "golden", "hearten", "recreate", "create anew",
+                    "beer", "cheer", "wildness", "abandon",
+                    "roses are red, violets are blue\nespresso tests will find bugs for you");
 
     private void runIntegrationTest(IntegrationTestScenario data) {
         Context context = mActivityTestRule.getActivity();
@@ -184,6 +188,28 @@ public class IntegrationTest {
     @Test
     public void cleanLayout2Test() {
         runCleanLayoutIntegrationTest(SCENARIO2);
+    }
+
+    @Test
+    public void copyTest() {
+        Context context = mActivityTestRule.getActivity();
+        search("donkey");
+        String wordToCopy = "swanky";
+        onView(allOf(withText(wordToCopy), isDisplayed())).perform(click());
+        onView(allOf(withText(endsWith(context.getString(R.string.menu_copy))), isDisplayed())).perform(click());
+        checkClipboard(context, wordToCopy);
+    }
+
+    @Test
+    public void copyCleanLayoutTest() {
+        Context context = mActivityTestRule.getActivity();
+        useCleanLayout();
+        search("donkey");
+        String wordToCopy = "swanky";
+        onView(allOf(withText(wordToCopy), isDisplayed())).perform(click());
+        onView(allOf(withText(endsWith(context.getString(R.string.menu_more))), isDisplayed())).perform(click());
+        onView(allOf(withText(endsWith(context.getString(R.string.menu_copy))), isDisplayed())).perform(click());
+        checkClipboard(context, wordToCopy);
     }
 
     @Test

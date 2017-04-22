@@ -19,6 +19,8 @@
 
 package ca.rmen.android.poetassistant.main;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.SystemClock;
 import android.support.test.espresso.NoMatchingRootException;
@@ -48,6 +50,8 @@ import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 class CustomChecks {
     private CustomChecks() {
@@ -147,6 +151,16 @@ class CustomChecks {
         if (suggestions.length == 0) {
             assertTrue("Found search suggestions but didn't expect to", false);
         }
+    }
+
+    static void checkClipboard(Context context, String clipboardContent) {
+        ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        assertTrue("Expected to find " + clipboardContent + " in the clipboard", clipboard.hasPrimaryClip());
+        ClipData primaryClip = clipboard.getPrimaryClip();
+        assertNotNull(primaryClip);
+        ClipData.Item item = primaryClip.getItemAt(primaryClip.getItemCount() - 1);
+        assertNotNull(item);
+        assertEquals(clipboardContent, item.getText());
     }
 
 }
