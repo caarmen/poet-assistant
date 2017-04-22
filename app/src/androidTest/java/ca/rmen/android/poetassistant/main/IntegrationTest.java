@@ -54,10 +54,6 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
 import static org.hamcrest.Matchers.containsString;
 
-/**
- * Tested on:
- * - Huawei P9 Lite
- */
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class IntegrationTest extends BaseTest {

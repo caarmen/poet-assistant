@@ -53,10 +53,6 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 
-/**
- * Tested on:
- * - Huawei P9 Lite
- */
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class RandomWordTest extends BaseTest {

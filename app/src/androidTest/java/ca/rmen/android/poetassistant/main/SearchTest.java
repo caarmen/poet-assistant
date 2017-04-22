@@ -43,10 +43,6 @@ import static ca.rmen.android.poetassistant.main.TestAppUtils.typeQuery;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 
-/**
- * Tested on:
- * - Huawei P9 Lite
- */
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class SearchTest extends BaseTest {

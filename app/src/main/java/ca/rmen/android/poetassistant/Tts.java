@@ -92,8 +92,6 @@ public class Tts {
         Log.v(TAG, "init");
         mTextToSpeech = new TextToSpeech(mContext, mInitListener);
         mTextToSpeech.setOnUtteranceProgressListener(mUtteranceListener);
-        //noinspection deprecation
-        mTextToSpeech.setOnUtteranceCompletedListener(mUtteranceListener);
     }
 
     /**
@@ -236,8 +234,7 @@ public class Tts {
     }
 
     @SuppressWarnings("deprecation")
-    private static class UtteranceListener extends UtteranceProgressListener
-            implements TextToSpeech.OnUtteranceCompletedListener {
+    private static class UtteranceListener extends UtteranceProgressListener {
 
         @Override
         public void onStart(String utteranceId) {
@@ -265,8 +262,7 @@ public class Tts {
             onUtteranceCompleted(utteranceId);
         }
 
-        @Override
-        public void onUtteranceCompleted(String utteranceId) {
+        private void onUtteranceCompleted(String utteranceId) {
             EventBus.getDefault().post(new OnUtteranceCompleted(utteranceId, true));
         }
 

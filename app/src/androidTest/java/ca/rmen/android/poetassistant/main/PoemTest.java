@@ -50,10 +50,6 @@ import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 
-/**
- * Tested on:
- * - Huawei P9 Lite
- */
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class PoemTest extends BaseTest {
