@@ -32,11 +32,9 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
-import static android.support.test.espresso.action.ViewActions.swipeUp;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
-import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
@@ -48,6 +46,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripCenterTitle;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
@@ -66,14 +65,7 @@ class TestAppUtils {
         // click on the settings menu item
         openMenuItem(R.string.action_settings);
 
-        // Scroll down to the bottom of the settings
-        onView(allOf(withId(R.id.list),
-                isDescendantOfA(withId(R.id.settings_fragment)),
-                isDisplayed()))
-                .perform(swipeUp(), swipeUp(), swipeUp(), swipeUp());
-
-        // Tap on "clear search history"
-        onView(withText(R.string.action_clear_search_history)).perform(click());
+        clickPreference(R.string.action_clear_search_history);
 
         // Tap ok on the confirmation dialog
         onView(allOf(withId(android.R.id.button1), withText(R.string.action_clear))).perform(scrollTo(), click());

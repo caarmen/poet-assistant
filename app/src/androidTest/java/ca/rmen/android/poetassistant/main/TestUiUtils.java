@@ -28,6 +28,8 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
+import static android.support.test.espresso.contrib.RecyclerViewActions.scrollTo;
+import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
@@ -72,6 +74,15 @@ class TestUiUtils {
                                 withParent(withId(R.id.view_pager))),
                         1),
                 isCompletelyDisplayed()));
+    }
+
+    static void clickPreference(@StringRes int prefTitleRes) {
+        // Scroll to the preference in case it's not visible
+        onView(withId(R.id.list))
+                .perform(scrollTo(hasDescendant(withText(prefTitleRes))));
+
+        // click on the preference
+        onView(withText(prefTitleRes)).perform(click());
     }
 
 }

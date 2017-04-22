@@ -38,16 +38,14 @@ import ca.rmen.android.poetassistant.R;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.swipeUp;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripCenterTitle;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
@@ -84,11 +82,7 @@ public class RandomWordTest extends BaseTest {
     @TargetApi(Build.VERSION_CODES.M)
     public void wotdNotificationTest() {
         openMenuItem(R.string.action_settings);
-        onView(allOf(withId(R.id.list),
-                isDescendantOfA(withId(R.id.settings_fragment)),
-                isDisplayed()))
-                .perform(swipeUp(), swipeUp(), swipeUp(), swipeUp());
-        onView(withText(R.string.wotd_setting_title)).perform(click());
+        clickPreference(R.string.wotd_setting_title);
         NotificationManager notificationManager = (NotificationManager) getInstrumentation().getTargetContext().getSystemService(Context.NOTIFICATION_SERVICE);
         StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
         boolean foundNotification = false;
