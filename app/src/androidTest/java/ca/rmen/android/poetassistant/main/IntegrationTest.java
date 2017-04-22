@@ -45,10 +45,13 @@ import static ca.rmen.android.poetassistant.main.TestAppUtils.clearSearchHistory
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearStarredWords;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.filter;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openDictionary;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.openDictionaryCleanLayout;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openThesaurus;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.openThesaurusCleanLayout;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
@@ -77,7 +80,7 @@ public class IntegrationTest extends BaseTest {
         swipeViewPagerRight(1);
         filter("bully", "rowdy", "cloudy");
         swipeViewPagerLeft(3);
-        typePoem("To be or not to be, that is the question");
+        typePoem("Forever is composed of nows");
         clearPoem();
         // clearing the search history doesn't erase starred words
         clearSearchHistory();
@@ -117,6 +120,68 @@ public class IntegrationTest extends BaseTest {
     }
 
     @Test
+    public void cleanLayout1Test() {
+        Context context = mActivityTestRule.getActivity();
+        useCleanLayout();
+
+        swipeViewPagerLeft(4);
+        checkAllStarredWords(context);
+        swipeViewPagerRight(4);
+        search("howdy");
+        checkRhymes(context, "cloudy", "dowdy");
+        openThesaurusCleanLayout(context, "cloudy", "nebulose");
+        openDictionaryCleanLayout(context, "nebulous", "lacking definite form or limits");
+        starQueryWord();
+        swipeViewPagerLeft(2);
+        checkAllStarredWords(context, "nebulous");
+        swipeViewPagerRight(3);
+        checkStarredInList("nebulous");
+        filter("bloody", "muddy", "nebulose");
+        swipeViewPagerRight(1);
+        filter("bully", "rowdy", "cloudy");
+        swipeViewPagerLeft(3);
+        typePoem("Forever is composed of nows");
+        clearPoem();
+        // clearing the search history doesn't erase starred words
+        clearSearchHistory();
+        swipeViewPagerLeft(1);
+        checkAllStarredWords(context, "nebulous");
+        clearStarredWords();
+        checkAllStarredWords(context);
+    }
+
+    @Test
+    public void cleanLayout2Test() {
+        Context context = mActivityTestRule.getActivity();
+        useCleanLayout();
+
+        swipeViewPagerLeft(4);
+        checkAllStarredWords(context);
+        swipeViewPagerRight(4);
+        search("beholden");
+        checkRhymes(context, "embolden", "golden");
+        openThesaurusCleanLayout(context, "embolden", "hearten");
+        openDictionaryCleanLayout(context, "recreate", "create anew");
+        starQueryWord();
+        swipeViewPagerLeft(2);
+        checkAllStarredWords(context, "recreate");
+        swipeViewPagerRight(3);
+        checkStarredInList("recreate");
+        filter("beer", "cheer", "hearten");
+        swipeViewPagerRight(1);
+        filter("wildness", "abandon", "embolden");
+        swipeViewPagerLeft(3);
+        typePoem("roses are red, violets are blue\nespresso tests will find bugs for you");
+        clearPoem();
+
+        clearSearchHistory();
+        swipeViewPagerLeft(1);
+        checkAllStarredWords(context, "recreate");
+        clearStarredWords();
+        checkAllStarredWords(context);
+    }
+
+    @Test
     public void openAboutScreenTest() {
         openMenuItem(R.string.action_about);
         onView(withId(R.id.tv_poet_assistant_license))
@@ -131,5 +196,12 @@ public class IntegrationTest extends BaseTest {
         onView(withId(R.id.tv_source_code))
                 .check(matches(isCompletelyDisplayed()))
                 .check(matches(withText(R.string.about_projectUrl)));
+    }
+
+    private void useCleanLayout() {
+        openMenuItem(R.string.action_settings);
+        clickPreference(R.string.pref_layout_title);
+        onView(withText(R.string.pref_layout_value_clean)).perform(click());
+        pressBack();
     }
 }

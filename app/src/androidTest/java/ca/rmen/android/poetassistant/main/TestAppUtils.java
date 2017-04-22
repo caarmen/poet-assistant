@@ -34,6 +34,7 @@ import static android.support.test.espresso.action.ViewActions.pressImeActionBut
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
@@ -99,16 +100,22 @@ class TestAppUtils {
     }
 
     static void openThesaurus(Context context, String entry, String expectedFirstSynonym) {
-        ViewInteraction thesaurusIcon = onView(
-                allOf(
-                        withId(R.id.btn_thesaurus),
-                        withContentDescription(R.string.tab_thesaurus),
-                        isDisplayed(),
-                        childAtPosition(
-                                withChild(withText(entry)),
-                                3)));
-        thesaurusIcon.perform(click());
+        onView(allOf(withId(R.id.btn_thesaurus),
+                hasSibling(withText(entry)),
+                isDisplayed()))
+                .perform(click());
+        verifyFirstSynonym(expectedFirstSynonym);
+        checkTitleStripCenterTitle(context, R.string.tab_thesaurus);
+    }
 
+    static void openThesaurusCleanLayout(Context context, String entry, String expectedFirstSynonym) {
+        onView(withText(entry)).perform(click());
+        onView(withText(R.string.tab_thesaurus)).perform(click());
+        verifyFirstSynonym(expectedFirstSynonym);
+        checkTitleStripCenterTitle(context, R.string.tab_thesaurus);
+    }
+
+    private static void verifyFirstSynonym(String expectedFirstSynonym) {
         ViewInteraction firstSynonymWord = onView(
                 allOf(withId(R.id.text1), withText(expectedFirstSynonym),
                         childAtPosition(
@@ -118,24 +125,25 @@ class TestAppUtils {
                                 1),
                         isDisplayed()));
         firstSynonymWord.check(matches(withText(expectedFirstSynonym)));
-
-        checkTitleStripCenterTitle(context, R.string.tab_thesaurus);
     }
 
     static void openDictionary(Context context, String entry, String expectedFirstDefinition) {
-        ViewInteraction dictionaryIcon = onView(
-                allOf(
-                        withId(R.id.btn_dictionary),
-                        withContentDescription(R.string.tab_dictionary),
-                        isDisplayed(),
-                        childAtPosition(
-                                withChild(withText(entry)),
-                                4)));
-
-        dictionaryIcon.perform(click());
-
+        onView(allOf(withId(R.id.btn_dictionary),
+                hasSibling(withText(entry)),
+                isDisplayed()))
+                .perform(click());
         checkTitleStripCenterTitle(context, R.string.tab_dictionary);
+        verifyFirstDefinition(expectedFirstDefinition);
+    }
 
+    static void openDictionaryCleanLayout(Context context, String entry, String expectedFirstDefinition) {
+        onView(withText(entry)).perform(click());
+        onView(withText(R.string.tab_dictionary)).perform(click());
+        checkTitleStripCenterTitle(context, R.string.tab_dictionary);
+        verifyFirstDefinition(expectedFirstDefinition);
+    }
+
+    private static void verifyFirstDefinition(String expectedFirstDefinition) {
         ViewInteraction firstDefinition = onView(
                 allOf(withId(R.id.definition), withText(expectedFirstDefinition),
                         childAtPosition(
