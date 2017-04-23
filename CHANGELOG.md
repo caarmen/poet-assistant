@@ -1,6 +1,18 @@
 Change Log
 ==========
 
+1.18.1  *(2017-04-23)*
+--------------------
+* Technical:
+  - Introduced RxJava
+  - Put back retrolambda
+  - Updated to support library 25.3.1
+  - Updated to dagger 2.10
+  - Added espresso tests
+* Bug fixes:
+  - https://github.com/caarmen/poet-assistant/issues/72: Clearing the poem hides the app bar layout (on some devices)
+  - On some devices, sometimes dismissing the filter dialog would leave the app bar layout hidden
+
 1.18.0  *(2017-03-12)*
 --------------------
 * Added function in the setting screen to preview the voice.
