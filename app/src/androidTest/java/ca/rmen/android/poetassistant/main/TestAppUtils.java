@@ -203,7 +203,7 @@ class TestAppUtils {
         clickDialogPositiveButton(R.string.action_clear);
     }
 
-    private static void clickDialogPositiveButton(@StringRes int labelRes) {
+    static void clickDialogPositiveButton(@StringRes int labelRes) {
         // Top ok on the confirmation dialog
         SystemClock.sleep(200);
         onView(allOf(withId(android.R.id.button1), withText(labelRes))).perform(scrollTo(), click());

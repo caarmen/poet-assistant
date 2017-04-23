@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import android.content.Context;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -34,6 +35,7 @@ import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.clearText;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -47,10 +49,12 @@ import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkSearchSuggestions;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withAdapterItemCount;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearSearchHistory;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.clickDialogPositiveButton;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openSearchView;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typeQuery;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static org.hamcrest.Matchers.allOf;
@@ -113,10 +117,17 @@ public class SearchTest {
 
     @Test
     public void patternSearchTest() {
+        Context context = mActivityTestRule.getActivity();
         search("h*llo");
-        checkPatterns(mActivityTestRule.getActivity(), "h*llo", "hello", "hermosillo", "hollo", "hullo");
+        checkPatterns(context, "h*llo", "hello", "hermosillo", "hollo", "hullo");
         search("h*llz");
-        checkPatterns(mActivityTestRule.getActivity(), "h*llz");
+        checkPatterns(context, "h*llz");
+        onView(allOf(withId(R.id.btn_help), isDisplayed())).perform(click());
+        onView(withText(R.string.pattern_help_title))
+                .check(matches(isDisplayed()));
+        clickDialogPositiveButton(android.R.string.ok);
+        search("hello");
+        checkTitleStripOrTab(context, R.string.tab_rhymer);
     }
 
     @Test
