@@ -40,7 +40,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripCenterTitle;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static org.hamcrest.Matchers.allOf;
 
@@ -59,7 +59,7 @@ public class RhymerRouterTest {
         intent.putExtra(Intent.EXTRA_PROCESS_TEXT, "polyvalent");
         mActivityTestRule.launchActivity(intent);
         Activity activity = mActivityTestRule.getActivity();
-        checkTitleStripCenterTitle(activity, R.string.tab_rhymer);
+        checkTitleStripOrTab(activity, R.string.tab_rhymer);
         onView(allOf(withId(R.id.empty), isDisplayed()))
                 .check(matches(withText(activity.getString(R.string.empty_rhymer_list_with_query, "polyvalent"))));
         swipeViewPagerLeft(1);

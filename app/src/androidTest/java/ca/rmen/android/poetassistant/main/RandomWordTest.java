@@ -50,7 +50,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withAdapterItemCount;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripCenterTitle;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
@@ -95,7 +95,7 @@ public class RandomWordTest {
     @Test
     public void randomWordTest() {
         openMenuItem(R.string.action_random_word);
-        checkTitleStripCenterTitle(mActivityTestRule.getActivity(), R.string.tab_dictionary);
+        checkTitleStripOrTab(mActivityTestRule.getActivity(), R.string.tab_dictionary);
         onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(not(isEmptyOrNullString()))));
     }
 

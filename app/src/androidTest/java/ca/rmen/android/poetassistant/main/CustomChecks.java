@@ -45,7 +45,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withChildCount;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripCenterTitle;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.endsWith;
@@ -60,7 +60,7 @@ class CustomChecks {
 
     static void checkRhymes(Context context, String firstRhyme, String secondRhyme) {
         // Make sure we're in the rhymer tab
-        checkTitleStripCenterTitle(context, R.string.tab_rhymer);
+        checkTitleStripOrTab(context, R.string.tab_rhymer);
 
         ViewInteraction firstRhymeWord = onView(
                 allOf(withId(R.id.text1), withText(firstRhyme),
@@ -84,7 +84,7 @@ class CustomChecks {
     }
 
     static void checkPatterns(Context context, String query, String... patterns) {
-        checkTitleStripCenterTitle(context, R.string.tab_pattern);
+        checkTitleStripOrTab(context, R.string.tab_pattern);
         Matcher<View> emptyViewMatch = allOf(withId(R.id.empty), withText(context.getString(R.string.empty_pattern_list_with_query, query)));
         ViewInteraction emptyView = onView(emptyViewMatch);
         if (patterns.length > 0) {
@@ -113,7 +113,7 @@ class CustomChecks {
     }
 
     static void checkAllStarredWords(Context context, String... expectedStarredWords) {
-        checkTitleStripCenterTitle(context, R.string.tab_favorites);
+        checkTitleStripOrTab(context, R.string.tab_favorites);
         Matcher<View> emptyViewMatch = allOf(withId(R.id.empty), withText(R.string.empty_favorites_list));
         ViewInteraction emptyView = onView(emptyViewMatch);
         if (expectedStarredWords == null || expectedStarredWords.length == 0) {
@@ -123,7 +123,7 @@ class CustomChecks {
             Matcher<View> recyclerViewMatch = allOf(withId(R.id.recycler_view), hasSibling(emptyViewMatch));
             onView(recyclerViewMatch).check(matches(withChildCount(expectedStarredWords.length)));
             for (String word : expectedStarredWords) {
-                onView(allOf(withId(R.id.text1), withParent(withParent(recyclerViewMatch)), withText(word))).check(matches(isCompletelyDisplayed()));
+                onView(allOf(withId(R.id.text1), withParent(withParent(recyclerViewMatch)), withText(word))).check(matches(isDisplayed()));
             }
         }
     }

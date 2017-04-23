@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import android.os.SystemClock;
 import android.support.test.espresso.PerformException;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -45,7 +46,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewActions.longTap;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripCenterTitle;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static junit.framework.Assert.assertFalse;
@@ -99,7 +100,7 @@ public class PoemTest {
 
         // Select the "rhymer" popup
         clickPopupView("rhymer");
-        checkTitleStripCenterTitle(mActivityTestRule.getActivity(), R.string.tab_rhymer);
+        checkTitleStripOrTab(mActivityTestRule.getActivity(), R.string.tab_rhymer);
         onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)));
 
         // Look up in the thesaurus
@@ -116,6 +117,7 @@ public class PoemTest {
     }
 
     private void clickPopupView(String label) {
+        SystemClock.sleep(200);
         try {
             onView(withText(equalToIgnoringCase(label))).inRoot(isPlatformPopup()).perform(click());
         } catch (PerformException e) {

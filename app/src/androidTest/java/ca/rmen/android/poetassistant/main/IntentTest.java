@@ -43,7 +43,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.verifyFirstDefinition;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.verifyFirstSynonym;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripCenterTitle;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
 import static org.hamcrest.Matchers.allOf;
@@ -59,7 +59,7 @@ public class IntentTest {
     public void onNewIntentQueryTest() {
         MainActivity activity = mActivityTestRule.launchActivity(new Intent());
         launchNewIntent(Intent.ACTION_SEARCH, SearchManager.QUERY, "muffin");
-        checkTitleStripCenterTitle(activity, R.string.tab_rhymer);
+        checkTitleStripOrTab(activity, R.string.tab_rhymer);
         checkRhymes(activity, "mcguffin", "toughen");
         swipeViewPagerLeft(1);
         verifyFirstSynonym("quick bread");
@@ -71,7 +71,7 @@ public class IntentTest {
     public void onNewIntenthUserQueryTest() {
         MainActivity activity = mActivityTestRule.launchActivity(new Intent());
         launchNewIntent(Intent.ACTION_SEARCH, SearchManager.USER_QUERY, "muffin");
-        checkTitleStripCenterTitle(activity, R.string.tab_rhymer);
+        checkTitleStripOrTab(activity, R.string.tab_rhymer);
         checkRhymes(activity, "mcguffin", "toughen");
         swipeViewPagerLeft(1);
         verifyFirstSynonym("quick bread");
@@ -83,7 +83,7 @@ public class IntentTest {
     public void onNewIntenthViewQueryTest() {
         MainActivity activity = mActivityTestRule.launchActivity(new Intent());
         launchNewIntent(Intent.ACTION_VIEW, "poetassistant://query/muffin");
-        checkTitleStripCenterTitle(activity, R.string.tab_dictionary);
+        checkTitleStripOrTab(activity, R.string.tab_dictionary);
         verifyFirstDefinition("a sweet quick bread baked in a cup-shaped pan");
         swipeViewPagerRight(1);
         verifyFirstSynonym("quick bread");
@@ -117,7 +117,7 @@ public class IntentTest {
         MainActivity activity = mActivityTestRule.launchActivity(new Intent());
         String poemText = "Dare to be honest and fear no labor."; // Robert Burns
         launchNewIntent(Intent.ACTION_SEND, Intent.EXTRA_TEXT, poemText);
-        checkTitleStripCenterTitle(activity, R.string.tab_reader);
+        checkTitleStripOrTab(activity, R.string.tab_reader);
         onView(allOf(withId(R.id.tv_text), isDisplayed()))
                 .check(matches(withText(poemText)));
     }
@@ -128,7 +128,7 @@ public class IntentTest {
         String poemText = "Dare to be honest and fear no labor."; // Robert Burns
         intent.putExtra(Intent.EXTRA_TEXT, poemText);
         MainActivity activity = mActivityTestRule.launchActivity(intent);
-        checkTitleStripCenterTitle(activity, R.string.tab_reader);
+        checkTitleStripOrTab(activity, R.string.tab_reader);
         onView(allOf(withId(R.id.tv_text), isDisplayed()))
                 .check(matches(withText(poemText)));
     }
@@ -138,7 +138,7 @@ public class IntentTest {
         Intent intent = new Intent(Intent.ACTION_VIEW)
                 .setData(Uri.parse("poetassistant://query/muffin"));
         MainActivity activity = mActivityTestRule.launchActivity(intent);
-        checkTitleStripCenterTitle(activity, R.string.tab_dictionary);
+        checkTitleStripOrTab(activity, R.string.tab_dictionary);
         verifyFirstDefinition("a sweet quick bread baked in a cup-shaped pan");
         swipeViewPagerRight(1);
         verifyFirstSynonym("quick bread");
@@ -184,7 +184,7 @@ public class IntentTest {
 
     private void checkRhymerOnly(String expectedRhyme1, String expectedRhyme2) {
         Activity activity = mActivityTestRule.getActivity();
-        checkTitleStripCenterTitle(activity, R.string.tab_rhymer);
+        checkTitleStripOrTab(activity, R.string.tab_rhymer);
         checkRhymes(activity, expectedRhyme1, expectedRhyme2);
         swipeViewPagerLeft(1);
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
@@ -196,7 +196,7 @@ public class IntentTest {
 
     private void checkThesaurusOnly(String expectedFirstSynonym) {
         Activity activity = mActivityTestRule.getActivity();
-        checkTitleStripCenterTitle(activity, R.string.tab_thesaurus);
+        checkTitleStripOrTab(activity, R.string.tab_thesaurus);
         verifyFirstSynonym(expectedFirstSynonym);
         swipeViewPagerLeft(1);
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
@@ -208,7 +208,7 @@ public class IntentTest {
 
     private void checkDictionaryOnly(String expectedFirstDefinition) {
         Activity activity = mActivityTestRule.getActivity();
-        checkTitleStripCenterTitle(activity, R.string.tab_dictionary);
+        checkTitleStripOrTab(activity, R.string.tab_dictionary);
         verifyFirstDefinition(expectedFirstDefinition);
         swipeViewPagerRight(1);
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))

@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.support.annotation.StringRes;
 
 import ca.rmen.android.poetassistant.R;
@@ -32,7 +33,9 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.RecyclerViewActions.scrollTo;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isSelected;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
@@ -60,23 +63,39 @@ class TestUiUtils {
         for (int i = 0; i < count; i++) {
             onView(allOf(withId(android.R.id.content), isDisplayed())).perform(swipeRight());
         }
+        SystemClock.sleep(200);
     }
 
     static void swipeViewPagerLeft(int count) {
         for (int i = 0; i < count; i++) {
             onView(allOf(withId(android.R.id.content), isDisplayed())).perform(swipeLeft());
         }
+        SystemClock.sleep(200);
     }
 
-   static void checkTitleStripCenterTitle(Context context, @StringRes int titleRes) {
+    static void checkTitleStripOrTab(Context context, @StringRes int titleRes) {
+        if (context.getResources().getBoolean(R.bool.tab_text)) {
+            checkSelectedTab(context, titleRes);
+        } else {
+            checkTitleStripCenterTitle(context, titleRes);
+        }
+    }
+
+    private static void checkTitleStripCenterTitle(Context context, @StringRes int titleRes) {
         onView(allOf(withText(equalToIgnoringCase(context.getString(titleRes))),
                 childAtPosition(
                         allOf(withId(R.id.pager_title_strip),
                                 withParent(withId(R.id.view_pager))),
                         1),
                 isCompletelyDisplayed()))
-        .check(matches(isDisplayed()));
+                .check(matches(isDisplayed()));
 
+    }
+
+    private static void checkSelectedTab(Context context, @StringRes int titleRes) {
+        onView(allOf(withText(equalToIgnoringCase(context.getString(titleRes))),
+                isDescendantOfA(withId(R.id.tabs))))
+                .check(matches(isSelected()));
     }
 
     static void clickPreference(@StringRes int prefTitleRes) {

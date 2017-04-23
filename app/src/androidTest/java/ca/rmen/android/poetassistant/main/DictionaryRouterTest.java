@@ -41,7 +41,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.verifyFirstDefinition;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripCenterTitle;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
 import static org.hamcrest.Matchers.allOf;
 
@@ -60,7 +60,7 @@ public class DictionaryRouterTest {
         intent.putExtra(Intent.EXTRA_PROCESS_TEXT, "polyvalenting");
         mActivityTestRule.launchActivity(intent);
         Activity activity = mActivityTestRule.getActivity();
-        checkTitleStripCenterTitle(activity, R.string.tab_dictionary);
+        checkTitleStripOrTab(activity, R.string.tab_dictionary);
         onView(allOf(withId(R.id.tv_list_header), isDisplayed()))
                 .check(matches(withText("polyvalent")));
         verifyFirstDefinition("containing several antibodies each capable of counteracting a specific antigen");

@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.main;
 
 import android.content.Context;
 import android.os.SystemClock;
+import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.test.espresso.ViewInteraction;
 
@@ -45,7 +46,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripCenterTitle;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static org.hamcrest.Matchers.allOf;
@@ -68,7 +69,7 @@ class TestAppUtils {
         clickPreference(R.string.action_clear_search_history);
 
         // Tap ok on the confirmation dialog
-        onView(allOf(withId(android.R.id.button1), withText(R.string.action_clear))).perform(scrollTo(), click());
+        clickDialogPositiveButton(R.string.action_clear);
 
         // Exit settings
         pressBack();
@@ -104,14 +105,14 @@ class TestAppUtils {
                 isDisplayed()))
                 .perform(click());
         verifyFirstSynonym(expectedFirstSynonym);
-        checkTitleStripCenterTitle(context, R.string.tab_thesaurus);
+        checkTitleStripOrTab(context, R.string.tab_thesaurus);
     }
 
     static void openThesaurusCleanLayout(Context context, String entry, String expectedFirstSynonym) {
         onView(withText(entry)).perform(click());
         onView(withText(R.string.tab_thesaurus)).perform(click());
         verifyFirstSynonym(expectedFirstSynonym);
-        checkTitleStripCenterTitle(context, R.string.tab_thesaurus);
+        checkTitleStripOrTab(context, R.string.tab_thesaurus);
     }
 
     static void verifyFirstSynonym(String expectedFirstSynonym) {
@@ -131,14 +132,14 @@ class TestAppUtils {
                 hasSibling(withText(entry)),
                 isDisplayed()))
                 .perform(click());
-        checkTitleStripCenterTitle(context, R.string.tab_dictionary);
+        checkTitleStripOrTab(context, R.string.tab_dictionary);
         verifyFirstDefinition(expectedFirstDefinition);
     }
 
     static void openDictionaryCleanLayout(Context context, String entry, String expectedFirstDefinition) {
         onView(withText(entry)).perform(click());
         onView(withText(R.string.tab_dictionary)).perform(click());
-        checkTitleStripCenterTitle(context, R.string.tab_dictionary);
+        checkTitleStripOrTab(context, R.string.tab_dictionary);
         verifyFirstDefinition(expectedFirstDefinition);
     }
 
@@ -167,7 +168,8 @@ class TestAppUtils {
                 allOf(withId(R.id.btn_star_query), isDisplayed()));
         starIcon.check(matches(isChecked()));
         starIcon.perform(click());
-        starIcon.check(matches(isNotChecked()));
+        onView(allOf(withId(R.id.btn_star_query), isDisplayed()))
+                .check(matches(isNotChecked()));
     }
 
     static void addFilter(String filter, String firstExpectedFilteredMatch) {
@@ -175,8 +177,7 @@ class TestAppUtils {
                 .perform(click());
         onView(allOf(withId(R.id.edit), isDisplayed()))
                 .perform(typeText(filter), closeSoftKeyboard());
-        onView(allOf(withId(android.R.id.button1), withText(android.R.string.ok)))
-                .perform(scrollTo(), click());
+        clickDialogPositiveButton(android.R.string.ok);
 
         onView(allOf(withId(R.id.text1),
                 withText(firstExpectedFilteredMatch),
@@ -199,8 +200,13 @@ class TestAppUtils {
 
     static void clearStarredWords() {
         onView(allOf(withId(R.id.btn_delete), withContentDescription(R.string.action_clear_favorites), isDisplayed())).perform(click());
+        clickDialogPositiveButton(R.string.action_clear);
+    }
+
+    private static void clickDialogPositiveButton(@StringRes int labelRes) {
         // Top ok on the confirmation dialog
-        onView(allOf(withId(android.R.id.button1), withText(R.string.action_clear))).perform(scrollTo(), click());
+        SystemClock.sleep(200);
+        onView(allOf(withId(android.R.id.button1), withText(labelRes))).perform(scrollTo(), click());
     }
 
     static void typePoem(String poem) {
@@ -225,7 +231,7 @@ class TestAppUtils {
     static void clearPoem() {
         openMenuItem(R.string.file);
         onView(allOf(withId(R.id.title), withText(R.string.file_new), isDisplayed())).perform(click());
-        onView(allOf(withId(android.R.id.button1), withText(R.string.action_clear))).perform(scrollTo(), click());
+        clickDialogPositiveButton(R.string.action_clear);
         onView(allOf(withId(R.id.tv_text), isDisplayed())).check(matches(withText("")));
     }
 }

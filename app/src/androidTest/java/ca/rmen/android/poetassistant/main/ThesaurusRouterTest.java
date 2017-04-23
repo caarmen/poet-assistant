@@ -41,7 +41,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.verifyFirstSynonym;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripCenterTitle;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
 import static org.hamcrest.Matchers.allOf;
@@ -61,7 +61,7 @@ public class ThesaurusRouterTest {
         intent.putExtra(Intent.EXTRA_PROCESS_TEXT, "almostic");
         mActivityTestRule.launchActivity(intent);
         Activity activity = mActivityTestRule.getActivity();
-        checkTitleStripCenterTitle(activity, R.string.tab_thesaurus);
+        checkTitleStripOrTab(activity, R.string.tab_thesaurus);
         onView(allOf(withId(R.id.tv_list_header), isDisplayed()))
                 .check(matches(withText("almost")));
         verifyFirstSynonym("about");
