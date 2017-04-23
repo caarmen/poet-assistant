@@ -184,7 +184,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", "crea
                        // ignore dagger generated code:
                        "ca/rmen/android/poetassistant/settings/SettingsEditorWrapper.class",
                        "ca/rmen/android/poetassistant/settings/SettingsPrefs.class",
-                       "ca/rmen/android/poetassistant/**/DaggerAppComponent.class",
+                       "ca/rmen/android/poetassistant/**/DaggerAppComponent*.class",
                        "ca/rmen/android/poetassistant/**/*_Factory.class",
                        "ca/rmen/android/poetassistant/**/*_Provides*.class",
                        "ca/rmen/android/poetassistant/**/*Injector.class",
