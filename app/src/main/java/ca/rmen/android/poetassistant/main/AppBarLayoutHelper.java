@@ -19,6 +19,7 @@
 
 package ca.rmen.android.poetassistant.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.design.widget.AppBarLayout;
 import android.view.View;
@@ -26,7 +27,7 @@ import android.view.View;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding;
 
-final class AppBarLayoutHelper {
+public final class AppBarLayoutHelper {
     private AppBarLayoutHelper() {
         // prevent instantiation
     }
@@ -43,6 +44,14 @@ final class AppBarLayoutHelper {
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) view.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
         view.setLayoutParams(params);
+    }
+
+    public static void forceExpandAppBarLayout(Activity activity) {
+        if (activity == null || activity.isFinishing()) return;
+        AppBarLayout appBarLayout = (AppBarLayout) activity.findViewById(R.id.app_bar_layout);
+        if (appBarLayout != null) {
+            forceExpandAppBarLayout(appBarLayout);
+        }
     }
 
     static void forceExpandAppBarLayout(final AppBarLayout appBarLayout) {

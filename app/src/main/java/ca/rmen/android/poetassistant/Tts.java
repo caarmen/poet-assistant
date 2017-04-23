@@ -92,8 +92,6 @@ public class Tts {
         Log.v(TAG, "init");
         mTextToSpeech = new TextToSpeech(mContext, mInitListener);
         mTextToSpeech.setOnUtteranceProgressListener(mUtteranceListener);
-        //noinspection deprecation
-        mTextToSpeech.setOnUtteranceCompletedListener(mUtteranceListener);
     }
 
     /**
@@ -153,6 +151,7 @@ public class Tts {
             mTextToSpeech.setOnUtteranceCompletedListener(null);
             mTextToSpeech.shutdown();
             mTtsStatus = TextToSpeech.ERROR;
+            EventBus.getDefault().removeStickyEvent(OnTtsInitialized.class);
             mTextToSpeech = null;
         }
     }
@@ -167,7 +166,7 @@ public class Tts {
             setVoiceSpeedFromSettings();
             setVoicePitchFromSettings();
         }
-        EventBus.getDefault().post(new OnTtsInitialized(status));
+        EventBus.getDefault().postSticky(new OnTtsInitialized(status));
     };
 
     // This can't be local or it will be removed from the shared prefs manager!
@@ -235,8 +234,7 @@ public class Tts {
     }
 
     @SuppressWarnings("deprecation")
-    private static class UtteranceListener extends UtteranceProgressListener
-            implements TextToSpeech.OnUtteranceCompletedListener {
+    private static class UtteranceListener extends UtteranceProgressListener {
 
         @Override
         public void onStart(String utteranceId) {
@@ -264,8 +262,7 @@ public class Tts {
             onUtteranceCompleted(utteranceId);
         }
 
-        @Override
-        public void onUtteranceCompleted(String utteranceId) {
+        private void onUtteranceCompleted(String utteranceId) {
             EventBus.getDefault().post(new OnUtteranceCompleted(utteranceId, true));
         }
 

@@ -18,7 +18,7 @@
  */
 package ca.rmen.android.poetassistant.main.dictionaries.search;
 
-public class Patterns {
+public final class Patterns {
 
     /**
      * USER_PATTERN_SYMBOLS are symbols the user can type for pattern matching.

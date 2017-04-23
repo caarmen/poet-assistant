@@ -21,6 +21,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'jacoco'
+
 
 
 android {
@@ -58,9 +60,20 @@ android {
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled = true
+        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    testOptions {
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
         }
     }
 
@@ -129,7 +142,12 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
 
     testCompile 'junit:junit:4.12'
+
+
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
     androidTestCompile 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
@@ -152,4 +170,32 @@ dependencyUpdates.resolutionStrategy = {
             }
         }
     }
+}
+task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", "createDebugCoverageReport"]) {
+    reports {
+        html.enabled = true
+    }
+    classDirectories = fileTree(
+            dir: "${buildDir}/intermediates/classes/debug",
+            excludes: ["**/R.class", "**/R*.class", "**/Manifest.class", "**/Manifest*.class", "**/BuildConfig.class",
+                       // ignore databinding generated code:
+                       "ca/rmen/android/poetassistant/databinding/*.class",
+                       "ca/rmen/android/poetassistant/BR.class",
+                       // ignore dagger generated code:
+                       "ca/rmen/android/poetassistant/settings/SettingsEditorWrapper.class",
+                       "ca/rmen/android/poetassistant/settings/SettingsPrefs.class",
+                       "ca/rmen/android/poetassistant/**/DaggerAppComponent*.class",
+                       "ca/rmen/android/poetassistant/**/*_Factory.class",
+                       "ca/rmen/android/poetassistant/**/*_Provides*.class",
+                       "ca/rmen/android/poetassistant/**/*Injector.class",
+                       // ignore generated code not in our package
+                       "android/databinding/**/*.class",
+                       "com/android/**/*.class"])
+    sourceDirectories = files("${project.projectDir}/src/main/java")
+    executionData = fileTree(
+            dir: "${buildDir}",
+            includes: [
+                    "jacoco/testDebugUnitTest.exec",
+                    "outputs/code-coverage/connected/*coverage.ec"
+            ])
 }
