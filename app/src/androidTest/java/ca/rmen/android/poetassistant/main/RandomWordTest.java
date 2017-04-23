@@ -25,10 +25,11 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
-import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
+import android.view.View;
 
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,15 +41,20 @@ import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition;
+import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withAdapterItemCount;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripCenterTitle;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
@@ -64,11 +70,26 @@ public class RandomWordTest {
     @Test
     public void openWotdListTest() {
         openMenuItem(R.string.action_wotd_history);
-        ViewInteraction latestEntryDateView = onView(allOf(withId(R.id.date), withParent(childAtPosition(childAtPosition(withId(R.id.recycler_view), 0), 1))));
+        Matcher<View> latestEntryViewMatcher = childAtPosition(withId(R.id.recycler_view), 0);
         // Check that the date field in the first (most recent) entry in the Wotd list contains today's date.
         Calendar cal = Calendar.getInstance();
         int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
-        latestEntryDateView.check(matches(withText(containsString(String.valueOf(dayOfMonth)))));
+        onView(allOf(withId(R.id.date), withParent(childAtPosition(latestEntryViewMatcher, 1))))
+                .check(matches(withText(containsString(String.valueOf(dayOfMonth)))));
+        onView(allOf(withId(R.id.btn_rhymer), isDescendantOfA(latestEntryViewMatcher)))
+                .perform(click());
+        swipeViewPagerLeft(5);
+        onView(allOf(withId(R.id.btn_thesaurus), isDescendantOfA(latestEntryViewMatcher)))
+                .perform(click());
+        swipeViewPagerLeft(4);
+        onView(allOf(withId(R.id.btn_dictionary), isDescendantOfA(latestEntryViewMatcher)))
+                .perform(click());
+        swipeViewPagerLeft(3);
+        onView(allOf(withId(R.id.btn_star_result), isDescendantOfA(latestEntryViewMatcher)))
+                .perform(click());
+        swipeViewPagerRight(1);
+        onView(allOf(withId(R.id.recycler_view), isDisplayed())).check(matches(withAdapterItemCount(1)));
+
     }
 
     @Test
