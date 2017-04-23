@@ -96,6 +96,8 @@ public class RandomWordTest {
         }
         assertTrue("Didn't find a Wotd notification", foundNotification);
 
+        // Disable it again
+        clickPreference(R.string.wotd_setting_title);
     }
 
 

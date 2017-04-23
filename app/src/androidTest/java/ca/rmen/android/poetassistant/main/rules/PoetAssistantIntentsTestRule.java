@@ -21,14 +21,12 @@ package ca.rmen.android.poetassistant.main.rules;
 import android.app.Activity;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 
-import ca.rmen.android.poetassistant.main.rules.ActivityTestRules;
-
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 
 public class PoetAssistantIntentsTestRule<T extends Activity> extends IntentsTestRule<T> {
 
-    public PoetAssistantIntentsTestRule(Class<T> clazz, boolean launchActivity) {
-        super(clazz, false, launchActivity);
+    public PoetAssistantIntentsTestRule(Class<T> clazz) {
+        super(clazz, false, true);
     }
 
     @Override

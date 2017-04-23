@@ -58,11 +58,13 @@ public class ThesaurusRouterTest {
     @TargetApi(Build.VERSION_CODES.M)
     public void onTextRouted() {
         Intent intent = new Intent(Intent.ACTION_PROCESS_TEXT);
-        intent.putExtra(Intent.EXTRA_PROCESS_TEXT, "polyvalent");
+        intent.putExtra(Intent.EXTRA_PROCESS_TEXT, "almostic");
         mActivityTestRule.launchActivity(intent);
         Activity activity = mActivityTestRule.getActivity();
         checkTitleStripCenterTitle(activity, R.string.tab_thesaurus);
-        verifyFirstSynonym("monovalent");
+        onView(allOf(withId(R.id.tv_list_header), isDisplayed()))
+                .check(matches(withText("almost")));
+        verifyFirstSynonym("about");
         swipeViewPagerLeft(1);
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
                 .check(matches(isDisplayed()));
