@@ -40,7 +40,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.verifyFirstSynonym;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkFirstSynonym;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
@@ -64,7 +64,7 @@ public class ThesaurusRouterTest {
         checkTitleStripOrTab(activity, R.string.tab_thesaurus);
         onView(allOf(withId(R.id.tv_list_header), isDisplayed()))
                 .check(matches(withText("almost")));
-        verifyFirstSynonym("about");
+        checkFirstSynonym("about");
         swipeViewPagerLeft(1);
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
                 .check(matches(isDisplayed()));

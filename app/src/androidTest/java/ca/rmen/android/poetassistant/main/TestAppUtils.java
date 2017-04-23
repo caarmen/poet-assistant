@@ -45,7 +45,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withContentDesc
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
@@ -104,27 +103,15 @@ class TestAppUtils {
                 hasSibling(withText(entry)),
                 isDisplayed()))
                 .perform(click());
-        verifyFirstSynonym(expectedFirstSynonym);
+        CustomChecks.checkFirstSynonym(expectedFirstSynonym);
         checkTitleStripOrTab(context, R.string.tab_thesaurus);
     }
 
     static void openThesaurusCleanLayout(Context context, String entry, String expectedFirstSynonym) {
         onView(withText(entry)).perform(click());
         onView(withText(R.string.tab_thesaurus)).perform(click());
-        verifyFirstSynonym(expectedFirstSynonym);
+        CustomChecks.checkFirstSynonym(expectedFirstSynonym);
         checkTitleStripOrTab(context, R.string.tab_thesaurus);
-    }
-
-    static void verifyFirstSynonym(String expectedFirstSynonym) {
-        ViewInteraction firstSynonymWord = onView(
-                allOf(withId(R.id.text1), withText(expectedFirstSynonym),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.recycler_view),
-                                        2),
-                                1),
-                        isDisplayed()));
-        firstSynonymWord.check(matches(withText(expectedFirstSynonym)));
     }
 
     static void openDictionary(Context context, String entry, String expectedFirstDefinition) {
@@ -133,26 +120,14 @@ class TestAppUtils {
                 isDisplayed()))
                 .perform(click());
         checkTitleStripOrTab(context, R.string.tab_dictionary);
-        verifyFirstDefinition(expectedFirstDefinition);
+        CustomChecks.checkFirstDefinition(expectedFirstDefinition);
     }
 
     static void openDictionaryCleanLayout(Context context, String entry, String expectedFirstDefinition) {
         onView(withText(entry)).perform(click());
         onView(withText(R.string.tab_dictionary)).perform(click());
         checkTitleStripOrTab(context, R.string.tab_dictionary);
-        verifyFirstDefinition(expectedFirstDefinition);
-    }
-
-    static void verifyFirstDefinition(String expectedFirstDefinition) {
-        ViewInteraction firstDefinition = onView(
-                allOf(withId(R.id.definition), withText(expectedFirstDefinition),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.recycler_view),
-                                        0),
-                                1),
-                        isDisplayed()));
-        firstDefinition.check(matches(withText(expectedFirstDefinition)));
+        CustomChecks.checkFirstDefinition(expectedFirstDefinition);
     }
 
     static void starQueryWord() {
@@ -175,6 +150,7 @@ class TestAppUtils {
     static void addFilter(String filter, String firstExpectedFilteredMatch) {
         onView(allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()))
                 .perform(click());
+        SystemClock.sleep(200);
         onView(allOf(withId(R.id.edit), isDisplayed()))
                 .perform(typeText(filter), closeSoftKeyboard());
         clickDialogPositiveButton(android.R.string.ok);

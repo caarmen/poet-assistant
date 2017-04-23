@@ -40,7 +40,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.verifyFirstDefinition;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkFirstDefinition;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
 import static org.hamcrest.Matchers.allOf;
@@ -63,7 +63,7 @@ public class DictionaryRouterTest {
         checkTitleStripOrTab(activity, R.string.tab_dictionary);
         onView(allOf(withId(R.id.tv_list_header), isDisplayed()))
                 .check(matches(withText("polyvalent")));
-        verifyFirstDefinition("containing several antibodies each capable of counteracting a specific antigen");
+        checkFirstDefinition("containing several antibodies each capable of counteracting a specific antigen");
         swipeViewPagerRight(1);
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
                 .check(matches(isDisplayed()));

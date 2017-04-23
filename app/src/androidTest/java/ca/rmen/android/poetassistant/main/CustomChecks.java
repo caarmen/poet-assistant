@@ -163,4 +163,27 @@ class CustomChecks {
         assertEquals(clipboardContent, item.getText());
     }
 
+    static void checkFirstDefinition(String expectedFirstDefinition) {
+        ViewInteraction firstDefinition = onView(
+                allOf(withId(R.id.definition), withText(expectedFirstDefinition),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.recycler_view),
+                                        0),
+                                1),
+                        isDisplayed()));
+        firstDefinition.check(matches(withText(expectedFirstDefinition)));
+    }
+
+    static void checkFirstSynonym(String expectedFirstSynonym) {
+        ViewInteraction firstSynonymWord = onView(
+                allOf(withId(R.id.text1), withText(expectedFirstSynonym),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.recycler_view),
+                                        2),
+                                1),
+                        isDisplayed()));
+        firstSynonymWord.check(matches(withText(expectedFirstSynonym)));
+    }
 }

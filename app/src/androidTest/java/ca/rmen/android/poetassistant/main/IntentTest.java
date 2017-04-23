@@ -41,8 +41,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.verifyFirstDefinition;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.verifyFirstSynonym;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkFirstDefinition;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkFirstSynonym;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
@@ -62,9 +62,9 @@ public class IntentTest {
         checkTitleStripOrTab(activity, R.string.tab_rhymer);
         checkRhymes(activity, "mcguffin", "toughen");
         swipeViewPagerLeft(1);
-        verifyFirstSynonym("quick bread");
+        checkFirstSynonym("quick bread");
         swipeViewPagerLeft(1);
-        verifyFirstDefinition("a sweet quick bread baked in a cup-shaped pan");
+        checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan");
     }
 
     @Test
@@ -74,9 +74,9 @@ public class IntentTest {
         checkTitleStripOrTab(activity, R.string.tab_rhymer);
         checkRhymes(activity, "mcguffin", "toughen");
         swipeViewPagerLeft(1);
-        verifyFirstSynonym("quick bread");
+        checkFirstSynonym("quick bread");
         swipeViewPagerLeft(1);
-        verifyFirstDefinition("a sweet quick bread baked in a cup-shaped pan");
+        checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan");
     }
 
     @Test
@@ -84,9 +84,9 @@ public class IntentTest {
         MainActivity activity = mActivityTestRule.launchActivity(new Intent());
         launchNewIntent(Intent.ACTION_VIEW, "poetassistant://query/muffin");
         checkTitleStripOrTab(activity, R.string.tab_dictionary);
-        verifyFirstDefinition("a sweet quick bread baked in a cup-shaped pan");
+        checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan");
         swipeViewPagerRight(1);
-        verifyFirstSynonym("quick bread");
+        checkFirstSynonym("quick bread");
         swipeViewPagerRight(1);
         checkRhymes(activity, "mcguffin", "toughen");
     }
@@ -139,9 +139,9 @@ public class IntentTest {
                 .setData(Uri.parse("poetassistant://query/muffin"));
         MainActivity activity = mActivityTestRule.launchActivity(intent);
         checkTitleStripOrTab(activity, R.string.tab_dictionary);
-        verifyFirstDefinition("a sweet quick bread baked in a cup-shaped pan");
+        checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan");
         swipeViewPagerRight(1);
-        verifyFirstSynonym("quick bread");
+        checkFirstSynonym("quick bread");
         swipeViewPagerRight(1);
         checkRhymes(activity, "mcguffin", "toughen");
     }
@@ -197,7 +197,7 @@ public class IntentTest {
     private void checkThesaurusOnly(String expectedFirstSynonym) {
         Activity activity = mActivityTestRule.getActivity();
         checkTitleStripOrTab(activity, R.string.tab_thesaurus);
-        verifyFirstSynonym(expectedFirstSynonym);
+        checkFirstSynonym(expectedFirstSynonym);
         swipeViewPagerLeft(1);
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
                 .check(matches(isDisplayed()));
@@ -209,7 +209,7 @@ public class IntentTest {
     private void checkDictionaryOnly(String expectedFirstDefinition) {
         Activity activity = mActivityTestRule.getActivity();
         checkTitleStripOrTab(activity, R.string.tab_dictionary);
-        verifyFirstDefinition(expectedFirstDefinition);
+        checkFirstDefinition(expectedFirstDefinition);
         swipeViewPagerRight(1);
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
                 .check(matches(isDisplayed()));

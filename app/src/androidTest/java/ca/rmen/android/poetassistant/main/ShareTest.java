@@ -65,14 +65,14 @@ public class ShareTest {
         String poemText = "Let's share a poem";
         typePoem(poemText);
         openMenuItem(R.string.share_poem_text);
-        verifyShareIntentEquals(poemText);
+        checkShareIntentEquals(poemText);
     }
 
     @Test
     public void shareRhymesTest() {
         search("merge");
         openMenuItem(R.string.share);
-        verifyShareIntentContains("upsurge");
+        checkShareIntentContains("upsurge");
     }
 
     @Test
@@ -80,7 +80,7 @@ public class ShareTest {
         search("splurge");
         swipeViewPagerLeft(1);
         openMenuItem(R.string.share);
-        verifyShareIntentContains("flaunt");
+        checkShareIntentContains("flaunt");
     }
 
     @Test
@@ -91,7 +91,7 @@ public class ShareTest {
         addFilter("messed", "blessed");
         openMenuItem(R.string.share);
         String expectedContent = context.getString(R.string.share_thesaurus_title_with_filter, "happy", "messed");
-        verifyShareIntentContains(expectedContent);
+        checkShareIntentContains(expectedContent);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class ShareTest {
         search("a");
         swipeViewPagerLeft(2);
         openMenuItem(R.string.share);
-        verifyShareIntentContains("the blood group whose red cells carry the A antigen");
+        checkShareIntentContains("the blood group whose red cells carry the A antigen");
     }
 
     @Test
@@ -109,7 +109,7 @@ public class ShareTest {
         onView(allOf(withId(R.id.btn_star_result), isDisplayed(), hasSibling(withText("crappy")))).perform(click());
         swipeViewPagerLeft(4);
         openMenuItem(R.string.share);
-        verifyShareIntentContains("snappy");
+        checkShareIntentContains("snappy");
     }
 
     // Need to look at this: sometimes the app bar layout is hidden :(
@@ -118,14 +118,14 @@ public class ShareTest {
     public void shareRandomWordTest() {
         openMenuItem(R.string.action_random_word);
         openMenuItem(R.string.share);
-        verifyShareIntentContains("Definitions of");
+        checkShareIntentContains("Definitions of");
     }
 
     @Test
     public void sharePatternTest() {
         search("ho?t");
         openMenuItem(R.string.share);
-        verifyShareIntentContains("host");
+        checkShareIntentContains("host");
     }
 
     @Test
@@ -133,7 +133,7 @@ public class ShareTest {
         Context context = mActivityTestRule.getActivity();
         openMenuItem(R.string.action_wotd_history);
         openMenuItem(R.string.share);
-        verifyShareIntentContains(context.getString(R.string.share_wotd_title));
+        checkShareIntentContains(context.getString(R.string.share_wotd_title));
     }
 
     @Test
@@ -142,10 +142,10 @@ public class ShareTest {
         Context context = mActivityTestRule.getActivity();
         onView(allOf(withText("adversary"), isDisplayed())).perform(click());
         onView(allOf(withText(endsWith(context.getString(R.string.share))), isDisplayed())).perform(click());
-        verifyShareIntentEquals("adversary");
+        checkShareIntentEquals("adversary");
     }
 
-    private void verifyShareIntentContains(String expectedText) {
+    private void checkShareIntentContains(String expectedText) {
         intended(allOf(hasAction(Intent.ACTION_CHOOSER),
                 hasExtra(is(Intent.EXTRA_INTENT),
                         allOf(hasAction(Intent.ACTION_SEND),
@@ -153,7 +153,7 @@ public class ShareTest {
                                         containsString(expectedText))))));
     }
 
-    private void verifyShareIntentEquals(String expectedText) {
+    private void checkShareIntentEquals(String expectedText) {
         intended(allOf(hasAction(Intent.ACTION_CHOOSER),
                 hasExtra(is(Intent.EXTRA_INTENT),
                         allOf(hasAction(Intent.ACTION_SEND),
