@@ -42,6 +42,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.addFilter;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
@@ -80,6 +81,17 @@ public class ShareTest {
         swipeViewPagerLeft(1);
         openMenuItem(R.string.share);
         verifyShareIntentContains("flaunt");
+    }
+
+    @Test
+    public void shareFilteredThesaurusTest() {
+        Context context = mActivityTestRule.getActivity();
+        search("happy");
+        swipeViewPagerLeft(1);
+        addFilter("messed", "blessed");
+        openMenuItem(R.string.share);
+        String expectedContent = context.getString(R.string.share_thesaurus_title_with_filter, "happy", "messed");
+        verifyShareIntentContains(expectedContent);
     }
 
     @Test

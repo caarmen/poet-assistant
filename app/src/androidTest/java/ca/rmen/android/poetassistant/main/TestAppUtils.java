@@ -170,35 +170,31 @@ class TestAppUtils {
         starIcon.check(matches(isNotChecked()));
     }
 
-    static void filter(String filter, String firstExpectedFilteredMatch, String firstExpectedNonFilteredMatch) {
-        ViewInteraction filterIcon = onView(
-                allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()));
-        filterIcon.perform(click());
-        ViewInteraction appCompatEditText = onView(
-                allOf(withId(R.id.edit), isDisplayed()));
-        appCompatEditText.perform(typeText(filter), closeSoftKeyboard());
-        ViewInteraction appCompatButton = onView(
-                allOf(withId(android.R.id.button1), withText(android.R.string.ok)));
-        appCompatButton.perform(scrollTo(), click());
+    static void addFilter(String filter, String firstExpectedFilteredMatch) {
+        onView(allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()))
+                .perform(click());
+        onView(allOf(withId(R.id.edit), isDisplayed()))
+                .perform(typeText(filter), closeSoftKeyboard());
+        onView(allOf(withId(android.R.id.button1), withText(android.R.string.ok)))
+                .perform(scrollTo(), click());
 
-        ViewInteraction firstActualMatch = onView(
-                allOf(withId(R.id.text1),
-                        withText(firstExpectedFilteredMatch),
-                        withParent(withParent(withId(R.id.recycler_view))),
-                        isDisplayed()));
-        firstActualMatch.check(matches(withText(firstExpectedFilteredMatch)));
+        onView(allOf(withId(R.id.text1),
+                withText(firstExpectedFilteredMatch),
+                withParent(withParent(withId(R.id.recycler_view))),
+                isDisplayed()))
+                .check(matches(withText(firstExpectedFilteredMatch)));
 
-        ViewInteraction clearFilterIcon = onView(
-                allOf(withId(R.id.btn_clear), withContentDescription(R.string.filter_clear), isDisplayed()));
-        clearFilterIcon.perform(click());
+    }
 
-        firstActualMatch = onView(
-                allOf(withId(R.id.text1),
-                        withText(firstExpectedNonFilteredMatch),
-                        withParent(withParent(withId(R.id.recycler_view))),
-                        isDisplayed()));
-        firstActualMatch.check(matches(withText(firstExpectedNonFilteredMatch)));
+    static void clearFilter(String firstExpectedNonFilteredMatch) {
+        onView(allOf(withId(R.id.btn_clear), withContentDescription(R.string.filter_clear), isDisplayed()))
+                .perform(click());
 
+        onView(allOf(withId(R.id.text1),
+                withText(firstExpectedNonFilteredMatch),
+                withParent(withParent(withId(R.id.recycler_view))),
+                isDisplayed()))
+                .check(matches(withText(firstExpectedNonFilteredMatch)));
     }
 
     static void clearStarredWords() {

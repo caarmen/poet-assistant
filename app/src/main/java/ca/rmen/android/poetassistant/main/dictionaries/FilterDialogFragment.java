@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ import android.view.WindowManager;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.databinding.InputDialogEditTextBinding;
+import ca.rmen.android.poetassistant.main.AppBarLayoutHelper;
 
 
 /**
@@ -108,5 +110,11 @@ public class FilterDialogFragment extends DialogFragment {
         });
 
         return dialog;
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
     }
 }
