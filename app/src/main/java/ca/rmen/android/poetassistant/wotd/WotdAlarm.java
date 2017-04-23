@@ -24,6 +24,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.SystemClock;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import ca.rmen.android.poetassistant.Constants;
@@ -32,7 +33,8 @@ import ca.rmen.android.poetassistant.Constants;
  * Word of the day task for API levels KitKat and lower.
  * This uses AlarmManager.
  */
-final class WotdAlarm {
+@VisibleForTesting
+public final class WotdAlarm {
     private static final String TAG = Constants.TAG + WotdAlarm.class.getSimpleName();
 
     private static final String ACTION_WOTD = "action_wotd";

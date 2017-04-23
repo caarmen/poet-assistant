@@ -55,7 +55,7 @@ import ca.rmen.android.poetassistant.wotd.WotdListExporter;
 import ca.rmen.android.poetassistant.wotd.WotdLoader;
 
 
-public class ResultListFactory {
+public final class ResultListFactory {
     private static final String TAG = Constants.TAG + ResultListFactory.class.getSimpleName();
 
     private ResultListFactory() {

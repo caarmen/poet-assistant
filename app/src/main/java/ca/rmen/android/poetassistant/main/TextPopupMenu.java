@@ -45,20 +45,20 @@ import ca.rmen.android.poetassistant.widget.HackFor23381;
 import ca.rmen.android.poetassistant.widget.PopupMenuHelper;
 import io.reactivex.Observable;
 
-public class TextPopupMenu {
+public final class TextPopupMenu {
     public enum Style {
-        /**
-         * Denotes popup menu items for looking up a text in the rhymer, thesaurus, or dictionary
-         */
-        APP,
         /**
          * Denotes popup menu items for copying text, and any other actions provided by the system.
          */
         SYSTEM,
         /**
-         * Denotes both APP and SYSTEM popup menu items.
+         * Denotes popup menu items for looking up a text in the rhymer, thesaurus, or dictionary, as well as SYSTEM items.
          */
         FULL
+    }
+
+    private TextPopupMenu() {
+        // prevent instantiation
     }
 
     /**
@@ -72,10 +72,7 @@ public class TextPopupMenu {
         textView.setOnClickListener(v -> {
             String text = textView.getText().toString();
             PopupMenu popupMenu = createPopupMenu(textView, text, listener);
-            if (style == Style.APP) {
-                addAppMenuItems(popupMenu);
-                PopupMenuHelper.insertMenuItemIcons(textView.getContext(), popupMenu);
-            } else if (style == Style.SYSTEM) {
+            if (style == Style.SYSTEM) {
                 addSystemMenuItems(textView.getContext(), popupMenu.getMenuInflater(), popupMenu.getMenu(), text);
                 PopupMenuHelper.insertMenuItemIcons(textView.getContext(), popupMenu);
             } else if (style == Style.FULL) {

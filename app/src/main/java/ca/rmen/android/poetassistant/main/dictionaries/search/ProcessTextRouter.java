@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -30,7 +31,8 @@ import java.util.Locale;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.main.Tab;
 
-final class ProcessTextRouter {
+@VisibleForTesting
+public final class ProcessTextRouter {
     private static final String TAG = Constants.TAG + ProcessTextRouter.class.getSimpleName();
 
     private ProcessTextRouter() {

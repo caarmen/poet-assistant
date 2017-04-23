@@ -19,11 +19,14 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
+import android.support.annotation.VisibleForTesting;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-class RTUtils {
+@VisibleForTesting
+public final class RTUtils {
 
     private RTUtils() {
         // prevent instantiation

@@ -25,6 +25,7 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import java.util.List;
@@ -36,7 +37,8 @@ import ca.rmen.android.poetassistant.Constants;
  * This uses JobScheduler.
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-final class WotdJob {
+@VisibleForTesting
+public final class WotdJob {
     private static final String TAG = Constants.TAG + WotdJob.class.getSimpleName();
 
     private WotdJob() {
