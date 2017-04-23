@@ -57,6 +57,7 @@ public class ThesaurusRouterTest {
     @Test
     @TargetApi(Build.VERSION_CODES.M)
     public void onTextRouted() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
         Intent intent = new Intent(Intent.ACTION_PROCESS_TEXT);
         intent.putExtra(Intent.EXTRA_PROCESS_TEXT, "almostic");
         mActivityTestRule.launchActivity(intent);

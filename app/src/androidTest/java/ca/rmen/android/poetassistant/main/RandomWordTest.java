@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main;
 
 
-import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
@@ -100,22 +99,23 @@ public class RandomWordTest {
     }
 
     @Test
-    @TargetApi(Build.VERSION_CODES.M)
     public void wotdNotificationTest() {
         openMenuItem(R.string.action_settings);
         clickPreference(R.string.wotd_setting_title);
-        NotificationManager notificationManager = (NotificationManager) getInstrumentation().getTargetContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
-        boolean foundNotification = false;
-        for (StatusBarNotification statusBarNotification : activeNotifications) {
-            statusBarNotification.getNotification();
-            CharSequence title = statusBarNotification.getNotification().extras.getCharSequence("android.title");
-            if (title != null && title.toString().startsWith(mActivityTestRule.getActivity().getString(R.string.wotd_setting_title))) {
-                foundNotification = true;
-                break;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            NotificationManager notificationManager = (NotificationManager) getInstrumentation().getTargetContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
+            boolean foundNotification = false;
+            for (StatusBarNotification statusBarNotification : activeNotifications) {
+                statusBarNotification.getNotification();
+                CharSequence title = statusBarNotification.getNotification().extras.getCharSequence("android.title");
+                if (title != null && title.toString().startsWith(mActivityTestRule.getActivity().getString(R.string.wotd_setting_title))) {
+                    foundNotification = true;
+                    break;
+                }
             }
+            assertTrue("Didn't find a Wotd notification", foundNotification);
         }
-        assertTrue("Didn't find a Wotd notification", foundNotification);
 
         // Disable it again
         clickPreference(R.string.wotd_setting_title);

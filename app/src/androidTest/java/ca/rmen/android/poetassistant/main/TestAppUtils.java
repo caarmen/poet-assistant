@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.SystemClock;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
@@ -35,6 +36,7 @@ import static android.support.test.espresso.action.ViewActions.pressImeActionBut
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.RootMatchers.isFocusable;
 import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -151,7 +153,10 @@ class TestAppUtils {
         onView(allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()))
                 .perform(click());
         SystemClock.sleep(200);
-        onView(allOf(withId(R.id.edit), isDisplayed()))
+        onView(allOf(
+                withId(R.id.edit),
+                isDisplayed()))
+                .inRoot(isFocusable())
                 .perform(typeText(filter), closeSoftKeyboard());
         clickDialogPositiveButton(android.R.string.ok);
 
@@ -205,8 +210,12 @@ class TestAppUtils {
     }
 
     static void clearPoem() {
-        openMenuItem(R.string.file);
-        onView(allOf(withId(R.id.title), withText(R.string.file_new), isDisplayed())).perform(click());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            openMenuItem(R.string.file);
+            onView(allOf(withId(R.id.title), withText(R.string.file_new), isDisplayed())).perform(click());
+        } else {
+            openMenuItem(R.string.file_clear);
+        }
         clickDialogPositiveButton(R.string.action_clear);
         onView(allOf(withId(R.id.tv_text), isDisplayed())).check(matches(withText("")));
     }

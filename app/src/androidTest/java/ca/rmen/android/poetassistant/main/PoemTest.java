@@ -20,10 +20,15 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.SystemClock;
+import android.support.test.espresso.NoMatchingRootException;
+import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.PerformException;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v7.widget.ActionBarContextView;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,7 +45,9 @@ import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.isPlatformPopup;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -53,6 +60,7 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 
@@ -64,7 +72,9 @@ public class PoemTest {
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 
     @Test
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     public void exportAudioTest() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return;
         swipeViewPagerLeft(3);
         typePoem("Will export some text");
         File exportDir = new File(mActivityTestRule.getActivity().getFilesDir(), "export");
@@ -120,11 +130,19 @@ public class PoemTest {
         SystemClock.sleep(200);
         try {
             onView(withText(equalToIgnoringCase(label))).inRoot(isPlatformPopup()).perform(click());
-        } catch (PerformException e) {
+        } catch (PerformException | NoMatchingRootException | NoMatchingViewException e) {
             // I haven't yet found a better way to handle this :(
             // On smaller screens the items are hidden behind an overflow item with id "overflow" which is inaccessible
-            onView(withContentDescription("More options")).inRoot(isPlatformPopup()).perform(click());
-            onView(withText(equalToIgnoringCase(label))).inRoot(isPlatformPopup()).perform(click());
+            try {
+                onView(withContentDescription("More options")).inRoot(isPlatformPopup()).perform(click());
+                onView(withText(equalToIgnoringCase(label))).inRoot(isPlatformPopup()).perform(click());
+            } catch (NoMatchingRootException e1) {
+                onView(allOf(
+                        withContentDescription("More options"),
+                        isDescendantOfA(withClassName(is(ActionBarContextView.class.getName())))))
+                        .perform(click());
+                onView(withText(equalToIgnoringCase(label))).perform(click());
+            }
         }
     }
 

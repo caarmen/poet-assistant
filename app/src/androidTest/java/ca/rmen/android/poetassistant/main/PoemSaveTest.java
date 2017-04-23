@@ -20,9 +20,11 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v7.preference.PreferenceManager;
@@ -63,7 +65,9 @@ public class PoemSaveTest {
     };
 
     @Test
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     public void saveTest() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return;
         swipeViewPagerLeft(3);
         File poemFile = getPoemFile();
         assertFalse(poemFile.exists());

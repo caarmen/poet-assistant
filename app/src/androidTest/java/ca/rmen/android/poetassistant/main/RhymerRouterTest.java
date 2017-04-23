@@ -55,6 +55,7 @@ public class RhymerRouterTest {
     @Test
     @TargetApi(Build.VERSION_CODES.M)
     public void onTextRouted() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
         Intent intent = new Intent(Intent.ACTION_PROCESS_TEXT);
         intent.putExtra(Intent.EXTRA_PROCESS_TEXT, "polyvalent");
         mActivityTestRule.launchActivity(intent);

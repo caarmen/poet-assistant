@@ -20,6 +20,8 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.support.annotation.StringRes;
 import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.GeneralLocation;
@@ -104,7 +106,9 @@ public class TtsTest {
     }
 
     @Test
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public void voiceSelectionTest() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
         openMenuItem(R.string.action_settings);
         clickPreference(R.string.pref_voice_title);
         // We don't know what voices will be available on the device.  Just select the last one.

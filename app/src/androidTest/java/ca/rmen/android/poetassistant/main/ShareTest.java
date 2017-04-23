@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -64,7 +65,11 @@ public class ShareTest {
         swipeViewPagerLeft(3);
         String poemText = "Let's share a poem";
         typePoem(poemText);
-        openMenuItem(R.string.share_poem_text);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            openMenuItem(R.string.share_poem_text);
+        } else {
+            openMenuItem(R.string.share);
+        }
         checkShareIntentEquals(poemText);
     }
 
