@@ -31,19 +31,29 @@ import org.junit.runner.RunWith;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
+import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
 import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
+import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkPatterns;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkSearchSuggestions;
+import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withAdapterItemCount;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearSearchHistory;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openSearchView;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typeQuery;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
+import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -107,6 +117,23 @@ public class SearchTest {
         checkPatterns(mActivityTestRule.getActivity(), "h*llo", "hello", "hermosillo", "hollo", "hullo");
         search("h*llz");
         checkPatterns(mActivityTestRule.getActivity(), "h*llz");
+    }
+
+    @Test
+    public void patternSearchWithFavoriteTest() {
+        search("hello");
+        starQueryWord();
+        search("he*o");
+        checkPatterns(mActivityTestRule.getActivity(), "he*o", "hello", "head honcho", "hector hugo munro",
+                "herero", "hereto", "hermosillo", "hero");
+        onView(allOf(withId(R.id.btn_star_result), hasSibling(withText("hello")), isDisplayed())).check(matches(isChecked()));
+    }
+
+    @Test
+    public void patternSearchTooManyResultsTest() {
+        search("a*");
+        onView(allOf(withId(R.id.recycler_view), isDisplayed()))
+                .check(matches(withAdapterItemCount(501)));
     }
 
     @Test

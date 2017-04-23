@@ -19,6 +19,8 @@
 
 package ca.rmen.android.poetassistant.main;
 
+import android.support.test.espresso.matcher.BoundedMatcher;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -67,4 +69,17 @@ final class CustomViewMatchers {
         };
     }
 
+    static Matcher<View> withAdapterItemCount(int count) {
+        return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Verifies that the recycler view has " + count + " items");
+            }
+
+            @Override
+            public boolean matchesSafely(RecyclerView recyclerView) {
+                return recyclerView.getAdapter().getItemCount() == count;
+            }
+        };
+    }
 }
