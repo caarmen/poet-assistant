@@ -35,7 +35,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsCursor;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider;
-import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
+import ca.rmen.android.poetassistant.main.reader.ReaderViewModel;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 import ca.rmen.android.poetassistant.settings.VoicePreference;
 import ca.rmen.android.poetassistant.wotd.WotdBootReceiver;
@@ -63,7 +63,7 @@ public interface AppComponent {
         void inject(RTEntryViewModel rtEntry);
         void inject(ResultListHeaderFragment resultListHeaderFragment);
         void inject(ResultListHeaderViewModel resultListHeaderViewModel);
-        void inject(ReaderFragment readerFragment);
+        void inject(ReaderViewModel readerViewModel);
         void inject(RhymerLoader rhymerLoader);
         void inject(ThesaurusLoader thesaurusLoader);
         void inject(DictionaryLoader dictionaryLoader);
