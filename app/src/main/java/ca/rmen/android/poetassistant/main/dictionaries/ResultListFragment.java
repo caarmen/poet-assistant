@@ -66,10 +66,9 @@ public class ResultListFragment<T> extends Fragment
     static final String EXTRA_QUERY = "query";
     private FragmentResultListBinding mBinding;
     private ResultListHeaderFragment mHeaderFragment;
+    private ResultListViewModel<T> mViewModel;
 
     private Tab mTab;
-    private ResultListAdapter<T> mAdapter;
-    private ResultListData<T> mData;
     @Inject Tts mTts;
     @Inject SettingsPrefs mPrefs;
 
@@ -93,6 +92,9 @@ public class ResultListFragment<T> extends Fragment
             mHeaderFragment = ResultListHeaderFragment.newInstance(mTab);
             getChildFragmentManager().beginTransaction().replace(R.id.result_list_header, mHeaderFragment).commit();
         }
+        //noinspection unchecked
+        mViewModel = (ResultListViewModel<T>) ResultListFactory.createViewModel(mTab);
+        mBinding.setViewModel(mViewModel);
         mPrefs.registerOnSharedPreferenceChangeListener(mPrefsListener);
         return mBinding.getRoot();
     }
@@ -102,8 +104,9 @@ public class ResultListFragment<T> extends Fragment
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, mTab + ": onActivityCreated() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         //noinspection unchecked
-        mAdapter = (ResultListAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
-        mBinding.recyclerView.setAdapter(mAdapter);
+        ResultListAdapter<T> adapter = (ResultListAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
+        mViewModel.setAdapter(adapter);
+        mBinding.recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -126,7 +129,7 @@ public class ResultListFragment<T> extends Fragment
             Share.share(getActivity(), mTab,
                     mHeaderFragment.getHeader(),
                     mHeaderFragment.getFilter(),
-                    mData.data);
+                    mViewModel.data.get().data);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -134,7 +137,7 @@ public class ResultListFragment<T> extends Fragment
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.action_share).setEnabled(mAdapter.getItemCount() > 0);
+        menu.findItem(R.id.action_share).setEnabled(mViewModel.isDataAvailable());
     }
 
     public void query(String query) {
@@ -156,18 +159,17 @@ public class ResultListFragment<T> extends Fragment
     @Override
     public Loader<ResultListData<T>> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, mTab + ": onCreateLoader() called with: " + "id = [" + id + "], args = [" + args + "]");
-        mAdapter.clear();
-        mData = null;
 
         String query = "";
         String filter = "";
-        if (args != null) {
+        if (args != null && args.containsKey(EXTRA_QUERY)) {
             query = args.getString(EXTRA_QUERY);
             filter = args.getString(EXTRA_FILTER);
             mHeaderFragment.setHeader(query);
-            mData = new ResultListData<>(query, Collections.emptyList());
+            mViewModel.setData(new ResultListData<>(query, Collections.emptyList()));
+        } else {
+            mViewModel.setData(null);
         }
-        mBinding.empty.setVisibility(View.GONE);
         mHeaderFragment.show();
 
         getActivity().supportInvalidateOptionsMenu();
@@ -179,10 +181,7 @@ public class ResultListFragment<T> extends Fragment
     @Override
     public void onLoadFinished(Loader<ResultListData<T>> loader, ResultListData<T> data) {
         Log.d(TAG, mTab + ": onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
-        mAdapter.clear();
-        //noinspection unchecked
-        mAdapter.addAll(data.data);
-        mData = data;
+        mViewModel.setData(data);
         updateUi();
 
         // Hide the keyboard
@@ -194,8 +193,7 @@ public class ResultListFragment<T> extends Fragment
     @Override
     public void onLoaderReset(Loader<ResultListData<T>> loader) {
         Log.d(TAG, mTab + ": onLoaderReset() called with: " + "loader = [" + loader + "]");
-        mAdapter.clear();
-        mData = null;
+        mViewModel.setData(null);
         updateUi();
     }
 
@@ -207,14 +205,20 @@ public class ResultListFragment<T> extends Fragment
 
     private void updateUi() {
         Log.d(TAG, mTab + ": updateUi() called with: " + "");
-        if (mAdapter.getItemCount() > 0 || !TextUtils.isEmpty(mHeaderFragment.getHeader())) {
+        if (mViewModel.isDataAvailable() || !TextUtils.isEmpty(mHeaderFragment.getHeader())) {
             mHeaderFragment.show();
         } else {
             mHeaderFragment.hide();
         }
 
-        String query = mData == null ? null : mData.matchedWord;
+        String query = mViewModel.getUsedQueryWord();
+        setEmptyText(query);
         mHeaderFragment.setHeader(query);
+
+        getActivity().supportInvalidateOptionsMenu();
+    }
+
+    private void setEmptyText(String query) {
         // If we have an empty list because the user didn't enter any search term,
         // we'll show a text to tell them to search.
         if (TextUtils.isEmpty(query)) {
@@ -227,18 +231,8 @@ public class ResultListFragment<T> extends Fragment
         }
         // If the user entered a query and there are no matches, show the normal "no results" text.
         else {
-            String noResults = ResultListFactory.getEmptyListText(getContext(), mTab, query);
-            mBinding.empty.setText(noResults);
+            mBinding.empty.setText(ResultListFactory.getEmptyListText(getContext(), mTab, query));
         }
-        if (mData == null || mData.data.isEmpty()) {
-            mBinding.empty.setVisibility(View.VISIBLE);
-            mBinding.recyclerView.setVisibility(View.GONE);
-        } else {
-            mBinding.empty.setVisibility(View.GONE);
-            mBinding.recyclerView.setVisibility(View.VISIBLE);
-        }
-
-        getActivity().supportInvalidateOptionsMenu();
     }
 
     private final SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
