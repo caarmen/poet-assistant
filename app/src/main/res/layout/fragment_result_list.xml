@@ -20,6 +20,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="ca.rmen.android.poetassistant.main.dictionaries.ResultListViewModel"/>
+    </data>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -53,6 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:visibility="@{viewModel.dataAvailable? View.GONE : View.VISIBLE}"
                 tools:text="Empty text here"
                 android:text="@null" />
 
@@ -61,7 +68,7 @@
                 tools:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:visibility="@{viewModel.dataAvailable? View.VISIBLE : View.GONE}"/>
 
         </FrameLayout>
     </LinearLayout>

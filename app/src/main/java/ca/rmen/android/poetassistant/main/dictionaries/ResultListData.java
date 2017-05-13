@@ -29,4 +29,12 @@ public class ResultListData<T> {
         this.matchedWord = matchedWord;
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        return "ResultListData{" +
+                "matchedWord='" + matchedWord + '\'' +
+                ", data=" + data +
+                '}';
+    }
 }

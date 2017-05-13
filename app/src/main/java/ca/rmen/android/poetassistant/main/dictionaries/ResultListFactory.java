@@ -104,6 +104,21 @@ public final class ResultListFactory {
         }
     }
 
+    static ResultListViewModel<?> createViewModel(Tab tab) {
+        switch(tab) {
+            case PATTERN:
+            case FAVORITES:
+            case RHYMER:
+            case THESAURUS:
+                return new ResultListViewModel<RTEntryViewModel>(tab);
+            case WOTD:
+                return new ResultListViewModel<WotdEntryViewModel>(tab);
+            case DICTIONARY:
+            default:
+                return new ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(tab);
+        }
+    }
+
     static ResultListLoader<? extends ResultListData<?>> createLoader(Tab tab, Activity activity, String query, String filter) {
         switch (tab) {
             case PATTERN:
