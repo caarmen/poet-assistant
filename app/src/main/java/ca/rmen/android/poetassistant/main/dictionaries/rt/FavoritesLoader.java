@@ -40,7 +40,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
-public class FavoritesLoader extends ResultListLoader<ResultListData<RTEntry>> {
+public class FavoritesLoader extends ResultListLoader<ResultListData<RTEntryViewModel>> {
 
     private static final String TAG = Constants.TAG + FavoritesLoader.class.getSimpleName();
 
@@ -52,10 +52,10 @@ public class FavoritesLoader extends ResultListLoader<ResultListData<RTEntry>> {
     }
 
     @Override
-    public ResultListData<RTEntry> loadInBackground() {
+    public ResultListData<RTEntryViewModel> loadInBackground() {
         Log.d(TAG, "loadInBackground()");
 
-        List<RTEntry> data = new ArrayList<>();
+        List<RTEntryViewModel> data = new ArrayList<>();
 
         Set<String> favorites = mFavorites.getFavorites();
         if (favorites.isEmpty()) return emptyResult();
@@ -65,8 +65,8 @@ public class FavoritesLoader extends ResultListLoader<ResultListData<RTEntry>> {
         int i = 0;
         for (String favorite : sortedFavorites) {
             @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
-            data.add(new RTEntry(
-                    RTEntry.Type.WORD,
+            data.add(new RTEntryViewModel(
+                    RTEntryViewModel.Type.WORD,
                     favorite,
                     ContextCompat.getColor(getContext(), color),
                     true,
@@ -76,7 +76,7 @@ public class FavoritesLoader extends ResultListLoader<ResultListData<RTEntry>> {
         return new ResultListData<>(getContext().getString(R.string.favorites_list_header), data);
     }
 
-    private ResultListData<RTEntry> emptyResult() {
+    private ResultListData<RTEntryViewModel> emptyResult() {
         return new ResultListData<>(getContext().getString(R.string.favorites_list_header), new ArrayList<>());
     }
 

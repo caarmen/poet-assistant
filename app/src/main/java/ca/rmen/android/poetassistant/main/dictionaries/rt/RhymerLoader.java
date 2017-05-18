@@ -42,7 +42,7 @@ import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.rhymer.RhymeResult;
 
-public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
+public class RhymerLoader extends ResultListLoader<ResultListData<RTEntryViewModel>> {
 
     private static final String TAG = Constants.TAG + RhymerLoader.class.getSimpleName();
 
@@ -61,11 +61,11 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
     }
 
     @Override
-    public ResultListData<RTEntry> loadInBackground() {
+    public ResultListData<RTEntryViewModel> loadInBackground() {
         Log.d(TAG, "loadInBackground() called with: query = " + mQuery + ", filter = " + mFilter);
         long before = System.currentTimeMillis();
 
-        List<RTEntry> data = new ArrayList<>();
+        List<RTEntryViewModel> data = new ArrayList<>();
         if (TextUtils.isEmpty(mQuery)) return emptyResult();
 
         List<RhymeResult> rhymeResults = mRhymer.getRhymingWords(mQuery, Constants.MAX_RESULTS);
@@ -86,7 +86,7 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
             // Add the word variant, if there are multiple pronunciations.
             if (rhymeResults.size() > 1) {
                 String heading = mQuery + " (" + (rhymeResult.variantNumber + 1) + ")";
-                data.add(new RTEntry(RTEntry.Type.HEADING, heading));
+                data.add(new RTEntryViewModel(RTEntryViewModel.Type.HEADING, heading));
             }
 
             addResultSection(favorites, data, R.string.rhyme_section_stress_syllables, rhymeResult.strictRhymes, layout);
@@ -94,7 +94,7 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
             addResultSection(favorites, data, R.string.rhyme_section_two_syllables, rhymeResult.twoSyllableRhymes, layout);
             addResultSection(favorites, data, R.string.rhyme_section_one_syllable, rhymeResult.oneSyllableRhymes, layout);
         }
-        ResultListData<RTEntry> result = new ResultListData<>(mQuery, data);
+        ResultListData<RTEntryViewModel> result = new ResultListData<>(mQuery, data);
         long after = System.currentTimeMillis();
         Log.d(TAG, "loadInBackground() finished in " + (after - before) + "ms");
         return result;
@@ -127,20 +127,20 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
         return matchingFavorites.toArray(new String[0]);
     }
 
-    private ResultListData<RTEntry> emptyResult() {
+    private ResultListData<RTEntryViewModel> emptyResult() {
         return new ResultListData<>(mQuery, new ArrayList<>());
     }
 
-    private void addResultSection(Set<String> favorites, List<RTEntry> results, int sectionHeadingResId, String[] rhymes, Settings.Layout layout) {
+    private void addResultSection(Set<String> favorites, List<RTEntryViewModel> results, int sectionHeadingResId, String[] rhymes, Settings.Layout layout) {
         if (rhymes.length > 0) {
 
             Set<String> wordsWithDefinitions = mPrefs.getIsAllRhymesEnabled() ? mRhymer.getWordsWithDefinitions(rhymes) : null;
-            results.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
+            results.add(new RTEntryViewModel(RTEntryViewModel.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
             for (int i = 0; i < rhymes.length; i++) {
                 @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
                 boolean hasDefinition = wordsWithDefinitions == null || wordsWithDefinitions.contains(rhymes[i]);
-                results.add(new RTEntry(
-                        RTEntry.Type.WORD,
+                results.add(new RTEntryViewModel(
+                        RTEntryViewModel.Type.WORD,
                         rhymes[i],
                         ContextCompat.getColor(getContext(), color),
                         favorites.contains(rhymes[i]),
@@ -148,8 +148,8 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
                         layout == Settings.Layout.EFFICIENT));
             }
             if (results.size() >= Constants.MAX_RESULTS) {
-                results.add(new RTEntry(
-                        RTEntry.Type.SUBHEADING,
+                results.add(new RTEntryViewModel(
+                        RTEntryViewModel.Type.SUBHEADING,
                         getContext().getString(R.string.max_results, Constants.MAX_RESULTS))
                 );
             }

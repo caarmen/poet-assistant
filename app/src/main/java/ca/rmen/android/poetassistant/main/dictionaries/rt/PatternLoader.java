@@ -44,7 +44,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
-public class PatternLoader extends ResultListLoader<ResultListData<RTEntry>> {
+public class PatternLoader extends ResultListLoader<ResultListData<RTEntryViewModel>> {
 
     private static final String TAG = Constants.TAG + PatternLoader.class.getSimpleName();
 
@@ -60,10 +60,10 @@ public class PatternLoader extends ResultListLoader<ResultListData<RTEntry>> {
     }
 
     @Override
-    public ResultListData<RTEntry> loadInBackground() {
+    public ResultListData<RTEntryViewModel> loadInBackground() {
         Log.d(TAG, "loadInBackground() called with: query = " + mQuery);
 
-        List<RTEntry> data = new ArrayList<>();
+        List<RTEntryViewModel> data = new ArrayList<>();
         if (TextUtils.isEmpty(mQuery)) return emptyResult();
         String[] matches = mDictionary.findWordsByPattern(Patterns.convertForSqlite(mQuery));
 
@@ -80,16 +80,16 @@ public class PatternLoader extends ResultListLoader<ResultListData<RTEntry>> {
         Settings.Layout layout = Settings.getLayout(mPrefs);
         for (int i=0; i < matches.length; i++) {
             @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
-            data.add(new RTEntry(
-                    RTEntry.Type.WORD,
+            data.add(new RTEntryViewModel(
+                    RTEntryViewModel.Type.WORD,
                     matches[i],
                     ContextCompat.getColor(getContext(), color),
                     favorites.contains(matches[i]),
                     layout == Settings.Layout.EFFICIENT));
         }
         if (matches.length == Constants.MAX_RESULTS) {
-            data.add(new RTEntry(
-                    RTEntry.Type.SUBHEADING,
+            data.add(new RTEntryViewModel(
+                    RTEntryViewModel.Type.SUBHEADING,
                     getContext().getString(R.string.max_results, Constants.MAX_RESULTS))
             );
         }
@@ -114,7 +114,7 @@ public class PatternLoader extends ResultListLoader<ResultListData<RTEntry>> {
         }
     }
 
-    private ResultListData<RTEntry> emptyResult() {
+    private ResultListData<RTEntryViewModel> emptyResult() {
         return new ResultListData<>(mQuery, new ArrayList<>());
     }
 }
