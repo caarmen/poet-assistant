@@ -24,13 +24,8 @@ import android.databinding.DataBindingUtil;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 
-import javax.inject.Inject;
-
-import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.ListItemWotdBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.TextPopupMenu;
@@ -41,11 +36,8 @@ public class WotdAdapter extends ResultListAdapter<WotdEntryViewModel> {
 
     private final OnWordClickListener mWordClickedListener;
     private final EntryIconClickListener mEntryIconClickListener;
-    @Inject
-    Favorites mFavorites;
 
     public WotdAdapter(Activity activity) {
-        DaggerHelper.getWotdComponent(activity).inject(this);
         mWordClickedListener = (OnWordClickListener) activity;
         mEntryIconClickListener = new EntryIconClickListener();
     }
@@ -83,10 +75,6 @@ public class WotdAdapter extends ResultListAdapter<WotdEntryViewModel> {
         private String getWord(View v) {
             ListItemWotdBinding binding = DataBindingUtil.getBinding((View) v.getParent());
             return binding.text1.getText().toString();
-        }
-
-        public void onFavoriteIconClicked(View v) {
-            mFavorites.saveFavorite(getWord(v), ((CheckBox) v).isChecked());
         }
 
         public void onRhymerIconClicked(View v) {
