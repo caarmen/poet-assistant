@@ -19,21 +19,34 @@
 
 package ca.rmen.android.poetassistant.wotd;
 
+import android.content.Context;
+import android.databinding.ObservableBoolean;
 import android.support.annotation.ColorInt;
+
+import javax.inject.Inject;
+
+import ca.rmen.android.poetassistant.Favorites;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
+import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
 
 public final class WotdEntryViewModel {
 
     public final String text;
     public final String date;
     public final @ColorInt int backgroundColor;
-    public final boolean isFavorite;
+    public final ObservableBoolean isFavorite = new ObservableBoolean();
     public final boolean showButtons;
 
-    public WotdEntryViewModel(String text, String date, @ColorInt int backgroundColor, boolean isFavorite, boolean showButtons) {
+    @Inject Favorites mFavorites;
+
+    public WotdEntryViewModel(Context context, String text, String date, @ColorInt int backgroundColor, boolean isFavorite, boolean showButtons) {
+        DaggerHelper.getWotdComponent(context).inject(this);
         this.text = text;
         this.date = date;
         this.backgroundColor = backgroundColor;
-        this.isFavorite = isFavorite;
+        this.isFavorite.set(isFavorite);
         this.showButtons = showButtons;
+        this.isFavorite.addOnPropertyChangedCallback(
+                new BindingCallbackAdapter(() -> mFavorites.saveFavorite(text, this.isFavorite.get())));
     }
 }

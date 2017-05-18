@@ -38,7 +38,6 @@ import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvide
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 import ca.rmen.android.poetassistant.settings.VoicePreference;
-import ca.rmen.android.poetassistant.wotd.WotdAdapter;
 import ca.rmen.android.poetassistant.wotd.WotdBootReceiver;
 import ca.rmen.android.poetassistant.wotd.WotdBroadcastReceiver;
 import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel;
@@ -88,6 +87,6 @@ public interface AppComponent {
         void inject(WotdJobService wotdJobService);
         void inject(WotdBootReceiver wotdBootReceiver);
         void inject(WotdLoader wotdLoader);
-        void inject(WotdAdapter wotdAdapter);
+        void inject(WotdEntryViewModel entry);
     }
 }
