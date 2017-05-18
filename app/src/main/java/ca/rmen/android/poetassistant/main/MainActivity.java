@@ -54,7 +54,6 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.about.AboutActivity;
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFavoriteClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus;
@@ -67,7 +66,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 
-public class MainActivity extends AppCompatActivity implements OnWordClickListener, OnFavoriteClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener, CABEditText.ImeListener {
+public class MainActivity extends AppCompatActivity implements OnWordClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener, CABEditText.ImeListener {
 
     private static final String TAG = Constants.TAG + MainActivity.class.getSimpleName();
     private static final String DIALOG_TAG = "dialog";
@@ -232,12 +231,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
     public void onWordClick(String word, Tab tab) {
         Log.d(TAG, "onWordClick() called with: " + "word = [" + word + "], tab = [" + tab + "]");
         mSearch.search(word, tab);
-    }
-
-    @Override
-    public void onFavoriteToggled(final String word, boolean isFavorite) {
-        if (isFavorite) mFavorites.addFavorite(word);
-        else mFavorites.removeFavorite(word);
     }
 
     @Override

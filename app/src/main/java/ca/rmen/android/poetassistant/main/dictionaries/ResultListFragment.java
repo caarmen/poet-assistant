@@ -165,7 +165,7 @@ public class ResultListFragment<T> extends Fragment
             query = args.getString(EXTRA_QUERY);
             filter = args.getString(EXTRA_FILTER);
             mHeaderFragment.setHeader(query);
-            mData = new ResultListData<>(query, false, Collections.emptyList());
+            mData = new ResultListData<>(query, Collections.emptyList());
         }
         mBinding.empty.setVisibility(View.GONE);
         mHeaderFragment.show();
@@ -237,8 +237,6 @@ public class ResultListFragment<T> extends Fragment
             mBinding.empty.setVisibility(View.GONE);
             mBinding.recyclerView.setVisibility(View.VISIBLE);
         }
-
-        if (mData != null) mHeaderFragment.setFavorite(mData.isFavorite);
 
         getActivity().supportInvalidateOptionsMenu();
     }

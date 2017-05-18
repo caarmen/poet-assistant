@@ -27,6 +27,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.MainThread;
 import android.support.annotation.WorkerThread;
 import android.support.v7.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -40,6 +42,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class Favorites {
 
+    private static final String TAG = Constants.TAG + Favorites.class.getSimpleName();
     private static final String TABLE_FAVORITE = "FAVORITE";
     private static final String COLUMN_WORD = "WORD";
 
@@ -55,6 +58,27 @@ public class Favorites {
 
     public Favorites(UserDb userDb) {
         mUserDb = userDb;
+    }
+
+    @WorkerThread
+    public boolean isFavorite(String word) {
+        if (TextUtils.isEmpty(word)) return false;
+        Cursor cursor = mUserDb.getReadableDatabase().query(
+                TABLE_FAVORITE,
+                new String[]{COLUMN_WORD}, // projection
+                COLUMN_WORD + " = ?", // selection
+                new String[] {word}, // selectionArgs
+                null, // groupBy
+                null, // having
+                null); // orderBy
+        if (cursor != null) {
+            try {
+                return cursor.getCount() > 0;
+            } finally {
+                cursor.close();
+            }
+        }
+        return false;
     }
 
     @WorkerThread
@@ -81,7 +105,14 @@ public class Favorites {
     }
 
     @MainThread
-    public void addFavorite(final String favorite) {
+    public void saveFavorite(String word, boolean isFavorite) {
+        if (isFavorite) addFavorite(word);
+        else removeFavorite(word);
+    }
+
+    @MainThread
+    private void addFavorite(final String favorite) {
+        Log.v(TAG, "addFavorite " + favorite);
         executeDbOperation(() -> {
             ContentValues values = new ContentValues(1);
             values.put(COLUMN_WORD, favorite);
@@ -91,7 +122,8 @@ public class Favorites {
     }
 
     @MainThread
-    public void removeFavorite(final String favorite) {
+    private void removeFavorite(final String favorite) {
+        Log.v(TAG, "removeFavorite " + favorite);
         executeDbOperation(() -> {
             ContentValues values = new ContentValues(1);
             values.put(COLUMN_WORD, favorite);

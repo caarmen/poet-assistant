@@ -82,11 +82,11 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
             addResultSection(favorites, data, R.string.thesaurus_section_synonyms, entry.synonyms, layout);
             addResultSection(favorites, data, R.string.thesaurus_section_antonyms, entry.antonyms, layout);
         }
-        return new ResultListData<>(result.word, favorites.contains(result.word), data);
+        return new ResultListData<>(result.word, data);
     }
 
     private ResultListData<RTEntry> emptyResult() {
-        return new ResultListData<>(mQuery, false, new ArrayList<>());
+        return new ResultListData<>(mQuery, new ArrayList<>());
     }
 
     private void addResultSection(Set<String> favorites, List<RTEntry> results, int sectionHeadingResId, String[] words, Settings.Layout layout) {

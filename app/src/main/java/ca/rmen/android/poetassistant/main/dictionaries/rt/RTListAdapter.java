@@ -27,7 +27,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 
+import javax.inject.Inject;
+
+import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.ListItemHeadingBinding;
 import ca.rmen.android.poetassistant.databinding.ListItemSubheadingBinding;
 import ca.rmen.android.poetassistant.databinding.ListItemWordBinding;
@@ -39,12 +43,13 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter;
 public class RTListAdapter extends ResultListAdapter<RTEntry> {
 
     private final OnWordClickListener mWordClickedListener;
-    private final OnFavoriteClickListener mOnFavoriteClickListener;
     private final EntryIconClickListener mEntryIconClickListener;
+    @Inject
+    Favorites mFavorites;
 
     public RTListAdapter(Activity activity) {
+        DaggerHelper.getMainScreenComponent(activity).inject(this);
         mWordClickedListener = (OnWordClickListener) activity;
-        mOnFavoriteClickListener = (OnFavoriteClickListener) activity;
         mEntryIconClickListener = new EntryIconClickListener();
     }
 
@@ -99,7 +104,7 @@ public class RTListAdapter extends ResultListAdapter<RTEntry> {
         }
 
         public void onFavoriteIconClicked(View v) {
-            mOnFavoriteClickListener.onFavoriteToggled(getWord(v), ((CheckBox) v).isChecked());
+            mFavorites.saveFavorite(getWord(v), ((CheckBox) v).isChecked());
         }
 
         public void onRhymerIconClicked(View v) {

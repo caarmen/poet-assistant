@@ -29,6 +29,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoad
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
@@ -37,6 +38,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvide
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 import ca.rmen.android.poetassistant.settings.VoicePreference;
+import ca.rmen.android.poetassistant.wotd.WotdAdapter;
 import ca.rmen.android.poetassistant.wotd.WotdBootReceiver;
 import ca.rmen.android.poetassistant.wotd.WotdBroadcastReceiver;
 import ca.rmen.android.poetassistant.wotd.WotdEntry;
@@ -60,6 +62,7 @@ public interface AppComponent {
         void injectWotd(ResultListFragment<WotdEntry> resultListFragment);
         void injectDict(ResultListFragment<DictionaryEntry> resultListFragment);
         void inject(ResultListHeaderFragment resultListHeaderFragment);
+        void inject(RTListAdapter rtListAdapter);
         void inject(ReaderFragment readerFragment);
         void inject(RhymerLoader rhymerLoader);
         void inject(ThesaurusLoader thesaurusLoader);
@@ -84,5 +87,6 @@ public interface AppComponent {
         void inject(WotdJobService wotdJobService);
         void inject(WotdBootReceiver wotdBootReceiver);
         void inject(WotdLoader wotdLoader);
+        void inject(WotdAdapter wotdAdapter);
     }
 }

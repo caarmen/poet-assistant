@@ -94,7 +94,7 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
             addResultSection(favorites, data, R.string.rhyme_section_two_syllables, rhymeResult.twoSyllableRhymes, layout);
             addResultSection(favorites, data, R.string.rhyme_section_one_syllable, rhymeResult.oneSyllableRhymes, layout);
         }
-        ResultListData<RTEntry> result = new ResultListData<>(mQuery, favorites.contains(mQuery), data);
+        ResultListData<RTEntry> result = new ResultListData<>(mQuery, data);
         long after = System.currentTimeMillis();
         Log.d(TAG, "loadInBackground() finished in " + (after - before) + "ms");
         return result;
@@ -128,7 +128,7 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntry>> {
     }
 
     private ResultListData<RTEntry> emptyResult() {
-        return new ResultListData<>(mQuery, false, new ArrayList<>());
+        return new ResultListData<>(mQuery, new ArrayList<>());
     }
 
     private void addResultSection(Set<String> favorites, List<RTEntry> results, int sectionHeadingResId, String[] rhymes, Settings.Layout layout) {

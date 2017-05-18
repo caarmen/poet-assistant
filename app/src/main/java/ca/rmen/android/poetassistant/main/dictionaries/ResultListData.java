@@ -23,12 +23,10 @@ import java.util.List;
 
 public class ResultListData<T> {
     final String matchedWord;
-    public final boolean isFavorite;
     public final List<T> data;
 
-    public ResultListData(String matchedWord, boolean isFavorite, List<T> data) {
+    public ResultListData(String matchedWord, List<T> data) {
         this.matchedWord = matchedWord;
-        this.isFavorite = isFavorite;
         this.data = data;
     }
 }

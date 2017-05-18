@@ -26,23 +26,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 
+import javax.inject.Inject;
+
+import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.ListItemWotdBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.TextPopupMenu;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFavoriteClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 
 public class WotdAdapter extends ResultListAdapter<WotdEntry> {
 
     private final OnWordClickListener mWordClickedListener;
-    private final OnFavoriteClickListener mOnFavoriteClickListener;
     private final EntryIconClickListener mEntryIconClickListener;
+    @Inject
+    Favorites mFavorites;
 
     public WotdAdapter(Activity activity) {
+        DaggerHelper.getWotdComponent(activity).inject(this);
         mWordClickedListener = (OnWordClickListener) activity;
-        mOnFavoriteClickListener = (OnFavoriteClickListener) activity;
         mEntryIconClickListener = new EntryIconClickListener();
     }
 
@@ -82,7 +86,7 @@ public class WotdAdapter extends ResultListAdapter<WotdEntry> {
         }
 
         public void onFavoriteIconClicked(View v) {
-            mOnFavoriteClickListener.onFavoriteToggled(getWord(v), ((CheckBox) v).isChecked());
+            mFavorites.saveFavorite(getWord(v), ((CheckBox) v).isChecked());
         }
 
         public void onRhymerIconClicked(View v) {
