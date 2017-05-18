@@ -77,21 +77,36 @@ android {
         }
     }
 
-    File signFile = rootProject.file('signing.properties')
-    if (signFile.exists()) {
-        Properties p = new Properties();
-        p.load(new FileInputStream(signFile))
-
+    if (rootProject.hasProperty("AndroidSigningKeyAlias")
+            && rootProject.hasProperty("AndroidSigningKeyPassword")
+            && rootProject.hasProperty("AndroidSigningStoreFile")
+            && rootProject.hasProperty("AndroidSigningStorePassword")) {
+        println "Using signing properties from gradle properties"
         signingConfigs {
             release {
-                keyAlias p.KeyAlias
-                keyPassword p.KeyPassword
-                storeFile file(p.StoreFile)
-                storePassword p.StorePassword
+                keyAlias rootProject.AndroidSigningKeyAlias
+                keyPassword rootProject.AndroidSigningKeyPassword
+                storeFile file(rootProject.AndroidSigningStoreFile)
+                storePassword rootProject.AndroidSigningStorePassword
             }
+            android.buildTypes.release.signingConfig = signingConfigs.release
         }
-        android.buildTypes.release.signingConfig = signingConfigs.release
+    } else if (System.env.AndroidSigningKeyPassword != null
+                && System.env.AndroidSigningKeyPassword != null
+                && System.env.AndroidSigningStoreFile != null
+                && System.env.AndroidSigningStorePassword != null) {
+        println "Using signing properties from environment variables"
+            signingConfigs {
+                release {
+                    keyAlias System.env.AndroidSigningKeyAlias
+                    keyPassword System.env.AndroidSigningKeyPassword
+                    storeFile file(System.env.AndroidSigningStoreFile)
+                    storePassword System.env.AndroidSigningStorePassword
+                }
+                android.buildTypes.release.signingConfig = signingConfigs.release
+            }
     } else {
+        println "No signing properties found"
         android.buildTypes.release.signingConfig = null
     }
 }
