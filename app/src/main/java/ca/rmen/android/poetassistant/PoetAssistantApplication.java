@@ -20,6 +20,8 @@ package ca.rmen.android.poetassistant;
 
 import android.app.Application;
 
+import com.squareup.leakcanary.LeakCanary;
+
 import ca.rmen.android.poetassistant.dagger.AppComponent;
 import ca.rmen.android.poetassistant.dagger.AppModule;
 import ca.rmen.android.poetassistant.dagger.DaggerAppComponent;
@@ -30,6 +32,12 @@ public class PoetAssistantApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
         Theme.setThemeFromSettings(SettingsPrefs.get(this));
     }
 
