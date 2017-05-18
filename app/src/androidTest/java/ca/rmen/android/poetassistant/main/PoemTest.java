@@ -88,6 +88,7 @@ public class PoemTest {
         // Try another one
 
         onView(allOf(withId(R.id.tv_text), isDisplayed())).perform(clearText());
+        SystemClock.sleep(250);
         typePoem("Will export some text which is a bit longer");
         openMenuItem(R.string.share_poem_audio);
         assertTrue(poemFile.exists());
