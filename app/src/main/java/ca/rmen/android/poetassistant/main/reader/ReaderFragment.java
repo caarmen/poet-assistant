@@ -23,18 +23,14 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
+import android.databinding.Observable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.speech.tts.TextToSpeech;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,28 +39,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
-import javax.inject.Inject;
-
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.dagger.DaggerHelper;
-import ca.rmen.android.poetassistant.compat.HtmlCompat;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.compat.HtmlCompat;
+import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding;
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper;
 import ca.rmen.android.poetassistant.main.TextPopupMenu;
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
-import ca.rmen.android.poetassistant.widget.CABEditText;
 import ca.rmen.android.poetassistant.widget.DebounceTextWatcher;
 
-
 public class ReaderFragment extends Fragment implements
-        PoemFile.PoemFileCallback,
         ConfirmDialogFragment.ConfirmDialogListener {
     private static final String TAG = Constants.TAG + ReaderFragment.class.getSimpleName();
     private static final String EXTRA_INITIAL_TEXT = "initial_text";
@@ -73,11 +60,7 @@ public class ReaderFragment extends Fragment implements
     private static final int ACTION_FILE_SAVE_AS = 1;
     private static final int ACTION_FILE_NEW = 2;
 
-    private FragmentReaderBinding mBinding;
-    @Inject Tts mTts;
-    private Handler mHandler;
-    private PoemPrefs mPoemPrefs;
-    private final PlayButtonListener mPlayButtonListener = new PlayButtonListener();
+    private ReaderViewModel mViewModel;
 
     public static ReaderFragment newInstance(String initialText) {
         Log.d(TAG, "newInstance() called with: " + "initialText = [" + initialText + "]");
@@ -93,11 +76,7 @@ public class ReaderFragment extends Fragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         super.onCreate(savedInstanceState);
-        DaggerHelper.getMainScreenComponent(getContext()).inject(this);
         setHasOptionsMenu(true);
-        mPoemPrefs = new PoemPrefs(getActivity());
-        mHandler = new Handler();
-        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -110,17 +89,16 @@ public class ReaderFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView() called with: " + "inflater = [" + inflater + "], container = [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false);
-        mBinding.setPlayButtonListener(mPlayButtonListener);
-        mBinding.tvText.addTextChangedListener(mTextWatcher);
-        mBinding.tvText.setImeListener(() -> {
-            Activity activity = getActivity();
-            if (activity instanceof CABEditText.ImeListener) ((CABEditText.ImeListener)activity).onImeClosed();
-        });
-        DebounceTextWatcher.observe(mBinding.tvText)
-            .subscribe(text -> mPoemPrefs.updatePoemText(text));
-        TextPopupMenu.addSelectionPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
-        return mBinding.getRoot();
+        FragmentReaderBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false);
+        mViewModel = new ReaderViewModel(getContext());
+        binding.setViewModel(mViewModel);
+        mViewModel.snackbarText.addOnPropertyChangedCallback(mSnackbarCallback);
+        mViewModel.ttsError.addOnPropertyChangedCallback(mTtsErrorCallback);
+        mViewModel.poemFile.addOnPropertyChangedCallback(mPoemFileCallback);
+        binding.tvText.setImeListener(() -> AppBarLayoutHelper.forceExpandAppBarLayout(getActivity()));
+        DebounceTextWatcher.observe(binding.tvText).subscribe(text -> mViewModel.updatePoemText());
+        TextPopupMenu.addSelectionPopupMenu(binding.tvText, (OnWordClickListener) getActivity());
+        return binding.getRoot();
     }
 
     @Override
@@ -140,12 +118,12 @@ public class ReaderFragment extends Fragment implements
         if (menuItem == null) {
             Log.d(TAG, "Unexpected: save menu item missing from reader fragment. Monkey?");
         } else {
-            menuItem.setEnabled(mPoemPrefs.hasSavedPoem());
+            menuItem.setEnabled(mViewModel.poemFile.get() != null);
         }
     }
 
     private void prepareMenuItemsRequiringEnteredText(Menu menu, @IdRes int ...menuIds) {
-        boolean hasEnteredText = !TextUtils.isEmpty(mBinding.tvText.getText());
+        boolean hasEnteredText = !TextUtils.isEmpty(mViewModel.poem.get());
         for (@IdRes int menuId : menuIds) {
             MenuItem menuItem = menu.findItem(menuId);
             if (menuItem != null) {
@@ -165,18 +143,16 @@ public class ReaderFragment extends Fragment implements
         } else if (item.getItemId() == R.id.action_open) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) open();
         } else if (item.getItemId() == R.id.action_save) {
-            PoemFile poemFile = mPoemPrefs.getSavedPoem();
-            PoemFile.save(getActivity(), poemFile.uri, mBinding.tvText.getText().toString(), this);
+            mViewModel.save(getActivity());
         } else if (item.getItemId() == R.id.action_save_as) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) saveAs();
         } else if (item.getItemId() == R.id.action_share_poem_text || item.getItemId() == R.id.action_share) {
             Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_TEXT, mBinding.tvText.getText().toString());
+            intent.putExtra(Intent.EXTRA_TEXT, mViewModel.poem.get());
             intent.setType("text/plain");
             startActivity(Intent.createChooser(intent, getString(R.string.share)));
         } else if (item.getItemId() == R.id.action_share_poem_audio) {
-            mTts.speakToFile(mBinding.tvText.getText().toString());
-            Snackbar.make(mBinding.getRoot(), R.string.share_poem_audio_snackbar, Snackbar.LENGTH_LONG).show();
+            mViewModel.speakToFile();
         }
         return true;
     }
@@ -184,7 +160,7 @@ public class ReaderFragment extends Fragment implements
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void open() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        PoemFile poemFile = mPoemPrefs.getSavedPoem();
+        PoemFile poemFile = mViewModel.poemFile.get();
         if (poemFile != null) intent.setData(poemFile.uri);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/plain");
@@ -196,13 +172,7 @@ public class ReaderFragment extends Fragment implements
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/plain");
-        PoemFile poemFile = mPoemPrefs.getSavedPoem();
-        final String fileName;
-        if (poemFile != null) {
-            fileName = poemFile.name;
-        } else {
-            fileName = PoemFile.generateFileName(mBinding.tvText.getText().toString());
-        }
+        String fileName = mViewModel.getSaveAsFilename();
         if (!TextUtils.isEmpty(fileName)) intent.putExtra(Intent.EXTRA_TITLE, fileName);
         startActivityForResult(intent, ACTION_FILE_SAVE_AS);
     }
@@ -210,14 +180,23 @@ public class ReaderFragment extends Fragment implements
     @Override
     public void onPause() {
         Log.d(TAG, "onPause() called with: " + "");
-        mPoemPrefs.updatePoemText(mBinding.tvText.getText().toString());
+        mViewModel.updatePoemText();
         super.onPause();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(TAG, "onDestroyView");
+        mViewModel.snackbarText.removeOnPropertyChangedCallback(mSnackbarCallback);
+        mViewModel.ttsError.removeOnPropertyChangedCallback(mTtsErrorCallback);
+        mViewModel.poemFile.removeOnPropertyChangedCallback(mPoemFileCallback);
+        mViewModel.destroy();
     }
 
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy() called with: " + "");
-        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
@@ -227,13 +206,11 @@ public class ReaderFragment extends Fragment implements
         Log.d(TAG, "onActivityResult() called with: " + "requestCode = [" + requestCode + "], resultCode = [" + resultCode + "], data = [" + data + "]");
         if (requestCode == ACTION_FILE_OPEN && resultCode == Activity.RESULT_OK) {
             if (data != null) {
-                Uri uri = data.getData();
-                PoemFile.open(getActivity(), uri, this);
+                mViewModel.open(getActivity(), data.getData());
             }
         } else if (requestCode == ACTION_FILE_SAVE_AS && resultCode == Activity.RESULT_OK) {
             if (data != null) {
-                Uri uri = data.getData();
-                PoemFile.save(getActivity(), uri, mBinding.tvText.getText().toString(), this);
+                mViewModel.saveAs(getActivity(), data.getData());
             }
         }
     }
@@ -241,104 +218,19 @@ public class ReaderFragment extends Fragment implements
     public void setText(String text) {
         Log.d(TAG, "speak() called with: " + "text = [" + text + "]");
         PoemFile poemFile = new PoemFile(null, null, text);
-        mPoemPrefs.setSavedPoem(poemFile);
-        mBinding.tvText.setText(text);
-    }
-
-    @Override
-    public void onPoemLoaded(PoemFile poemFile) {
-        Log.d(TAG, "onPoemLoaded() called with: " + "poemFile = [" + poemFile + "]");
-        if (poemFile == null) {
-            mPoemPrefs.clear();
-            Snackbar.make(mBinding.tvText, getString(R.string.file_opened_error), Snackbar.LENGTH_LONG).show();
-        } else {
-            mBinding.tvText.setText(poemFile.text);
-            mPoemPrefs.setSavedPoem(poemFile);
-            getActivity().supportInvalidateOptionsMenu();
-            Snackbar.make(mBinding.tvText, getString(R.string.file_opened, poemFile.name), Snackbar.LENGTH_LONG).show();
-        }
-        getActivity().supportInvalidateOptionsMenu();
-    }
-
-    @Override
-    public void onPoemSaved(PoemFile poemFile) {
-        if (poemFile == null) {
-            Snackbar.make(mBinding.tvText, getString(R.string.file_saved_error), Snackbar.LENGTH_LONG).show();
-        } else {
-            Log.d(TAG, "onPoemSaved() called with: " + "poemFile = [" + poemFile + "]");
-            mPoemPrefs.setSavedPoem(poemFile);
-            Snackbar.make(mBinding.tvText, getString(R.string.file_saved, poemFile.name), Snackbar.LENGTH_LONG).show();
-        }
-        getActivity().supportInvalidateOptionsMenu();
-    }
-
-    /**
-     * The button shall be disabled if TTS isn't initialized, or if there is no text to play.
-     * The button should display a "Play" icon if TTS isn't running but can be started.
-     * The button should display a "Stop" icon if TTS is currently running.
-     * This is called from a background thread by TTS.
-     */
-    private void updatePlayButton() {
-        Log.d(TAG, "updatePlayButton: tts status = " + mTts.getStatus() + ", tts is speaking = " + mTts.isSpeaking());
-        mHandler.post(() -> {
-            boolean enabled = !TextUtils.isEmpty(mBinding.tvText.getText());
-            mBinding.btnPlay.setEnabled(enabled);
-            if (mTts.isSpeaking()) {
-                mBinding.btnPlay.setImageResource(R.drawable.ic_stop);
-            } else if (!enabled) {
-                mBinding.btnPlay.setImageResource(R.drawable.ic_play_disabled);
-            } else {
-                mBinding.btnPlay.setImageResource(R.drawable.ic_play_enabled);
-            }
-        });
+        mViewModel.setSavedPoem(poemFile);
     }
 
     @Override
     public void onOk(int actionId) {
         if (actionId == ACTION_FILE_NEW) {
-            mPoemPrefs.clear();
-            mBinding.tvText.setText("");
+            mViewModel.clearPoem();
             // Hack for https://github.com/caarmen/poet-assistant/issues/72
             // On some devices, clearing the poem text auto-hides the app bar layout.
             // Let's expand it again.
             AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
             getActivity().supportInvalidateOptionsMenu();
         }
-    }
-
-    public class PlayButtonListener {
-        public void onPlayButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            Log.v(TAG, "Play button clicked");
-            if (mTts.isSpeaking()) {
-                mTts.stop();
-            } else if (mTts.getStatus() == TextToSpeech.SUCCESS) {
-                speak();
-            } else {
-                Snackbar snackBar = Snackbar.make(mBinding.getRoot(), HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG);
-                final Intent intent = new Intent("com.android.settings.TTS_SETTINGS");
-                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    snackBar.setAction(R.string.tts_error_open_system_settings, view -> startActivity(intent));
-                } else {
-                    snackBar.setAction(R.string.tts_error_open_app_settings, view -> startActivity(new Intent(getContext(), SettingsActivity.class)));
-                }
-                snackBar.show();
-            }
-
-            updatePlayButton();
-        }
-    }
-
-    /**
-     * Read the text in our text view.
-     */
-    private void speak() {
-        String text = mBinding.tvText.getText().toString();
-        int startPosition = mBinding.tvText.getSelectionStart();
-        if (startPosition == text.length()) startPosition = 0;
-        int endPosition = mBinding.tvText.getSelectionEnd();
-        if (startPosition == endPosition) endPosition = text.length();
-        text = text.substring(startPosition, endPosition);
-        mTts.speak(text);
     }
 
     private void loadPoem() {
@@ -349,59 +241,48 @@ public class ReaderFragment extends Fragment implements
         if (arguments != null) {
             String initialText = arguments.getString(EXTRA_INITIAL_TEXT);
             if (!TextUtils.isEmpty(initialText)) {
-                mBinding.tvText.setText(initialText);
                 PoemFile poemFile = new PoemFile(null, null, initialText);
-                mPoemPrefs.setSavedPoem(poemFile);
+                mViewModel.setSavedPoem(poemFile);
                 getActivity().supportInvalidateOptionsMenu();
                 return;
             }
         }
         // Load the poem we previously saved
-        if (mPoemPrefs.hasSavedPoem()) {
-            PoemFile poemFile = mPoemPrefs.getSavedPoem();
-            mBinding.tvText.setText(poemFile.text);
-        } else if (mPoemPrefs.hasTempPoem()) {
-            String tempPoemText = mPoemPrefs.getTempPoem();
-            mBinding.tvText.setText(tempPoemText);
-        }
+        mViewModel.loadPoem();
     }
 
-    private final TextWatcher mTextWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
+    private final Observable.OnPropertyChangedCallback mSnackbarCallback =
+            new BindingCallbackAdapter(
+                    () -> {
+                        View root = getView();
+                        if (root != null) {
+                            ReaderViewModel.SnackbarText text = mViewModel.snackbarText.get();
+                            String message = getString(text.stringResId, text.params);
+                            Snackbar.make(root, message, Snackbar.LENGTH_LONG).show();
+                        }
+                    });
 
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
+    private final Observable.OnPropertyChangedCallback mTtsErrorCallback =
+            new BindingCallbackAdapter(
+                    () -> {
+                        if (mViewModel.ttsError.get()) {
+                            View root = getView();
+                            if (root != null) {
+                                Snackbar snackBar = Snackbar.make(root, HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG);
+                                final Intent intent = new Intent("com.android.settings.TTS_SETTINGS");
+                                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                                    snackBar.setAction(R.string.tts_error_open_system_settings, view -> startActivity(intent));
+                                } else {
+                                    snackBar.setAction(R.string.tts_error_open_app_settings, view -> startActivity(new Intent(getContext(), SettingsActivity.class)));
+                                }
+                                snackBar.show();
+                            }
+                        }
+                    }
+            );
 
-        @Override
-        public void afterTextChanged(Editable s) {
-            updatePlayButton();
-        }
-    };
-
-    @SuppressWarnings("unused")
-    @Subscribe(sticky = true)
-    public void onTtsInitialized(Tts.OnTtsInitialized event) {
-        Log.d(TAG, "onTtsInitialized() called with: " + "event = [" + event + "]");
-
-        updatePlayButton();
-        // Sometimes when the tts engine is initialized, the "isSpeaking()" method returns true
-        // if you call it immediately.  If we call updatePlayButton only once at this point, we
-        // will show a "stop" button instead of a "play" button.  We workaround this by updating
-        // the button again after a brief moment, hoping that isSpeaking() will correctly
-        // return false, allowing us to display a "play" button.
-        mHandler.postDelayed(this::updatePlayButton, 5000);
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onTtsUtteranceCompleted(Tts.OnUtteranceCompleted event) {
-        Log.d(TAG, "onTtsUtteranceCompleted() called with: " + "event = [" + event + "]");
-        updatePlayButton();
-        mHandler.postDelayed(this::updatePlayButton, 1000);
-    }
+    private final Observable.OnPropertyChangedCallback mPoemFileCallback =
+            new BindingCallbackAdapter(() -> getActivity().supportInvalidateOptionsMenu());
 
 }
 

@@ -84,6 +84,7 @@ public class WotdLoader extends ResultListLoader<ResultListData<WotdEntryViewMod
                     String word = cursor.getString(0);
                     @ColorRes int color = (i % 2 == 0) ? R.color.row_background_color_even : R.color.row_background_color_odd;
                     data.add(new WotdEntryViewModel(
+                            getContext(),
                             word,
                             date,
                             ContextCompat.getColor(getContext(), color),

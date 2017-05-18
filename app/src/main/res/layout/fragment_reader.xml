@@ -23,8 +23,8 @@
     <data>
 
         <variable
-            name="playButtonListener"
-            type="ca.rmen.android.poetassistant.main.reader.ReaderFragment.PlayButtonListener" />
+            name="viewModel"
+            type="ca.rmen.android.poetassistant.main.reader.ReaderViewModel" />
     </data>
 
     <ScrollView
@@ -48,14 +48,17 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@string/tts_play"
-                android:onClick="@{playButtonListener::onPlayButtonClicked}"
-                app:srcCompat="@drawable/ic_play_disabled" />
+                android:onClick="@{v -> viewModel.onPlayButtonClicked()}"
+                app:enabled="@{viewModel.playButtonEnabled}"
+                app:srcCompat="@{viewModel.playButtonDrawable}" />
 
             <ca.rmen.android.poetassistant.widget.CABEditText
                 android:id="@+id/tv_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                app:charSequence="@={viewModel.poemSelection}"
+                android:text="@={viewModel.poem}"
                 android:hint="@string/tts_hint" />
 
 

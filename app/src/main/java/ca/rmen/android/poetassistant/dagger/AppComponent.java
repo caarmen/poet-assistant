@@ -23,22 +23,21 @@ import javax.inject.Singleton;
 
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderViewModel;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsCursor;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider;
-import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
+import ca.rmen.android.poetassistant.main.reader.ReaderViewModel;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 import ca.rmen.android.poetassistant.settings.VoicePreference;
-import ca.rmen.android.poetassistant.wotd.WotdAdapter;
 import ca.rmen.android.poetassistant.wotd.WotdBootReceiver;
 import ca.rmen.android.poetassistant.wotd.WotdBroadcastReceiver;
 import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel;
@@ -61,9 +60,10 @@ public interface AppComponent {
         void inject(ResultListFragment<RTEntryViewModel> resultListFragment);
         void injectWotd(ResultListFragment<WotdEntryViewModel> resultListFragment);
         void injectDict(ResultListFragment<DictionaryEntry> resultListFragment);
+        void inject(RTEntryViewModel rtEntry);
         void inject(ResultListHeaderFragment resultListHeaderFragment);
-        void inject(RTListAdapter rtListAdapter);
-        void inject(ReaderFragment readerFragment);
+        void inject(ResultListHeaderViewModel resultListHeaderViewModel);
+        void inject(ReaderViewModel readerViewModel);
         void inject(RhymerLoader rhymerLoader);
         void inject(ThesaurusLoader thesaurusLoader);
         void inject(DictionaryLoader dictionaryLoader);
@@ -87,6 +87,6 @@ public interface AppComponent {
         void inject(WotdJobService wotdJobService);
         void inject(WotdBootReceiver wotdBootReceiver);
         void inject(WotdLoader wotdLoader);
-        void inject(WotdAdapter wotdAdapter);
+        void inject(WotdEntryViewModel entry);
     }
 }
