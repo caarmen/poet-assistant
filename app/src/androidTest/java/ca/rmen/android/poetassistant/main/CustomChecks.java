@@ -87,12 +87,12 @@ class CustomChecks {
         checkTitleStripOrTab(context, R.string.tab_pattern);
         Matcher<View> emptyViewMatch = allOf(withId(R.id.empty), withText(context.getString(R.string.empty_pattern_list_with_query, query)));
         ViewInteraction emptyView = onView(emptyViewMatch);
+        Matcher<View> recyclerViewMatch = allOf(withId(R.id.recycler_view), hasSibling(emptyViewMatch));
         if (patterns.length > 0) {
             emptyView.check(matches(not(isDisplayed())));
+            onView(recyclerViewMatch).check(matches(withChildCount(patterns.length)));
         } else {
             emptyView.check(matches(isDisplayed()));
-            Matcher<View> recyclerViewMatch = allOf(withId(R.id.recycler_view), hasSibling(emptyViewMatch));
-            onView(recyclerViewMatch).check(matches(withChildCount(patterns.length)));
             for (int i = 0; i < patterns.length; i++) {
                 onView(allOf(withId(R.id.text1), withText(patterns[i]),
                         childAtPosition(childAtPosition(recyclerViewMatch, i), 1),
