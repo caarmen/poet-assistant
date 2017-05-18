@@ -60,6 +60,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 import ca.rmen.android.poetassistant.widget.CABEditText;
+import ca.rmen.android.poetassistant.widget.DebounceTextWatcher;
 
 
 public class ReaderFragment extends Fragment implements
@@ -116,6 +117,8 @@ public class ReaderFragment extends Fragment implements
             Activity activity = getActivity();
             if (activity instanceof CABEditText.ImeListener) ((CABEditText.ImeListener)activity).onImeClosed();
         });
+        DebounceTextWatcher.observe(mBinding.tvText)
+            .subscribe(text -> mPoemPrefs.updatePoemText(text));
         TextPopupMenu.addSelectionPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
         return mBinding.getRoot();
     }
