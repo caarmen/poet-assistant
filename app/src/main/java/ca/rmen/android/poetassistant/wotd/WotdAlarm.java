@@ -33,7 +33,7 @@ import ca.rmen.android.poetassistant.Constants;
  * Word of the day task for API levels KitKat and lower.
  * This uses AlarmManager.
  */
-@VisibleForTesting
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 public final class WotdAlarm {
     private static final String TAG = Constants.TAG + WotdAlarm.class.getSimpleName();
 

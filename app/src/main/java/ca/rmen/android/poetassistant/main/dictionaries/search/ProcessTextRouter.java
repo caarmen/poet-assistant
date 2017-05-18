@@ -31,7 +31,7 @@ import java.util.Locale;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.main.Tab;
 
-@VisibleForTesting
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 public final class ProcessTextRouter {
     private static final String TAG = Constants.TAG + ProcessTextRouter.class.getSimpleName();
 
