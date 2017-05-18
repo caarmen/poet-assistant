@@ -23,6 +23,7 @@ import javax.inject.Singleton;
 
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderViewModel;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
@@ -62,6 +63,7 @@ public interface AppComponent {
         void injectDict(ResultListFragment<DictionaryEntry> resultListFragment);
         void inject(RTEntryViewModel rtEntry);
         void inject(ResultListHeaderFragment resultListHeaderFragment);
+        void inject(ResultListHeaderViewModel resultListHeaderViewModel);
         void inject(ReaderFragment readerFragment);
         void inject(RhymerLoader rhymerLoader);
         void inject(ThesaurusLoader thesaurusLoader);

@@ -23,9 +23,15 @@
 
     <data>
 
+        <import type="android.view.View"/>
+        <import type="android.text.TextUtils"/>
         <variable
             name="buttonListener"
             type="ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderFragment.ButtonListener" />
+
+        <variable
+            name="viewModel"
+            type="ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderViewModel" />
     </data>
 
     <LinearLayout
@@ -55,6 +61,7 @@
                 android:gravity="start|center_vertical"
                 android:textIsSelectable="true"
                 android:textStyle="bold"
+                android:text="@{viewModel.query}"
                 tools:text="Query" />
 
             <CheckBox
@@ -70,8 +77,8 @@
                 android:layout_toRightOf="@id/tv_list_header"
                 android:background="?selectableItemBackgroundBorderless"
                 android:button="@drawable/ic_star"
+                android:checked="@={viewModel.isFavorite}"
                 android:clickable="true"
-                android:onClick="@{buttonListener::onFavoriteButtonClicked}"
                 android:padding="8dp"
                 app:buttonTint="@color/primary_dark" />
 
@@ -168,14 +175,13 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:id="@+id/filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:background="@drawable/shape_rounded_rect"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:visibility="gone"
+            android:visibility="@{TextUtils.isEmpty(viewModel.filter)? View.GONE : View.VISIBLE}"
             tools:visibility="visible">
 
             <TextView
@@ -198,6 +204,7 @@
                 android:freezesText="true"
                 android:gravity="center_vertical"
                 android:textColor="#37474f"
+                android:text="@{viewModel.filter}"
                 tools:text="yesterday" />
 
             <android.support.v7.widget.AppCompatImageView

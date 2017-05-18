@@ -26,7 +26,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,9 +46,6 @@ import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFilterListener;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class ResultListHeaderFragment extends Fragment
     implements FilterDialogFragment.FilterDialogListener,
@@ -84,21 +80,19 @@ public class ResultListHeaderFragment extends Fragment
     }
 
     public void setHeader(String header) {
-        mBinding.tvListHeader.setText(header);
-        readFavorite();
+        mBinding.getViewModel().query.set(header);
     }
 
     public void setFilter(String filter) {
-        mBinding.tvFilter.setText(filter);
-        mBinding.filter.setVisibility(TextUtils.isEmpty(filter) ? View.GONE : View.VISIBLE);
+        mBinding.getViewModel().filter.set(filter);
     }
 
     public String getHeader() {
-        return mBinding.tvListHeader.getText().toString();
+        return mBinding.getViewModel().query.get();
     }
 
     public String getFilter() {
-        return mBinding.tvFilter.getText().toString();
+        return mBinding.getViewModel().filter.get();
     }
 
     @Nullable
@@ -119,12 +113,15 @@ public class ResultListHeaderFragment extends Fragment
     public void onDestroyView() {
         super.onDestroyView();
         EventBus.getDefault().unregister(this);
+        mBinding.getViewModel().destroy();
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         Log.v(TAG, mTab + " onViewStateRestored, bundle = " + savedInstanceState);
         super.onViewStateRestored(savedInstanceState);
+        ResultListHeaderViewModel resultListHeaderViewModel = new ResultListHeaderViewModel(getContext(), mBinding.tvListHeader.getText().toString(), mBinding.tvFilter.getText().toString());
+        mBinding.setViewModel(resultListHeaderViewModel);
         updateUi();
     }
 
@@ -151,36 +148,14 @@ public class ResultListHeaderFragment extends Fragment
         updateUi();
     }
 
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onFavoritesChanged(Favorites.OnFavoritesChanged event) {
-        readFavorite();
-    }
-
     private void updateUi() {
         Log.v(TAG, mTab + " updateUi");
         if (mTab != null) ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, mTts.getStatus());
-        mBinding.filter.setVisibility(TextUtils.isEmpty(mBinding.tvFilter.getText()) ? View.GONE : View.VISIBLE);
-        readFavorite();
-    }
-
-    private void readFavorite() {
-        Single.fromCallable(() -> mFavorites.isFavorite(mBinding.tvListHeader.getText().toString()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(isFavoriteValue -> mBinding.btnStarQuery.setChecked(isFavoriteValue)
-                );
     }
 
     public class ButtonListener {
         public void onPlayButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            mTts.speak(mBinding.tvListHeader.getText().toString());
-        }
-
-        public void onFavoriteButtonClicked(View v) {
-            ResultListHeaderBinding binding = DataBindingUtil.findBinding(v);
-            String word = binding.tvListHeader.getText().toString();
-            mFavorites.saveFavorite(word, binding.btnStarQuery.isChecked());
+            mTts.speak(mBinding.getViewModel().query.get());
         }
 
         public void onDeleteFavoritesButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
@@ -194,7 +169,7 @@ public class ResultListHeaderFragment extends Fragment
 
         public void onWebSearchButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             Intent searchIntent = new Intent(Intent.ACTION_WEB_SEARCH);
-            String word = mBinding.tvListHeader.getText().toString();
+            String word = mBinding.getViewModel().query.get();
             searchIntent.putExtra(SearchManager.QUERY, word);
             // No apps can handle ACTION_WEB_SEARCH.  We'll try a more generic intent instead
             if (getContext().getPackageManager().queryIntentActivities(searchIntent, 0).isEmpty()) {
@@ -210,7 +185,7 @@ public class ResultListHeaderFragment extends Fragment
                     ResultListFactory.createFilterDialog(
                             getContext(),
                             mTab,
-                            mBinding.tvFilter.getText().toString());
+                            mBinding.getViewModel().filter.get());
             getChildFragmentManager().beginTransaction().add(fragment, DIALOG_TAG).commit();
         }
 
@@ -222,7 +197,5 @@ public class ResultListHeaderFragment extends Fragment
             setFilter(null);
             ((OnFilterListener) getParentFragment()).onFilterSubmitted(null);
         }
-
-
     }
 }
