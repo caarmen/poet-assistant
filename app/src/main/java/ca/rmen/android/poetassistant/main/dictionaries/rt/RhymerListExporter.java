@@ -29,7 +29,7 @@ import java.util.List;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListExporter;
 
-public class RhymerListExporter implements ResultListExporter<List<RTEntry>> {
+public class RhymerListExporter implements ResultListExporter<List<RTEntryViewModel>> {
     private final Context mContext;
 
     public RhymerListExporter(Context context) {
@@ -39,7 +39,7 @@ public class RhymerListExporter implements ResultListExporter<List<RTEntry>> {
     @Override
     public String export(@NonNull String word,
                          @Nullable String filter, /* results only include synonyms of filter */
-                         @NonNull List<RTEntry> entries) {
+                         @NonNull List<RTEntryViewModel> entries) {
         final String title;
         if (TextUtils.isEmpty(filter)) {
             title = mContext.getString(R.string.share_rhymer_title, word);
@@ -47,10 +47,10 @@ public class RhymerListExporter implements ResultListExporter<List<RTEntry>> {
             title = mContext.getString(R.string.share_rhymer_title_with_filter, word, filter);
         }
         StringBuilder builder = new StringBuilder(title);
-        for (RTEntry entry : entries) {
+        for (RTEntryViewModel entry : entries) {
             int entryResId;
-            if (entry.type == RTEntry.Type.HEADING) entryResId = R.string.share_rt_heading;
-            else if (entry.type == RTEntry.Type.SUBHEADING) entryResId = R.string.share_rt_subheading;
+            if (entry.type == RTEntryViewModel.Type.HEADING) entryResId = R.string.share_rt_heading;
+            else if (entry.type == RTEntryViewModel.Type.SUBHEADING) entryResId = R.string.share_rt_subheading;
             else entryResId = R.string.share_rt_entry;
             builder.append(mContext.getString(entryResId, entry.text));
         }

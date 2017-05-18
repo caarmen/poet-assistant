@@ -37,7 +37,7 @@ import ca.rmen.android.poetassistant.main.TextPopupMenu;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 
-public class WotdAdapter extends ResultListAdapter<WotdEntry> {
+public class WotdAdapter extends ResultListAdapter<WotdEntryViewModel> {
 
     private final OnWordClickListener mWordClickedListener;
     private final EntryIconClickListener mEntryIconClickListener;
@@ -67,12 +67,12 @@ public class WotdAdapter extends ResultListAdapter<WotdEntry> {
 
     @Override
     public void onBindViewHolder(ResultListEntryViewHolder holder, int position) {
-        WotdEntry entry = getItem(position);
+        WotdEntryViewModel viewModel = getItem(position);
         ListItemWotdBinding binding = (ListItemWotdBinding) holder.binding;
-        binding.setEntry(entry);
+        binding.setViewModel(viewModel);
         binding.setEntryIconClickListener(mEntryIconClickListener);
         TextPopupMenu.addPopupMenu(
-                entry.showButtons ? TextPopupMenu.Style.SYSTEM : TextPopupMenu.Style.FULL,
+                viewModel.showButtons ? TextPopupMenu.Style.SYSTEM : TextPopupMenu.Style.FULL,
                 binding.text1,
                 mWordClickedListener);
         binding.executePendingBindings();

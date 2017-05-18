@@ -40,7 +40,7 @@ import ca.rmen.android.poetassistant.main.TextPopupMenu;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter;
 
 
-public class RTListAdapter extends ResultListAdapter<RTEntry> {
+public class RTListAdapter extends ResultListAdapter<RTEntryViewModel> {
 
     private final OnWordClickListener mWordClickedListener;
     private final EntryIconClickListener mEntryIconClickListener;
@@ -55,16 +55,16 @@ public class RTListAdapter extends ResultListAdapter<RTEntry> {
 
     @Override
     public int getItemViewType(int position) {
-        RTEntry entry = getItem(position);
+        RTEntryViewModel entry = getItem(position);
         return entry.type.ordinal();
     }
 
     @Override
     public ResultListAdapter.ResultListEntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutId;
-        if (viewType == RTEntry.Type.HEADING.ordinal())
+        if (viewType == RTEntryViewModel.Type.HEADING.ordinal())
             layoutId = R.layout.list_item_heading;
-        else if (viewType == RTEntry.Type.SUBHEADING.ordinal())
+        else if (viewType == RTEntryViewModel.Type.SUBHEADING.ordinal())
             layoutId = R.layout.list_item_subheading;
         else
             layoutId = R.layout.list_item_word;
@@ -79,17 +79,17 @@ public class RTListAdapter extends ResultListAdapter<RTEntry> {
 
     @Override
     public void onBindViewHolder(ResultListAdapter.ResultListEntryViewHolder holder, int position) {
-        RTEntry entry = getItem(position);
-        if (entry.type == RTEntry.Type.HEADING) {
-            ((ListItemHeadingBinding) holder.binding).setEntry(entry);
-        } else if (entry.type == RTEntry.Type.SUBHEADING) {
-            ((ListItemSubheadingBinding) holder.binding).setEntry(entry);
+        RTEntryViewModel viewModel = getItem(position);
+        if (viewModel.type == RTEntryViewModel.Type.HEADING) {
+            ((ListItemHeadingBinding) holder.binding).setViewModel(viewModel);
+        } else if (viewModel.type == RTEntryViewModel.Type.SUBHEADING) {
+            ((ListItemSubheadingBinding) holder.binding).setViewModel(viewModel);
         } else {
             ListItemWordBinding wordBinding = (ListItemWordBinding) holder.binding;
-            wordBinding.setEntry(entry);
+            wordBinding.setViewModel(viewModel);
             wordBinding.setEntryIconClickListener(mEntryIconClickListener);
             TextPopupMenu.addPopupMenu(
-                    entry.showButtons ? TextPopupMenu.Style.SYSTEM : TextPopupMenu.Style.FULL,
+                    viewModel.showButtons ? TextPopupMenu.Style.SYSTEM : TextPopupMenu.Style.FULL,
                     wordBinding.text1,
                     mWordClickedListener);
         }

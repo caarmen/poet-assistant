@@ -22,8 +22,8 @@
     <data>
 
         <variable
-            name="entry"
-            type="ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry" />
+            name="viewModel"
+            type="ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel" />
     </data>
 
     <TextView
@@ -32,6 +32,6 @@
         android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_rt_item_subheading_height"
-        android:text="@{entry.text}"
+        android:text="@{viewModel.text}"
         android:textStyle="italic" />
 </layout>

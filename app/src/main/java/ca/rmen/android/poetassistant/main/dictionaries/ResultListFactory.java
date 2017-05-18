@@ -43,14 +43,14 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternListExporter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLoader;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListExporter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusListExporter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
 import ca.rmen.android.poetassistant.wotd.WotdAdapter;
-import ca.rmen.android.poetassistant.wotd.WotdEntry;
+import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel;
 import ca.rmen.android.poetassistant.wotd.WotdListExporter;
 import ca.rmen.android.poetassistant.wotd.WotdLoader;
 
@@ -70,10 +70,10 @@ public final class ResultListFactory {
             case FAVORITES:
             case RHYMER:
             case THESAURUS:
-                fragment = new ResultListFragment<RTEntry>();
+                fragment = new ResultListFragment<RTEntryViewModel>();
                 break;
             case WOTD:
-                fragment = new ResultListFragment<WotdEntry>();
+                fragment = new ResultListFragment<WotdEntryViewModel>();
                 break;
             case DICTIONARY:
             default:
@@ -163,12 +163,12 @@ public final class ResultListFactory {
             case FAVORITES:
                 //noinspection unchecked
                 DaggerHelper.getMainScreenComponent(fragment.getContext())
-                        .inject((ResultListFragment<RTEntry>) fragment);
+                        .inject((ResultListFragment<RTEntryViewModel>) fragment);
                 break;
             case WOTD:
                 //noinspection unchecked
                 DaggerHelper.getMainScreenComponent(fragment.getContext())
-                        .injectWotd((ResultListFragment<WotdEntry>) fragment);
+                        .injectWotd((ResultListFragment<WotdEntryViewModel>) fragment);
             case DICTIONARY:
                 //noinspection unchecked
                 DaggerHelper.getMainScreenComponent(fragment.getContext())

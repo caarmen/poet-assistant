@@ -28,7 +28,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntr
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLoader;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntry;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
@@ -41,7 +41,7 @@ import ca.rmen.android.poetassistant.settings.VoicePreference;
 import ca.rmen.android.poetassistant.wotd.WotdAdapter;
 import ca.rmen.android.poetassistant.wotd.WotdBootReceiver;
 import ca.rmen.android.poetassistant.wotd.WotdBroadcastReceiver;
-import ca.rmen.android.poetassistant.wotd.WotdEntry;
+import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel;
 import ca.rmen.android.poetassistant.wotd.WotdJobService;
 import ca.rmen.android.poetassistant.wotd.WotdLoader;
 import dagger.Component;
@@ -58,8 +58,8 @@ public interface AppComponent {
     @Subcomponent
     interface MainScreenComponent {
         void inject(MainActivity mainActivity);
-        void inject(ResultListFragment<RTEntry> resultListFragment);
-        void injectWotd(ResultListFragment<WotdEntry> resultListFragment);
+        void inject(ResultListFragment<RTEntryViewModel> resultListFragment);
+        void injectWotd(ResultListFragment<WotdEntryViewModel> resultListFragment);
         void injectDict(ResultListFragment<DictionaryEntry> resultListFragment);
         void inject(ResultListHeaderFragment resultListHeaderFragment);
         void inject(RTListAdapter rtListAdapter);
