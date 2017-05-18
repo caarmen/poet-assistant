@@ -66,6 +66,7 @@ public class FavoritesLoader extends ResultListLoader<ResultListData<RTEntryView
         for (String favorite : sortedFavorites) {
             @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
             data.add(new RTEntryViewModel(
+                    getContext(),
                     RTEntryViewModel.Type.WORD,
                     favorite,
                     ContextCompat.getColor(getContext(), color),

@@ -43,7 +43,7 @@
         <CheckBox
             android:background="?selectableItemBackgroundBorderless"
             android:button="@drawable/ic_star"
-            android:checked="@{viewModel.isFavorite}"
+            android:checked="@={viewModel.isFavorite}"
             android:clickable="true"
             android:id="@+id/btn_star_result"
             android:layout_marginLeft="8dp"
@@ -53,8 +53,7 @@
             android:paddingRight="8dp"
             android:paddingEnd="8dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{entryIconClickListener::onFavoriteIconClicked}" />
+            android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/text1"
             style="?attr/textAppearanceListItem"

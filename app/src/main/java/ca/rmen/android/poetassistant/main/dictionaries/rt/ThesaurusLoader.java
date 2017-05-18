@@ -78,7 +78,7 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntryView
         Settings.Layout layout = Settings.getLayout(mPrefs);
         Set<String> favorites = mFavorites.getFavorites();
         for (ThesaurusEntry.ThesaurusEntryDetails entry : entries) {
-            data.add(new RTEntryViewModel(RTEntryViewModel.Type.HEADING, entry.wordType.name().toLowerCase(Locale.US)));
+            data.add(new RTEntryViewModel(getContext(), RTEntryViewModel.Type.HEADING, entry.wordType.name().toLowerCase(Locale.US)));
             addResultSection(favorites, data, R.string.thesaurus_section_synonyms, entry.synonyms, layout);
             addResultSection(favorites, data, R.string.thesaurus_section_antonyms, entry.antonyms, layout);
         }
@@ -91,10 +91,11 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntryView
 
     private void addResultSection(Set<String> favorites, List<RTEntryViewModel> results, int sectionHeadingResId, String[] words, Settings.Layout layout) {
         if (words.length > 0) {
-            results.add(new RTEntryViewModel(RTEntryViewModel.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
+            results.add(new RTEntryViewModel(getContext(), RTEntryViewModel.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
             for (int i = 0; i < words.length; i++) {
                 @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
                 results.add(new RTEntryViewModel(
+                        getContext(),
                         RTEntryViewModel.Type.WORD,
                         words[i],
                         ContextCompat.getColor(getContext(), color),

@@ -19,7 +19,15 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
+import android.content.Context;
+import android.databinding.ObservableBoolean;
 import android.support.annotation.ColorInt;
+
+import javax.inject.Inject;
+
+import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
+import ca.rmen.android.poetassistant.Favorites;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 
 public class RTEntryViewModel {
     enum Type {
@@ -31,25 +39,30 @@ public class RTEntryViewModel {
     public final Type type;
     public final String text;
     public final @ColorInt int backgroundColor;
-    public final boolean isFavorite;
+    public final ObservableBoolean isFavorite = new ObservableBoolean();
     public final boolean hasDefinition;
     public final boolean showButtons;
 
-    public RTEntryViewModel(Type type, String text) {
-        this(type, text, 0, false, false);
+    @Inject Favorites mFavorites;
+
+    public RTEntryViewModel(Context context, Type type, String text) {
+        this(context, type, text, 0, false, false);
     }
 
-    public RTEntryViewModel(Type type, String text, @ColorInt int backgroundColor, boolean isFavorite, boolean showButtons) {
-        this(type, text, backgroundColor, isFavorite, true, showButtons);
+    public RTEntryViewModel(Context context, Type type, String text, @ColorInt int backgroundColor, boolean isFavorite, boolean showButtons) {
+        this(context, type, text, backgroundColor, isFavorite, true, showButtons);
     }
 
-    public RTEntryViewModel(Type type, String text, @ColorInt int backgroundColor, boolean isFavorite, boolean hasDefinition, boolean showButtons) {
+    public RTEntryViewModel(Context context, Type type, String text, @ColorInt int backgroundColor, boolean isFavorite, boolean hasDefinition, boolean showButtons) {
+        DaggerHelper.getMainScreenComponent(context).inject(this);
         this.type = type;
         this.text = text;
         this.backgroundColor = backgroundColor;
-        this.isFavorite = isFavorite;
+        this.isFavorite.set(isFavorite);
         this.hasDefinition = hasDefinition;
         this.showButtons = showButtons;
+        this.isFavorite.addOnPropertyChangedCallback(
+                new BindingCallbackAdapter(() -> mFavorites.saveFavorite(text, this.isFavorite.get())));
     }
 
     @Override
