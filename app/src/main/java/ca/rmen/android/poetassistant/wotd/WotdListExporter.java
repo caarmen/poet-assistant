@@ -27,9 +27,8 @@ import java.util.List;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListExporter;
-import ca.rmen.android.poetassistant.wotd.WotdEntry;
 
-public class WotdListExporter implements ResultListExporter<List<WotdEntry>> {
+public class WotdListExporter implements ResultListExporter<List<WotdEntryViewModel>> {
     private final Context mContext;
 
     public WotdListExporter(Context context) {
@@ -39,11 +38,11 @@ public class WotdListExporter implements ResultListExporter<List<WotdEntry>> {
     @Override
     public String export(@NonNull String word,
                          @Nullable String filter,
-                         @NonNull List<WotdEntry> entries) {
+                         @NonNull List<WotdEntryViewModel> entries) {
         final String title = mContext.getString(R.string.share_wotd_title);
         StringBuilder builder = new StringBuilder(title);
         for (int i = 0; i < 10 && i < entries.size(); i++) {
-            WotdEntry entry = entries.get(i);
+            WotdEntryViewModel entry = entries.get(i);
             builder.append(mContext.getString(R.string.share_wotd_entry, entry.date, entry.text));
         }
         return builder.toString();

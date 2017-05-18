@@ -42,7 +42,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
-public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
+public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntryViewModel>> {
 
     private static final String TAG = Constants.TAG + ThesaurusLoader.class.getSimpleName();
 
@@ -61,10 +61,10 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
     }
 
     @Override
-    public ResultListData<RTEntry> loadInBackground() {
+    public ResultListData<RTEntryViewModel> loadInBackground() {
         Log.d(TAG, "loadInBackground() called with: query = " + mQuery + ", filter = " + mFilter);
 
-        List<RTEntry> data = new ArrayList<>();
+        List<RTEntryViewModel> data = new ArrayList<>();
         if(TextUtils.isEmpty(mQuery)) return emptyResult();
         ThesaurusEntry result  = mThesaurus.lookup(mQuery);
         ThesaurusEntry.ThesaurusEntryDetails[] entries = result.entries;
@@ -78,24 +78,24 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntry>> {
         Settings.Layout layout = Settings.getLayout(mPrefs);
         Set<String> favorites = mFavorites.getFavorites();
         for (ThesaurusEntry.ThesaurusEntryDetails entry : entries) {
-            data.add(new RTEntry(RTEntry.Type.HEADING, entry.wordType.name().toLowerCase(Locale.US)));
+            data.add(new RTEntryViewModel(RTEntryViewModel.Type.HEADING, entry.wordType.name().toLowerCase(Locale.US)));
             addResultSection(favorites, data, R.string.thesaurus_section_synonyms, entry.synonyms, layout);
             addResultSection(favorites, data, R.string.thesaurus_section_antonyms, entry.antonyms, layout);
         }
         return new ResultListData<>(result.word, data);
     }
 
-    private ResultListData<RTEntry> emptyResult() {
+    private ResultListData<RTEntryViewModel> emptyResult() {
         return new ResultListData<>(mQuery, new ArrayList<>());
     }
 
-    private void addResultSection(Set<String> favorites, List<RTEntry> results, int sectionHeadingResId, String[] words, Settings.Layout layout) {
+    private void addResultSection(Set<String> favorites, List<RTEntryViewModel> results, int sectionHeadingResId, String[] words, Settings.Layout layout) {
         if (words.length > 0) {
-            results.add(new RTEntry(RTEntry.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
+            results.add(new RTEntryViewModel(RTEntryViewModel.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
             for (int i = 0; i < words.length; i++) {
                 @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
-                results.add(new RTEntry(
-                        RTEntry.Type.WORD,
+                results.add(new RTEntryViewModel(
+                        RTEntryViewModel.Type.WORD,
                         words[i],
                         ContextCompat.getColor(getContext(), color),
                         favorites.contains(words[i]),

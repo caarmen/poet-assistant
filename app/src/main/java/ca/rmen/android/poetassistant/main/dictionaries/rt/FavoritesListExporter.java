@@ -28,7 +28,7 @@ import java.util.List;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListExporter;
 
-public class FavoritesListExporter implements ResultListExporter<List<RTEntry>> {
+public class FavoritesListExporter implements ResultListExporter<List<RTEntryViewModel>> {
     private final Context mContext;
 
     public FavoritesListExporter(Context context) {
@@ -38,10 +38,10 @@ public class FavoritesListExporter implements ResultListExporter<List<RTEntry>> 
     @Override
     public String export(@NonNull String word,
                          @Nullable String filter,
-                         @NonNull List<RTEntry> entries) {
+                         @NonNull List<RTEntryViewModel> entries) {
         final String title = mContext.getString(R.string.share_favorites_title);
         StringBuilder builder = new StringBuilder(title);
-        for (RTEntry entry : entries) {
+        for (RTEntryViewModel entry : entries) {
             builder.append(mContext.getString(R.string.share_rt_entry, entry.text));
         }
         return builder.toString();

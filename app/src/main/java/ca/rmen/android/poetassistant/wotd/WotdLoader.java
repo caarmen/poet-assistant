@@ -45,7 +45,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
-public class WotdLoader extends ResultListLoader<ResultListData<WotdEntry>> {
+public class WotdLoader extends ResultListLoader<ResultListData<WotdEntryViewModel>> {
 
     private static final String TAG = Constants.TAG + WotdLoader.class.getSimpleName();
 
@@ -59,10 +59,10 @@ public class WotdLoader extends ResultListLoader<ResultListData<WotdEntry>> {
     }
 
     @Override
-    public ResultListData<WotdEntry> loadInBackground() {
+    public ResultListData<WotdEntryViewModel> loadInBackground() {
         Log.d(TAG, "loadInBackground()");
 
-        List<WotdEntry> data = new ArrayList<>(100);
+        List<WotdEntryViewModel> data = new ArrayList<>(100);
 
         Cursor cursor = mDictionary.getRandomWordCursor();
         if (cursor == null || cursor.getCount() == 0) return emptyResult();
@@ -83,7 +83,7 @@ public class WotdLoader extends ResultListLoader<ResultListData<WotdEntry>> {
                 if (cursor.moveToPosition(position)) {
                     String word = cursor.getString(0);
                     @ColorRes int color = (i % 2 == 0) ? R.color.row_background_color_even : R.color.row_background_color_odd;
-                    data.add(new WotdEntry(
+                    data.add(new WotdEntryViewModel(
                             word,
                             date,
                             ContextCompat.getColor(getContext(), color),
@@ -101,7 +101,7 @@ public class WotdLoader extends ResultListLoader<ResultListData<WotdEntry>> {
         return new ResultListData<>(getContext().getString(R.string.wotd_list_header), data);
     }
 
-    private ResultListData<WotdEntry> emptyResult() {
+    private ResultListData<WotdEntryViewModel> emptyResult() {
         return new ResultListData<>(getContext().getString(R.string.wotd_list_header), new ArrayList<>());
     }
 

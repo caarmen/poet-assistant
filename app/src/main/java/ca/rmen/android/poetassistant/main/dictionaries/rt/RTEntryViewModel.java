@@ -17,23 +17,46 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.wotd;
+package ca.rmen.android.poetassistant.main.dictionaries.rt;
 
 import android.support.annotation.ColorInt;
 
-public final class WotdEntry {
+public class RTEntryViewModel {
+    enum Type {
+        HEADING,
+        SUBHEADING,
+        WORD
+    }
 
+    public final Type type;
     public final String text;
-    public final String date;
     public final @ColorInt int backgroundColor;
     public final boolean isFavorite;
+    public final boolean hasDefinition;
     public final boolean showButtons;
 
-    public WotdEntry(String text, String date, @ColorInt int backgroundColor, boolean isFavorite, boolean showButtons) {
+    public RTEntryViewModel(Type type, String text) {
+        this(type, text, 0, false, false);
+    }
+
+    public RTEntryViewModel(Type type, String text, @ColorInt int backgroundColor, boolean isFavorite, boolean showButtons) {
+        this(type, text, backgroundColor, isFavorite, true, showButtons);
+    }
+
+    public RTEntryViewModel(Type type, String text, @ColorInt int backgroundColor, boolean isFavorite, boolean hasDefinition, boolean showButtons) {
+        this.type = type;
         this.text = text;
-        this.date = date;
         this.backgroundColor = backgroundColor;
         this.isFavorite = isFavorite;
+        this.hasDefinition = hasDefinition;
         this.showButtons = showButtons;
+    }
+
+    @Override
+    public String toString() {
+        return "RTEntry{" +
+                "text='" + text + '\'' +
+                ", type=" + type +
+                '}';
     }
 }
