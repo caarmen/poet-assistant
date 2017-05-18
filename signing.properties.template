@@ -1,4 +1,10 @@
-KeyAlias=my-key-alias
-KeyPassword=my-key-password
-StoreFile=/path/to/signing/certificate
-StorePassword=my-store-password
+# Define these properties in one of the following places:
+# 1. In the gradle.properties file of this project.  Be sure to not commit this!
+# 2. In the gradle.properties file of your gradle home
+# 3. As command-line options.  Example:
+#    ./gradlew -PAndroidSigningKeyAlias=my-key-alias -PAndroidSigningKeyPassword=my-key-password -PAndroidSigningStoreFile=/path/to/signing/certificate -PAndroidSigningStorePassword=my-store-password clean assembleRelease
+# 4. As environment variables
+AndroidSigningKeyAlias=my-key-alias
+AndroidSigningKeyPassword=my-key-password
+AndroidSigningStoreFile=/path/to/signing/certificate
+AndroidSigningStorePassword=my-store-password
