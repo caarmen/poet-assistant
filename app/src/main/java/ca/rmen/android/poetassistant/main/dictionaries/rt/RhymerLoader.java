@@ -86,7 +86,7 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntryViewMod
             // Add the word variant, if there are multiple pronunciations.
             if (rhymeResults.size() > 1) {
                 String heading = mQuery + " (" + (rhymeResult.variantNumber + 1) + ")";
-                data.add(new RTEntryViewModel(RTEntryViewModel.Type.HEADING, heading));
+                data.add(new RTEntryViewModel(getContext(), RTEntryViewModel.Type.HEADING, heading));
             }
 
             addResultSection(favorites, data, R.string.rhyme_section_stress_syllables, rhymeResult.strictRhymes, layout);
@@ -135,11 +135,12 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntryViewMod
         if (rhymes.length > 0) {
 
             Set<String> wordsWithDefinitions = mPrefs.getIsAllRhymesEnabled() ? mRhymer.getWordsWithDefinitions(rhymes) : null;
-            results.add(new RTEntryViewModel(RTEntryViewModel.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
+            results.add(new RTEntryViewModel(getContext(), RTEntryViewModel.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
             for (int i = 0; i < rhymes.length; i++) {
                 @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
                 boolean hasDefinition = wordsWithDefinitions == null || wordsWithDefinitions.contains(rhymes[i]);
                 results.add(new RTEntryViewModel(
+                        getContext(),
                         RTEntryViewModel.Type.WORD,
                         rhymes[i],
                         ContextCompat.getColor(getContext(), color),
@@ -149,6 +150,7 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntryViewMod
             }
             if (results.size() >= Constants.MAX_RESULTS) {
                 results.add(new RTEntryViewModel(
+                        getContext(),
                         RTEntryViewModel.Type.SUBHEADING,
                         getContext().getString(R.string.max_results, Constants.MAX_RESULTS))
                 );

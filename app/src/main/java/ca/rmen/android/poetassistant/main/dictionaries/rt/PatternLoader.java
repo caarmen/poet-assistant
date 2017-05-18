@@ -81,6 +81,7 @@ public class PatternLoader extends ResultListLoader<ResultListData<RTEntryViewMo
         for (int i=0; i < matches.length; i++) {
             @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
             data.add(new RTEntryViewModel(
+                    getContext(),
                     RTEntryViewModel.Type.WORD,
                     matches[i],
                     ContextCompat.getColor(getContext(), color),
@@ -89,6 +90,7 @@ public class PatternLoader extends ResultListLoader<ResultListData<RTEntryViewMo
         }
         if (matches.length == Constants.MAX_RESULTS) {
             data.add(new RTEntryViewModel(
+                    getContext(),
                     RTEntryViewModel.Type.SUBHEADING,
                     getContext().getString(R.string.max_results, Constants.MAX_RESULTS))
             );
