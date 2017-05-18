@@ -31,7 +31,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -47,8 +46,10 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding;
 import ca.rmen.android.poetassistant.main.Tab;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFavoriteClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFilterListener;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class ResultListHeaderFragment extends Fragment
     implements FilterDialogFragment.FilterDialogListener,
@@ -84,6 +85,7 @@ public class ResultListHeaderFragment extends Fragment
 
     public void setHeader(String header) {
         mBinding.tvListHeader.setText(header);
+        readFavorite();
     }
 
     public void setFilter(String filter) {
@@ -97,10 +99,6 @@ public class ResultListHeaderFragment extends Fragment
 
     public String getFilter() {
         return mBinding.tvFilter.getText().toString();
-    }
-
-    public void setFavorite(boolean isFavorite) {
-        mBinding.btnStarQuery.setChecked(isFavorite);
     }
 
     @Nullable
@@ -153,10 +151,25 @@ public class ResultListHeaderFragment extends Fragment
         updateUi();
     }
 
+    @SuppressWarnings("unused")
+    @Subscribe
+    public void onFavoritesChanged(Favorites.OnFavoritesChanged event) {
+        readFavorite();
+    }
+
     private void updateUi() {
         Log.v(TAG, mTab + " updateUi");
         if (mTab != null) ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, mTts.getStatus());
         mBinding.filter.setVisibility(TextUtils.isEmpty(mBinding.tvFilter.getText()) ? View.GONE : View.VISIBLE);
+        readFavorite();
+    }
+
+    private void readFavorite() {
+        Single.fromCallable(() -> mFavorites.isFavorite(mBinding.tvListHeader.getText().toString()))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(isFavoriteValue -> mBinding.btnStarQuery.setChecked(isFavoriteValue)
+                );
     }
 
     public class ButtonListener {
@@ -167,7 +180,7 @@ public class ResultListHeaderFragment extends Fragment
         public void onFavoriteButtonClicked(View v) {
             ResultListHeaderBinding binding = DataBindingUtil.findBinding(v);
             String word = binding.tvListHeader.getText().toString();
-            ((OnFavoriteClickListener) getActivity()).onFavoriteToggled(word, ((CheckBox) v).isChecked());
+            mFavorites.saveFavorite(word, binding.btnStarQuery.isChecked());
         }
 
         public void onDeleteFavoritesButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
@@ -209,5 +222,7 @@ public class ResultListHeaderFragment extends Fragment
             setFilter(null);
             ((OnFilterListener) getParentFragment()).onFilterSubmitted(null);
         }
+
+
     }
 }

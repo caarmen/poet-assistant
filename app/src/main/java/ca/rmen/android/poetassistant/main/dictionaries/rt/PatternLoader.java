@@ -93,7 +93,7 @@ public class PatternLoader extends ResultListLoader<ResultListData<RTEntry>> {
                     getContext().getString(R.string.max_results, Constants.MAX_RESULTS))
             );
         }
-        return new ResultListData<>(mQuery, favorites.contains(mQuery), data);
+        return new ResultListData<>(mQuery, data);
     }
 
     private static class MatchComparator implements Comparator<String> {
@@ -115,6 +115,6 @@ public class PatternLoader extends ResultListLoader<ResultListData<RTEntry>> {
     }
 
     private ResultListData<RTEntry> emptyResult() {
-        return new ResultListData<>(mQuery, false, new ArrayList<>());
+        return new ResultListData<>(mQuery, new ArrayList<>());
     }
 }

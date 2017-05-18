@@ -73,11 +73,11 @@ public class FavoritesLoader extends ResultListLoader<ResultListData<RTEntry>> {
                     layout == Settings.Layout.EFFICIENT));
             i++;
         }
-        return new ResultListData<>(getContext().getString(R.string.favorites_list_header), false, data);
+        return new ResultListData<>(getContext().getString(R.string.favorites_list_header), data);
     }
 
     private ResultListData<RTEntry> emptyResult() {
-        return new ResultListData<>(getContext().getString(R.string.favorites_list_header), false, new ArrayList<>());
+        return new ResultListData<>(getContext().getString(R.string.favorites_list_header), new ArrayList<>());
     }
 
 }

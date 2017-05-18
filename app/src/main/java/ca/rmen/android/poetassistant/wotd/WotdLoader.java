@@ -98,11 +98,11 @@ public class WotdLoader extends ResultListLoader<ResultListData<WotdEntry>> {
         } finally {
             cursor.close();
         }
-        return new ResultListData<>(getContext().getString(R.string.wotd_list_header), false, data);
+        return new ResultListData<>(getContext().getString(R.string.wotd_list_header), data);
     }
 
     private ResultListData<WotdEntry> emptyResult() {
-        return new ResultListData<>(getContext().getString(R.string.wotd_list_header), false, new ArrayList<>());
+        return new ResultListData<>(getContext().getString(R.string.wotd_list_header), new ArrayList<>());
     }
 
 }

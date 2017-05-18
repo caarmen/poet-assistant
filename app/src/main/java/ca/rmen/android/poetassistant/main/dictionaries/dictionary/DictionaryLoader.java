@@ -26,13 +26,11 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
-import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
 
@@ -42,23 +40,21 @@ public class DictionaryLoader extends ResultListLoader<ResultListData<Dictionary
 
     private final String mQuery;
     @Inject Dictionary mDictionary;
-    @Inject Favorites mFavorites;
 
     public DictionaryLoader(Context context, String query) {
         super(context);
-        mQuery = query;
         DaggerHelper.getMainScreenComponent(context).inject(this);
+        mQuery = query;
     }
 
     @Override
     public ResultListData<DictionaryEntry.DictionaryEntryDetails> loadInBackground() {
         Log.d(TAG, "loadInBackground() called with: " + "");
         List<DictionaryEntry.DictionaryEntryDetails> result = new ArrayList<>();
-        if (TextUtils.isEmpty(mQuery)) return new ResultListData<>(mQuery, false, result);
+        if (TextUtils.isEmpty(mQuery)) return new ResultListData<>(mQuery, result);
         DictionaryEntry entry = mDictionary.lookup(mQuery);
         Collections.addAll(result, entry.details);
-        Set<String> favorites = mFavorites.getFavorites();
-        return new ResultListData<>(entry.word, favorites.contains(entry.word), result);
+        return new ResultListData<>(entry.word, result);
     }
 
 }
