@@ -37,7 +37,7 @@ import ca.rmen.android.poetassistant.Constants;
  * This uses JobScheduler.
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-@VisibleForTesting
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 public final class WotdJob {
     private static final String TAG = Constants.TAG + WotdJob.class.getSimpleName();
 
