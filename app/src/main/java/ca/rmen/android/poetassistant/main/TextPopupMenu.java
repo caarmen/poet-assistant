@@ -97,6 +97,8 @@ public final class TextPopupMenu {
         textView.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                // Issue #78: mode can be null
+                if (mode == null) return false;
                 mode.getMenuInflater().inflate(R.menu.menu_word_lookup, menu);
                 mode.setTitle(null);
                 return true;
