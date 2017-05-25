@@ -26,8 +26,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.PopupMenu;
+import android.text.TextUtils;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -132,7 +134,9 @@ public final class TextPopupMenu {
     }
 
     private static boolean handleItemClicked(int itemId, View view, String selectedWord, OnWordClickListener listener) {
-        if (itemId == R.id.action_lookup_rhymer) {
+        if (TextUtils.isEmpty(selectedWord)) {
+            return false;
+        } else if (itemId == R.id.action_lookup_rhymer) {
             listener.onWordClick(selectedWord, Tab.RHYMER);
         } else if (itemId == R.id.action_lookup_thesaurus) {
             listener.onWordClick(selectedWord, Tab.THESAURUS);
@@ -204,6 +208,7 @@ public final class TextPopupMenu {
                         info.activityInfo.name);
     }
 
+    @Nullable
     private static String getSelectedWord(TextView textView) {
         int selectionStart = textView.getSelectionStart();
         int selectionEnd = textView.getSelectionEnd();
