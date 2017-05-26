@@ -19,6 +19,7 @@
 
 package ca.rmen.android.poetassistant.dagger;
 
+import android.app.Application;
 import android.content.Context;
 
 import ca.rmen.android.poetassistant.PoetAssistantApplication;
@@ -28,12 +29,20 @@ public class DaggerHelper {
         return getAppComponent(context).getMainScreenComponent();
     }
 
+    public static AppComponent.MainScreenComponent getMainScreenComponent(Application application) {
+        return ((PoetAssistantApplication) application).getAppComponent().getMainScreenComponent();
+    }
+
     public static AppComponent.SettingsComponent getSettingsComponent(Context context) {
         return getAppComponent(context).getSettingsComponent();
     }
 
     public static AppComponent.WotdComponent getWotdComponent(Context context) {
         return getAppComponent(context).getWotdComponent();
+    }
+
+    public static AppComponent.WotdComponent getWotdComponent(Application application) {
+        return ((PoetAssistantApplication) application).getAppComponent().getWotdComponent();
     }
 
     private static AppComponent getAppComponent(Context context) {
