@@ -94,6 +94,7 @@ public class AboutActivity extends AppCompatActivity {
         hackSetIcon(mBinding.tvBugReport, R.drawable.ic_bug_report_24dp);
         hackSetIcon(mBinding.tvRate, R.drawable.ic_rate);
         hackSetIcon(mBinding.tvLegal, R.drawable.ic_legal);
+        hackSetIcon(mBinding.tvPrivacyPolicy, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvPoetAssistantLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvRhymerLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvThesaurusLicense, R.drawable.ic_bullet);

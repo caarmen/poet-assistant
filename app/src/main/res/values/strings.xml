@@ -67,6 +67,7 @@
     <string name="about_issuesUrl">Report bugs:\nhttp://github.com/caarmen/poet-assistant/issues</string>
     <string name="about_rateUrl">Rate the app on the Play Store:\nhttps://play.google.com/store/apps/details?id=ca.rmen.android.poetassistant</string>
     <string name="about_legal">Legal:</string>
+    <string name="about_privacy_policy">Privacy policy: https://github.com/caarmen/poet-assistant/blob/master/PRIVACY.md</string>
     <string name="about_license_app">Poet Assistant License (GPLv3)</string>
     <string name="about_license_rhyming_dictionary">Carnegie Mellon Pronunciation Dictionary License</string>
     <string name="about_license_thesaurus">WordNet Thesaurus License</string>

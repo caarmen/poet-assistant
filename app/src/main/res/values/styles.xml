@@ -17,7 +17,7 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppBaseTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
@@ -70,5 +70,22 @@
 
     <style name="AppPopupMenuHeader" parent="TextAppearance.AppCompat.Widget.PopupMenu.Header">
         <item name="android:textColor">@color/dialog_accent</item>
+    </style>
+
+    <style name="AboutActivityItem">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:autoLink">all</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
+        <item name="android:textColorLink">@color/primary</item>
+    </style>
+    <style name="AboutActivitySubItem" parent="AboutActivityItem">
+        <item name="android:layout_marginLeft">24dp</item>
+        <item name="android:layout_marginStart" tools:targetApi="jelly_bean_mr1">24dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:textColorLink">@color/primary</item>
     </style>
 </resources>
