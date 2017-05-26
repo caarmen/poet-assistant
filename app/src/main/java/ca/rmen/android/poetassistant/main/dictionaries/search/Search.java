@@ -30,6 +30,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewTreeObserver;
 
 import java.util.Locale;
@@ -83,10 +84,7 @@ public class Search {
     public void search(String word, Tab tab) {
         Log.d(TAG, "search() called with: " + "word = [" + word + "], tab = [" + tab + "]");
         mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false);
-        word = word.trim().toLowerCase(Locale.US);
-        // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
-        // We want to retrieve the existing fragment.
-        ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, tab)).query(word);
+        executeWhenViewShown(mViewPager, () -> ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, tab)).query(word.trim().toLowerCase(Locale.US)));
     }
 
     /**
@@ -106,24 +104,28 @@ public class Search {
                 ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.DICTIONARY)).query(wordTrimmed);
             }
         };
+        executeWhenViewShown(mViewPager, performSearch);
+    }
+
+    private static void executeWhenViewShown(View view, Runnable runnable) {
         // Issue #19: In a specific scenario, the fragments may not be "ready" yet (onCreateView() may not have been called).
         // Wait until the ViewPager is laid out before invoking anything on the fragments.
         // (We assume that the fragments are "ready" once the ViewPager is laid out.)
-        if (mViewPager.isShown()) {
+        if (view.isShown()) {
             Log.d(TAG, "searching immediately");
-            mViewPager.post(performSearch);
+            view.post(runnable);
         } else {
-            mViewPager.getViewTreeObserver().addOnGlobalLayoutListener(
+            view.getViewTreeObserver().addOnGlobalLayoutListener(
                     new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
                             Log.d(TAG, "searching after layout");
-                            mViewPager.post(performSearch);
+                            view.post(runnable);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                                mViewPager.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                             } else {
                                 //noinspection deprecation
-                                mViewPager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                                view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                             }
                         }
                     }
