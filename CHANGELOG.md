@@ -12,6 +12,8 @@ Change Log
   - #78, #80: Crashes related to text selection in the reader
   - #79: Crash starting the app or starting the word of the day notification service.
   - #81: Crash looking up a word in Poet Assistant, from another app.
+* Features:
+  - Added link to the privacy policy in the about screen.
 
 1.18.1  *(2017-04-23)*
 --------------------
