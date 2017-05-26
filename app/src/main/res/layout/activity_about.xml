@@ -83,6 +83,11 @@
 
                 <TextView
                     style="@style/AboutActivitySubItem"
+                    android:id="@+id/tv_privacy_policy"
+                    android:text="@string/about_privacy_policy"/>
+
+                <TextView
+                    style="@style/AboutActivitySubItem"
                     android:id="@+id/tv_poet_assistant_license"
                     android:onClick="onClickAppLicense"
                     android:text="@string/about_license_app"
