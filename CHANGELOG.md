@@ -1,6 +1,18 @@
 Change Log
 ==========
 
+1.18.2  *(2017-05-26)*
+--------------------
+* Technical:
+  - Library updates: retrolambda 3.6.1, RxJava 2.1.0, gradle 2.3.2, dagger 2.11
+  - Added Leak Canary.
+  - Use two-way databinding
+  - Refactoring: introduce "ViewModels"
+* Crash fixes:
+  - #78, #80: Crashes related to text selection in the reader
+  - #79: Crash starting the app or starting the word of the day notification service.
+  - #81: Crash looking up a word in Poet Assistant, from another app.
+
 1.18.1  *(2017-04-23)*
 --------------------
 * Technical:
