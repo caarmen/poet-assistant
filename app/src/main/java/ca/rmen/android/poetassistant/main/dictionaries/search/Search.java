@@ -64,7 +64,7 @@ public class Search {
     @Inject Dictionary mDictionary;
 
     public Search(Activity searchableActivity, ViewPager viewPager) {
-        DaggerHelper.getMainScreenComponent(searchableActivity).inject(this);
+        DaggerHelper.getMainScreenComponent(searchableActivity.getApplication()).inject(this);
         mContext = searchableActivity;
         mViewPager = viewPager;
         mPagerAdapter = (PagerAdapter) viewPager.getAdapter();
