@@ -62,197 +62,84 @@
                     android:textColorLink="@color/primary" />
 
                 <TextView
+                    style="@style/AboutActivityItem"
                     android:id="@+id/tv_source_code"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:autoLink="all"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/about_projectUrl"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColorLink="@color/primary" />
+                    android:text="@string/about_projectUrl"/>
 
                 <TextView
+                    style="@style/AboutActivityItem"
                     android:id="@+id/tv_bug_report"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:autoLink="all"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/about_issuesUrl"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColorLink="@color/primary" />
+                    android:text="@string/about_issuesUrl"/>
 
                 <TextView
+                    style="@style/AboutActivityItem"
                     android:id="@+id/tv_rate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:autoLink="all"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/about_rateUrl"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColorLink="@color/primary" />
+                    android:text="@string/about_rateUrl"/>
 
                 <TextView
+                    style="@style/AboutActivityItem"
                     android:id="@+id/tv_legal"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:autoLink="all"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/about_legal"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColorLink="@color/primary" />
+                    android:text="@string/about_legal"/>
 
                 <TextView
+                    style="@style/AboutActivitySubItem"
                     android:id="@+id/tv_poet_assistant_license"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="8dp"
-                    android:autoLink="all"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
                     android:onClick="onClickAppLicense"
                     android:text="@string/about_license_app"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/primary" />
 
                 <TextView
                     android:id="@+id/tv_rhymer_license"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="8dp"
-                    android:autoLink="all"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
+                    style="@style/AboutActivitySubItem"
                     android:onClick="onClickRhymerLicense"
                     android:text="@string/about_license_rhyming_dictionary"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/primary" />
 
                 <TextView
                     android:id="@+id/tv_thesaurus_license"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="8dp"
-                    android:autoLink="all"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
+                    style="@style/AboutActivitySubItem"
                     android:onClick="onClickThesaurusLicense"
                     android:text="@string/about_license_thesaurus"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/primary" />
 
                 <TextView
                     android:id="@+id/tv_dictionary_license"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="8dp"
-                    android:autoLink="all"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
+                    style="@style/AboutActivitySubItem"
                     android:onClick="onClickDictionaryLicense"
                     android:text="@string/about_license_dictionary"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/primary" />
 
                 <TextView
                     android:id="@+id/tv_google_ngram_dataset_license"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="8dp"
-                    android:autoLink="all"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
+                    style="@style/AboutActivitySubItem"
                     android:onClick="onClickGoogleNgramDatasetLicense"
                     android:text="@string/about_license_google_ngram_dataset"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/primary" />
 
                 <TextView
+                    style="@style/AboutActivitySubItem"
                     android:id="@+id/tv_event_bus_license"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="8dp"
-                    android:autoLink="all"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/about_license_event_bus"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColorLink="@color/primary" />
+                    android:text="@string/about_license_event_bus"/>
 
                 <TextView
+                    style="@style/AboutActivitySubItem"
                     android:id="@+id/tv_retrolambda_license"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="8dp"
-                    android:autoLink="all"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/about_license_retrolambda"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColorLink="@color/primary" />
+                    android:text="@string/about_license_retrolambda"/>
 
                 <TextView
+                    style="@style/AboutActivitySubItem"
                     android:id="@+id/tv_dagger_license"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="8dp"
-                    android:autoLink="all"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/about_license_dagger"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColorLink="@color/primary" />
+                    android:text="@string/about_license_dagger"/>
 
                 <TextView
+                    style="@style/AboutActivitySubItem"
                     android:id="@+id/tv_rx_java_license"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="8dp"
-                    android:autoLink="all"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/about_license_rx_java"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColorLink="@color/primary" />
+                    android:text="@string/about_license_rx_java"/>
 
                 <TextView
+                    style="@style/AboutActivitySubItem"
                     android:id="@+id/tv_stemmer_license"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="8dp"
-                    android:autoLink="all"
-                    android:drawablePadding="8dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/about_porter_stemming_algorithm"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColorLink="@color/primary" />
+                    android:text="@string/about_porter_stemming_algorithm"/>
             </LinearLayout>
         </ScrollView>
     </FrameLayout>
