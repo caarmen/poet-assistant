@@ -32,9 +32,11 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
@@ -61,7 +63,8 @@ import static org.junit.Assert.assertThat;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class TtsTest {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class ATtsTest {
 
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
@@ -74,6 +77,22 @@ public class TtsTest {
             timeUtteranceCompleted = System.currentTimeMillis();
         }
     }
+
+    @Test
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void aVoiceSelectionTest() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
+        openMenuItem(R.string.action_settings);
+        clickPreference(R.string.pref_voice_title);
+        // We don't know what voices will be available on the device.  Just select the last one.
+        onView(withClassName(endsWith("RecycleListView")))
+                .perform(scrollToEnd(), clickLastChild());
+        clickPreference(R.string.pref_voice_preview_title);
+        pressBack();
+        swipeViewPagerLeft(3);
+        typePoem("Do I have an accent?");
+    }
+
 
     @Test
     public void voicePitchTest() {
@@ -103,21 +122,6 @@ public class TtsTest {
         assertThat("expected speech time to be slower after scrolling seekbar to the left",
                 slowSpeechTime,
                 greaterThan(defaultSpeechTime));
-    }
-
-    @Test
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public void voiceSelectionTest() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return;
-        openMenuItem(R.string.action_settings);
-        clickPreference(R.string.pref_voice_title);
-        // We don't know what voices will be available on the device.  Just select the last one.
-        onView(withClassName(endsWith("RecycleListView")))
-                .perform(scrollToEnd(), clickLastChild());
-        clickPreference(R.string.pref_voice_preview_title);
-        pressBack();
-        swipeViewPagerLeft(3);
-        typePoem("Do I have an accent?");
     }
 
     private long timeTtsPreview() {
