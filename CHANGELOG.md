@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.18.3  *(2017-06-30)*
+--------------------
+* Another fix for #81: Crash looking up a word in Poet Assistant, from another app.
+
 1.18.2  *(2017-05-26)*
 --------------------
 * Technical:
