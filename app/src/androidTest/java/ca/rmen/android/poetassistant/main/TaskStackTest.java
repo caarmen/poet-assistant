@@ -29,9 +29,11 @@ import android.support.test.espresso.Espresso;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.ActivityVisibleIdlingResource;
@@ -52,21 +54,32 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
 import static org.hamcrest.Matchers.allOf;
 
+/**
+ * Test for these issues:
+ * https://github.com/caarmen/poet-assistant/issues/19
+ * https://github.com/caarmen/poet-assistant/issues/81
+ */
 @LargeTest
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(AndroidJUnit4.class)
 public class TaskStackTest {
 
     @Rule
     public PoetAssistantActivityTestRule<SettingsActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(SettingsActivity.class, false);
 
-    /**
-     * Test for these issues:
-     * https://github.com/caarmen/poet-assistant/issues/19
-     * https://github.com/caarmen/poet-assistant/issues/81
-     */
     @Test
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public void deepLinkAfterThemeChangeTest() {
+    public void dictionaryDeepLinkAfterThemeChangeTest() {
+        deepLinkAfterThemeChangeTest("poetassistant://dictionary/muffin");
+    }
+
+    @Test
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public void queryDeepLinkAfterThemeChangeTest() {
+        deepLinkAfterThemeChangeTest("poetassistant://query/muffin");
+    }
+
+    private void deepLinkAfterThemeChangeTest(String deepLinkUrl) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             return;
         }
@@ -78,7 +91,7 @@ public class TaskStackTest {
         onView(withText(R.string.pref_theme_value_dark)).perform(click());
 
         // Open a deep link
-        getInstrumentation().getUiAutomation().executeShellCommand("am start -a android.intent.action.VIEW -d poetassistant://dictionary/muffin");
+        getInstrumentation().getUiAutomation().executeShellCommand("am start -a android.intent.action.VIEW -d " + deepLinkUrl);
 
         // Wait for the MainActivity to appear
         ActivityVisibleIdlingResource waitForMainActivity = new ActivityVisibleIdlingResource(
@@ -87,22 +100,11 @@ public class TaskStackTest {
         Espresso.registerIdlingResources(waitForMainActivity);
 
         // Check the results
-        checkDictionaryOnly("a sweet quick bread baked in a cup-shaped pan");
+        Activity activity = mActivityTestRule.getActivity();
+        checkTitleStripOrTab(activity, R.string.tab_dictionary);
+        checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan");
         Espresso.unregisterIdlingResources(waitForMainActivity);
         waitForMainActivity.destroy();
     }
-
-    private void checkDictionaryOnly(String expectedFirstDefinition) {
-        Activity activity = mActivityTestRule.getActivity();
-        checkTitleStripOrTab(activity, R.string.tab_dictionary);
-        checkFirstDefinition(expectedFirstDefinition);
-        swipeViewPagerRight(1);
-        onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
-                .check(matches(isDisplayed()));
-        swipeViewPagerRight(1);
-        onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
-                .check(matches(isDisplayed()));
-    }
-
 
 }

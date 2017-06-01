@@ -29,9 +29,10 @@ import io.reactivex.ObservableEmitter;
 
 public final class DebounceTextWatcher {
     public static Observable<String> observe(TextView textView) {
-        return Observable.create((ObservableEmitter<String> emmiter) -> {
-            EmitterTextWatcher textWatcher = new EmitterTextWatcher(emmiter);
+        return Observable.create((ObservableEmitter<String> emitter) -> {
+            EmitterTextWatcher textWatcher = new EmitterTextWatcher(emitter);
             textView.addTextChangedListener(textWatcher);
+            emitter.setCancellable(() -> textView.removeTextChangedListener(textWatcher));
         }).debounce(5000, TimeUnit.MILLISECONDS);
     }
 

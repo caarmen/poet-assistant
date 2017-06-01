@@ -188,8 +188,8 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         if (uri == null) return;
         String word = uri.getLastPathSegment();
         if(Constants.DEEP_LINK_QUERY.equals(uri.getHost())) {
-            mSearch.search(word);
             mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false);
+            mSearch.search(word);
         } else {
             Tab tab = Tab.parse(uri.getHost());
             if (tab != null) mSearch.search(word, tab);

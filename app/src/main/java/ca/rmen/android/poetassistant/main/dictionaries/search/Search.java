@@ -24,14 +24,11 @@ import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
-import android.os.Build;
 import android.support.annotation.MainThread;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewTreeObserver;
 
 import java.util.Locale;
 
@@ -43,6 +40,7 @@ import ca.rmen.android.poetassistant.main.PagerAdapter;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
+import ca.rmen.android.poetassistant.widget.ViewShownCompletable;
 import io.reactivex.Maybe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -84,7 +82,7 @@ public class Search {
     public void search(String word, Tab tab) {
         Log.d(TAG, "search() called with: " + "word = [" + word + "], tab = [" + tab + "]");
         mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false);
-        executeWhenViewShown(mViewPager, () -> ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, tab)).query(word.trim().toLowerCase(Locale.US)));
+        ViewShownCompletable.create(mViewPager).subscribe(() -> ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, tab)).query(word.trim().toLowerCase(Locale.US)));
     }
 
     /**
@@ -95,42 +93,16 @@ public class Search {
         String wordTrimmed = word.trim().toLowerCase(Locale.US);
 
         selectTabForSearch(wordTrimmed);
-        final Runnable performSearch = () -> {
-            if (Patterns.isPattern(wordTrimmed)) {
-                ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.PATTERN)).query(wordTrimmed);
-            } else {
-                ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.RHYMER)).query(wordTrimmed);
-                ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.THESAURUS)).query(wordTrimmed);
-                ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.DICTIONARY)).query(wordTrimmed);
-            }
-        };
-        executeWhenViewShown(mViewPager, performSearch);
-    }
-
-    private static void executeWhenViewShown(View view, Runnable runnable) {
-        // Issue #19: In a specific scenario, the fragments may not be "ready" yet (onCreateView() may not have been called).
-        // Wait until the ViewPager is laid out before invoking anything on the fragments.
-        // (We assume that the fragments are "ready" once the ViewPager is laid out.)
-        if (view.isShown()) {
-            Log.d(TAG, "searching immediately");
-            view.post(runnable);
-        } else {
-            view.getViewTreeObserver().addOnGlobalLayoutListener(
-                    new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            Log.d(TAG, "searching after layout");
-                            view.post(runnable);
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                            } else {
-                                //noinspection deprecation
-                                view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                            }
-                        }
+        ViewShownCompletable.create(mViewPager)
+                .subscribe(() -> {
+                    if (Patterns.isPattern(wordTrimmed)) {
+                        ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.PATTERN)).query(wordTrimmed);
+                    } else {
+                        ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.RHYMER)).query(wordTrimmed);
+                        ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.THESAURUS)).query(wordTrimmed);
+                        ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.DICTIONARY)).query(wordTrimmed);
                     }
-            );
-        }
+                });
     }
 
     /**

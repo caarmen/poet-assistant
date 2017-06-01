@@ -80,6 +80,7 @@ public class ResultListHeaderFragment extends Fragment
     }
 
     public void setHeader(String header) {
+        Log.v(TAG, mTab + " setHeader " + header);
         mBinding.getViewModel().query.set(header);
     }
 
