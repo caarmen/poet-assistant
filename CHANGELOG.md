@@ -1,7 +1,11 @@
 Change Log
 ==========
 
-1.18.3  *(2017-06-30)*
+1.18.4  *(2017-06-10)*
+--------------------
+* Attempt to fix ClassCastException crashes.
+
+1.18.3  *(2017-05-30)*
 --------------------
 * Another fix for #81: Crash looking up a word in Poet Assistant, from another app.
 
