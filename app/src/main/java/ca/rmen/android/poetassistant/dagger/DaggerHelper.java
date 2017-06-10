@@ -22,19 +22,23 @@ package ca.rmen.android.poetassistant.dagger;
 import android.app.Application;
 import android.content.Context;
 
-import ca.rmen.android.poetassistant.PoetAssistantApplication;
-
 public class DaggerHelper {
+    private static AppComponent sAppComponent;
+
     public static AppComponent.MainScreenComponent getMainScreenComponent(Context context) {
         return getAppComponent(context).getMainScreenComponent();
     }
 
     public static AppComponent.MainScreenComponent getMainScreenComponent(Application application) {
-        return ((PoetAssistantApplication) application).getAppComponent().getMainScreenComponent();
+        return getAppComponent(application).getMainScreenComponent();
     }
 
     public static AppComponent.SettingsComponent getSettingsComponent(Context context) {
         return getAppComponent(context).getSettingsComponent();
+    }
+
+    public static AppComponent.SettingsComponent getSettingsComponent(Application application) {
+        return getAppComponent(application).getSettingsComponent();
     }
 
     public static AppComponent.WotdComponent getWotdComponent(Context context) {
@@ -42,11 +46,19 @@ public class DaggerHelper {
     }
 
     public static AppComponent.WotdComponent getWotdComponent(Application application) {
-        return ((PoetAssistantApplication) application).getAppComponent().getWotdComponent();
+        return getAppComponent(application).getWotdComponent();
     }
 
     private static AppComponent getAppComponent(Context context) {
-        return ((PoetAssistantApplication) context.getApplicationContext()).getAppComponent();
+        return getAppComponent((Application) context.getApplicationContext());
     }
 
+    private static AppComponent getAppComponent(Application application) {
+        if (sAppComponent == null) {
+            sAppComponent = DaggerAppComponent.builder()
+                    .appModule(new AppModule(application))
+                    .build();
+        }
+        return sAppComponent;
+    }
 }

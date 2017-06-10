@@ -22,13 +22,9 @@ import android.app.Application;
 
 import com.squareup.leakcanary.LeakCanary;
 
-import ca.rmen.android.poetassistant.dagger.AppComponent;
-import ca.rmen.android.poetassistant.dagger.AppModule;
-import ca.rmen.android.poetassistant.dagger.DaggerAppComponent;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 public class PoetAssistantApplication extends Application {
-    private AppComponent mAppComponent;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -41,12 +37,4 @@ public class PoetAssistantApplication extends Application {
         Theme.setThemeFromSettings(SettingsPrefs.get(this));
     }
 
-    public AppComponent getAppComponent() {
-        if (mAppComponent == null) {
-            mAppComponent = DaggerAppComponent.builder()
-                    .appModule(new AppModule(this))
-                    .build();
-        }
-        return mAppComponent;
-    }
 }
