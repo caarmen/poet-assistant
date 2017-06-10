@@ -63,7 +63,7 @@ public class ShareTest {
     @Test
     public void sharePoemTest() {
         swipeViewPagerLeft(3);
-        String poemText = "Let's share a poem";
+        String poemText = "Let us share a poem";
         typePoem(poemText);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             openMenuItem(R.string.share_poem_text);

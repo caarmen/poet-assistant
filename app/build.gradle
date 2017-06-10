@@ -161,7 +161,7 @@ dependencies {
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-    androidTestCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
+    androidTestCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
 
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'

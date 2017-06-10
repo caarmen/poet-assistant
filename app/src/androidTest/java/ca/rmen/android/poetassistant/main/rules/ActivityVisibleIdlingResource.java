@@ -23,8 +23,14 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 import android.support.test.espresso.IdlingResource;
+import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
+import android.support.test.runner.lifecycle.Stage;
+
+import java.util.Collection;
 
 import ca.rmen.android.poetassistant.Constants;
+
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 
 public class ActivityVisibleIdlingResource implements IdlingResource {
     private static final String TAG = Constants.TAG + ActivityVisibleIdlingResource.class.getSimpleName();
@@ -41,6 +47,14 @@ public class ActivityVisibleIdlingResource implements IdlingResource {
     public ActivityVisibleIdlingResource(Application application, String targetActivityClassName) {
         mApplication = application;
         mTargetActivityClassName = targetActivityClassName;
+        getInstrumentation().runOnMainSync(() -> {
+            Collection<Activity> resumedActivities = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
+            for(Activity resumedActivity: resumedActivities){
+                if (targetActivityClassName.equals(resumedActivity.getClass().getName())) {
+                    mCurrentActivityClassName = targetActivityClassName;
+                }
+            }
+        });
         application.registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks);
     }
 
