@@ -70,7 +70,7 @@ public class SettingsActivity extends AppCompatActivity implements ConfirmDialog
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHelper.getSettingsComponent(this).inject(this);
+        DaggerHelper.getSettingsComponent(getApplication()).inject(this);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_settings);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);

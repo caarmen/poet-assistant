@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
 
     @WorkerThread
     private boolean loadDatabase() {
-        DaggerHelper.getMainScreenComponent(MainActivity.this).inject(MainActivity.this);
+        DaggerHelper.getMainScreenComponent(getApplication()).inject(MainActivity.this);
         return mRhymer.isLoaded() && mThesaurus.isLoaded() && mDictionary.isLoaded();
     }
 
