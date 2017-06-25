@@ -34,6 +34,7 @@ import android.text.TextUtils;
 
 import javax.inject.Inject;
 
+import ca.rmen.android.poetassistant.BuildConfig;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 
 public class SuggestionsProvider extends ContentProvider {
@@ -42,7 +43,7 @@ public class SuggestionsProvider extends ContentProvider {
             .authority(SuggestionsProvider.AUTHORITY)
             .build();
 
-    private static final String AUTHORITY = "ca.rmen.android.poetassistant.SuggestionsProvider";
+    private static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".SuggestionsProvider";
     private static final int URI_MATCH_SUGGEST = 1;
 
     @Inject Suggestions mSuggestions;

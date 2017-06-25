@@ -62,10 +62,13 @@ android {
     buildTypes {
         debug {
             testCoverageEnabled = true
+            applicationIdSuffix = ".test"
+            resValue "string", "search_provider_authority", android.defaultConfig.applicationId + applicationIdSuffix + ".SuggestionsProvider";
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue "string", "search_provider_authority", android.defaultConfig.applicationId + ".SuggestionsProvider";
         }
     }
 
@@ -157,6 +160,8 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
 
     testCompile 'junit:junit:4.12'
+    testCompile "org.robolectric:robolectric:3.3.2"
+
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'

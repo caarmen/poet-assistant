@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -19,8 +19,6 @@
 
 package ca.rmen.android.poetassistant;
 
-import java.util.HashMap;
-
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,9 +27,16 @@ import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
@@ -40,6 +45,7 @@ import io.reactivex.Observable;
 public class Tts {
     private static final String TAG = Constants.TAG + Tts.class.getSimpleName();
 
+    private static final int PAUSE_DURATION_MS = 500;
     private static final float MIN_VOICE_PITCH = 0.25f;
     private static final float MIN_VOICE_SPEED = 0.25f;
 
@@ -114,22 +120,35 @@ public class Tts {
 
     public void speak(String text) {
         if (!isReady()) return;
+        List<String> splitText = split(text);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            speak21(text);
+            speak21(splitText);
         else
-            speak4(text);
+            speak4(splitText);
     }
 
     @SuppressWarnings("deprecation")
-    private void speak4(String text) {
+    private void speak4(List<String> text) {
         HashMap<String, String> map = new HashMap<>();
         map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, TAG);
-        mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, map);
+        for (String subtext : text) {
+            if (TextUtils.isEmpty(subtext)) {
+                mTextToSpeech.playSilence(PAUSE_DURATION_MS, TextToSpeech.QUEUE_ADD, map);
+            } else {
+                mTextToSpeech.speak(subtext, TextToSpeech.QUEUE_ADD, map);
+            }
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void speak21(String text) {
-        mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, TAG);
+    private void speak21(List<String> text) {
+        for (String subtext : text) {
+            if (TextUtils.isEmpty(subtext)) {
+                mTextToSpeech.playSilentUtterance(PAUSE_DURATION_MS, TextToSpeech.QUEUE_ADD, TAG);
+            } else {
+                mTextToSpeech.speak(subtext, TextToSpeech.QUEUE_ADD, null, TAG);
+            }
+        }
     }
 
     public void speakToFile(String text) {
@@ -142,6 +161,65 @@ public class Tts {
 
     public void stop() {
         if (mTextToSpeech != null) mTextToSpeech.stop();
+    }
+
+    /**
+     * Splits a string into multiple tokens for pausing playback.
+     *
+     * @param text A "..." in the input text indicates a pause, and each subsequent "." after the initial "..." indicates an additional pause.
+     *
+     * Examples:
+     * "To be or not to be... that is the question":  1 pause:  "To be or not to be", "",     " that is the question"
+     * "To be or not to be.... that is the question": 2 pauses: "To be or not to be", "", "", " that is the question"
+     * "To be or not to be. that is the question":    0 pauses: "To be or not to be. that is the question"
+     *
+     * @return the input split into multiple tokens. An empty-string token in the result indicates a pause.
+     */
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    static List<String> split(String text) {
+        List<String> tokens = new ArrayList<>();
+        StringTokenizer stringTokenizer = new StringTokenizer(text, ".", true);
+        // In a sequence of dots, we want to skip the first two.
+        int skippedDots = 0;
+        String prevToken = null;
+        while (stringTokenizer.hasMoreTokens()) {
+            String token = stringTokenizer.nextToken();
+            // The current token is a dot. It may or may not be used to pause.
+            if (".".equals(token)) {
+                // We've skipped at least two consecutive dots. We can now start adding all dots as
+                // pause tokens.
+                if (skippedDots == 2) {
+                    String pauseToken = "";
+                    tokens.add(pauseToken);
+                    prevToken = pauseToken;
+                }
+                // Beginning of a dot sequence. We have to skip the first two dots.
+                else {
+                    skippedDots++;
+                }
+            }
+            // The current token is actual text to speak.
+            else {
+                final String textToken;
+                // This is either the first text token of the entire input, or a text token after a pause token.
+                // We simply add it to the list.
+                if (prevToken == null || "".equals(prevToken)){
+                    textToken = token;
+                    tokens.add(textToken);
+                }
+                // The previous token was also actual text.
+                // Concatenate the previous token with this one, separating by a single period.
+                // This optimization allows us to minimize the number of tokens we'll return, and to rely
+                // on the sentence pausing of the TTS engine when less than 3 dots separate two sentences.
+                else /* prevToken != null && prevToken != "" */{
+                    textToken = prevToken + "." + token;
+                    tokens.set(tokens.size() - 1, textToken);
+                }
+                prevToken = textToken;
+                skippedDots = 0;
+            }
+        }
+        return tokens;
     }
 
     private void shutdown() {
