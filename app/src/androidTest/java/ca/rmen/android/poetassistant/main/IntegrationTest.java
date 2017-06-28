@@ -59,7 +59,7 @@ import static ca.rmen.android.poetassistant.main.TestAppUtils.openThesaurus;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openThesaurusCleanLayout;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
@@ -136,7 +136,7 @@ public class IntegrationTest {
         addFilter(data.rhymerFilter, data.rhymerFilterMatch);
         clearFilter(data.firstRhyme);
         swipeViewPagerLeft(3);
-        typePoem(data.poem);
+        typeAndSpeakPoem(data.poem);
         clearPoem();
         // clearing the search history doesn't erase starred words
         clearSearchHistory();
@@ -167,7 +167,7 @@ public class IntegrationTest {
         addFilter(data.rhymerFilter, data.rhymerFilterMatch);
         clearFilter(data.firstRhyme);
         swipeViewPagerLeft(3);
-        typePoem(data.poem);
+        typeAndSpeakPoem(data.poem);
         clearPoem();
         // clearing the search history doesn't erase starred words
         clearSearchHistory();

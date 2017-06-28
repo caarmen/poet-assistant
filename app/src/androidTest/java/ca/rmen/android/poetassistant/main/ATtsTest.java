@@ -51,6 +51,9 @@ import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewActions.clickLastChild;
 import static ca.rmen.android.poetassistant.main.CustomViewActions.scrollToEnd;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.speakPoem;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
@@ -90,7 +93,7 @@ public class ATtsTest {
         clickPreference(R.string.pref_voice_preview_title);
         pressBack();
         swipeViewPagerLeft(3);
-        typePoem("Do I have an accent?");
+        typeAndSpeakPoem("Do I have an accent?");
     }
 
 
@@ -122,6 +125,29 @@ public class ATtsTest {
         assertThat("expected speech time to be slower after scrolling seekbar to the left",
                 slowSpeechTime,
                 greaterThan(defaultSpeechTime));
+    }
+
+    @Test
+    public void pauseTest() {
+        swipeViewPagerLeft(3);
+        long timeWithoutPause = timePoem("Hello. Bonjour");
+        pressBack();
+        clearPoem();
+        long timeWithPause = timePoem("Hello....... Bonjour");
+        assertThat("expected paused poem to be longer than non-paused poem",
+                timeWithPause - timeWithoutPause,
+                greaterThan(2000L));
+    }
+
+    private long timePoem(String poem) {
+        EventBusReceiver receiver = new EventBusReceiver();
+        EventBus.getDefault().register(receiver);
+        typePoem(poem);
+        long before = System.currentTimeMillis();
+        speakPoem();
+        long poemSpeechTime = receiver.timeUtteranceCompleted - before;
+        EventBus.getDefault().unregister(receiver);
+        return poemSpeechTime;
     }
 
     private long timeTtsPreview() {

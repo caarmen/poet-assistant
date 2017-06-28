@@ -45,7 +45,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.addFilter;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static org.hamcrest.Matchers.allOf;
@@ -64,7 +64,7 @@ public class ShareTest {
     public void sharePoemTest() {
         swipeViewPagerLeft(3);
         String poemText = "Let us share a poem";
-        typePoem(poemText);
+        typeAndSpeakPoem(poemText);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             openMenuItem(R.string.share_poem_text);
         } else {
