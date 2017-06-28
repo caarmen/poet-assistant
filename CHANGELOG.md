@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.18.5  *(2017-06-28)*
+--------------------
+* Added possibility to plause playback by typing "..." in the poem text. Currently only works for playback, not when saving the poem to an audio file.
+
 1.18.4  *(2017-06-10)*
 --------------------
 * Attempt to fix ClassCastException crashes.
