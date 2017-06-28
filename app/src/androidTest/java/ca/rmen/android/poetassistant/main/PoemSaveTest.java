@@ -44,7 +44,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static org.hamcrest.Matchers.allOf;
@@ -71,7 +71,7 @@ public class PoemSaveTest {
         swipeViewPagerLeft(3);
         File poemFile = getPoemFile();
         assertFalse(poemFile.exists());
-        typePoem("Let's save a file");
+        typeAndSpeakPoem("Let's save a file");
         openMenuItem(R.string.file);
         onView(allOf(withId(R.id.title), withText(R.string.file_save), isDisplayed())).perform(click());
         assertTrue(poemFile.exists());

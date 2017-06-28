@@ -190,6 +190,12 @@ class TestAppUtils {
         onView(allOf(withId(android.R.id.button1), withText(labelRes))).perform(scrollTo(), click());
     }
 
+    static void typeAndSpeakPoem(String poem) {
+        typePoem(poem);
+        speakPoem();
+        pressBack();
+    }
+
     static void typePoem(String poem) {
         // The fab should be disabled until there is text
         ViewInteraction fab = onView(withClassName(is(FloatingActionButton.class.getName())));
@@ -200,11 +206,9 @@ class TestAppUtils {
         appCompatEditText.perform(typeText(poem));
         appCompatEditText.check(matches(withText(equalToIgnoringCase(poem))));
         fab.check(matches(isEnabled()));
-        speakPoem();
-        pressBack();
     }
 
-    private static void speakPoem() {
+    static void speakPoem() {
         ViewInteraction fab = onView(allOf(withClassName(is(FloatingActionButton.class.getName())), isEnabled()));
         fab.perform(click());
     }

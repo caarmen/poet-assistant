@@ -52,7 +52,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withContentDesc
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewActions.longTap;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
@@ -76,7 +76,7 @@ public class PoemTest {
     public void exportAudioTest() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return;
         swipeViewPagerLeft(3);
-        typePoem("Will export some text");
+        typeAndSpeakPoem("Will export some text");
         File exportDir = new File(mActivityTestRule.getActivity().getFilesDir(), "export");
         File poemFile = new File(exportDir, "poem.wav");
         assertFalse(poemFile.exists());
@@ -89,7 +89,7 @@ public class PoemTest {
 
         onView(allOf(withId(R.id.tv_text), isDisplayed())).perform(clearText());
         SystemClock.sleep(250);
-        typePoem("Will export some text which is a bit longer");
+        typeAndSpeakPoem("Will export some text which is a bit longer");
         openMenuItem(R.string.share_poem_audio);
         assertTrue(poemFile.exists());
         long length2 = poemFile.length();
@@ -102,7 +102,7 @@ public class PoemTest {
     public void lookupFromPoemTest() {
         swipeViewPagerLeft(3);
         String poemText = "Here is a poem";
-        typePoem(poemText);
+        typeAndSpeakPoem(poemText);
 
         // Look up in the rhymer
         // Long press on the left part of the EditText, to select the first word
