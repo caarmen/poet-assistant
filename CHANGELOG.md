@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.19.0  *(2017-07-08)*
+--------------------
+* Added an option to print the poem text.
+
 1.18.5  *(2017-06-28)*
 --------------------
 * Added possibility to pause playback by typing "..." in the poem text. Currently only works for playback, not when saving the poem to an audio file.
