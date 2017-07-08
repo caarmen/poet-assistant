@@ -26,9 +26,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
+import android.print.PrintJob;
 import android.print.PrintManager;
 import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
@@ -61,6 +64,9 @@ class PoemFile {
         void onPoemLoaded(@SuppressWarnings("SameParameterValue") PoemFile poemFile);
 
         void onPoemSaved(PoemFile poemFile);
+
+        @TargetApi(Build.VERSION_CODES.KITKAT)
+        void onPrintJobCreated(PoemFile poemFile, @Nullable PrintJob printJob);
     }
 
     final Uri uri;
@@ -125,9 +131,14 @@ class PoemFile {
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    static void print(Context context, @NonNull PoemFile poemFile) {
-        String formattedText = context.getString(R.string.print_preview_html, poemFile.text);
+    static void print(Context context, @NonNull PoemFile poemFile, PoemFileCallback callback) {
         WebView webView = new WebView(context);
+        print(context, webView, poemFile, callback);
+    }
+
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    static void print(Context context, WebView webView, @NonNull PoemFile poemFile, PoemFileCallback callback) {
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -144,9 +155,11 @@ class PoemFile {
                                 : webView.createPrintDocumentAdapter();
                 PrintAttributes printAttributes = new PrintAttributes.Builder().build();
                 PrintManager printManager = (PrintManager) context.getSystemService(Context.PRINT_SERVICE);
-                printManager.print(title, printDocumentAdapter, printAttributes);
+                PrintJob printJob = printManager.print(title, printDocumentAdapter, printAttributes);
+                callback.onPrintJobCreated(poemFile, printJob);
             }
         });
+        String formattedText = context.getString(R.string.print_preview_html, poemFile.text);
         webView.loadDataWithBaseURL(null, formattedText, "text/html", "UTF-8", null);
     }
 
