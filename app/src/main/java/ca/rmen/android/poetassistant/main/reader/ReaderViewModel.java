@@ -27,7 +27,9 @@ import android.databinding.ObservableInt;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.print.PrintJob;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.preference.PreferenceManager;
 import android.text.Selection;
@@ -212,9 +214,9 @@ public class ReaderViewModel {
     @TargetApi(Build.VERSION_CODES.KITKAT)
     void print(Context context) {
         if (poemFile.get() == null) {
-            PoemFile.print(context, new PoemFile(null, PoemFile.generateFileName(poem.get()), poem.get()));
+            PoemFile.print(context, new PoemFile(null, PoemFile.generateFileName(poem.get()), poem.get()), mPoemFileCallback);
         } else {
-            PoemFile.print(context, poemFile.get());
+            PoemFile.print(context, poemFile.get(), mPoemFileCallback);
         }
     }
 
@@ -239,6 +241,15 @@ public class ReaderViewModel {
                 Log.d(TAG, "onPoemSaved() called with: " + "poemFile = [" + savedPoem + "]");
                 setSavedPoem(savedPoem);
                 snackbarText.set(new SnackbarText(R.string.file_saved, savedPoem.name));
+            }
+        }
+
+        @Override
+        @TargetApi(Build.VERSION_CODES.KITKAT)
+        public void onPrintJobCreated(PoemFile poemFile, @Nullable PrintJob printJob) {
+            Log.d(TAG, "onPrintJobCreated() called with: poemFile = [" + poemFile + "], printJob = [" + printJob + "]");
+            if (printJob != null) {
+                Log.d(TAG, "Print job id = " + printJob.getId() + ", info = " +  printJob.getInfo());
             }
         }
     };
