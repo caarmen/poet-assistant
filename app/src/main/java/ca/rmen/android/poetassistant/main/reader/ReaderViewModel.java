@@ -18,12 +18,14 @@
  */
 package ca.rmen.android.poetassistant.main.reader;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.StringRes;
@@ -204,6 +206,15 @@ public class ReaderViewModel {
         } else if (mPoemPrefs.hasTempPoem()) {
             String tempPoemText = mPoemPrefs.getTempPoem();
             poem.set(tempPoemText);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    void print(Context context) {
+        if (poemFile.get() == null) {
+            PoemFile.print(context, new PoemFile(null, PoemFile.generateFileName(poem.get()), poem.get()));
+        } else {
+            PoemFile.print(context, poemFile.get());
         }
     }
 
