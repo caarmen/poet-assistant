@@ -41,6 +41,10 @@
                 android:id="@+id/action_save_as"
                 android:title="@string/file_save_as"
                 app:showAsAction="never" />
+            <item
+                android:id="@+id/action_print"
+                android:title="@string/file_print"
+                app:showAsAction="never" />
         </menu>
     </item>
     <item

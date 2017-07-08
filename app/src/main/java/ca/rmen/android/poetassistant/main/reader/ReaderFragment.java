@@ -113,7 +113,7 @@ public class ReaderFragment extends Fragment implements
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         prepareMenuItemsRequiringEnteredText(menu, R.id.action_new, R.id.action_save_as,
-                R.id.action_share, R.id.action_share_poem_text, R.id.action_share_poem_audio);
+                R.id.action_share, R.id.action_share_poem_text, R.id.action_share_poem_audio, R.id.action_print);
         MenuItem menuItem = menu.findItem(R.id.action_save);
         if (menuItem == null) {
             Log.d(TAG, "Unexpected: save menu item missing from reader fragment. Monkey?");
@@ -146,6 +146,8 @@ public class ReaderFragment extends Fragment implements
             mViewModel.save(getActivity());
         } else if (item.getItemId() == R.id.action_save_as) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) saveAs();
+        } else if (item.getItemId() == R.id.action_print) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) mViewModel.print(getActivity());
         } else if (item.getItemId() == R.id.action_share_poem_text || item.getItemId() == R.id.action_share) {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.putExtra(Intent.EXTRA_TEXT, mViewModel.poem.get());

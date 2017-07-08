@@ -19,13 +19,21 @@
 
 package ca.rmen.android.poetassistant.main.reader;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
+import android.print.PrintAttributes;
+import android.print.PrintDocumentAdapter;
+import android.print.PrintManager;
 import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
+import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -38,6 +46,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.R;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -113,6 +122,32 @@ class PoemFile {
         writer.close();
         String displayName = readDisplayName(context, uri);
         return new PoemFile(uri, displayName, text);
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    static void print(Context context, @NonNull PoemFile poemFile) {
+        String formattedText = context.getString(R.string.print_preview_html, poemFile.text);
+        WebView webView = new WebView(context);
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                String title = poemFile.name;
+                if (TextUtils.isEmpty(title)) {
+                    title = context.getString(R.string.print_default_title);
+                } else {
+                    title = title.replaceAll(".txt$", ".pdf");
+                }
+                @SuppressWarnings("deprecation")
+                PrintDocumentAdapter printDocumentAdapter =
+                        Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? webView.createPrintDocumentAdapter(title)
+                                : webView.createPrintDocumentAdapter();
+                PrintAttributes printAttributes = new PrintAttributes.Builder().build();
+                PrintManager printManager = (PrintManager) context.getSystemService(Context.PRINT_SERVICE);
+                printManager.print(title, printDocumentAdapter, printAttributes);
+            }
+        });
+        webView.loadDataWithBaseURL(null, formattedText, "text/html", "UTF-8", null);
     }
 
     /**

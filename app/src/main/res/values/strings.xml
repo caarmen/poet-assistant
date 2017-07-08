@@ -86,6 +86,7 @@
     <string name="file_open">Open</string>
     <string name="file_save">Save</string>
     <string name="file_save_as">Save as</string>
+    <string name="file_print">Print</string>
     <string name="file_opened">Opened %s</string>
     <string name="file_opened_error">Couldn\'t open file</string>
     <string name="file_saved">Saved poem to %s</string>
@@ -189,5 +190,29 @@
     <string name="tts_error"><![CDATA[No voices found! &#128552;]]></string>
     <string name="tts_error_open_system_settings">Voice settings</string>
     <string name="tts_error_open_app_settings">Settings</string>
+
+    <string name="print_default_title">Poet Assistant poem</string>
+    <string name="print_preview_html" translatable="false">
+<![CDATA[
+<html>
+ <head>
+  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>
+  <style type="text/css">
+  table {
+   border-spacing: 0px;
+  }
+  .poem-text {
+    margin: 2cm 2cm 2cm 2cm;
+    white-space: pre-wrap;
+    font-size: 12pt;
+  }
+  </style>
+ </head>
+ <body>
+ <div class="poem-text">%s</div>
+ </body>
+</html>
+]]>
+    </string>
 
 </resources>
