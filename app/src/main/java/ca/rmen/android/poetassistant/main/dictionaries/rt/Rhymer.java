@@ -165,20 +165,21 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
     private SortedSet<String> lookupBySyllable(String syllables, String columnName) {
         SortedSet<String> result = new TreeSet<>();
         String[] projection = new String[]{"word"};
-        String selection;
-        final String[] selectionArgs;
-        if (mPrefs.getIsStrictVowelMatchingEnabled()) {
-            selection = columnName + "= ? ";
-            selectionArgs = new String[]{syllables};
-        } else {
-            selection = String.format(Locale.US, "replace(%s, 'AO', 'AA') = ? ", columnName);
-            selectionArgs = new String[]{
-                    syllables.replaceAll("AO", "AA")
-            };
+        String selectionColumn = columnName;
+        String inputSyllables = syllables;
+        if (mPrefs.getIsAORAOMatchEnabled() && syllables.contains("AO")) {
+            selectionColumn = String.format(Locale.US, "replace(%s, 'AOR', 'AO')", selectionColumn);
+            inputSyllables = inputSyllables.replaceAll("AOR", "AO");
         }
+        if (mPrefs.getIsAOAAMatchEnabled() && (syllables.contains("AO") || syllables.contains("AA"))) {
+            selectionColumn = String.format(Locale.US, "replace(%s, 'AO', 'AA')", selectionColumn);
+            inputSyllables = inputSyllables.replaceAll("AO", "AA");
+        }
+        String selection = selectionColumn + " = ? ";
         if (!mPrefs.getIsAllRhymesEnabled()) {
             selection += "AND has_definition=1";
         }
+        String[] selectionArgs = new String[]{inputSyllables};
         Cursor cursor = mEmbeddedDb.query("word_variants", projection, selection, selectionArgs);
         if (cursor != null) {
             try {

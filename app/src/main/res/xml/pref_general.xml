@@ -62,8 +62,8 @@
         </Preference>
     </PreferenceCategory>
     <PreferenceCategory
-        android:key="PREF_CATEGORY_OTHER"
-        android:title="@string/pref_category_other">
+        android:key="PREF_CATEGORY_RHYMING"
+        android:title="@string/pref_category_rhyming">
 
 
         <!--suppress AndroidElementNotAllowed -->
@@ -76,9 +76,20 @@
         <!--suppress AndroidElementNotAllowed -->
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
-            android:key="PREF_STRICT_VOWEL_MATCHING_ENABLED"
-            android:summary="@string/strict_vowel_matching_setting_description"
-            android:title="@string/strict_vowel_matching_setting_title" />
+            android:key="PREF_MATCH_AO_AA_ENABLED"
+            android:summary="@string/match_ao_aa_setting_description"
+            android:title="@string/match_ao_aa_setting_title" />
+
+        <!--suppress AndroidElementNotAllowed -->
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="PREF_MATCH_AOR_AO_ENABLED"
+            android:summary="@string/match_aor_ao_setting_description"
+            android:title="@string/match_aor_ao_setting_title" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="PREF_CATEGORY_OTHER"
+        android:title="@string/pref_category_other">
 
         <ListPreference
             android:defaultValue="Light"

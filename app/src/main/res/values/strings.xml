@@ -108,10 +108,12 @@
     <string name="wotd_setting_description">Display a notification once a day with a random word.</string>
     <string name="wotd_notification_title">Word of the day: %s</string>
     <string name="wotd_notification_definition"><![CDATA[<br>\n<b>%1$s.</b> %2$s]]></string>
-    <string name="all_rhymes_setting_title">Show all rhymes</string>
+    <string name="all_rhymes_setting_title">Show rhymes without definitions</string>
     <string name="all_rhymes_setting_description">Display all rhymes, even if words have no definitions (search may be slower)</string>
-    <string name="strict_vowel_matching_setting_title">Strict vowel matching</string>
-    <string name="strict_vowel_matching_setting_description">Vowel matching based strictly on phonemes as defined by the CMU Pronouncing Dictionary (http://www.speech.cs.cmu.edu/cgi-bin/cmudict). Search will be faster.</string>
+    <string name="match_ao_aa_setting_title">AO /ɔ/ matches AA /ɑ/</string>
+    <string name="match_ao_aa_setting_description">AO /ɔ/: "off".\nAA /ɑ/: "father".</string>
+    <string name="match_aor_ao_setting_title">AOR /ɔr/ matches AO /ɔ/</string>
+    <string name="match_aor_ao_setting_description">AOR /ɔr/: "more".\nAO /ɔ/: "thaw".</string>
     <string name="share">Share</string>
     <string name="share_poem_text">Share poem text</string>
     <string name="share_poem_audio">Share poem audio</string>
@@ -151,6 +153,7 @@
     <string translatable="false" name="pref_voice_value_with_country"><![CDATA[%1$s (%2$s)<br/><font color=\'#888888\'><small>%3$s</small></font>]]></string>
     <string translatable="false" name="pref_voice_value_without_country"><![CDATA[%1$s<br/><font color=\'#888888\'><small>%2$s</small></font>]]></string>
     <string name="pref_category_voice">Voice settings</string>
+    <string name="pref_category_rhyming">Rhyming</string>
     <string name="pref_category_other">Other</string>
     <string name="pref_voice_default">System voice</string>
     <string name="pref_voice_title">Voice</string>

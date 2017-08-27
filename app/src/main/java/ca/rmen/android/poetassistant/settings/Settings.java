@@ -54,7 +54,10 @@ public class Settings {
     static final String PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED";
     @SuppressWarnings("unused")
     private static final String PREF_ALL_RHYMES_ENABLED = "PREF_ALL_RHYMES_ENABLED";
-    private static final String PREF_STRICT_VOWEL_MATCHING = "PREF_STRICT_VOWEL_MATCHING_ENABLED";
+    @SuppressWarnings("unused")
+    private static final String PREF_MATCH_AO_AA_ENABLED = "PREF_MATCH_AO_AA_ENABLED";
+    @SuppressWarnings("unused")
+    private static final String PREF_MATCH_AOR_AO_ENABLED = "PREF_MATCH_AOR_AO_ENABLED";
 
     @SuppressWarnings("unused")
     @Name(PREF_VOICE)
@@ -91,9 +94,14 @@ public class Settings {
     Boolean isAllRhymesEnabled;
 
     @SuppressWarnings("unused")
-    @Name(PREF_STRICT_VOWEL_MATCHING)
+    @Name(PREF_MATCH_AO_AA_ENABLED)
     @DefaultBoolean(false)
-    Boolean isStrictVowelMatchingEnabled;
+    Boolean isAOAAMatchEnabled;
+
+    @SuppressWarnings("unused")
+    @Name(PREF_MATCH_AOR_AO_ENABLED)
+    @DefaultBoolean(false)
+    Boolean isAORAOMatchEnabled;
 
     public static void migrateSettings(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
