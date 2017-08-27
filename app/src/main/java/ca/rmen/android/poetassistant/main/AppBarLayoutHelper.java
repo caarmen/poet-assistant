@@ -48,7 +48,7 @@ public final class AppBarLayoutHelper {
 
     public static void forceExpandAppBarLayout(Activity activity) {
         if (activity == null || activity.isFinishing()) return;
-        AppBarLayout appBarLayout = (AppBarLayout) activity.findViewById(R.id.app_bar_layout);
+        AppBarLayout appBarLayout = activity.findViewById(R.id.app_bar_layout);
         if (appBarLayout != null) {
             forceExpandAppBarLayout(appBarLayout);
         }

@@ -23,11 +23,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
-import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingRegistry;
 import android.support.test.espresso.IdlingResource;
 
 import java.io.File;
-import java.util.List;
+import java.util.Collection;
 
 import ca.rmen.android.poetassistant.UserDb;
 import io.reactivex.plugins.RxJavaPlugins;
@@ -41,22 +41,20 @@ final class ActivityTestRules {
     }
 
     static void beforeActivityLaunched(Context targetContext) {
-        Espresso.registerIdlingResources(new TtsIdlingResource(targetContext));
+        IdlingRegistry.getInstance().register(new TtsIdlingResource(targetContext));
         cleanup(targetContext);
         RxJavaPlugins.setIoSchedulerHandler(scheduler -> {
             IdlingScheduler idlingScheduler = new IdlingScheduler(scheduler);
-            Espresso.registerIdlingResources(new RxSchedulerIdlingResource(idlingScheduler));
+            IdlingRegistry.getInstance().register(new RxSchedulerIdlingResource(idlingScheduler));
             return idlingScheduler;
         });
     }
 
     static void afterActivityFinished(Context targetContext) {
         cleanup(targetContext);
-        List<IdlingResource> idlingResourceList = Espresso.getIdlingResources();
-        if (idlingResourceList != null) {
-            for (int i = 0; i < idlingResourceList.size(); i++) {
-                Espresso.unregisterIdlingResources(idlingResourceList.get(i));
-            }
+        Collection<IdlingResource> idlingResourceList = IdlingRegistry.getInstance().getResources();
+        for (IdlingResource idlingResource : idlingResourceList) {
+            IdlingRegistry.getInstance().unregister(idlingResource);
         }
     }
 

@@ -231,7 +231,7 @@ public class ReaderFragment extends Fragment implements
             // On some devices, clearing the poem text auto-hides the app bar layout.
             // Let's expand it again.
             AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
-            getActivity().supportInvalidateOptionsMenu();
+            getActivity().invalidateOptionsMenu();
         }
     }
 
@@ -245,7 +245,7 @@ public class ReaderFragment extends Fragment implements
             if (!TextUtils.isEmpty(initialText)) {
                 PoemFile poemFile = new PoemFile(null, null, initialText);
                 mViewModel.setSavedPoem(poemFile);
-                getActivity().supportInvalidateOptionsMenu();
+                getActivity().invalidateOptionsMenu();
                 return;
             }
         }
@@ -284,7 +284,7 @@ public class ReaderFragment extends Fragment implements
             );
 
     private final Observable.OnPropertyChangedCallback mPoemFileCallback =
-            new BindingCallbackAdapter(() -> getActivity().supportInvalidateOptionsMenu());
+            new BindingCallbackAdapter(() -> getActivity().invalidateOptionsMenu());
 
 }
 

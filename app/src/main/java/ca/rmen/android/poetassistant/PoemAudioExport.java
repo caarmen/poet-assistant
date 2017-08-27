@@ -34,7 +34,7 @@ import android.support.annotation.MainThread;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
@@ -138,7 +138,7 @@ class PoemAudioExport {
     private void notifyPoemAudioInProgress() {
         Log.v(TAG, "notifyPoemAudioInProgress");
         cancelNotifications();
-        Notification notification = new NotificationCompat.Builder(mContext)
+        Notification notification = new NotificationCompat.Builder(mContext, NotificationChannel.createNotificationChannel(mContext))
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setContentIntent(getMainActivityIntent())
@@ -154,7 +154,7 @@ class PoemAudioExport {
         Log.v(TAG, "notifyPoemAudioReady");
         cancelNotifications();
         PendingIntent shareIntent = getFileShareIntent();
-        Notification notification = new NotificationCompat.Builder(mContext)
+        Notification notification = new NotificationCompat.Builder(mContext, NotificationChannel.createNotificationChannel(mContext))
                 .setAutoCancel(true)
                 .setContentIntent(shareIntent)
                 .setContentTitle(mContext.getString(R.string.share_poem_audio_ready_notification_title))
@@ -172,7 +172,7 @@ class PoemAudioExport {
     private void notifyPoemAudioFailed() {
         Log.v(TAG, "notifyPoemAudioFailed");
         cancelNotifications();
-        Notification notification = new NotificationCompat.Builder(mContext)
+        Notification notification = new NotificationCompat.Builder(mContext, NotificationChannel.createNotificationChannel(mContext))
                 .setAutoCancel(true)
                 .setContentTitle(mContext.getString(R.string.share_poem_audio_error_notification_title))
                 .setContentText(mContext.getString(R.string.share_poem_audio_error_notification_message))

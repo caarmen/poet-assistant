@@ -29,6 +29,7 @@ import android.support.test.runner.lifecycle.Stage;
 import java.util.Collection;
 
 import ca.rmen.android.poetassistant.Constants;
+import io.reactivex.Observable;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 
@@ -49,11 +50,13 @@ public class ActivityVisibleIdlingResource implements IdlingResource {
         mTargetActivityClassName = targetActivityClassName;
         getInstrumentation().runOnMainSync(() -> {
             Collection<Activity> resumedActivities = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.RESUMED);
-            for(Activity resumedActivity: resumedActivities){
-                if (targetActivityClassName.equals(resumedActivity.getClass().getName())) {
-                    mCurrentActivityClassName = targetActivityClassName;
-                }
-            }
+            Observable.fromIterable(resumedActivities)
+                    .any(resumedActivity -> targetActivityClassName.equals(resumedActivity.getClass().getName()))
+                    .subscribe(targetActivityIsResumed -> {
+                        if (targetActivityIsResumed) {
+                            mCurrentActivityClassName = targetActivityClassName;
+                        }
+                    });
         });
         application.registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks);
     }

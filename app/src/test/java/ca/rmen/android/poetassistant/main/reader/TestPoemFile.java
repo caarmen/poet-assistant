@@ -168,7 +168,7 @@ public class TestPoemFile {
         assertNull(poemFile.uri);
 
         PrintJob printJob = callback.getPrintJob();
-        /* From robolectric, no printjob is actually created :(
+        /* From robolectric, no print job is actually created :(
         assertNotNull(printJob);
         */
     }

@@ -25,7 +25,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Build;
-import android.support.test.espresso.Espresso;
+import android.support.test.espresso.IdlingRegistry;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -93,13 +93,13 @@ public class TaskStackTest {
         ActivityVisibleIdlingResource waitForMainActivity = new ActivityVisibleIdlingResource(
                 (Application) getInstrumentation().getTargetContext().getApplicationContext(),
                 MainActivity.class.getName());
-        Espresso.registerIdlingResources(waitForMainActivity);
+        IdlingRegistry.getInstance().register(waitForMainActivity);
 
         // Check the results
         Activity activity = mActivityTestRule.getActivity();
         checkTitleStripOrTab(activity, R.string.tab_dictionary);
         checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan");
-        Espresso.unregisterIdlingResources(waitForMainActivity);
+        IdlingRegistry.getInstance().unregister(waitForMainActivity);
         waitForMainActivity.destroy();
     }
 

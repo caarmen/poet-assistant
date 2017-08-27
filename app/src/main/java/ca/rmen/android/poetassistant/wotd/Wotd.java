@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.NotificationChannel;
 import ca.rmen.android.poetassistant.compat.HtmlCompat;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.MainActivity;
@@ -116,7 +117,7 @@ public final class Wotd {
                 .setData(uri)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-        Notification notification = new NotificationCompat.Builder(context)
+        Notification notification = new NotificationCompat.Builder(context, NotificationChannel.createNotificationChannel(context))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setContentText(content)

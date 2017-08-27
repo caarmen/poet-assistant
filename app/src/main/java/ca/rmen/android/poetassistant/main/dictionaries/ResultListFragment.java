@@ -172,7 +172,7 @@ public class ResultListFragment<T> extends Fragment
         }
         mHeaderFragment.show();
 
-        getActivity().supportInvalidateOptionsMenu();
+        getActivity().invalidateOptionsMenu();
 
         //noinspection unchecked
         return (Loader<ResultListData<T>>) ResultListFactory.createLoader(mTab, getActivity(), query, filter);
@@ -215,7 +215,7 @@ public class ResultListFragment<T> extends Fragment
         setEmptyText(query);
         mHeaderFragment.setHeader(query);
 
-        getActivity().supportInvalidateOptionsMenu();
+        getActivity().invalidateOptionsMenu();
     }
 
     private void setEmptyText(String query) {

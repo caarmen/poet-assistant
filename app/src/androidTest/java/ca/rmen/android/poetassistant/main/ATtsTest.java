@@ -163,7 +163,7 @@ public class ATtsTest {
     private void slideSeekbar(@StringRes int prefTitleId, GeneralLocation location) {
         //http://stackoverflow.com/questions/23659367/espresso-set-seekbar
         onView(allOf(withId(R.id.seekbar), withParent(withParent(hasDescendant(withText(prefTitleId))))))
-                .perform(new GeneralClickAction(Tap.SINGLE, location, Press.FINGER));
+                .perform(new GeneralClickAction(Tap.SINGLE, location, Press.FINGER, 0, 0));
     }
 
 }

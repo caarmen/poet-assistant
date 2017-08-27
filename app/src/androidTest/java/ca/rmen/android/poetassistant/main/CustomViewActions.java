@@ -52,7 +52,8 @@ final class CustomViewActions {
 
                     return new float[]{screenX, screenY};
                 },
-                Press.FINGER);
+                Press.FINGER,
+                0, 0);
     }
 
     static ViewAction scrollToEnd() {
@@ -98,7 +99,7 @@ final class CustomViewActions {
                 View lastChild = viewGroup.getChildAt(viewGroup.getChildCount() - 1);
                 new GeneralClickAction(Tap.SINGLE,
                         view1 -> GeneralLocation.CENTER.calculateCoordinates(lastChild),
-                        Press.FINGER)
+                        Press.FINGER, 0, 0)
                         .perform(uiController, view);
             }
         };
