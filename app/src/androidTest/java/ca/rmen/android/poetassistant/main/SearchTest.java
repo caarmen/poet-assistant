@@ -33,7 +33,6 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
@@ -45,7 +44,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkPatterns;
-import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkSearchSuggestions;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withAdapterItemCount;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearSearchHistory;
@@ -55,8 +53,6 @@ import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typeQuery;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
@@ -145,17 +141,6 @@ public class SearchTest {
         search("a*");
         onView(allOf(withId(R.id.recycler_view), isDisplayed()))
                 .check(matches(withAdapterItemCount(501)));
-    }
-
-    @Test
-    public void showAllRhymesTest() {
-        search("faith");
-        checkRhymes(mActivityTestRule.getActivity(), "eighth", "interfaith");
-        openMenuItem(R.string.action_settings);
-        clickPreference(R.string.all_rhymes_setting_title);
-        pressBack();
-        search("faith");
-        checkRhymes(mActivityTestRule.getActivity(), "eighth", "haith");
     }
 
 }
