@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -164,11 +165,21 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
     private SortedSet<String> lookupBySyllable(String syllables, String columnName) {
         SortedSet<String> result = new TreeSet<>();
         String[] projection = new String[]{"word"};
-        String selection = columnName + "=?";
+        String selectionColumn = columnName;
+        String inputSyllables = syllables;
+        if (mPrefs.getIsAORAOMatchEnabled() && syllables.contains("AO")) {
+            selectionColumn = String.format(Locale.US, "replace(%s, 'AOR', 'AO')", selectionColumn);
+            inputSyllables = inputSyllables.replaceAll("AOR", "AO");
+        }
+        if (mPrefs.getIsAOAAMatchEnabled() && (syllables.contains("AO") || syllables.contains("AA"))) {
+            selectionColumn = String.format(Locale.US, "replace(%s, 'AO', 'AA')", selectionColumn);
+            inputSyllables = inputSyllables.replaceAll("AO", "AA");
+        }
+        String selection = selectionColumn + " = ? ";
         if (!mPrefs.getIsAllRhymesEnabled()) {
             selection += "AND has_definition=1";
         }
-        String[] selectionArgs = new String[]{syllables};
+        String[] selectionArgs = new String[]{inputSyllables};
         Cursor cursor = mEmbeddedDb.query("word_variants", projection, selection, selectionArgs);
         if (cursor != null) {
             try {
