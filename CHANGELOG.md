@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.20.0  *(2017-08-27)*
+--------------------
+* Add settings to consider some different vowel sounds as identical for rhyming.
+* Make the app compatible with Android O.
+
 1.19.0  *(2017-07-08)*
 --------------------
 * Added an option to print the poem text.
