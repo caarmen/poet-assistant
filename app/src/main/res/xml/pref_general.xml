@@ -73,6 +73,12 @@
             android:summary="@string/all_rhymes_setting_description"
             android:title="@string/all_rhymes_setting_title" />
 
+        <!--suppress AndroidElementNotAllowed -->
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="PREF_STRICT_VOWEL_MATCHING_ENABLED"
+            android:summary="@string/strict_vowel_matching_setting_description"
+            android:title="@string/strict_vowel_matching_setting_title" />
 
         <ListPreference
             android:defaultValue="Light"

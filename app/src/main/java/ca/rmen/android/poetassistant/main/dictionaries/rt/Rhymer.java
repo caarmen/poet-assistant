@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -164,11 +165,20 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
     private SortedSet<String> lookupBySyllable(String syllables, String columnName) {
         SortedSet<String> result = new TreeSet<>();
         String[] projection = new String[]{"word"};
-        String selection = columnName + "=?";
+        String selection;
+        final String[] selectionArgs;
+        if (mPrefs.getIsStrictVowelMatchingEnabled()) {
+            selection = columnName + "= ? ";
+            selectionArgs = new String[]{syllables};
+        } else {
+            selection = String.format(Locale.US, "replace(%s, 'AO', 'AA') = ? ", columnName);
+            selectionArgs = new String[]{
+                    syllables.replaceAll("AO", "AA")
+            };
+        }
         if (!mPrefs.getIsAllRhymesEnabled()) {
             selection += "AND has_definition=1";
         }
-        String[] selectionArgs = new String[]{syllables};
         Cursor cursor = mEmbeddedDb.query("word_variants", projection, selection, selectionArgs);
         if (cursor != null) {
             try {
