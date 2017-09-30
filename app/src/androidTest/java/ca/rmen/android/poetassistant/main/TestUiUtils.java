@@ -98,11 +98,14 @@ class TestUiUtils {
                 .check(matches(isSelected()));
     }
 
-    static void clickPreference(@StringRes int prefTitleRes) {
+    static void scrollToPreference(@StringRes int prefTitleRes) {
         // Scroll to the preference in case it's not visible
         onView(withId(R.id.list))
                 .perform(scrollTo(hasDescendant(withText(prefTitleRes))));
+    }
 
+    static void clickPreference(@StringRes int prefTitleRes) {
+        scrollToPreference(prefTitleRes);
         // click on the preference
         onView(withText(prefTitleRes)).perform(click());
     }

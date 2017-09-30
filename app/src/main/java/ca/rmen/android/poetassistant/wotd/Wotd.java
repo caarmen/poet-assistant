@@ -30,16 +30,18 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.NotificationChannel;
-import ca.rmen.android.poetassistant.compat.HtmlCompat;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.compat.HtmlCompat;
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.dictionaries.Share;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
+import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import io.reactivex.schedulers.Schedulers;
 
@@ -117,7 +119,7 @@ public final class Wotd {
                 .setData(uri)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-        Notification notification = new NotificationCompat.Builder(context, NotificationChannel.createNotificationChannel(context))
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationChannel.createNotificationChannel(context))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setContentText(content)
@@ -127,8 +129,11 @@ public final class Wotd {
                 .addAction(
                         Share.getShareIconId(),
                         context.getString(R.string.share),
-                        getShareIntent(context, entry))
-                .build();
+                        getShareIntent(context, entry));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            builder.setPriority(Settings.NotificationPriority.valueOf(SettingsPrefs.get(context).getWotdNotificationPriority().toUpperCase(Locale.US)).priority);
+        }
+        Notification notification = builder.build();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(TAG.hashCode(), notification);
     }

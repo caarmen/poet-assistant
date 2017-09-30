@@ -33,7 +33,7 @@ public final class NotificationChannel {
             return "";
         } else {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            android.app.NotificationChannel channel = new android.app.NotificationChannel(context.getString(R.string.app_name), context.getString(R.string.app_name), NotificationManager.IMPORTANCE_DEFAULT);
+            android.app.NotificationChannel channel = new android.app.NotificationChannel(context.getString(R.string.app_name), context.getString(R.string.app_name), NotificationManager.IMPORTANCE_LOW);
             notificationManager.createNotificationChannel(channel);
             return channel.getId();
         }

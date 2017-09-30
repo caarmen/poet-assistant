@@ -41,9 +41,15 @@ import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.contrib.RecyclerViewActions.scrollTo;
+import static android.support.test.espresso.matcher.ViewMatchers.hasChildCount;
+import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isEnabled;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -52,6 +58,7 @@ import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withAdapterI
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.scrollToPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
 import static junit.framework.Assert.assertTrue;
@@ -121,5 +128,58 @@ public class RandomWordTest {
         clickPreference(R.string.wotd_setting_title);
     }
 
+    @Test
+    public void wotdNotificationPriorityPresenceTest() {
+        openMenuItem(R.string.action_settings);
+        Matcher<View> prioritySettingMatcher = withText(R.string.wotd_setting_system_notification_priority_title);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            onView(prioritySettingMatcher).check(doesNotExist());
+        } else {
+            onView(withId(R.id.list))
+                    .perform(scrollTo(hasDescendant(prioritySettingMatcher)));
+            onView(prioritySettingMatcher).check(matches(isDisplayed()));
+        }
+    }
 
+    @Test
+    public void wotdNotificationPriorityEnabledTest() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return; // The setting isn't available on O+
+        }
+        openMenuItem(R.string.action_settings);
+        scrollToPreference(R.string.wotd_setting_system_notification_priority_title);
+        onView(withText(R.string.wotd_setting_system_notification_priority_title)).check(matches(not(isEnabled())));
+        clickPreference(R.string.wotd_setting_title);
+        onView(withText(R.string.wotd_setting_system_notification_priority_title)).check(matches(isEnabled()));
+    }
+
+    @Test
+    public void wotdNotificationPrioritySelectionTest() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return; // The setting isn't available on O+
+        }
+        openMenuItem(R.string.action_settings);
+        scrollToPreference(R.string.wotd_setting_system_notification_priority_title);
+        clickPreference(R.string.wotd_setting_title);
+
+        clickPreference(R.string.wotd_setting_system_notification_priority_title);
+        onView(withId(R.id.select_dialog_listview)).check(matches(hasChildCount(5)));
+        onView(withText(R.string.wotd_setting_system_notification_priority_label_default)).check(matches(isChecked()));
+
+        onView(withText(R.string.wotd_setting_system_notification_priority_label_max)).perform(click());
+        clickPreference(R.string.wotd_setting_system_notification_priority_title);
+        onView(withText(R.string.wotd_setting_system_notification_priority_label_max)).check(matches(isChecked()));
+
+        onView(withText(R.string.wotd_setting_system_notification_priority_label_high)).perform(click());
+        clickPreference(R.string.wotd_setting_system_notification_priority_title);
+        onView(withText(R.string.wotd_setting_system_notification_priority_label_high)).check(matches(isChecked()));
+
+        onView(withText(R.string.wotd_setting_system_notification_priority_label_low)).perform(click());
+        clickPreference(R.string.wotd_setting_system_notification_priority_title);
+        onView(withText(R.string.wotd_setting_system_notification_priority_label_low)).check(matches(isChecked()));
+
+        onView(withText(R.string.wotd_setting_system_notification_priority_label_min)).perform(click());
+        clickPreference(R.string.wotd_setting_system_notification_priority_title);
+        onView(withText(R.string.wotd_setting_system_notification_priority_label_min)).check(matches(isChecked()));
+    }
 }

@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 
 import org.jraf.android.prefs.DefaultBoolean;
 import org.jraf.android.prefs.DefaultInt;
@@ -33,6 +34,19 @@ import java.util.Locale;
 
 @Prefs
 public class Settings {
+
+    public enum NotificationPriority {
+        MAX(NotificationCompat.PRIORITY_MAX),
+        HIGH(NotificationCompat.PRIORITY_HIGH),
+        DEFAULT(NotificationCompat.PRIORITY_DEFAULT),
+        LOW(NotificationCompat.PRIORITY_LOW),
+        MIN(NotificationCompat.PRIORITY_MIN);
+        public final int priority;
+        NotificationPriority(int priority) {
+            this.priority = priority;
+        }
+    }
+
     @SuppressWarnings("unused")
     public static final String THEME_LIGHT = "Light";
     public static final String THEME_DARK = "Dark";
@@ -52,6 +66,8 @@ public class Settings {
     static final String PREF_VOICE_PREVIEW = "PREF_VOICE_PREVIEW";
     static final String PREF_THEME = "PREF_THEME";
     static final String PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED";
+    static final String PREF_WOTD_NOTIFICATION_PRIORITY = "PREF_WOTD_NOTIFICATION_PRIORITY";
+    private static final String PREF_WOTD_NOTIFICATION_PRIORITY_DEFAULT = "default";
     @SuppressWarnings("unused")
     private static final String PREF_ALL_RHYMES_ENABLED = "PREF_ALL_RHYMES_ENABLED";
     @SuppressWarnings("unused")
@@ -87,6 +103,11 @@ public class Settings {
     @Name(PREF_WOTD_ENABLED)
     @DefaultBoolean(true)
     Boolean isWotdEnabled;
+
+    @SuppressWarnings("unused")
+    @Name(PREF_WOTD_NOTIFICATION_PRIORITY)
+    @DefaultString(PREF_WOTD_NOTIFICATION_PRIORITY_DEFAULT)
+    String wotdNotificationPriority;
 
     @SuppressWarnings("unused")
     @Name(PREF_ALL_RHYMES_ENABLED)
