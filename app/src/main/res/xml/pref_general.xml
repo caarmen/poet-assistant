@@ -135,6 +135,12 @@
             android:key="PREF_CATEGORY_USER_DATA"
             android:title="@string/pref_category_user_data">
         <Preference
+            android:key="PREF_EXPORT_FAVORITES"
+            android:title="@string/action_export_favorites"/>
+        <Preference
+            android:key="PREF_IMPORT_FAVORITES"
+            android:title="@string/action_import_favorites"/>
+        <Preference
             android:key="PREF_CLEAR_SEARCH_HISTORY"
             android:title="@string/action_clear_search_history"/>
     </PreferenceCategory>

@@ -55,7 +55,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 
-class PoemFile {
+public class PoemFile {
     private static final String TAG = Constants.TAG + PoemFile.class.getSimpleName();
 
     interface PoemFileCallback {
@@ -197,7 +197,7 @@ class PoemFile {
         return textStart;
     }
 
-    private static String readDisplayName(Context context, Uri uri) {
+    public static String readDisplayName(Context context, Uri uri) {
         Cursor cursor = null;
         try {
             cursor = context.getContentResolver().query(uri, null, null, null, null);

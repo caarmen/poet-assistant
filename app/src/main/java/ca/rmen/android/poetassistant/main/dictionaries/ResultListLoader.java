@@ -64,7 +64,7 @@ public abstract class ResultListLoader<T> extends AsyncTaskLoader<T> {
     @SuppressWarnings("unused")
     @Subscribe
     public void onFavoritesChanged(Favorites.OnFavoritesChanged event) {
-        onContentChanged();
+        forceLoad();
     }
 
 }

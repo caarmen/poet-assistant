@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.support.annotation.MainThread;
 import android.support.annotation.WorkerThread;
 import android.support.v7.preference.PreferenceManager;
@@ -32,6 +33,13 @@ import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
@@ -104,21 +112,61 @@ public class Favorites {
         return result;
     }
 
-    @MainThread
-    public void saveFavorite(String word, boolean isFavorite) {
-        if (isFavorite) addFavorite(word);
-        else removeFavorite(word);
+    @WorkerThread
+    public void exportFavorites(Context context, Uri uri) throws IOException {
+        OutputStream outputStream = context.getContentResolver().openOutputStream(uri);
+        if (outputStream == null) throw new IOException("Can't open null output stream");
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+            Set<String> favorites = getFavorites();
+            for (String favorite : favorites) {
+                writer.write(favorite);
+                writer.newLine();
+            }
+        } finally {
+            if (writer != null) writer .close();
+        }
     }
 
     @MainThread
-    private void addFavorite(final String favorite) {
-        Log.v(TAG, "addFavorite " + favorite);
-        executeDbOperation(() -> {
-            ContentValues values = new ContentValues(1);
-            values.put(COLUMN_WORD, favorite);
-            mUserDb.getWritableDatabase().insert(
-                    TABLE_FAVORITE, null, values);
-        });
+    public void saveFavorite(String word, boolean isFavorite) {
+        if (isFavorite) executeDbOperation(() -> insertFavorite(word));
+        else removeFavorite(word);
+    }
+
+    @WorkerThread
+    public void importFavorites(Context context, Uri uri) throws IOException {
+        InputStream inputStream = context.getContentResolver().openInputStream(uri);
+        Set<String> favorites = getFavorites();
+        if (inputStream == null) throw new IOException("Can't open null input stream");
+        mUserDb.getWritableDatabase().beginTransaction();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                if (!TextUtils.isEmpty(line)) {
+                    String favorite = line.trim().toLowerCase(Locale.getDefault());
+                    if (!TextUtils.isEmpty(favorite) && !favorites.contains(favorite)) {
+                        insertFavorite(favorite);
+                        favorites.add(favorite);
+                    }
+                }
+            }
+            mUserDb.getWritableDatabase().setTransactionSuccessful();
+        } finally {
+            mUserDb.getWritableDatabase().endTransaction();
+            if (reader != null) reader.close();
+            AndroidSchedulers.mainThread().scheduleDirect(() -> EventBus.getDefault().post(new OnFavoritesChanged()));
+        }
+    }
+
+    @WorkerThread
+    private void insertFavorite(String favorite) {
+        ContentValues values = new ContentValues(1);
+        values.put(COLUMN_WORD, favorite);
+        mUserDb.getWritableDatabase().insert(
+                TABLE_FAVORITE, null, values);
     }
 
     @MainThread
