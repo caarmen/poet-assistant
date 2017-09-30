@@ -59,6 +59,7 @@ public class SettingsActivity extends AppCompatActivity implements ConfirmDialog
 
     private static final String TAG = Constants.TAG + SettingsActivity.class.getSimpleName();
     private static final int ACTION_CLEAR_SEARCH_HISTORY = 1;
+    private static final String PREF_CATEGORY_OTHER = "PREF_CATEGORY_OTHER";
     private static final String PREF_CATEGORY_VOICE = "PREF_CATEGORY_VOICE";
     private static final String PREF_CLEAR_SEARCH_HISTORY = "PREF_CLEAR_SEARCH_HISTORY";
 
@@ -101,7 +102,7 @@ public class SettingsActivity extends AppCompatActivity implements ConfirmDialog
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(SettingsActivity.this);
             stackBuilder.addNextIntentWithParentStack(intent);
             stackBuilder.startActivities();
-        } else if (Settings.PREF_WOTD_ENABLED.equals(key)) {
+        } else if (Settings.PREF_WOTD_ENABLED.equals(key) || Settings.PREF_WOTD_NOTIFICATION_PRIORITY.equals(key)) {
             Wotd.setWotdEnabled(context, mDictionary, mSettingsPrefs.getIsWotdEnabled());
         }
     };
@@ -167,6 +168,11 @@ public class SettingsActivity extends AppCompatActivity implements ConfirmDialog
                     mRestartTtsOnResume = true;
                     return false;
                 });
+            }
+            // Android O users can change the priority in the system settings.
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Preference wotdNotificationPriorityPreference = findPreference(Settings.PREF_WOTD_NOTIFICATION_PRIORITY);
+                removePreference(PREF_CATEGORY_OTHER, wotdNotificationPriorityPreference);
             }
         }
 
