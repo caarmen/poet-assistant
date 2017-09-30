@@ -35,6 +35,7 @@ import java.util.Locale;
 @Prefs
 public class Settings {
 
+    @SuppressWarnings("unused")
     public enum NotificationPriority {
         MAX(NotificationCompat.PRIORITY_MAX),
         HIGH(NotificationCompat.PRIORITY_HIGH),
@@ -67,6 +68,7 @@ public class Settings {
     static final String PREF_THEME = "PREF_THEME";
     static final String PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED";
     static final String PREF_WOTD_NOTIFICATION_PRIORITY = "PREF_WOTD_NOTIFICATION_PRIORITY";
+    @SuppressWarnings("unused")
     private static final String PREF_WOTD_NOTIFICATION_PRIORITY_DEFAULT = "default";
     @SuppressWarnings("unused")
     private static final String PREF_ALL_RHYMES_ENABLED = "PREF_ALL_RHYMES_ENABLED";

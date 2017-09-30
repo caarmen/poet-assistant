@@ -88,8 +88,8 @@
             android:title="@string/match_aor_ao_setting_title" />
     </PreferenceCategory>
     <PreferenceCategory
-        android:key="PREF_CATEGORY_OTHER"
-        android:title="@string/pref_category_other">
+        android:key="PREF_CATEGORY_UI"
+        android:title="@string/pref_category_ui">
 
         <ListPreference
             android:defaultValue="Light"
@@ -111,6 +111,10 @@
             android:summary="@string/pref_layout_summary"
             android:title="@string/pref_layout_title" />
 
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="PREF_CATEGORY_NOTIFICATIONS"
+        android:title="@string/pref_category_notifications">
         <!--suppress AndroidElementNotAllowed -->
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
@@ -126,6 +130,10 @@
             android:key="PREF_WOTD_NOTIFICATION_PRIORITY"
             android:summary="@string/wotd_setting_system_notification_priority_summary"
             android:title="@string/wotd_setting_system_notification_priority_title" />
+    </PreferenceCategory>
+    <PreferenceCategory
+            android:key="PREF_CATEGORY_USER_DATA"
+            android:title="@string/pref_category_user_data">
         <Preference
             android:key="PREF_CLEAR_SEARCH_HISTORY"
             android:title="@string/action_clear_search_history"/>

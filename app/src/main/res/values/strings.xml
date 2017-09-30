@@ -175,7 +175,9 @@
     <string translatable="false" name="pref_voice_value_without_country"><![CDATA[%1$s<br/><font color=\'#888888\'><small>%2$s</small></font>]]></string>
     <string name="pref_category_voice">Voice settings</string>
     <string name="pref_category_rhyming">Rhyming</string>
-    <string name="pref_category_other">Other</string>
+    <string name="pref_category_user_data">User data</string>
+    <string name="pref_category_notifications">Notifications</string>
+    <string name="pref_category_ui">Interface</string>
     <string name="pref_voice_default">System voice</string>
     <string name="pref_voice_title">Voice</string>
     <string name="pref_voice_summary">%s</string>
