@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.21.0  *(2017-10-01)*
+--------------------
+* Add setting for the priority of the word of the day notification.
+* Add favorites import/export function in the settings screen.
+
 1.20.0  *(2017-08-27)*
 --------------------
 * Add settings to consider some different vowel sounds as identical for rhyming.
