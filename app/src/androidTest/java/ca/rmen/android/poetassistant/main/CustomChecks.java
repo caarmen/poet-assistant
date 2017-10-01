@@ -22,15 +22,16 @@ package ca.rmen.android.poetassistant.main;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.os.Build;
 import android.os.SystemClock;
 import android.support.test.espresso.NoMatchingRootException;
 import android.support.test.espresso.ViewInteraction;
 import android.view.View;
 import android.view.WindowManager;
 
+import org.fest.reflect.core.Reflection;
 import org.hamcrest.Matcher;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 import ca.rmen.android.poetassistant.R;
@@ -56,7 +57,6 @@ import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 class CustomChecks {
     private CustomChecks() {
@@ -136,16 +136,14 @@ class CustomChecks {
     static void checkSingleRootView(Context context) {
         SystemClock.sleep(500);
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        try {
-            Field globalField  = windowManager.getClass().getDeclaredField("mGlobal");
-            globalField.setAccessible(true);
-            Object globalValue = globalField.get(windowManager);
-            Field viewsField = globalValue.getClass().getDeclaredField("mViews");
-            viewsField.setAccessible(true);
-            List viewsValue = (List) viewsField.get(globalValue);
-            assertEquals(1, viewsValue.size());
-        } catch (Exception e) {
-            fail(e.getMessage());
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            Object impl = Reflection.field("mWindowManager").ofType(Object.class).in(windowManager).get();
+            View[] views = Reflection.field("mViews").ofType(View[].class).in(impl).get();
+            assertEquals(1, views.length);
+        } else {
+            Object impl = Reflection.field("mGlobal").ofType(Object.class).in(windowManager).get();
+            List views = Reflection.field("mViews").ofType(List.class).in(impl).get();
+            assertEquals(1, views.size());
         }
     }
 

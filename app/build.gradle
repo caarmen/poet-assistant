@@ -167,6 +167,7 @@ dependencies {
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
     androidTestCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
+    androidTestCompile group: 'org.easytesting', name: 'fest-reflect', version: '1.4.1'
 
     androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
