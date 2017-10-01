@@ -22,12 +22,12 @@ package ca.rmen.android.poetassistant.main;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Application;
 import android.content.Intent;
 import android.os.Build;
 import android.support.test.espresso.IdlingRegistry;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.test.runner.lifecycle.Stage;
 
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -36,7 +36,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.rules.ActivityVisibleIdlingResource;
+import ca.rmen.android.poetassistant.main.rules.ActivityStageIdlingResource;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 
@@ -90,9 +90,9 @@ public class TaskStackTest {
         getInstrumentation().getUiAutomation().executeShellCommand("am start -a android.intent.action.VIEW -d " + deepLinkUrl);
 
         // Wait for the MainActivity to appear
-        ActivityVisibleIdlingResource waitForMainActivity = new ActivityVisibleIdlingResource(
-                (Application) getInstrumentation().getTargetContext().getApplicationContext(),
-                MainActivity.class.getName());
+        ActivityStageIdlingResource waitForMainActivity = new ActivityStageIdlingResource(
+                MainActivity.class.getName(),
+                Stage.RESUMED);
         IdlingRegistry.getInstance().register(waitForMainActivity);
 
         // Check the results
@@ -100,7 +100,6 @@ public class TaskStackTest {
         checkTitleStripOrTab(activity, R.string.tab_dictionary);
         checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan");
         IdlingRegistry.getInstance().unregister(waitForMainActivity);
-        waitForMainActivity.destroy();
     }
 
 }

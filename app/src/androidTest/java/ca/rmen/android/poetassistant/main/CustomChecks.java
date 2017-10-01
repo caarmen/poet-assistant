@@ -134,6 +134,7 @@ class CustomChecks {
     }
 
     static void checkSingleRootView(Context context) {
+        SystemClock.sleep(500);
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         try {
             Field globalField  = windowManager.getClass().getDeclaredField("mGlobal");
