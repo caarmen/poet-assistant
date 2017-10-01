@@ -26,8 +26,12 @@ import android.os.SystemClock;
 import android.support.test.espresso.NoMatchingRootException;
 import android.support.test.espresso.ViewInteraction;
 import android.view.View;
+import android.view.WindowManager;
 
 import org.hamcrest.Matcher;
+
+import java.lang.reflect.Field;
+import java.util.List;
 
 import ca.rmen.android.poetassistant.R;
 
@@ -52,6 +56,7 @@ import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 class CustomChecks {
     private CustomChecks() {
@@ -125,6 +130,21 @@ class CustomChecks {
             for (String word : expectedStarredWords) {
                 onView(allOf(withId(R.id.text1), withParent(withParent(recyclerViewMatch)), withText(word))).check(matches(isDisplayed()));
             }
+        }
+    }
+
+    static void checkSingleRootView(Context context) {
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        try {
+            Field globalField  = windowManager.getClass().getDeclaredField("mGlobal");
+            globalField.setAccessible(true);
+            Object globalValue = globalField.get(windowManager);
+            Field viewsField = globalValue.getClass().getDeclaredField("mViews");
+            viewsField.setAccessible(true);
+            List viewsValue = (List) viewsField.get(globalValue);
+            assertEquals(1, viewsValue.size());
+        } catch (Exception e) {
+            fail(e.getMessage());
         }
     }
 

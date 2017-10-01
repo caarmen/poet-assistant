@@ -44,6 +44,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkPatterns;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkSingleRootView;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkSearchSuggestions;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withAdapterItemCount;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearSearchHistory;
@@ -71,16 +72,16 @@ public class SearchTest {
         checkSearchSuggestions("heavyset");
 
         searchAutoComplete.perform(typeText("z"));
-        checkSearchSuggestions();
+        checkSingleRootView(mActivityTestRule.getActivity());
     }
 
     @Test
     public void searchHistoryTest() {
         openSearchView();
-        checkSearchSuggestions();
+        checkSingleRootView(mActivityTestRule.getActivity());
 
         ViewInteraction searchAutoComplete = typeQuery("carmen");
-        checkSearchSuggestions();
+        checkSingleRootView(mActivityTestRule.getActivity());
 
         searchAutoComplete.perform(pressImeActionButton());
 
@@ -88,7 +89,7 @@ public class SearchTest {
         checkSearchSuggestions("carmen");
 
         typeQuery("benoit");
-        checkSearchSuggestions();
+        checkSingleRootView(mActivityTestRule.getActivity());
         searchAutoComplete.perform(pressImeActionButton());
 
         openSearchView();
@@ -106,7 +107,7 @@ public class SearchTest {
         clearSearchHistory();
 
         openSearchView();
-        checkSearchSuggestions();
+        checkSingleRootView(mActivityTestRule.getActivity());
         typeQuery("carme");
         checkSearchSuggestions("carmelite");
     }
