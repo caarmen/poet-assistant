@@ -20,7 +20,9 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.support.test.espresso.IdlingRegistry;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -86,15 +88,23 @@ public class FavoritesTest {
         checkAllStarredWords(context);
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Test
     public void exportTest() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            return;
+        }
         openMenuItem(R.string.action_settings);
         clickPreference(R.string.action_export_favorites);
         checkActivityHidden(SettingsActivity.class.getName());
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Test
     public void importTest() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            return;
+        }
         openMenuItem(R.string.action_settings);
         clickPreference(R.string.action_import_favorites);
         checkActivityHidden(SettingsActivity.class.getName());
