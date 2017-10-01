@@ -20,20 +20,18 @@
 package ca.rmen.android.poetassistant.main;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.test.espresso.IdlingRegistry;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Collection;
 import java.util.EnumSet;
+import java.util.Set;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.ActivityStageIdlingResource;
@@ -92,40 +90,26 @@ public class FavoritesTest {
     public void exportTest() {
         openMenuItem(R.string.action_settings);
         clickPreference(R.string.action_export_favorites);
-        checkActivityPaused(SettingsActivity.class.getName());
+        checkActivityHidden(SettingsActivity.class.getName());
     }
 
     @Test
     public void importTest() {
         openMenuItem(R.string.action_settings);
         clickPreference(R.string.action_import_favorites);
-        checkActivityPaused(SettingsActivity.class.getName());
+        checkActivityHidden(SettingsActivity.class.getName());
     }
 
-    private void checkActivityPaused(String activityClassName) {
+    private void checkActivityHidden(String activityClassName) {
         // Wait for the activity to pause
-        ActivityStageIdlingResource waitForActivityPause = new ActivityStageIdlingResource(
-                activityClassName,
-                EnumSet.of(Stage.PAUSED, Stage.STOPPED));
+        Set<Stage> stages = EnumSet.of(Stage.PAUSED, Stage.STOPPED);
+        ActivityStageIdlingResource waitForActivityPause =
+                new ActivityStageIdlingResource(activityClassName, stages);
         IdlingRegistry.getInstance().register(waitForActivityPause);
         getInstrumentation().runOnMainSync(() -> {
-            Collection<Activity> pausedActivities = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.PAUSED);
-            Collection<Activity> stoppedActivities = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(Stage.STOPPED);
-            boolean found = false;
-            for (Activity activity : pausedActivities) {
-                if (activity.getClass().getName().equals(activityClassName)) {
-                    found = true;
-                }
-            }
-            for (Activity activity : stoppedActivities) {
-                if (activity.getClass().getName().equals(activityClassName)) {
-                    found = true;
-                }
-            }
-            assertTrue("activities doesn't contain " + activityClassName + ": paused: " + pausedActivities + ", stopped: " + stoppedActivities, found);
+            assertTrue("activity " + activityClassName + "not paused or stopped", ActivityStageIdlingResource.isActivityInStages(activityClassName, stages));
             IdlingRegistry.getInstance().unregister(waitForActivityPause);
         });
     }
-
 }
 

@@ -31,16 +31,15 @@ import io.reactivex.Observable;
 
 public class ActivityStageIdlingResource implements IdlingResource {
     private static final String TAG = Constants.TAG + ActivityStageIdlingResource.class.getSimpleName();
-    private final String mTargetActivityClassName;
-
+    private final String mActivityClassName;
     private ResourceCallback mCallback;
     private Set<Stage> mMatchingStages;
 
     /**
      * Becomes idle when the given activity enters the given stage.
      */
-    public ActivityStageIdlingResource(String targetActivityClassName, Stage stage) {
-        this(targetActivityClassName, EnumSet.of(stage));
+    public ActivityStageIdlingResource(String activityClassName, Stage stage) {
+        this(activityClassName, EnumSet.of(stage));
     }
 
     /**
@@ -48,7 +47,7 @@ public class ActivityStageIdlingResource implements IdlingResource {
      */
     public ActivityStageIdlingResource(String targetActivityClassName, Set<Stage> stages) {
         mMatchingStages = stages;
-        mTargetActivityClassName = targetActivityClassName;
+        mActivityClassName = targetActivityClassName;
     }
 
     @Override
@@ -58,12 +57,19 @@ public class ActivityStageIdlingResource implements IdlingResource {
 
     @Override
     public boolean isIdleNow() {
-        boolean isShowing = Observable.fromIterable(mMatchingStages)
+        boolean isInStages = isActivityInStages(mActivityClassName, mMatchingStages);
+        if (isInStages && mCallback != null) mCallback.onTransitionToIdle();
+        return isInStages;
+    }
+
+    /**
+     * @return true if the given activity is in one of the given stages.
+     */
+    public static boolean isActivityInStages(String activityClassName, Set<Stage> stages) {
+        return Observable.fromIterable(stages)
                 .flatMapIterable(stage -> ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(stage))
-                .any(matchedActivity -> mTargetActivityClassName.equals(matchedActivity.getClass().getName()))
+                .any(matchedActivity -> activityClassName.equals(matchedActivity.getClass().getName()))
                 .blockingGet();
-        if (isShowing && mCallback != null) mCallback.onTransitionToIdle();
-        return isShowing;
     }
 
     @Override
