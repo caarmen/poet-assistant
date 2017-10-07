@@ -93,7 +93,7 @@ public class ResultListFragment<T> extends Fragment
             getChildFragmentManager().beginTransaction().replace(R.id.result_list_header, mHeaderFragment).commit();
         }
         //noinspection unchecked
-        mViewModel = (ResultListViewModel<T>) ResultListFactory.createViewModel(mTab);
+        mViewModel = (ResultListViewModel<T>) ResultListFactory.createViewModel(mTab, this);
         mBinding.setViewModel(mViewModel);
         mPrefs.registerOnSharedPreferenceChangeListener(mPrefsListener);
         return mBinding.getRoot();

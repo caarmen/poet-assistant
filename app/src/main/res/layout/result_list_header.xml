@@ -204,7 +204,7 @@
                 android:freezesText="true"
                 android:gravity="center_vertical"
                 android:textColor="#37474f"
-                android:text="@{viewModel.filter}"
+                android:text="@={viewModel.filter}"
                 tools:text="yesterday" />
 
             <android.support.v7.widget.AppCompatImageView

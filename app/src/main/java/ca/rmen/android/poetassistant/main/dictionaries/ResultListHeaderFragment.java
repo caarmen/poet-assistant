@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.app.SearchManager;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -114,14 +115,13 @@ public class ResultListHeaderFragment extends Fragment
     public void onDestroyView() {
         super.onDestroyView();
         EventBus.getDefault().unregister(this);
-        mBinding.getViewModel().destroy();
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         Log.v(TAG, mTab + " onViewStateRestored, bundle = " + savedInstanceState);
         super.onViewStateRestored(savedInstanceState);
-        ResultListHeaderViewModel resultListHeaderViewModel = new ResultListHeaderViewModel(getContext(), mBinding.tvListHeader.getText().toString(), mBinding.tvFilter.getText().toString());
+        ResultListHeaderViewModel resultListHeaderViewModel = ViewModelProviders.of(this).get(ResultListHeaderViewModel.class);
         mBinding.setViewModel(resultListHeaderViewModel);
         updateUi();
     }

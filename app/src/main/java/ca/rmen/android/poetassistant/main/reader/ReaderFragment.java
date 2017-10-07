@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.main.reader;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
@@ -90,7 +91,7 @@ public class ReaderFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView() called with: " + "inflater = [" + inflater + "], container = [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
         FragmentReaderBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false);
-        mViewModel = new ReaderViewModel(getContext());
+        mViewModel = ViewModelProviders.of(this).get(ReaderViewModel.class);
         binding.setViewModel(mViewModel);
         mViewModel.snackbarText.addOnPropertyChangedCallback(mSnackbarCallback);
         mViewModel.ttsError.addOnPropertyChangedCallback(mTtsErrorCallback);

@@ -19,7 +19,8 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries;
 
-import android.content.Context;
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 
@@ -36,7 +37,7 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class ResultListHeaderViewModel {
+public class ResultListHeaderViewModel extends AndroidViewModel {
 
     public final ObservableField<String> query = new ObservableField<>();
     public final ObservableField<String> filter = new ObservableField<>();
@@ -44,18 +45,19 @@ public class ResultListHeaderViewModel {
     @Inject
     Favorites mFavorites;
 
-    ResultListHeaderViewModel(Context context, String queryText, String filterText) {
-        DaggerHelper.getMainScreenComponent(context).inject(this);
+    public ResultListHeaderViewModel(Application application) {
+        super(application);
+        DaggerHelper.getMainScreenComponent(application).inject(this);
         // When the query text changes, update the star icon
         query.addOnPropertyChangedCallback(new BindingCallbackAdapter(this::readFavorite));
         // When the user taps on the star icon, update the favorite in the DB
         isFavorite.addOnPropertyChangedCallback(mPersistFavoriteCallback);
-        query.set(queryText); // This will cause the star icon to be updated too
-        filter.set(filterText);
         EventBus.getDefault().register(this);
     }
 
-    void destroy() {
+    @Override
+    protected void onCleared() {
+        super.onCleared();
         EventBus.getDefault().unregister(this);
     }
 

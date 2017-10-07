@@ -19,6 +19,8 @@
 package ca.rmen.android.poetassistant.main.reader;
 
 import android.annotation.TargetApi;
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.databinding.ObservableBoolean;
@@ -47,7 +49,7 @@ import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
 
-public class ReaderViewModel {
+public class ReaderViewModel extends AndroidViewModel {
     private static final String TAG = Constants.TAG + ReaderViewModel.class.getSimpleName();
 
     class SnackbarText {
@@ -73,13 +75,14 @@ public class ReaderViewModel {
     private final PoemPrefs mPoemPrefs;
     private final SharedPreferences mSharedPreferences;
 
-    ReaderViewModel(Context context) {
-        DaggerHelper.getMainScreenComponent(context).inject(this);
+    public ReaderViewModel(Application application) {
+        super(application);
+        DaggerHelper.getMainScreenComponent(application).inject(this);
         mHandler = new Handler();
         poem.addOnPropertyChangedCallback(new BindingCallbackAdapter(this::updatePlayButton));
         EventBus.getDefault().register(this);
-        mPoemPrefs = new PoemPrefs(context);
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        mPoemPrefs = new PoemPrefs(application);
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(application);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(mPrefsListener);
         poemFile.set(mPoemPrefs.getSavedPoem());
     }
