@@ -137,7 +137,7 @@ public class ResultListFragment<T> extends Fragment
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.action_share).setEnabled(mViewModel.isDataAvailable());
+        menu.findItem(R.id.action_share).setEnabled(mViewModel.isDataAvailable.get());
     }
 
     public void query(String query) {
@@ -205,7 +205,7 @@ public class ResultListFragment<T> extends Fragment
 
     private void updateUi() {
         Log.d(TAG, mTab + ": updateUi() called with: " + "");
-        if (mViewModel.isDataAvailable() || !TextUtils.isEmpty(mHeaderFragment.getHeader())) {
+        if (mViewModel.isDataAvailable.get() || !TextUtils.isEmpty(mHeaderFragment.getHeader())) {
             mHeaderFragment.show();
         } else {
             mHeaderFragment.hide();

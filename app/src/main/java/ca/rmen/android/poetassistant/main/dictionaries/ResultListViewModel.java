@@ -20,36 +20,26 @@
 package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.arch.lifecycle.ViewModel;
-import android.databinding.Bindable;
-import android.databinding.Observable;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
-import android.databinding.PropertyChangeRegistry;
 import android.util.Log;
 
-import ca.rmen.android.poetassistant.BR;
 import ca.rmen.android.poetassistant.Constants;
 
-public class ResultListViewModel<T> extends ViewModel
-        // We need both ViewModel and BaseObservable
-        // https://medium.com/@dpreussler/add-the-new-viewmodel-to-your-mvvm-36bfea86b159
-        implements Observable {
+public class ResultListViewModel<T> extends ViewModel {
     private static final String TAG = Constants.TAG + ResultListViewModel.class.getSimpleName();
 
     final ObservableField<ResultListData<T>> data = new ObservableField<>();
+    public final ObservableBoolean isDataAvailable = new ObservableBoolean();
     private ResultListAdapter<T> mAdapter;
-    private final PropertyChangeRegistry mCallbacks = new PropertyChangeRegistry();
-
-    public ResultListViewModel() {
-        super();
-    }
 
     void setAdapter(ResultListAdapter<T> adapter) {
         mAdapter = adapter;
     }
 
-    @Bindable
-    public boolean isDataAvailable() {
-        return mAdapter != null && mAdapter.getItemCount() > 0;
+    private void updateDataAvailable() {
+        isDataAvailable.set(mAdapter != null && mAdapter.getItemCount() > 0);
+        isDataAvailable.notifyChange();
     }
 
     void setData(ResultListData<T> loadedData) {
@@ -57,21 +47,10 @@ public class ResultListViewModel<T> extends ViewModel
         mAdapter.clear();
         if (loadedData != null) mAdapter.addAll(loadedData.data);
         data.set(loadedData);
-        mCallbacks.notifyCallbacks(this, BR.dataAvailable, null);
+        updateDataAvailable();
     }
 
     String getUsedQueryWord() {
         return data.get() == null ? null : data.get().matchedWord;
     }
-
-    @Override
-    public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
-        mCallbacks.add(callback);
-    }
-
-    @Override
-    public void removeOnPropertyChangedCallback(OnPropertyChangedCallback callback) {
-        mCallbacks.remove(callback);
-    }
-
 }
