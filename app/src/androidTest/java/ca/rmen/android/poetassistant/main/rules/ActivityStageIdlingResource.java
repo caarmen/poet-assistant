@@ -33,7 +33,7 @@ public class ActivityStageIdlingResource implements IdlingResource {
     private static final String TAG = Constants.TAG + ActivityStageIdlingResource.class.getSimpleName();
     private final String mActivityClassName;
     private ResourceCallback mCallback;
-    private Set<Stage> mMatchingStages;
+    private final Set<Stage> mMatchingStages;
 
     /**
      * Becomes idle when the given activity enters the given stage.

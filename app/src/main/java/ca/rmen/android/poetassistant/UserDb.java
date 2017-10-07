@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -19,35 +19,37 @@
 
 package ca.rmen.android.poetassistant;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+import android.arch.persistence.db.SupportSQLiteDatabase;
+import android.arch.persistence.room.Database;
+import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.migration.Migration;
 
-import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions;
+import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestion;
+import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionDao;
 
+// https://medium.com/google-developers/7-steps-to-room-27a5fe5f99b2
+@Database(entities = {Favorite.class, Suggestion.class}, version = 2)
+public abstract class UserDb extends RoomDatabase {
 
-public class UserDb extends SQLiteOpenHelper {
+    public abstract FavoriteDao favoriteDao();
 
-    private static final String TAG = Constants.TAG + UserDb.class.getSimpleName();
+    public abstract SuggestionDao suggestionDao();
 
-    private static final String DB_NAME = "userdata.db";
-    private static final int DB_VERSION = 1;
-    private final Context mContext;
-
-    public UserDb(Context context) {
-        super(context, DB_NAME, null, DB_VERSION);
-        mContext = context;
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        Favorites.createTable(mContext, db);
-        Suggestions.createTable(mContext, db);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.v(TAG, "onUpgrade: oldVersion = " + oldVersion + ", newVersion = " + newVersion);
-    }
+    public static final Migration MIGRATION_1_2 = new Migration(1, 2) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE `FAVORITE_TEMP` AS SELECT * FROM `FAVORITE`");
+            database.execSQL("CREATE TABLE `SUGGESTION_TEMP` AS SELECT * FROM `SUGGESTION`");
+            database.execSQL("DROP TABLE `FAVORITE`");
+            database.execSQL("DROP TABLE `SUGGESTION`");
+            database.execSQL("CREATE TABLE `FAVORITE` (`WORD` TEXT NOT NULL, PRIMARY KEY(`WORD`))");
+            database.execSQL("CREATE TABLE `SUGGESTION` (`WORD` TEXT NOT NULL, PRIMARY KEY(`WORD`))");
+            database.execSQL("CREATE UNIQUE INDEX `index_FAVORITE_WORD` ON `FAVORITE` (`WORD`)");
+            database.execSQL("CREATE UNIQUE INDEX `index_SUGGESTION_WORD` ON `SUGGESTION` (`WORD`)");
+            database.execSQL("INSERT OR IGNORE INTO `FAVORITE` SELECT * FROM `FAVORITE_TEMP`");
+            database.execSQL("INSERT OR IGNORE INTO `SUGGESTION` SELECT * FROM `SUGGESTION_TEMP`");
+            database.execSQL("DROP TABLE `FAVORITE_TEMP`");
+            database.execSQL("DROP TABLE `SUGGESTION_TEMP`");
+        }
+    };
 }

@@ -19,9 +19,9 @@
 package ca.rmen.android.poetassistant.main.rules;
 
 import android.app.NotificationManager;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.support.test.espresso.IdlingRegistry;
 import android.support.test.espresso.IdlingResource;
@@ -59,9 +59,13 @@ final class ActivityTestRules {
     }
 
     private static void cleanup(Context targetContext) {
-        SQLiteDatabase db = new UserDb(targetContext).getWritableDatabase();
-        db.delete("SUGGESTION", null, null);
-        db.delete("FAVORITE", null, null);
+        UserDb userDb = Room.databaseBuilder(
+                targetContext,
+                UserDb.class, "userdata.db")
+                .build();
+        userDb.favoriteDao().deleteAll();
+        userDb.suggestionDao().deleteAll();
+        userDb.close();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(targetContext);
         prefs.edit().clear().apply();
         File filesDir = targetContext.getFilesDir();

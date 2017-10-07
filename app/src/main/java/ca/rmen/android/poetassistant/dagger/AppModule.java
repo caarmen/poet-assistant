@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.dagger;
 
 import android.app.Application;
+import android.arch.persistence.room.Room;
 
 import javax.inject.Singleton;
 
@@ -44,7 +45,9 @@ public class AppModule {
 
     public AppModule(Application application) {
         mApplication = application;
-        mUserDb = new UserDb(application);
+        mUserDb = Room.databaseBuilder(application,
+                UserDb.class, "userdata.db")
+                .addMigrations(UserDb.MIGRATION_1_2).build();
     }
 
     @Provides @Singleton Tts providesTts(SettingsPrefs settingsPrefs) {
@@ -73,10 +76,10 @@ public class AppModule {
     }
 
     @Provides Favorites providesFavorites() {
-        return new Favorites(mUserDb);
+        return new Favorites(mUserDb.favoriteDao());
     }
 
     @Provides Suggestions providesSuggestions() {
-        return new Suggestions(mUserDb);
+        return new Suggestions(mUserDb.suggestionDao());
     }
 }

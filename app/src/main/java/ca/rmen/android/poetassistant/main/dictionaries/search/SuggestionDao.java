@@ -19,33 +19,23 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.search;
 
-import android.support.annotation.WorkerThread;
+import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
+import android.arch.persistence.room.Query;
 
 import java.util.List;
 
-import io.reactivex.Observable;
+@Dao
+public interface SuggestionDao {
 
-public class Suggestions {
+    @Query("SELECT * FROM SUGGESTION")
+    List<Suggestion> getSuggestions();
 
-    private final SuggestionDao mSuggestionDao;
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertAll(Suggestion... suggestions);
 
-    public Suggestions(SuggestionDao suggestionDao) {
-        mSuggestionDao = suggestionDao;
-    }
-
-    @WorkerThread
-    List<String> getSuggestions() {
-        return Observable.fromIterable(mSuggestionDao.getSuggestions()).map(Suggestion::getWord).toList().blockingGet();
-    }
-
-    @WorkerThread
-    void addSuggestion(final String suggestion) {
-        mSuggestionDao.insertAll(new Suggestion(suggestion));
-    }
-
-    @WorkerThread
-    void clear() {
-        mSuggestionDao.deleteAll();
-    }
+    @Query("DELETE FROM SUGGESTION")
+    void deleteAll();
 
 }
