@@ -42,6 +42,7 @@ android {
         abortOnError true
         textReport true
         ignoreWarnings true
+        disable 'RestrictedApi'  // https://stackoverflow.com/questions/45648530/restricted-api-lint-error-when-deleting-table-room-persistence
     }
 
     defaultConfig {
