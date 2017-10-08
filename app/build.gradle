@@ -61,7 +61,7 @@ android {
         // used by Room, to test migrations
         sourceSets {
             androidTest.assets.srcDirs +=
-                    files("$projectDir/schemas".toString())
+                    files("$projectDir/src/androidTest/schemas".toString())
         }
 
         // used by Room, to test migrations

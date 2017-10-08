@@ -1,0 +1,71 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "c39757d37889d7e33f74a89510a6b4e1",
+    "entities": [
+      {
+        "tableName": "FAVORITE",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`WORD` TEXT NOT NULL, PRIMARY KEY(`WORD`))",
+        "fields": [
+          {
+            "fieldPath": "mWord",
+            "columnName": "WORD",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "WORD"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_FAVORITE_WORD",
+            "unique": true,
+            "columnNames": [
+              "WORD"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_FAVORITE_WORD` ON `${TABLE_NAME}` (`WORD`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "SUGGESTION",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`WORD` TEXT NOT NULL, PRIMARY KEY(`WORD`))",
+        "fields": [
+          {
+            "fieldPath": "mWord",
+            "columnName": "WORD",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "WORD"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_SUGGESTION_WORD",
+            "unique": true,
+            "columnNames": [
+              "WORD"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_SUGGESTION_WORD` ON `${TABLE_NAME}` (`WORD`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"c39757d37889d7e33f74a89510a6b4e1\")"
+    ]
+  }
+}
