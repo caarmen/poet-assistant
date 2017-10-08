@@ -19,7 +19,6 @@
 
 package ca.rmen.android.poetassistant.main.reader;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -141,43 +140,22 @@ public class ReaderFragment extends Fragment implements
                     getString(R.string.action_clear),
                     getChildFragmentManager(),
                     DIALOG_TAG);
-        } else if (item.getItemId() == R.id.action_open) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) open();
-        } else if (item.getItemId() == R.id.action_save) {
-            mViewModel.save(getActivity());
-        } else if (item.getItemId() == R.id.action_save_as) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) saveAs();
-        } else if (item.getItemId() == R.id.action_print) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) mViewModel.print(getActivity());
         } else if (item.getItemId() == R.id.action_share_poem_text || item.getItemId() == R.id.action_share) {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.putExtra(Intent.EXTRA_TEXT, mViewModel.poem.get());
-            intent.setType("text/plain");
-            startActivity(Intent.createChooser(intent, getString(R.string.share)));
+            mViewModel.sharePoem();
         } else if (item.getItemId() == R.id.action_share_poem_audio) {
             mViewModel.speakToFile();
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (item.getItemId() == R.id.action_open) {
+                startActivityForResult(mViewModel.getOpenFileIntent(), ACTION_FILE_OPEN);
+            } else if (item.getItemId() == R.id.action_save) {
+                mViewModel.save(getActivity());
+            } else if (item.getItemId() == R.id.action_save_as) {
+                startActivityForResult(mViewModel.getSaveAsFileIntent(), ACTION_FILE_SAVE_AS);
+            } else if (item.getItemId() == R.id.action_print) {
+                mViewModel.print(getActivity());
+            }
         }
         return true;
-    }
-
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private void open() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        PoemFile poemFile = mViewModel.poemFile.get();
-        if (poemFile != null) intent.setData(poemFile.uri);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("text/plain");
-        startActivityForResult(intent, ACTION_FILE_OPEN);
-    }
-
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private void saveAs() {
-        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("text/plain");
-        String fileName = mViewModel.getSaveAsFilename();
-        if (!TextUtils.isEmpty(fileName)) intent.putExtra(Intent.EXTRA_TITLE, fileName);
-        startActivityForResult(intent, ACTION_FILE_SAVE_AS);
     }
 
     @Override
@@ -194,27 +172,16 @@ public class ReaderFragment extends Fragment implements
         mViewModel.snackbarText.removeOnPropertyChangedCallback(mSnackbarCallback);
         mViewModel.ttsError.removeOnPropertyChangedCallback(mTtsErrorCallback);
         mViewModel.poemFile.removeOnPropertyChangedCallback(mPoemFileCallback);
-        mViewModel.destroy();
-    }
-
-    @Override
-    public void onDestroy() {
-        Log.d(TAG, "onDestroy() called with: " + "");
-        super.onDestroy();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult() called with: " + "requestCode = [" + requestCode + "], resultCode = [" + resultCode + "], data = [" + data + "]");
-        if (requestCode == ACTION_FILE_OPEN && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                mViewModel.open(getActivity(), data.getData());
-            }
-        } else if (requestCode == ACTION_FILE_SAVE_AS && resultCode == Activity.RESULT_OK) {
-            if (data != null) {
-                mViewModel.saveAs(getActivity(), data.getData());
-            }
+        if (requestCode == ACTION_FILE_OPEN && resultCode == Activity.RESULT_OK && data != null) {
+            mViewModel.open(getActivity(), data.getData());
+        } else if (requestCode == ACTION_FILE_SAVE_AS && resultCode == Activity.RESULT_OK && data != null) {
+            mViewModel.saveAs(getActivity(), data.getData());
         }
     }
 

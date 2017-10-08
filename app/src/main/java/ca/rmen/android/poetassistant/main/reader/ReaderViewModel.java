@@ -22,6 +22,7 @@ import android.annotation.TargetApi;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
@@ -48,6 +49,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
+import ca.rmen.android.poetassistant.main.dictionaries.Share;
 
 public class ReaderViewModel extends AndroidViewModel {
     private static final String TAG = Constants.TAG + ReaderViewModel.class.getSimpleName();
@@ -199,6 +201,27 @@ public class ReaderViewModel extends AndroidViewModel {
         PoemFile.save(context, uri, poem.get(), mPoemFileCallback);
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    Intent getOpenFileIntent() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        if (poemFile.get() != null) {
+            intent.setData(poemFile.get().uri);
+        }
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/plain");
+        return intent;
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    Intent getSaveAsFileIntent() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/plain");
+        String fileName = getSaveAsFilename();
+        if (!TextUtils.isEmpty(fileName)) intent.putExtra(Intent.EXTRA_TITLE, fileName);
+        return intent;
+    }
+
     void open(Context context, Uri uri) {
         PoemFile.open(context, uri, mPoemFileCallback);
     }
@@ -212,6 +235,10 @@ public class ReaderViewModel extends AndroidViewModel {
             String tempPoemText = mPoemPrefs.getTempPoem();
             poem.set(tempPoemText);
         }
+    }
+
+    void sharePoem() {
+        Share.share(getApplication(), poem.get());
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -267,10 +294,10 @@ public class ReaderViewModel extends AndroidViewModel {
     // end saving/opening files
 
 
-    void destroy() {
+    @Override
+    protected void onCleared() {
         EventBus.getDefault().unregister(this);
         mSharedPreferences.unregisterOnSharedPreferenceChangeListener(mPrefsListener);
+        super.onCleared();
     }
-
-
 }
