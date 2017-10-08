@@ -124,14 +124,14 @@ public final class ResultListFactory {
                     case RHYMER:
                     case THESAURUS:
                         //noinspection unchecked
-                        return (T) new ResultListViewModel<RTEntryViewModel>(application);
+                        return (T) new ResultListViewModel<RTEntryViewModel>(application, tab);
                     case WOTD:
                         //noinspection unchecked
-                        return (T) new ResultListViewModel<WotdEntryViewModel>(application);
+                        return (T) new ResultListViewModel<WotdEntryViewModel>(application, tab);
                     case DICTIONARY:
                     default:
                         //noinspection unchecked
-                        return (T) new ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application);
+                        return (T) new ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, tab);
                 }
             }
         };

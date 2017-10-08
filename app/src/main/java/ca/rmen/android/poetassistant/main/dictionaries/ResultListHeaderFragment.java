@@ -40,13 +40,12 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding;
 import ca.rmen.android.poetassistant.main.Tab;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFilterListener;
 
 public class ResultListHeaderFragment extends Fragment
     implements FilterDialogFragment.FilterDialogListener,
@@ -70,31 +69,6 @@ public class ResultListHeaderFragment extends Fragment
         ResultListHeaderFragment fragment = new ResultListHeaderFragment();
         fragment.setArguments(arguments);
         return fragment;
-    }
-
-    public void show() {
-        mBinding.getRoot().setVisibility(View.VISIBLE);
-    }
-
-    public void hide() {
-        mBinding.getRoot().setVisibility(View.GONE);
-    }
-
-    public void setHeader(String header) {
-        Log.v(TAG, mTab + " setHeader " + header);
-        mBinding.getViewModel().query.set(header);
-    }
-
-    public void setFilter(String filter) {
-        mBinding.getViewModel().filter.set(filter);
-    }
-
-    public String getHeader() {
-        return mBinding.getViewModel().query.get();
-    }
-
-    public String getFilter() {
-        return mBinding.getViewModel().filter.get();
     }
 
     @Nullable
@@ -121,17 +95,15 @@ public class ResultListHeaderFragment extends Fragment
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         Log.v(TAG, mTab + " onViewStateRestored, bundle = " + savedInstanceState);
         super.onViewStateRestored(savedInstanceState);
-        ResultListHeaderViewModel resultListHeaderViewModel = ViewModelProviders.of(this).get(ResultListHeaderViewModel.class);
+        ResultListHeaderViewModel resultListHeaderViewModel = ViewModelProviders.of(getParentFragment()).get(ResultListHeaderViewModel.class);
         mBinding.setViewModel(resultListHeaderViewModel);
         updateUi();
     }
 
     @Override
     public void onFilterSubmitted(String input) {
-        OnFilterListener listener = (OnFilterListener) getParentFragment();
         String normalizedInput = input == null ? null : input.toLowerCase(Locale.getDefault()).trim();
-        setFilter(normalizedInput);
-        listener.onFilterSubmitted(normalizedInput);
+        mBinding.getViewModel().filter.set(normalizedInput);
     }
 
     @Override
@@ -195,8 +167,7 @@ public class ResultListHeaderFragment extends Fragment
         }
 
         public void onFilterClearButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            setFilter(null);
-            ((OnFilterListener) getParentFragment()).onFilterSubmitted(null);
+            mBinding.getViewModel().filter.set(null);
         }
     }
 }

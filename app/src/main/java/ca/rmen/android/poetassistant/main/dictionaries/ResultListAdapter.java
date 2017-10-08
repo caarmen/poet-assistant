@@ -35,7 +35,7 @@ public abstract class ResultListAdapter<T> extends RecyclerView.Adapter<ResultLi
     }
 
     void addAll(List<T> data) {
-        mData.addAll(data);
+        if (data != null) mData.addAll(data);
         notifyDataSetChanged();
     }
 

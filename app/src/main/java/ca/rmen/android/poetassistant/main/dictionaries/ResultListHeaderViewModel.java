@@ -42,6 +42,7 @@ public class ResultListHeaderViewModel extends AndroidViewModel {
     public final ObservableField<String> query = new ObservableField<>();
     public final ObservableField<String> filter = new ObservableField<>();
     public final ObservableBoolean isFavorite = new ObservableBoolean();
+    public final ObservableBoolean showHeader = new ObservableBoolean();
     @Inject
     Favorites mFavorites;
 

@@ -41,7 +41,7 @@
         android:orientation="vertical"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:visibility="gone"
+        android:visibility="@{viewModel.showHeader? View.VISIBLE : View.GONE}"
         tools:visibility="visible">
 
         <RelativeLayout

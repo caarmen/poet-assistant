@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:visibility="@{viewModel.isDataAvailable? View.GONE : View.VISIBLE}"
-                tools:text="Empty text here"
+                tools:text="@{viewModel.emptyText}"
                 android:text="@null" />
 
             <android.support.v7.widget.RecyclerView
