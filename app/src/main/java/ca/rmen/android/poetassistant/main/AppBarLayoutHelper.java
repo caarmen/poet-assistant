@@ -20,29 +20,43 @@
 package ca.rmen.android.poetassistant.main;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.design.widget.AppBarLayout;
 import android.view.View;
 
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.databinding.ActivityMainBinding;
 
 public final class AppBarLayoutHelper {
     private AppBarLayoutHelper() {
         // prevent instantiation
     }
 
-    static void enableAutoHide(ActivityMainBinding binding) {
-        Context context = binding.getRoot().getContext();
-        if (context.getResources().getBoolean(R.bool.toolbar_auto_hide)) {
-            enableAutoHide(binding.toolbar);
-            enableAutoHide(binding.tabs);
+    public static void enableAutoHide(Activity activity) {
+        if (activity == null || activity.isFinishing()) return;
+        if (activity.getResources().getBoolean(R.bool.toolbar_auto_hide)) {
+            enableAutoHide(activity.findViewById(R.id.toolbar));
+            enableAutoHide(activity.findViewById(R.id.tabs));
+        }
+    }
+
+    public static void disableAutoHide(Activity activity) {
+        if (activity == null || activity.isFinishing()) return;
+        if (activity.getResources().getBoolean(R.bool.toolbar_auto_hide)) {
+            disableAutoHide(activity.findViewById(R.id.toolbar));
+            disableAutoHide(activity.findViewById(R.id.tabs));
         }
     }
 
     private static void enableAutoHide(View view) {
+        if (view == null) return;
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) view.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
+        view.setLayoutParams(params);
+    }
+
+    private static void disableAutoHide(View view) {
+        if (view == null) return;
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) view.getLayoutParams();
+        params.setScrollFlags(params.getScrollFlags() & ~(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP));
         view.setLayoutParams(params);
     }
 

@@ -43,6 +43,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
+import ca.rmen.android.poetassistant.main.AppBarLayoutHelper;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
@@ -82,6 +83,7 @@ public class ResultListFragment<T> extends Fragment
         mBinding.setViewModel(mViewModel);
         mViewModel.layout.addOnPropertyChangedCallback(mLayoutSettingChanged);
         mViewModel.showHeader.addOnPropertyChangedCallback(mShowHeaderChanged);
+        mViewModel.isDataAvailable.addOnPropertyChangedCallback(mDataAvailableChanged);
         mHeaderViewModel = ViewModelProviders.of(this).get(ResultListHeaderViewModel.class);
         mHeaderViewModel.filter.addOnPropertyChangedCallback(mFilterChanged);
         Fragment headerFragment = getChildFragmentManager().findFragmentById(R.id.result_list_header);
@@ -114,6 +116,7 @@ public class ResultListFragment<T> extends Fragment
         Log.v(TAG, mTab + " onDestroyView");
         mViewModel.layout.removeOnPropertyChangedCallback(mLayoutSettingChanged);
         mViewModel.layout.removeOnPropertyChangedCallback(mShowHeaderChanged);
+        mViewModel.isDataAvailable.removeOnPropertyChangedCallback(mDataAvailableChanged);
         mHeaderViewModel.filter.removeOnPropertyChangedCallback(mFilterChanged);
         super.onDestroyView();
     }
@@ -187,6 +190,16 @@ public class ResultListFragment<T> extends Fragment
         mHeaderViewModel.query.set(query);
         getActivity().invalidateOptionsMenu();
     }
+
+    private final BindingCallbackAdapter mDataAvailableChanged = new BindingCallbackAdapter(() -> {
+        if (getUserVisibleHint()) {
+            if (mViewModel.isDataAvailable.get()) {
+                AppBarLayoutHelper.enableAutoHide(getActivity());
+            } else {
+                AppBarLayoutHelper.disableAutoHide(getActivity());
+            }
+        }
+    });
 
     private final BindingCallbackAdapter mLayoutSettingChanged = new BindingCallbackAdapter(() -> {
         Bundle args = new Bundle(2);
