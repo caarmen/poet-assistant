@@ -20,8 +20,8 @@
 package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
+import android.databinding.Observable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -52,7 +52,6 @@ import ca.rmen.android.poetassistant.compat.VectorCompat;
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnFilterListener;
-import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 
@@ -95,7 +94,7 @@ public class ResultListFragment<T> extends Fragment
         //noinspection unchecked
         mViewModel = (ResultListViewModel<T>) ResultListFactory.createViewModel(mTab, this);
         mBinding.setViewModel(mViewModel);
-        mPrefs.registerOnSharedPreferenceChangeListener(mPrefsListener);
+        mViewModel.layout.addOnPropertyChangedCallback(mLayoutSettingChanged);
         return mBinding.getRoot();
     }
 
@@ -119,7 +118,7 @@ public class ResultListFragment<T> extends Fragment
     @Override
     public void onDestroyView() {
         Log.v(TAG, mTab + " onDestroyView");
-        mPrefs.unregisterOnSharedPreferenceChangeListener(mPrefsListener);
+        mViewModel.layout.removeOnPropertyChangedCallback(mLayoutSettingChanged);
         super.onDestroyView();
     }
 
@@ -202,7 +201,6 @@ public class ResultListFragment<T> extends Fragment
         filter(filter);
     }
 
-
     private void updateUi() {
         Log.d(TAG, mTab + ": updateUi() called with: " + "");
         if (mViewModel.isDataAvailable.get() || !TextUtils.isEmpty(mHeaderFragment.getHeader())) {
@@ -235,17 +233,13 @@ public class ResultListFragment<T> extends Fragment
         }
     }
 
-    private final SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+    private final Observable.OnPropertyChangedCallback mLayoutSettingChanged = new Observable.OnPropertyChangedCallback() {
         @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (Settings.PREF_LAYOUT.equals(key)) {
-                Bundle args = new Bundle(2);
-                args.putString(EXTRA_QUERY, mHeaderFragment.getHeader());
-                args.putString(EXTRA_FILTER, mHeaderFragment.getFilter());
-                getLoaderManager().restartLoader(mTab.ordinal(), args, ResultListFragment.this);
-            }
+        public void onPropertyChanged(Observable sender, int propertyId) {
+            Bundle args = new Bundle(2);
+            args.putString(EXTRA_QUERY, mHeaderFragment.getHeader());
+            args.putString(EXTRA_FILTER, mHeaderFragment.getFilter());
+            getLoaderManager().restartLoader(mTab.ordinal(), args, ResultListFragment.this);
         }
     };
-
-
 }

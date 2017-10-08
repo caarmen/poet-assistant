@@ -19,19 +19,30 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries;
 
-import android.arch.lifecycle.ViewModel;
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
+import android.content.SharedPreferences;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.settings.Settings;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
-public class ResultListViewModel<T> extends ViewModel {
+public class ResultListViewModel<T> extends AndroidViewModel {
     private static final String TAG = Constants.TAG + ResultListViewModel.class.getSimpleName();
 
     final ObservableField<ResultListData<T>> data = new ObservableField<>();
     public final ObservableBoolean isDataAvailable = new ObservableBoolean();
+    public final ObservableField<Settings.Layout> layout = new ObservableField<>();
     private ResultListAdapter<T> mAdapter;
+
+    ResultListViewModel(Application application) {
+        super(application);
+        PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mPrefsListener);
+    }
 
     void setAdapter(ResultListAdapter<T> adapter) {
         mAdapter = adapter;
@@ -53,4 +64,17 @@ public class ResultListViewModel<T> extends ViewModel {
     String getUsedQueryWord() {
         return data.get() == null ? null : data.get().matchedWord;
     }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        PreferenceManager.getDefaultSharedPreferences(getApplication()).unregisterOnSharedPreferenceChangeListener(mPrefsListener);
+    }
+
+    private final SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener = (sharedPreferences, key) -> {
+        if (Settings.PREF_LAYOUT.equals(key)) {
+            layout.set(Settings.getLayout(SettingsPrefs.get(getApplication())));
+        }
+    };
+
 }

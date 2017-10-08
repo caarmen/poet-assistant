@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.app.Activity;
+import android.app.Application;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
@@ -109,11 +110,11 @@ public final class ResultListFactory {
     }
 
     static ResultListViewModel<?> createViewModel(Tab tab, Fragment fragment) {
-        ViewModelProvider.Factory factory = createViewModelFactory(tab);
+        ViewModelProvider.Factory factory = createViewModelFactory(tab, (Application) fragment.getContext().getApplicationContext());
         return ViewModelProviders.of(fragment,factory).get(ResultListViewModel.class);
     }
 
-    private static ViewModelProvider.Factory createViewModelFactory(Tab tab) {
+    private static ViewModelProvider.Factory createViewModelFactory(Tab tab, Application application) {
         return new ViewModelProvider.Factory() {
             @Override
             public <T extends ViewModel> T create(Class<T> aClass) {
@@ -123,14 +124,14 @@ public final class ResultListFactory {
                     case RHYMER:
                     case THESAURUS:
                         //noinspection unchecked
-                        return (T) new ResultListViewModel<RTEntryViewModel>();
+                        return (T) new ResultListViewModel<RTEntryViewModel>(application);
                     case WOTD:
                         //noinspection unchecked
-                        return (T) new ResultListViewModel<WotdEntryViewModel>();
+                        return (T) new ResultListViewModel<WotdEntryViewModel>(application);
                     case DICTIONARY:
                     default:
                         //noinspection unchecked
-                        return (T) new ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>();
+                        return (T) new ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application);
                 }
             }
         };
