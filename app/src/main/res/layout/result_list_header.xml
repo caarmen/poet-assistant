@@ -152,7 +152,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/tts_play"
-                android:onClick="@{buttonListener::onPlayButtonClicked}"
+                android:onClick="@{() -> viewModel.speak()}"
                 android:padding="8dp"
                 app:srcCompat="@drawable/ic_play_circle" />
 
@@ -167,7 +167,7 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/action_search"
-                android:onClick="@{buttonListener::onWebSearchButtonClicked}"
+                android:onClick="@{() -> viewModel.webSearch()}"
                 android:padding="8dp"
                 app:srcCompat="@drawable/ic_web_search" />
 
@@ -213,7 +213,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/filter_clear"
-                android:onClick="@{buttonListener::onFilterClearButtonClicked}"
+                android:onClick="@{() -> viewModel.clearFilter()}"
                 app:srcCompat="@drawable/ic_clear" />
         </LinearLayout>
 
