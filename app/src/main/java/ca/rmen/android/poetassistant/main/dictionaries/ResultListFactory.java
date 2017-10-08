@@ -137,21 +137,21 @@ public final class ResultListFactory {
         };
     }
 
-    static ResultListLoader<? extends ResultListData<?>> createLoader(Tab tab, Activity activity, String query, String filter) {
+    static ResultListLoader<? extends ResultListData<?>> createLoader(Tab tab, Context context, String query, String filter) {
         switch (tab) {
             case PATTERN:
-                return new PatternLoader(activity, query);
+                return new PatternLoader(context, query);
             case FAVORITES:
-                return new FavoritesLoader(activity);
+                return new FavoritesLoader(context);
             case WOTD:
-                return new WotdLoader(activity);
+                return new WotdLoader(context);
             case RHYMER:
-                return new RhymerLoader(activity, query, filter);
+                return new RhymerLoader(context, query, filter);
             case THESAURUS:
-                return new ThesaurusLoader(activity, query, filter);
+                return new ThesaurusLoader(context, query, filter);
             case DICTIONARY:
             default:
-                return new DictionaryLoader(activity, query);
+                return new DictionaryLoader(context, query);
 
         }
     }

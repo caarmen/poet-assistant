@@ -25,8 +25,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -48,12 +46,10 @@ import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 
-public class ResultListFragment<T> extends Fragment
-        implements
-        LoaderManager.LoaderCallbacks<ResultListData<T>> {
+public class ResultListFragment<T> extends Fragment {
     private static final String TAG = Constants.TAG + ResultListFragment.class.getSimpleName();
-    private static final String EXTRA_FILTER = "filter";
     public static final String EXTRA_TAB = "tab";
+    static final String EXTRA_FILTER = "filter";
     static final String EXTRA_QUERY = "query";
     private FragmentResultListBinding mBinding;
     private ResultListViewModel<T> mViewModel;
@@ -108,7 +104,8 @@ public class ResultListFragment<T> extends Fragment
     public void onStart() {
         Log.v(TAG, mTab + " onStart");
         super.onStart();
-        getLoaderManager().initLoader(mTab.ordinal(), getArguments(), this);
+        getLoaderManager().initLoader(mTab.ordinal(), getArguments(), mViewModel.loaderCallbacks);
+        getActivity().invalidateOptionsMenu();
     }
 
     @Override
@@ -137,76 +134,30 @@ public class ResultListFragment<T> extends Fragment
 
     public void query(String query) {
         Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
-        mHeaderViewModel.query.set(query);
         mHeaderViewModel.filter.set(null);
         Bundle args = new Bundle(1);
         args.putString(EXTRA_QUERY, query);
-        getLoaderManager().restartLoader(mTab.ordinal(), args, this);
-    }
-
-    @Override
-    public Loader<ResultListData<T>> onCreateLoader(int id, Bundle args) {
-        Log.d(TAG, mTab + ": onCreateLoader() called with: " + "id = [" + id + "], args = [" + args + "]");
-
-        String query = "";
-        String filter = "";
-        if (args != null && args.containsKey(EXTRA_QUERY)) {
-            query = args.getString(EXTRA_QUERY);
-            filter = args.getString(EXTRA_FILTER);
-            mHeaderViewModel.query.set(query);
-            mViewModel.setData(new ResultListData<>(query, null));
-        } else {
-            mViewModel.setData(null);
-        }
-
-        getActivity().invalidateOptionsMenu();
-
-        //noinspection unchecked
-        return (Loader<ResultListData<T>>) ResultListFactory.createLoader(mTab, getActivity(), query, filter);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<ResultListData<T>> loader, ResultListData<T> data) {
-        Log.d(TAG, mTab + ": onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
-        mViewModel.setData(data);
-        updateUi();
-
-        // Hide the keyboard
-        mBinding.recyclerView.requestFocus();
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(mBinding.recyclerView.getWindowToken(), 0);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<ResultListData<T>> loader) {
-        Log.d(TAG, mTab + ": onLoaderReset() called with: " + "loader = [" + loader + "]");
-        mViewModel.setData(null);
-        updateUi();
-    }
-
-    private void updateUi() {
-        Log.d(TAG, mTab + ": updateUi() called with: " + "");
-        String query = mViewModel.getUsedQueryWord();
-        mHeaderViewModel.query.set(query);
+        getLoaderManager().restartLoader(mTab.ordinal(), args, mViewModel.loaderCallbacks);
         getActivity().invalidateOptionsMenu();
     }
 
-    private final BindingCallbackAdapter mDataAvailableChanged = new BindingCallbackAdapter(() -> {
-        if (getUserVisibleHint()) {
-            if (mViewModel.isDataAvailable.get()) {
-                AppBarLayoutHelper.enableAutoHide(getActivity());
-            } else {
-                AppBarLayoutHelper.disableAutoHide(getActivity());
-            }
-        }
-    });
+    private final BindingCallbackAdapter mDataAvailableChanged =
+            new BindingCallbackAdapter(() -> {
+                if (getUserVisibleHint()) {
+                    if (mViewModel.isDataAvailable.get()) {
+                        AppBarLayoutHelper.enableAutoHide(getActivity());
+                    } else {
+                        AppBarLayoutHelper.disableAutoHide(getActivity());
+                    }
+                }
+                getActivity().invalidateOptionsMenu();
 
-    private final BindingCallbackAdapter mLayoutSettingChanged = new BindingCallbackAdapter(() -> {
-        Bundle args = new Bundle(2);
-        args.putString(EXTRA_QUERY, mHeaderViewModel.query.get());
-        args.putString(EXTRA_FILTER, mHeaderViewModel.filter.get());
-        getLoaderManager().restartLoader(mTab.ordinal(), args, ResultListFragment.this);
-    });
+                mHeaderViewModel.query.set(mViewModel.getUsedQueryWord());
+                // Hide the keyboard
+                mBinding.recyclerView.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mBinding.recyclerView.getWindowToken(), 0);
+            });
 
     private final BindingCallbackAdapter mShowHeaderChanged =
             new BindingCallbackAdapter(() -> mHeaderViewModel.showHeader.set(mViewModel.showHeader.get()));
@@ -216,6 +167,14 @@ public class ResultListFragment<T> extends Fragment
                 Bundle args = new Bundle(2);
                 args.putString(EXTRA_QUERY, mHeaderViewModel.query.get());
                 args.putString(EXTRA_FILTER, mHeaderViewModel.filter.get());
-                getLoaderManager().restartLoader(mTab.ordinal(), args, this);
+                getLoaderManager().restartLoader(mTab.ordinal(), args, mViewModel.loaderCallbacks);
+            });
+
+    private final BindingCallbackAdapter mLayoutSettingChanged =
+            new BindingCallbackAdapter(() -> {
+                Bundle args = new Bundle(2);
+                args.putString(EXTRA_QUERY, mHeaderViewModel.query.get());
+                args.putString(EXTRA_FILTER, mHeaderViewModel.filter.get());
+                getLoaderManager().restartLoader(mTab.ordinal(), args, mViewModel.loaderCallbacks);
             });
 }
