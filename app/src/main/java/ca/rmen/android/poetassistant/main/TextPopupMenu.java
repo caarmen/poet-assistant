@@ -43,6 +43,7 @@ import java.util.List;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.Share;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.android.poetassistant.widget.HackFor23381;
 import ca.rmen.android.poetassistant.widget.PopupMenuHelper;
 import io.reactivex.Observable;
@@ -94,6 +95,9 @@ public final class TextPopupMenu {
      * @param listener this listener will be notified when the user selects one of the popup menu items
      */
     public static void addSelectionPopupMenu(final TextView textView, final OnWordClickListener listener) {
+        if (!SettingsPrefs.get(textView.getContext()).isExternalLookupEnabled()) {
+            return;
+        }
         textView.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {

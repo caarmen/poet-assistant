@@ -54,15 +54,20 @@ public class SettingsChangeListener implements SharedPreferences.OnSharedPrefere
         if (Settings.PREF_THEME.equals(key)) {
             // When the theme changes, restart the activity
             Theme.setThemeFromSettings(mSettingsPrefs);
-            Intent intent = new Intent(mContext, SettingsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
-            stackBuilder.addNextIntentWithParentStack(intent);
-            stackBuilder.startActivities();
+            restartSettingsActivity();
         } else if (Settings.PREF_WOTD_ENABLED.equals(key) || Settings.PREF_WOTD_NOTIFICATION_PRIORITY.equals(key)) {
             Wotd.setWotdEnabled(mContext, mDictionary, mSettingsPrefs.getIsWotdEnabled());
         } else if (Settings.PREF_EXTERNAL_LOOKUP.equals(key)) {
             ProcessTextRouter.setEnabled(mContext, mSettingsPrefs.isExternalLookupEnabled());
+            restartSettingsActivity();
         }
+    }
+
+    private void restartSettingsActivity(){
+        Intent intent = new Intent(mContext, SettingsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(mContext);
+        stackBuilder.addNextIntentWithParentStack(intent);
+        stackBuilder.startActivities();
     }
 }

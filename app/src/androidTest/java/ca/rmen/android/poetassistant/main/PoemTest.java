@@ -26,9 +26,12 @@ import android.os.SystemClock;
 import android.support.test.espresso.NoMatchingRootException;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.PerformException;
+import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v7.widget.ActionBarContextView;
+
+import junit.framework.AssertionFailedError;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,6 +44,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -53,7 +57,9 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewActions.longTap;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static junit.framework.Assert.assertFalse;
@@ -127,24 +133,75 @@ public class PoemTest {
         onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)));
     }
 
-    private void clickPopupView(String label) {
-        SystemClock.sleep(200);
+    @Test
+    public void testLookupSetting() {
+        openMenuItem(R.string.action_settings);
+        clickPreference(R.string.pref_external_lookup_title);
+        pressBack();
+        swipeViewPagerLeft(3);
+        String poemText = "Here is a poem with lookup disabled";
+        typePoem(poemText);
+        pressBack();
+
+        assertPopupMissing("rhymer");
+        assertPopupMissing("thesaurus");
+        assertPopupMissing("dictionary");
+        pressBack();
+
+        openMenuItem(R.string.action_settings);
+        clickPreference(R.string.pref_external_lookup_title);
+        pressBack();
+        swipeViewPagerLeft(3);
+        assertPopupVisible("rhymer");
+        assertPopupVisible("thesaurus");
+        assertPopupVisible("dictionary");
+    }
+
+    private void assertPopupVisible(String label) {
+        onView(withId(R.id.tv_text)).perform(longTap(1, 0));
+        getPopupView(label).check(matches(isDisplayed()));
+        pressBack();
+    }
+
+    private void assertPopupMissing(String label) {
+        onView(withId(R.id.tv_text)).perform(longTap(1, 0));
+        boolean exceptionThrown = false;
         try {
-            onView(withText(equalToIgnoringCase(label))).inRoot(isPlatformPopup()).perform(click());
-        } catch (PerformException | NoMatchingRootException | NoMatchingViewException e) {
+            getPopupView(label);
+        } catch (NoMatchingViewException e) {
+            exceptionThrown = true;
+        }
+        assertTrue(exceptionThrown);
+        pressBack();
+    }
+
+    private ViewInteraction getPopupView(String label) {
+        SystemClock.sleep(220);
+        try {
+            ViewInteraction result = onView(withText(equalToIgnoringCase(label))).inRoot(isPlatformPopup());
+            result.check(matches(isDisplayed()));
+            return result;
+        } catch (PerformException | NoMatchingRootException | NoMatchingViewException | AssertionFailedError e) {
             // I haven't yet found a better way to handle this :(
             // On smaller screens the items are hidden behind an overflow item with id "overflow" which is inaccessible
             try {
                 onView(withContentDescription("More options")).inRoot(isPlatformPopup()).perform(click());
-                onView(withText(equalToIgnoringCase(label))).inRoot(isPlatformPopup()).perform(click());
+                ViewInteraction result = onView(withText(equalToIgnoringCase(label))).inRoot(isPlatformPopup());
+                result.check(matches(isDisplayed()));
+                return result;
             } catch (NoMatchingRootException e1) {
                 onView(allOf(
                         withContentDescription("More options"),
                         isDescendantOfA(withClassName(is(ActionBarContextView.class.getName())))))
                         .perform(click());
-                onView(withText(equalToIgnoringCase(label))).perform(click());
+                return onView(withText(equalToIgnoringCase(label)));
             }
         }
+
+    }
+
+    private void clickPopupView(String label) {
+        getPopupView(label).perform(click());
     }
 
 }
