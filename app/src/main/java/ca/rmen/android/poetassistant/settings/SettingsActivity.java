@@ -21,9 +21,7 @@ package ca.rmen.android.poetassistant.settings;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -32,7 +30,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.Preference;
@@ -49,15 +46,11 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.Theme;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
-import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider;
 import ca.rmen.android.poetassistant.main.reader.PoemFile;
-import ca.rmen.android.poetassistant.wotd.Wotd;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -67,9 +60,8 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = Constants.TAG + SettingsActivity.class.getSimpleName();
 
     @Inject Tts mTts;
-    @Inject Dictionary mDictionary;
-    @Inject SettingsPrefs mSettingsPrefs;
 
+    private SettingsChangeListener mListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +69,7 @@ public class SettingsActivity extends AppCompatActivity {
         DataBindingUtil.setContentView(this, R.layout.activity_settings);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
+        mListener = new SettingsChangeListener(this);
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(mListener);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
@@ -93,23 +86,6 @@ public class SettingsActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private final SharedPreferences.OnSharedPreferenceChangeListener mListener = (sharedPreferences, key) -> {
-        Log.v(TAG, "onSharedPreferenceChanged: key = " + key);
-        Context context = getApplicationContext();
-        if (Settings.PREF_THEME.equals(key)) {
-            // When the theme changes, restart the activity
-            Theme.setThemeFromSettings(mSettingsPrefs);
-            Intent intent = new Intent(SettingsActivity.this, SettingsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(SettingsActivity.this);
-            stackBuilder.addNextIntentWithParentStack(intent);
-            stackBuilder.startActivities();
-        } else if (Settings.PREF_WOTD_ENABLED.equals(key) || Settings.PREF_WOTD_NOTIFICATION_PRIORITY.equals(key)) {
-            Wotd.setWotdEnabled(context, mDictionary, mSettingsPrefs.getIsWotdEnabled());
-        } else if (Settings.PREF_EXTERNAL_LOOKUP.equals(key)) {
-            ProcessTextRouter.setEnabled(this, mSettingsPrefs.isExternalLookupEnabled());
-        }
-    };
 
     public static class GeneralPreferenceFragment extends PreferenceFragmentCompat
             implements ConfirmDialogFragment.ConfirmDialogListener {

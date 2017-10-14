@@ -37,6 +37,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsCursor;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider;
 import ca.rmen.android.poetassistant.main.reader.ReaderViewModel;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
+import ca.rmen.android.poetassistant.settings.SettingsChangeListener;
 import ca.rmen.android.poetassistant.settings.VoicePreference;
 import ca.rmen.android.poetassistant.wotd.WotdBootReceiver;
 import ca.rmen.android.poetassistant.wotd.WotdBroadcastReceiver;
@@ -77,6 +78,7 @@ public interface AppComponent {
     @Subcomponent
     interface SettingsComponent {
         void inject(SettingsActivity settingsActivity);
+        void inject(SettingsChangeListener settingsChangeListener);
         void inject(SettingsActivity.GeneralPreferenceFragment generalPreferenceFragment);
         void inject(VoicePreference voicePreference);
     }
