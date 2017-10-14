@@ -17,35 +17,27 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.search;
+package ca.rmen.android.poetassistant;
 
-import android.support.annotation.WorkerThread;
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
-import java.util.List;
+@Entity(tableName = "FAVORITE", indices = {@Index(value = {"WORD"}, unique = true)})
+public class Favorite {
 
-import io.reactivex.Observable;
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "WORD")
+    private final String mWord;
 
-public class Suggestions {
-
-    private final SuggestionDao mSuggestionDao;
-
-    public Suggestions(SuggestionDao suggestionDao) {
-        mSuggestionDao = suggestionDao;
+    Favorite(@NonNull String word) {
+        mWord = word;
     }
 
-    @WorkerThread
-    List<String> getSuggestions() {
-        return Observable.fromIterable(mSuggestionDao.getSuggestions()).map(Suggestion::getWord).toList().blockingGet();
+    public String getWord() {
+        return mWord;
     }
-
-    @WorkerThread
-    void addSuggestion(final String suggestion) {
-        mSuggestionDao.insertAll(new Suggestion(suggestion));
-    }
-
-    @WorkerThread
-    void clear() {
-        mSuggestionDao.deleteAll();
-    }
-
 }

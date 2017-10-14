@@ -32,6 +32,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
+import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsCursor;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider;
 import ca.rmen.android.poetassistant.main.reader.ReaderViewModel;
@@ -46,7 +47,7 @@ import dagger.Component;
 import dagger.Subcomponent;
 
 @Singleton
-@Component(modules = AppModule.class)
+@Component(modules = {AppModule.class, DbModule.class})
 public interface AppComponent {
 
     MainScreenComponent getMainScreenComponent();
@@ -70,6 +71,7 @@ public interface AppComponent {
         void inject(SuggestionsCursor suggestionsCursor);
         void inject(SuggestionsProvider suggestionsProvider);
         void inject(Search search);
+        Suggestions getSuggestions();
     }
 
     @Subcomponent

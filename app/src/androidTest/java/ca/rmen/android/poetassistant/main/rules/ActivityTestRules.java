@@ -18,10 +18,10 @@
  */
 package ca.rmen.android.poetassistant.main.rules;
 
+import android.app.Application;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
 import android.support.test.espresso.IdlingRegistry;
 import android.support.test.espresso.IdlingResource;
@@ -29,7 +29,11 @@ import android.support.test.espresso.IdlingResource;
 import java.io.File;
 import java.util.Collection;
 
-import ca.rmen.android.poetassistant.UserDb;
+import ca.rmen.android.poetassistant.dagger.AppModule;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.DaggerTestAppComponent;
+import ca.rmen.android.poetassistant.dagger.TestAppComponent;
+import ca.rmen.android.poetassistant.dagger.TestDbModule;
 import io.reactivex.plugins.RxJavaPlugins;
 
 import static junit.framework.Assert.assertTrue;
@@ -43,6 +47,13 @@ final class ActivityTestRules {
     static void beforeActivityLaunched(Context targetContext) {
         IdlingRegistry.getInstance().register(new TtsIdlingResource(targetContext));
         cleanup(targetContext);
+
+        Application application = (Application) targetContext.getApplicationContext();
+        TestAppComponent testAppComponent = DaggerTestAppComponent.builder()
+                .appModule(new AppModule(application))
+                .testDbModule(new TestDbModule(application))
+                .build();
+        DaggerHelper.setAppComponent(testAppComponent);
         RxJavaPlugins.setIoSchedulerHandler(scheduler -> {
             IdlingScheduler idlingScheduler = new IdlingScheduler(scheduler);
             IdlingRegistry.getInstance().register(new RxSchedulerIdlingResource(idlingScheduler));
@@ -59,9 +70,6 @@ final class ActivityTestRules {
     }
 
     private static void cleanup(Context targetContext) {
-        SQLiteDatabase db = new UserDb(targetContext).getWritableDatabase();
-        db.delete("SUGGESTION", null, null);
-        db.delete("FAVORITE", null, null);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(targetContext);
         prefs.edit().clear().apply();
         File filesDir = targetContext.getFilesDir();

@@ -19,6 +19,7 @@
 
 package ca.rmen.android.poetassistant;
 
+import android.arch.persistence.room.Room;
 import android.net.Uri;
 import android.os.Environment;
 
@@ -45,7 +46,11 @@ import static org.robolectric.Shadows.shadowOf;
 public class TestFavorites {
     @Test
     public void importTest() throws IOException {
-        Favorites favorites = new Favorites(new UserDb(RuntimeEnvironment.application));
+        UserDb db =  Room.databaseBuilder(RuntimeEnvironment.application,
+                UserDb.class, "userdata.db")
+                .allowMainThreadQueries()
+                .addMigrations(UserDb.MIGRATION_1_2).build();
+        Favorites favorites = new Favorites(db.favoriteDao());
         Set<String> favs = favorites.getFavorites();
         assertEquals(0, favs.size());
         Uri uri = createFavoritesFile();
@@ -53,6 +58,7 @@ public class TestFavorites {
         favorites.importFavorites(RuntimeEnvironment.application, uri);
         favs = favorites.getFavorites();
         assertEquals(2, favs.size());
+        db.close();
     }
 
     private Uri createFavoritesFile() throws IOException {

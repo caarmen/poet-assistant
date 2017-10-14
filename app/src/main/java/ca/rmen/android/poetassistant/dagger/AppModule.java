@@ -40,11 +40,9 @@ import dagger.Provides;
 public class AppModule {
 
     private final Application mApplication;
-    private final UserDb mUserDb;
 
     public AppModule(Application application) {
         mApplication = application;
-        mUserDb = new UserDb(application);
     }
 
     @Provides @Singleton Tts providesTts(SettingsPrefs settingsPrefs) {
@@ -72,11 +70,11 @@ public class AppModule {
         return SettingsPrefs.get(mApplication);
     }
 
-    @Provides Favorites providesFavorites() {
-        return new Favorites(mUserDb);
+    @Provides Favorites providesFavorites(UserDb userDb) {
+        return new Favorites(userDb.favoriteDao());
     }
 
-    @Provides Suggestions providesSuggestions() {
-        return new Suggestions(mUserDb);
+    @Provides Suggestions providesSuggestions(UserDb userDb) {
+        return new Suggestions(userDb.suggestionDao());
     }
 }

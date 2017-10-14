@@ -1,0 +1,36 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "no-hash-prior-to-room",
+    "entities": [
+      {
+        "tableName": "FAVORITE",
+        "createSql": "CREATE TABLE `${TABLE_NAME}` (`WORD` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "mWord",
+            "columnName": "WORD",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "indices": []
+      },
+      {
+        "tableName": "SUGGESTION",
+        "createSql": "CREATE TABLE `${TABLE_NAME}` (`WORD` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "mWord",
+            "columnName": "WORD",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "indices": []
+      }
+    ],
+    "setupQueries": []
+  }
+}
