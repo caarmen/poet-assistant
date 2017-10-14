@@ -136,7 +136,7 @@ public class PoemTest {
     @Test
     public void testLookupSetting() {
         openMenuItem(R.string.action_settings);
-        clickPreference(R.string.pref_external_lookup_title);
+        clickPreference(R.string.pref_selection_lookup_title);
         pressBack();
         swipeViewPagerLeft(3);
         String poemText = "Here is a poem with lookup disabled";
@@ -149,7 +149,7 @@ public class PoemTest {
         pressBack();
 
         openMenuItem(R.string.action_settings);
-        clickPreference(R.string.pref_external_lookup_title);
+        clickPreference(R.string.pref_selection_lookup_title);
         pressBack();
         swipeViewPagerLeft(3);
         assertPopupVisible("rhymer");

@@ -95,7 +95,7 @@ public final class TextPopupMenu {
      * @param listener this listener will be notified when the user selects one of the popup menu items
      */
     public static void addSelectionPopupMenu(final TextView textView, final OnWordClickListener listener) {
-        if (!SettingsPrefs.get(textView.getContext()).isExternalLookupEnabled()) {
+        if (!SettingsPrefs.get(textView.getContext()).isSelectionLookupEnabled()) {
             return;
         }
         textView.setCustomSelectionActionModeCallback(new ActionMode.Callback() {

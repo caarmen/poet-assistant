@@ -114,9 +114,9 @@
         <!--suppress AndroidElementNotAllowed -->
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="true"
-            android:key="PREF_EXTERNAL_LOOKUP"
-            android:summary="@string/pref_external_lookup_summary"
-            android:title="@string/pref_external_lookup_title" />
+            android:key="PREF_SELECTION_LOOKUP"
+            android:summary="@string/pref_selection_lookup_summary"
+            android:title="@string/pref_selection_lookup_title" />
 
     </PreferenceCategory>
     <PreferenceCategory

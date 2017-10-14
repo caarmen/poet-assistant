@@ -66,7 +66,7 @@ public class Settings {
     static final String PREF_SYSTEM_TTS_SETTINGS = "PREF_SYSTEM_TTS_SETTINGS";
     static final String PREF_VOICE_PREVIEW = "PREF_VOICE_PREVIEW";
     static final String PREF_THEME = "PREF_THEME";
-    static final String PREF_EXTERNAL_LOOKUP = "PREF_EXTERNAL_LOOKUP";
+    static final String PREF_SELECTION_LOOKUP = "PREF_SELECTION_LOOKUP";
     static final String PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED";
     static final String PREF_WOTD_NOTIFICATION_PRIORITY = "PREF_WOTD_NOTIFICATION_PRIORITY";
     @SuppressWarnings("unused")
@@ -103,9 +103,9 @@ public class Settings {
     String layout;
 
     @SuppressWarnings("unused")
-    @Name(PREF_EXTERNAL_LOOKUP)
+    @Name(PREF_SELECTION_LOOKUP)
     @DefaultBoolean(true)
-    Boolean externalLookupEnabled;
+    Boolean selectionLookupEnabled;
 
     @SuppressWarnings("unused")
     @Name(PREF_WOTD_ENABLED)
