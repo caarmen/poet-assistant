@@ -46,7 +46,7 @@ import dagger.Component;
 import dagger.Subcomponent;
 
 @Singleton
-@Component(modules = AppModule.class)
+@Component(modules = {AppModule.class, DbModule.class})
 public interface AppComponent {
 
     MainScreenComponent getMainScreenComponent();

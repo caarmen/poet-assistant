@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.dagger;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.annotation.VisibleForTesting;
 
 public class DaggerHelper {
     private static AppComponent sAppComponent;
@@ -53,10 +54,16 @@ public class DaggerHelper {
         return getAppComponent((Application) context.getApplicationContext());
     }
 
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public static void setAppComponent(AppComponent appComponent) {
+        sAppComponent = appComponent;
+    }
+
     private static AppComponent getAppComponent(Application application) {
         if (sAppComponent == null) {
             sAppComponent = DaggerAppComponent.builder()
                     .appModule(new AppModule(application))
+                    .dbModule(new DbModule(application))
                     .build();
         }
         return sAppComponent;

@@ -177,6 +177,7 @@ dependencies {
     annotationProcessor 'android.arch.persistence.room:compiler:1.0.0-beta2'
     androidTestCompile 'android.arch.persistence.room:testing:1.0.0-beta2'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
+    androidTestAnnotationProcessor 'com.google.dagger:dagger-compiler:2.11'
 
     testCompile 'junit:junit:4.12'
     testCompile "org.robolectric:robolectric:3.4.2"
