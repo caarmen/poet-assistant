@@ -23,16 +23,12 @@ import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.UriMatcher;
-import android.content.pm.ProviderInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-
-import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.BuildConfig;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
@@ -46,7 +42,6 @@ public class SuggestionsProvider extends ContentProvider {
     private static final String AUTHORITY = BuildConfig.APPLICATION_ID + ".SuggestionsProvider";
     private static final int URI_MATCH_SUGGEST = 1;
 
-    @Inject Suggestions mSuggestions;
     private final UriMatcher mUriMatcher;
 
     public SuggestionsProvider() {
@@ -57,12 +52,6 @@ public class SuggestionsProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         return true;
-    }
-
-    @Override
-    public void attachInfo(Context context, ProviderInfo info) {
-        super.attachInfo(context, info);
-        DaggerHelper.getMainScreenComponent(context).inject(this);
     }
 
     @Override
@@ -88,13 +77,13 @@ public class SuggestionsProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         String suggestion = values.getAsString(SearchManager.QUERY);
-        mSuggestions.addSuggestion(suggestion);
+        DaggerHelper.getMainScreenComponent(getContext()).getSuggestions().addSuggestion(suggestion);
         return null;
     }
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        mSuggestions.clear();
+        DaggerHelper.getMainScreenComponent(getContext()).getSuggestions().clear();
         return 0;
     }
 
