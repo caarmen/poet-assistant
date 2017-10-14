@@ -19,7 +19,8 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries;
 
-import android.content.Context;
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 
@@ -29,33 +30,55 @@ import org.greenrobot.eventbus.Subscribe;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Favorites;
+import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
-
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class ResultListHeaderViewModel {
+public class ResultListHeaderViewModel extends AndroidViewModel {
 
     public final ObservableField<String> query = new ObservableField<>();
     public final ObservableField<String> filter = new ObservableField<>();
     public final ObservableBoolean isFavorite = new ObservableBoolean();
-    @Inject
-    Favorites mFavorites;
+    public final ObservableBoolean showHeader = new ObservableBoolean();
+    final ObservableField<String> snackbarText = new ObservableField<>();
 
-    ResultListHeaderViewModel(Context context, String queryText, String filterText) {
-        DaggerHelper.getMainScreenComponent(context).inject(this);
+    @Inject Favorites mFavorites;
+    @Inject Tts mTts;
+
+    public ResultListHeaderViewModel(Application application) {
+        super(application);
+        DaggerHelper.getMainScreenComponent(application).inject(this);
         // When the query text changes, update the star icon
         query.addOnPropertyChangedCallback(new BindingCallbackAdapter(this::readFavorite));
         // When the user taps on the star icon, update the favorite in the DB
         isFavorite.addOnPropertyChangedCallback(mPersistFavoriteCallback);
-        query.set(queryText); // This will cause the star icon to be updated too
-        filter.set(filterText);
         EventBus.getDefault().register(this);
     }
 
-    void destroy() {
+    public void speak() {
+        mTts.speak(query.get());
+    }
+
+    public void clearFilter() {
+        filter.set(null);
+    }
+
+    public void webSearch() {
+        WebSearch.search(getApplication(), query.get());
+    }
+
+    void clearFavorites () {
+        mFavorites.clear();
+        snackbarText.set(getApplication().getString(R.string.favorites_cleared));
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
         EventBus.getDefault().unregister(this);
     }
 

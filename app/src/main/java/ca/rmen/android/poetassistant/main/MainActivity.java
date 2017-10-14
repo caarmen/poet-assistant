@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener);
 
         mBinding.tabs.setupWithViewPager(mBinding.viewPager);
-        AppBarLayoutHelper.enableAutoHide(mBinding);
         mAdapterChangeListener.onChanged();
 
         // If the app was launched with a query for the a particular tab, focus on that tab.
@@ -255,7 +254,9 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
 
             Tab tab = mPagerAdapter.getTabForPosition(position);
 
-            if (tab != Tab.READER) {
+            if (tab == Tab.READER) {
+                AppBarLayoutHelper.enableAutoHide(MainActivity.this);
+            } else {
                 // Hide the keyboard when we navigate to any tab other than the reader tab.
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mBinding.viewPager.getWindowToken(), 0);

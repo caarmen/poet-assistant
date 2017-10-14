@@ -23,6 +23,7 @@ package ca.rmen.android.poetassistant.main;
 import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.annotation.StringRes;
+import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -37,6 +38,7 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
@@ -53,8 +55,10 @@ import static ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearSearchHistory;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearStarredWords;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.addFilter;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.clickDialogPositiveButton;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openDictionary;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openDictionaryCleanLayout;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.openFilter;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openThesaurus;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openThesaurusCleanLayout;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
@@ -254,6 +258,15 @@ public class IntegrationTest {
         onView(withId(R.id.tv_source_code))
                 .check(matches(isCompletelyDisplayed()))
                 .check(matches(withText(R.string.about_projectUrl)));
+    }
+
+    @Test
+    public void saveFilterTest() {
+        search("pugnacious");
+        addFilter("vulturous", "rapacious");
+        ViewInteraction filterView = openFilter("vulturous");
+        filterView.perform(closeSoftKeyboard());
+        clickDialogPositiveButton(android.R.string.ok);
     }
 
     private void checkLicense(@IdRes int linkResId, @StringRes int linkTitle, String licenseContent) {

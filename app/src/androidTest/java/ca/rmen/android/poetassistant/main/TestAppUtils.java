@@ -149,15 +149,21 @@ class TestAppUtils {
                 .check(matches(isNotChecked()));
     }
 
-    static void addFilter(String filter, String firstExpectedFilteredMatch) {
+    static ViewInteraction openFilter(String expectedPrefilledFilter) {
         onView(allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()))
                 .perform(click());
         SystemClock.sleep(200);
-        onView(allOf(
+        ViewInteraction result = onView(allOf(
                 withId(R.id.edit),
                 isDisplayed()))
-                .inRoot(isFocusable())
-                .perform(typeText(filter), closeSoftKeyboard());
+                .inRoot(isFocusable());
+        result.check(matches(withText(expectedPrefilledFilter)));
+        return result;
+    }
+
+    static void addFilter(String filter, String firstExpectedFilteredMatch) {
+        ViewInteraction filterView = openFilter("");
+        filterView.perform(typeText(filter), closeSoftKeyboard());
         clickDialogPositiveButton(android.R.string.ok);
 
         onView(allOf(withId(R.id.text1),

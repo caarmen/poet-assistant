@@ -20,10 +20,15 @@
 package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.app.Activity;
+import android.app.Application;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 
@@ -104,36 +109,49 @@ public final class ResultListFactory {
         }
     }
 
-    static ResultListViewModel<?> createViewModel(Tab tab) {
-        switch(tab) {
-            case PATTERN:
-            case FAVORITES:
-            case RHYMER:
-            case THESAURUS:
-                return new ResultListViewModel<RTEntryViewModel>(tab);
-            case WOTD:
-                return new ResultListViewModel<WotdEntryViewModel>(tab);
-            case DICTIONARY:
-            default:
-                return new ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(tab);
-        }
+    static ResultListViewModel<?> createViewModel(Tab tab, Fragment fragment) {
+        ViewModelProvider.Factory factory = createViewModelFactory(tab, (Application) fragment.getContext().getApplicationContext());
+        return ViewModelProviders.of(fragment,factory).get(ResultListViewModel.class);
     }
 
-    static ResultListLoader<? extends ResultListData<?>> createLoader(Tab tab, Activity activity, String query, String filter) {
+    private static ViewModelProvider.Factory createViewModelFactory(Tab tab, Application application) {
+        return new ViewModelProvider.Factory() {
+            @Override
+            public <T extends ViewModel> T create(Class<T> aClass) {
+                switch(tab) {
+                    case PATTERN:
+                    case FAVORITES:
+                    case RHYMER:
+                    case THESAURUS:
+                        //noinspection unchecked
+                        return (T) new ResultListViewModel<RTEntryViewModel>(application, tab);
+                    case WOTD:
+                        //noinspection unchecked
+                        return (T) new ResultListViewModel<WotdEntryViewModel>(application, tab);
+                    case DICTIONARY:
+                    default:
+                        //noinspection unchecked
+                        return (T) new ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, tab);
+                }
+            }
+        };
+    }
+
+    static ResultListLoader<? extends ResultListData<?>> createLoader(Tab tab, Context context, String query, String filter) {
         switch (tab) {
             case PATTERN:
-                return new PatternLoader(activity, query);
+                return new PatternLoader(context, query);
             case FAVORITES:
-                return new FavoritesLoader(activity);
+                return new FavoritesLoader(context);
             case WOTD:
-                return new WotdLoader(activity);
+                return new WotdLoader(context);
             case RHYMER:
-                return new RhymerLoader(activity, query, filter);
+                return new RhymerLoader(context, query, filter);
             case THESAURUS:
-                return new ThesaurusLoader(activity, query, filter);
+                return new ThesaurusLoader(context, query, filter);
             case DICTIONARY:
             default:
-                return new DictionaryLoader(activity, query);
+                return new DictionaryLoader(context, query);
 
         }
     }
