@@ -111,6 +111,13 @@
             android:summary="@string/pref_layout_summary"
             android:title="@string/pref_layout_title" />
 
+        <!--suppress AndroidElementNotAllowed -->
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="PREF_EXTERNAL_LOOKUP"
+            android:summary="@string/pref_external_lookup_summary"
+            android:title="@string/pref_external_lookup_title" />
+
     </PreferenceCategory>
     <PreferenceCategory
         android:key="PREF_CATEGORY_NOTIFICATIONS"

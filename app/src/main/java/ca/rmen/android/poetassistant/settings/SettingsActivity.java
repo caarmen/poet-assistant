@@ -54,6 +54,7 @@ import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
+import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider;
 import ca.rmen.android.poetassistant.main.reader.PoemFile;
 import ca.rmen.android.poetassistant.wotd.Wotd;
@@ -105,6 +106,8 @@ public class SettingsActivity extends AppCompatActivity {
             stackBuilder.startActivities();
         } else if (Settings.PREF_WOTD_ENABLED.equals(key) || Settings.PREF_WOTD_NOTIFICATION_PRIORITY.equals(key)) {
             Wotd.setWotdEnabled(context, mDictionary, mSettingsPrefs.getIsWotdEnabled());
+        } else if (Settings.PREF_EXTERNAL_LOOKUP.equals(key)) {
+            ProcessTextRouter.setEnabled(this, mSettingsPrefs.isExternalLookupEnabled());
         }
     };
 

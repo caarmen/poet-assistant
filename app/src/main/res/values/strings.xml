@@ -217,6 +217,8 @@
         <item>Clean</item>
         <item>Efficient</item>
     </string-array>
+    <string name="pref_external_lookup_title">External lookup</string>
+    <string name="pref_external_lookup_summary">Enable lookup in the rhymer, thesaurus, and dictionary, from other apps.</string>
     <string name="pref_voice_preview_title">Preview</string>
     <string name="pref_voice_preview_summary">Listen to a voice sample</string>
     <string name="pref_voice_preview_text">To be, or not to be, that is the question.</string>

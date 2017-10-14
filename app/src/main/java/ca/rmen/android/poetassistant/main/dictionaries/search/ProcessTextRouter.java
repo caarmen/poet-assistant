@@ -18,11 +18,13 @@
  */
 package ca.rmen.android.poetassistant.main.dictionaries.search;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -31,7 +33,6 @@ import java.util.Locale;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.main.Tab;
 
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 public final class ProcessTextRouter {
     private static final String TAG = Constants.TAG + ProcessTextRouter.class.getSimpleName();
 
@@ -55,6 +56,19 @@ public final class ProcessTextRouter {
                 }
             }
         }
+    }
 
+    public static void setEnabled(Context context, boolean enabled) {
+        setEnabled(context, RhymerRouterActivity.class, enabled);
+        setEnabled(context, ThesaurusRouterActivity.class, enabled);
+        setEnabled(context, DictionaryRouterActivity.class, enabled);
+    }
+
+    private static void setEnabled(Context context, Class<? extends Activity> clazz, boolean enabled) {
+        PackageManager pm  = context.getApplicationContext().getPackageManager();
+        ComponentName componentName = new ComponentName(context.getPackageName(), clazz.getName());
+        pm.setComponentEnabledSetting(componentName,
+                enabled ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP);
     }
 }
