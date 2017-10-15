@@ -217,6 +217,8 @@
         <item>Clean</item>
         <item>Efficient</item>
     </string-array>
+    <string name="pref_selection_lookup_title">Selection lookup</string>
+    <string name="pref_selection_lookup_summary">Enable lookup in the rhymer, thesaurus, and dictionary, when a word is selected (including from other apps).</string>
     <string name="pref_voice_preview_title">Preview</string>
     <string name="pref_voice_preview_summary">Listen to a voice sample</string>
     <string name="pref_voice_preview_text">To be, or not to be, that is the question.</string>

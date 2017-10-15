@@ -19,20 +19,16 @@
 
 package ca.rmen.android.poetassistant.settings;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
+import android.databinding.Observable;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.Preference;
@@ -47,66 +43,24 @@ import org.greenrobot.eventbus.Subscribe;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.Theme;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
+import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
-import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider;
-import ca.rmen.android.poetassistant.main.reader.PoemFile;
-import ca.rmen.android.poetassistant.wotd.Wotd;
-import io.reactivex.Completable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 
 public class SettingsActivity extends AppCompatActivity {
 
     private static final String TAG = Constants.TAG + SettingsActivity.class.getSimpleName();
 
-    @Inject Tts mTts;
-    @Inject Dictionary mDictionary;
-    @Inject SettingsPrefs mSettingsPrefs;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerHelper.getSettingsComponent(getApplication()).inject(this);
         DataBindingUtil.setContentView(this, R.layout.activity_settings);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
-        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(mListener);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
-
-    @Override
-    protected void onPause() {
-        mTts.stop();
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(mListener);
-        super.onDestroy();
-    }
-
-    private final SharedPreferences.OnSharedPreferenceChangeListener mListener = (sharedPreferences, key) -> {
-        Log.v(TAG, "onSharedPreferenceChanged: key = " + key);
-        Context context = getApplicationContext();
-        if (Settings.PREF_THEME.equals(key)) {
-            // When the theme changes, restart the activity
-            Theme.setThemeFromSettings(mSettingsPrefs);
-            Intent intent = new Intent(SettingsActivity.this, SettingsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(SettingsActivity.this);
-            stackBuilder.addNextIntentWithParentStack(intent);
-            stackBuilder.startActivities();
-        } else if (Settings.PREF_WOTD_ENABLED.equals(key) || Settings.PREF_WOTD_NOTIFICATION_PRIORITY.equals(key)) {
-            Wotd.setWotdEnabled(context, mDictionary, mSettingsPrefs.getIsWotdEnabled());
-        }
-    };
 
     public static class GeneralPreferenceFragment extends PreferenceFragmentCompat
             implements ConfirmDialogFragment.ConfirmDialogListener {
@@ -122,14 +76,17 @@ public class SettingsActivity extends AppCompatActivity {
         private static final String PREF_IMPORT_FAVORITES = "PREF_IMPORT_FAVORITES";
         private static final String PREF_CLEAR_SEARCH_HISTORY = "PREF_CLEAR_SEARCH_HISTORY";
 
-        @Inject Tts mTts;
-        @Inject Favorites mFavorites;
+        @Inject
+        Tts mTts;
         private boolean mRestartTtsOnResume = false;
+
+        private SettingsViewModel mViewModel;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             DaggerHelper.getSettingsComponent(getContext()).inject(this);
+            mViewModel = ViewModelProviders.of(this).get(SettingsViewModel.class);
         }
 
         @Override
@@ -153,10 +110,7 @@ public class SettingsActivity extends AppCompatActivity {
             if (voicePreference.getEntries() == null || voicePreference.getEntries().length < 2) {
                 removePreference(PREF_CATEGORY_VOICE, voicePreference);
             }
-            setOnPreferenceClickListener(Settings.PREF_VOICE_PREVIEW, () -> {
-                if (mTts.isSpeaking()) mTts.stop();
-                else mTts.speak(getString(R.string.pref_voice_preview_text));
-            });
+            setOnPreferenceClickListener(Settings.PREF_VOICE_PREVIEW, () -> mViewModel.playTtsPreview());
 
             // Hide the system tts settings if no system app can handle it
             Preference systemTtsSettings = findPreference(Settings.PREF_SYSTEM_TTS_SETTINGS);
@@ -176,26 +130,9 @@ public class SettingsActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                 removePreferences(PREF_CATEGORY_USER_DATA, PREF_EXPORT_FAVORITES, PREF_IMPORT_FAVORITES);
             } else {
-                setOnPreferenceClickListener(PREF_EXPORT_FAVORITES, this::exportFavorites);
-                setOnPreferenceClickListener(PREF_IMPORT_FAVORITES, this::importFavorites);
+                setOnPreferenceClickListener(PREF_EXPORT_FAVORITES, () -> startActivityForResult(mViewModel.getExportFavoritesIntent(), ACTION_EXPORT_FAVORITES));
+                setOnPreferenceClickListener(PREF_IMPORT_FAVORITES, () -> startActivityForResult(mViewModel.getImportFavoritesIntent(), ACTION_IMPORT_FAVORITES));
             }
-        }
-
-        @TargetApi(Build.VERSION_CODES.KITKAT)
-        private void exportFavorites() {
-            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TITLE, getString(R.string.export_favorites_default_filename));
-            startActivityForResult(intent, ACTION_EXPORT_FAVORITES);
-        }
-
-        @TargetApi(Build.VERSION_CODES.KITKAT)
-        private void importFavorites() {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("text/plain");
-            startActivityForResult(intent, ACTION_IMPORT_FAVORITES);
         }
 
         @Override
@@ -206,11 +143,14 @@ public class SettingsActivity extends AppCompatActivity {
                 mTts.restart();
                 mRestartTtsOnResume = false;
             }
+            mViewModel.snackbarText.addOnPropertyChangedCallback(mSnackbarCallback);
         }
 
         @Override
         public void onPause() {
             EventBus.getDefault().unregister(this);
+            mViewModel.snackbarText.removeOnPropertyChangedCallback(mSnackbarCallback);
+            mTts.stop();
             super.onPause();
         }
 
@@ -219,29 +159,17 @@ public class SettingsActivity extends AppCompatActivity {
             super.onActivityResult(requestCode, resultCode, data);
             Log.d(TAG, "onActivityResult() called with: " + "requestCode = [" + requestCode + "], resultCode = [" + resultCode + "], data = [" + data + "]");
             Uri uri = data == null ? null : data.getData();
-            String fileDisplayName = PoemFile.readDisplayName(getContext(), uri);
             if (requestCode == ACTION_EXPORT_FAVORITES && resultCode == Activity.RESULT_OK && uri != null) {
-                Completable.fromAction(() -> mFavorites.exportFavorites(getActivity(), uri))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(() -> showSnackbar(R.string.export_favorites_success, fileDisplayName),
-                                throwable -> showSnackbar(R.string.export_favorites_error, fileDisplayName));
+                mViewModel.exportFavorites(uri);
             } else if (requestCode == ACTION_IMPORT_FAVORITES && resultCode == Activity.RESULT_OK && uri != null) {
-                Completable.fromAction(() -> mFavorites.importFavorites(getActivity(), uri))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(() -> showSnackbar(R.string.import_favorites_success, fileDisplayName),
-                                throwable -> showSnackbar(R.string.import_favorites_error, fileDisplayName));
+                mViewModel.importFavorites(uri);
             }
         }
 
         @Override
         public void onOk(int actionId) {
             if (actionId == ACTION_CLEAR_SEARCH_HISTORY) {
-                Completable.fromRunnable(() -> getContext().getContentResolver().delete(SuggestionsProvider.CONTENT_URI, null, null))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(() -> showSnackbar(R.string.search_history_cleared));
+                mViewModel.clearSearchHistory();
             }
         }
 
@@ -278,13 +206,6 @@ public class SettingsActivity extends AppCompatActivity {
             category.removePreference(preference);
         }
 
-        private void showSnackbar(@StringRes int messageResId, String... args) {
-            View rootView = getView();
-            if (rootView != null) {
-                Snackbar.make(rootView, getString(messageResId, (Object[]) args), Snackbar.LENGTH_LONG).show();
-            }
-        }
-
         private void setOnPreferenceClickListener(String preferenceKey, Runnable runnable) {
             setOnPreferenceClickListener(findPreference(preferenceKey), runnable);
         }
@@ -295,5 +216,12 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
             });
         }
+
+        private Observable.OnPropertyChangedCallback mSnackbarCallback = new BindingCallbackAdapter(() -> {
+            View rootView = getView();
+            if (rootView != null) {
+                Snackbar.make(rootView, mViewModel.snackbarText.get(), Snackbar.LENGTH_LONG).show();
+            }
+        });
     }
 }
