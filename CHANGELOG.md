@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.22.0  *(2017-10-15)*
+--------------------
+* Add setting to toggle lookups from text selection.
+* Maintenance: use the android viewmodel and room architecture components.
+
 1.21.0  *(2017-10-01)*
 --------------------
 * Add setting for the priority of the word of the day notification.
