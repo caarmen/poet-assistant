@@ -55,7 +55,9 @@ public final class Share {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_TEXT, text);
         intent.setType("text/plain");
-        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
+        Intent chooserIntent = Intent.createChooser(intent, context.getString(R.string.share));
+        chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(chooserIntent);
     }
 
     /**
@@ -65,7 +67,9 @@ public final class Share {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.putExtra(Intent.EXTRA_TEXT, text);
         intent.setType("text/plain");
-        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)));
+        Intent chooserIntent = Intent.createChooser(intent, context.getString(R.string.share));
+        chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(chooserIntent);
     }
 
     @DrawableRes public static int getShareIconId() {

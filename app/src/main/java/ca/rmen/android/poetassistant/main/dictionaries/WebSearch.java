@@ -46,7 +46,9 @@ public final class WebSearch {
             searchIntent.setType("text/plain");
             searchIntent.putExtra(Intent.EXTRA_TEXT, text);
         }
-        context.startActivity(Intent.createChooser(searchIntent, context.getString(R.string.action_web_search, text)));
+        Intent chooserIntent = Intent.createChooser(searchIntent, context.getString(R.string.action_web_search, text));
+        chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(chooserIntent);
     }
 
 
