@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.22.1  *(2017-10-19)*
+--------------------
+* Fix crash when sharing poem text or search results, or when doing a web search.
+
 1.22.0  *(2017-10-15)*
 --------------------
 * Add setting to toggle lookups from text selection.
