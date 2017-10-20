@@ -36,13 +36,10 @@ public interface FavoriteDao {
     List<Favorite> getFavorites();
 
     @Query("SELECT * FROM FAVORITE")
-    LiveData<List<Favorite>> observeFavorites();
+    LiveData<List<Favorite>> getFavoritesLiveData();
 
     @Query("SELECT COUNT(*) FROM FAVORITE WHERE WORD = :word")
     LiveData<Integer> getCountLiveData(String word);
-
-    @Query("SELECT COUNT(*) FROM FAVORITE WHERE WORD = :word")
-    int getCount(String word);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(Favorite favorite);

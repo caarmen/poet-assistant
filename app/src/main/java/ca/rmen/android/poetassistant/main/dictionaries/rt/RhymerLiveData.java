@@ -33,18 +33,18 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.dagger.DaggerHelper;
-import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Favorites;
+import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData;
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.rhymer.RhymeResult;
 
-public class RhymerLoader extends ResultListLoader<ResultListData<RTEntryViewModel>> {
+public class RhymerLiveData extends ResultListLiveData<ResultListData<RTEntryViewModel>> {
 
-    private static final String TAG = Constants.TAG + RhymerLoader.class.getSimpleName();
+    private static final String TAG = Constants.TAG + RhymerLiveData.class.getSimpleName();
 
     private final String mQuery;
     private final String mFilter;
@@ -53,7 +53,7 @@ public class RhymerLoader extends ResultListLoader<ResultListData<RTEntryViewMod
     @Inject Thesaurus mThesaurus;
     @Inject Favorites mFavorites;
 
-    public RhymerLoader(Context context, String query, String filter) {
+    public RhymerLiveData(Context context, String query, String filter) {
         super(context);
         mQuery = query;
         mFilter = filter;

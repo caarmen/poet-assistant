@@ -37,33 +37,25 @@ import android.view.inputmethod.InputMethodManager;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.Favorite;
-import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper;
 import ca.rmen.android.poetassistant.main.Tab;
-import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 
 public class ResultListFragment<T> extends Fragment {
     private static final String TAG = Constants.TAG + ResultListFragment.class.getSimpleName();
     public static final String EXTRA_TAB = "tab";
-    static final String EXTRA_FILTER = "filter";
     static final String EXTRA_QUERY = "query";
+    private static final String EXTRA_FILTER = "filter";
     private FragmentResultListBinding mBinding;
     private ResultListViewModel<T> mViewModel;
     private ResultListHeaderViewModel mHeaderViewModel;
 
     private Tab mTab;
-    @Inject Tts mTts;
-    @Inject SettingsPrefs mPrefs;
-    @Inject Favorites mFavorites;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,7 +68,6 @@ public class ResultListFragment<T> extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
         Log.v(TAG, mTab + " onCreateView");
-        ResultListFactory.inject(mTab, this);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false);
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mBinding.recyclerView.setHasFixedSize(true);
@@ -93,7 +84,8 @@ public class ResultListFragment<T> extends Fragment {
             headerFragment = ResultListHeaderFragment.newInstance(mTab);
             getChildFragmentManager().beginTransaction().replace(R.id.result_list_header, headerFragment).commit();
         }
-        mFavorites.observeFavorites().observe(this, mFavoritesObserver);
+        mViewModel.favoritesLiveData.observe(this, mFavoritesObserver);
+        mViewModel.resultListDataLiveData.observe(this, data -> mViewModel.setData(data));
         return mBinding.getRoot();
     }
 
@@ -112,7 +104,7 @@ public class ResultListFragment<T> extends Fragment {
     public void onStart() {
         Log.v(TAG, mTab + " onStart");
         super.onStart();
-        getLoaderManager().initLoader(mTab.ordinal(), getArguments(), mViewModel.loaderCallbacks);
+        queryFromArguments();
         getActivity().invalidateOptionsMenu();
     }
 
@@ -140,12 +132,20 @@ public class ResultListFragment<T> extends Fragment {
         menu.findItem(R.id.action_share).setEnabled(mViewModel.isDataAvailable.get());
     }
 
+    private void queryFromArguments() {
+        Bundle args = getArguments();
+        if (args != null && args.containsKey(EXTRA_QUERY)) {
+            mViewModel.setQueryParams(new ResultListViewModel.QueryParams(
+                    args.getString(EXTRA_QUERY),
+                    args.getString(EXTRA_FILTER)
+            ));
+        }
+    }
+
     public void query(String query) {
         Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
         mHeaderViewModel.filter.set(null);
-        Bundle args = new Bundle(1);
-        args.putString(EXTRA_QUERY, query);
-        getLoaderManager().restartLoader(mTab.ordinal(), args, mViewModel.loaderCallbacks);
+        mViewModel.setQueryParams(new ResultListViewModel.QueryParams(query, null));
         getActivity().invalidateOptionsMenu();
     }
 
@@ -174,12 +174,10 @@ public class ResultListFragment<T> extends Fragment {
 
     private final BindingCallbackAdapter mLayoutSettingChanged = new BindingCallbackAdapter(this::reload);
 
-    private Observer<List<Favorite>> mFavoritesObserver = favorites -> reload();
+    private final Observer<List<Favorite>> mFavoritesObserver = favorites -> reload();
 
     private void reload() {
-        Bundle args = new Bundle(2);
-        args.putString(EXTRA_QUERY, mHeaderViewModel.query.get());
-        args.putString(EXTRA_FILTER, mHeaderViewModel.filter.get());
-        getLoaderManager().restartLoader(mTab.ordinal(), args, mViewModel.loaderCallbacks);
+        mViewModel.setQueryParams(new ResultListViewModel.QueryParams(mHeaderViewModel.query.get(),
+                mHeaderViewModel.filter.get()));
     }
 }

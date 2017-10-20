@@ -118,7 +118,7 @@ public class ResultListHeaderFragment extends Fragment
                 }
             });
 
-    private Observer<Boolean> mFavoriteObserver = isFavorite -> mBinding.btnStarQuery.setChecked(isFavorite == Boolean.TRUE);
+    private final Observer<Boolean> mFavoriteObserver = isFavorite -> mBinding.btnStarQuery.setChecked(isFavorite == Boolean.TRUE);
 
     public class ButtonListener {
 

@@ -36,29 +36,29 @@ import android.view.View;
 import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListExporter;
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLiveData;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesListExporter;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLiveData;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternListExporter;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLiveData;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListExporter;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLiveData;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusListExporter;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLiveData;
 import ca.rmen.android.poetassistant.wotd.WotdAdapter;
 import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel;
 import ca.rmen.android.poetassistant.wotd.WotdListExporter;
-import ca.rmen.android.poetassistant.wotd.WotdLoader;
+import ca.rmen.android.poetassistant.wotd.WotdLiveData;
 
 
 public final class ResultListFactory {
@@ -139,22 +139,21 @@ public final class ResultListFactory {
         };
     }
 
-    static ResultListLoader<? extends ResultListData<?>> createLoader(Tab tab, Context context, String query, String filter) {
+    static ResultListLiveData<? extends ResultListData<?>> createLiveData(Tab tab, Context context, String query, String filter) {
         switch (tab) {
             case PATTERN:
-                return new PatternLoader(context, query);
+                return new PatternLiveData(context, query);
             case FAVORITES:
-                return new FavoritesLoader(context);
+                return new FavoritesLiveData(context);
             case WOTD:
-                return new WotdLoader(context);
+                return new WotdLiveData(context);
             case RHYMER:
-                return new RhymerLoader(context, query, filter);
+                return new RhymerLiveData(context, query, filter);
             case THESAURUS:
-                return new ThesaurusLoader(context, query, filter);
+                return new ThesaurusLiveData(context, query, filter);
             case DICTIONARY:
             default:
-                return new DictionaryLoader(context, query);
-
+                return new DictionaryLiveData(context, query);
         }
     }
 
@@ -190,28 +189,29 @@ public final class ResultListFactory {
         return FilterDialogFragment.newInstance(dialogMessage, text);
     }
 
-    static void inject(Tab tab, ResultListFragment<?> fragment) {
+    static void inject(Context context, Tab tab, ResultListViewModel<?> viewModel) {
         switch (tab) {
             case RHYMER:
             case THESAURUS:
             case PATTERN:
             case FAVORITES:
                 //noinspection unchecked
-                DaggerHelper.getMainScreenComponent(fragment.getContext())
-                        .inject((ResultListFragment<RTEntryViewModel>) fragment);
+                DaggerHelper.getMainScreenComponent(context)
+                        .inject((ResultListViewModel<RTEntryViewModel>) viewModel);
                 break;
             case WOTD:
                 //noinspection unchecked
-                DaggerHelper.getMainScreenComponent(fragment.getContext())
-                        .injectWotd((ResultListFragment<WotdEntryViewModel>) fragment);
+                DaggerHelper.getMainScreenComponent(context)
+                        .injectWotd((ResultListViewModel<WotdEntryViewModel>) viewModel);
             case DICTIONARY:
                 //noinspection unchecked
-                DaggerHelper.getMainScreenComponent(fragment.getContext())
-                        .injectDict((ResultListFragment<DictionaryEntry>) fragment);
+                DaggerHelper.getMainScreenComponent(context)
+                        .injectDict((ResultListViewModel<DictionaryEntry>) viewModel);
                 break;
             default:
         }
     }
+
     static String getFilterLabel(Context context, Tab tab) {
         switch (tab) {
             case RHYMER:

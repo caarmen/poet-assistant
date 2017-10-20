@@ -22,15 +22,15 @@ package ca.rmen.android.poetassistant.dagger;
 import javax.inject.Singleton;
 
 import ca.rmen.android.poetassistant.main.MainActivity;
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderViewModel;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListViewModel;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLoader;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLiveData;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLiveData;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLiveData;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLiveData;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLiveData;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsCursor;
@@ -43,7 +43,7 @@ import ca.rmen.android.poetassistant.wotd.WotdBootReceiver;
 import ca.rmen.android.poetassistant.wotd.WotdBroadcastReceiver;
 import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel;
 import ca.rmen.android.poetassistant.wotd.WotdJobService;
-import ca.rmen.android.poetassistant.wotd.WotdLoader;
+import ca.rmen.android.poetassistant.wotd.WotdLiveData;
 import dagger.Component;
 import dagger.Subcomponent;
 
@@ -58,17 +58,17 @@ public interface AppComponent {
     @Subcomponent
     interface MainScreenComponent {
         void inject(MainActivity mainActivity);
-        void inject(ResultListFragment<RTEntryViewModel> resultListFragment);
-        void injectWotd(ResultListFragment<WotdEntryViewModel> resultListFragment);
-        void injectDict(ResultListFragment<DictionaryEntry> resultListFragment);
+        void inject(ResultListViewModel<RTEntryViewModel> resultListViewModel);
+        void injectWotd(ResultListViewModel<WotdEntryViewModel> resultListViewModel);
+        void injectDict(ResultListViewModel<DictionaryEntry> resultListViewModel);
         void inject(RTEntryViewModel rtEntry);
         void inject(ResultListHeaderViewModel resultListHeaderViewModel);
         void inject(ReaderViewModel readerViewModel);
-        void inject(RhymerLoader rhymerLoader);
-        void inject(ThesaurusLoader thesaurusLoader);
-        void inject(DictionaryLoader dictionaryLoader);
-        void inject(PatternLoader patternLoader);
-        void inject(FavoritesLoader favoritesLoader);
+        void inject(RhymerLiveData rhymerLiveData);
+        void inject(ThesaurusLiveData thesaurusLiveData);
+        void inject(DictionaryLiveData dictionaryLiveData);
+        void inject(PatternLiveData patternLiveData);
+        void inject(FavoritesLiveData favoritesLiveData);
         void inject(SuggestionsCursor suggestionsCursor);
         void inject(Search search);
         Suggestions getSuggestions();
@@ -87,7 +87,7 @@ public interface AppComponent {
         void inject(WotdBroadcastReceiver wotdBroadcastReceiver);
         void inject(WotdJobService wotdJobService);
         void inject(WotdBootReceiver wotdBootReceiver);
-        void inject(WotdLoader wotdLoader);
+        void inject(WotdLiveData wotdLiveData);
         void inject(WotdEntryViewModel entry);
     }
 }

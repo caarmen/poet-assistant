@@ -57,12 +57,8 @@ public class Favorites {
         return Transformations.map(mFavoriteDao.getCountLiveData(word), count -> count > 0);
     }
 
-    public LiveData<Boolean> observeIsFavorite(String word) {
-        return Transformations.map(mFavoriteDao.observeFavoriteCount(word), count -> count > 0);
-    }
-
-    public LiveData<List<Favorite>> observeFavorites() {
-        return mFavoriteDao.observeFavorites();
+    public LiveData<List<Favorite>> getFavoritesLiveData() {
+        return mFavoriteDao.getFavoritesLiveData();
     }
 
     @WorkerThread
