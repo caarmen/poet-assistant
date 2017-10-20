@@ -31,9 +31,9 @@ import dagger.Provides;
 @Module
 public class DbModule {
 
-    protected final Application mApplication;
+    private final Application mApplication;
 
-    public DbModule(Application application) {
+    DbModule(Application application) {
         mApplication = application;
     }
 

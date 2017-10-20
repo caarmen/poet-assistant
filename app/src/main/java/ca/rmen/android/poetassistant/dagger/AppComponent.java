@@ -34,7 +34,6 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsCursor;
-import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider;
 import ca.rmen.android.poetassistant.main.reader.ReaderViewModel;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 import ca.rmen.android.poetassistant.settings.SettingsChangeListener;
@@ -71,7 +70,6 @@ public interface AppComponent {
         void inject(PatternLoader patternLoader);
         void inject(FavoritesLoader favoritesLoader);
         void inject(SuggestionsCursor suggestionsCursor);
-        void inject(SuggestionsProvider suggestionsProvider);
         void inject(Search search);
         Suggestions getSuggestions();
     }

@@ -108,7 +108,7 @@ public class ResultListHeaderFragment extends Fragment
         if (mTab != null) ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, event.status);
     }
 
-    private Observable.OnPropertyChangedCallback mSnackbarTextChanged =
+    private final Observable.OnPropertyChangedCallback mSnackbarTextChanged =
             new BindingCallbackAdapter(() -> {
                 String text = mViewModel.snackbarText.get();
                 if (!TextUtils.isEmpty(text)) {

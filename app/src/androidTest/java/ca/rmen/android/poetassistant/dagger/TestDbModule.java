@@ -31,7 +31,7 @@ import dagger.Provides;
 @Module
 public class TestDbModule {
 
-    private Application mApplication;
+    private final Application mApplication;
 
     public TestDbModule(Application application) {
         mApplication = application;

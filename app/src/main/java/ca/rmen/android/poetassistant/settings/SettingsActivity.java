@@ -217,7 +217,7 @@ public class SettingsActivity extends AppCompatActivity {
             });
         }
 
-        private Observable.OnPropertyChangedCallback mSnackbarCallback = new BindingCallbackAdapter(() -> {
+        private final Observable.OnPropertyChangedCallback mSnackbarCallback = new BindingCallbackAdapter(() -> {
             View rootView = getView();
             if (rootView != null) {
                 Snackbar.make(rootView, mViewModel.snackbarText.get(), Snackbar.LENGTH_LONG).show();

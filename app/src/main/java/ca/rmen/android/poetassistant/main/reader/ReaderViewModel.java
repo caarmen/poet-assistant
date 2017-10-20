@@ -178,7 +178,7 @@ public class ReaderViewModel extends AndroidViewModel {
         poem.set(savedPoem.text);
     }
 
-    String getSaveAsFilename() {
+    private String getSaveAsFilename() {
         PoemFile poemFile = mPoemPrefs.getSavedPoem();
         if (poemFile != null) {
             return poemFile.name;

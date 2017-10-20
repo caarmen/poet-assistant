@@ -23,6 +23,7 @@ import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.migration.Migration;
+import android.support.annotation.NonNull;
 
 import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestion;
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionDao;
@@ -37,7 +38,7 @@ public abstract class UserDb extends RoomDatabase {
 
     public static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
-        public void migrate(SupportSQLiteDatabase database) {
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("CREATE TABLE `FAVORITE_TEMP` AS SELECT * FROM `FAVORITE`");
             database.execSQL("CREATE TABLE `SUGGESTION_TEMP` AS SELECT * FROM `SUGGESTION`");
             database.execSQL("DROP TABLE `FAVORITE`");

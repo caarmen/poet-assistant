@@ -27,6 +27,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -117,7 +118,8 @@ public final class ResultListFactory {
     private static ViewModelProvider.Factory createViewModelFactory(Tab tab, Application application) {
         return new ViewModelProvider.Factory() {
             @Override
-            public <T extends ViewModel> T create(Class<T> aClass) {
+            @NonNull
+            public <T extends ViewModel> T create(@NonNull Class<T> aClass) {
                 switch(tab) {
                     case PATTERN:
                     case FAVORITES:
