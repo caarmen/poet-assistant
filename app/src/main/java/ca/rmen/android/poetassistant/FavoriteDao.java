@@ -19,6 +19,7 @@
 
 package ca.rmen.android.poetassistant;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -33,6 +34,9 @@ public interface FavoriteDao {
 
     @Query("SELECT * FROM FAVORITE")
     List<Favorite> getFavorites();
+
+    @Query("SELECT COUNT(*) FROM FAVORITE WHERE WORD = :word")
+    LiveData<Integer> getCountLiveData(String word);
 
     @Query("SELECT COUNT(*) FROM FAVORITE WHERE WORD = :word")
     int getCount(String word);

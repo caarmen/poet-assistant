@@ -19,6 +19,7 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
@@ -76,6 +77,7 @@ public class ResultListHeaderFragment extends Fragment
         mViewModel = ViewModelProviders.of(getParentFragment()).get(ResultListHeaderViewModel.class);
         mBinding.setViewModel(mViewModel);
         mViewModel.snackbarText.addOnPropertyChangedCallback(mSnackbarTextChanged);
+        mViewModel.isFavoriteLiveData.observe(this, mFavoriteObserver);
 
         EventBus.getDefault().register(this);
         return mBinding.getRoot();
@@ -115,6 +117,8 @@ public class ResultListHeaderFragment extends Fragment
                     Snackbar.make(mBinding.getRoot(), text, Snackbar.LENGTH_SHORT).show();
                 }
             });
+
+    private Observer<Boolean> mFavoriteObserver = isFavorite -> mBinding.btnStarQuery.setChecked(isFavorite == Boolean.TRUE);
 
     public class ButtonListener {
 

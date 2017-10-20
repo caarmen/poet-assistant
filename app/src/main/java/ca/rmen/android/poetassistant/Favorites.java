@@ -19,6 +19,8 @@
 
 package ca.rmen.android.poetassistant;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Transformations;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.MainThread;
@@ -62,9 +64,12 @@ public class Favorites {
         mFavoriteDao = favoriteDao;
     }
 
-    @WorkerThread
-    public boolean isFavorite(String word) {
-        return !TextUtils.isEmpty(word) && mFavoriteDao.getCount(word) > 0;
+    public LiveData<Boolean> getIsFavoriteLiveData(String word) {
+        return Transformations.map(mFavoriteDao.getCountLiveData(word), count -> count > 0);
+    }
+
+    public LiveData<Boolean> observeIsFavorite(String word) {
+        return Transformations.map(mFavoriteDao.observeFavoriteCount(word), count -> count > 0);
     }
 
     @WorkerThread

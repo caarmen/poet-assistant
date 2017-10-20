@@ -21,11 +21,10 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Transformations;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import javax.inject.Inject;
 
@@ -34,9 +33,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import ca.rmen.android.poetassistant.databinding.LiveDataMapping;
 
 public class ResultListHeaderViewModel extends AndroidViewModel {
 
@@ -46,17 +43,24 @@ public class ResultListHeaderViewModel extends AndroidViewModel {
     public final ObservableBoolean showHeader = new ObservableBoolean();
     final ObservableField<String> snackbarText = new ObservableField<>();
 
+    final LiveData<Boolean> isFavoriteLiveData;
+
     @Inject Favorites mFavorites;
     @Inject Tts mTts;
 
     public ResultListHeaderViewModel(Application application) {
         super(application);
         DaggerHelper.getMainScreenComponent(application).inject(this);
-        // When the query text changes, update the star icon
-        query.addOnPropertyChangedCallback(new BindingCallbackAdapter(this::readFavorite));
+        // Expose a LiveData to the fragment, so it can update the star icon when the favorite
+        // value changes in the DB. This is relevant when the favorite value changes because the star
+        // was clicked in *another* fragment. If we only had one screen where the user could change
+        // the favorites, a simple databinding between the star checkbox and this ViewModel would
+        // suffice to sync the db and the UI.
+        isFavoriteLiveData = Transformations.switchMap(LiveDataMapping.fromObservableField(query),
+                query -> mFavorites.getIsFavoriteLiveData(query));
         // When the user taps on the star icon, update the favorite in the DB
-        isFavorite.addOnPropertyChangedCallback(mPersistFavoriteCallback);
-        EventBus.getDefault().register(this);
+        isFavorite.addOnPropertyChangedCallback(
+                new BindingCallbackAdapter(() -> mFavorites.saveFavorite(query.get(), isFavorite.get())));
     }
 
     public void speak() {
@@ -74,32 +78,6 @@ public class ResultListHeaderViewModel extends AndroidViewModel {
     void clearFavorites () {
         mFavorites.clear();
         snackbarText.set(getApplication().getString(R.string.favorites_cleared));
-    }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        EventBus.getDefault().unregister(this);
-    }
-
-    private void readFavorite() {
-        Single.fromCallable(() -> mFavorites.isFavorite(query.get()))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(isFavoriteValue -> {
-                    isFavorite.removeOnPropertyChangedCallback(mPersistFavoriteCallback);
-                    isFavorite.set(isFavoriteValue);
-                    isFavorite.addOnPropertyChangedCallback(mPersistFavoriteCallback);
-                });
-    }
-
-    private final BindingCallbackAdapter mPersistFavoriteCallback =
-        new BindingCallbackAdapter(() -> mFavorites.saveFavorite(query.get(), isFavorite.get()));
-
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onFavoritesChanged(Favorites.OnFavoritesChanged event) {
-        readFavorite();
     }
 
     @Override
