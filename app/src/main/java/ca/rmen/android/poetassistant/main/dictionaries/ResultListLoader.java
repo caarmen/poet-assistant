@@ -23,11 +23,7 @@ import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.Favorites;
 
 public abstract class ResultListLoader<T> extends AsyncTaskLoader<T> {
 
@@ -50,21 +46,7 @@ public abstract class ResultListLoader<T> extends AsyncTaskLoader<T> {
     protected void onStartLoading() {
         super.onStartLoading();
         Log.d(TAG, "onStartLoading() called");
-        if (!EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
         if (mResult != null) super.deliverResult(mResult);
         else forceLoad();
     }
-
-    @Override
-    protected void onReset() {
-        if (EventBus.getDefault().isRegistered(this)) EventBus.getDefault().unregister(this);
-        super.onReset();
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onFavoritesChanged(Favorites.OnFavoritesChanged event) {
-        forceLoad();
-    }
-
 }

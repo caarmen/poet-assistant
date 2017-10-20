@@ -35,6 +35,9 @@ public interface FavoriteDao {
     @Query("SELECT * FROM FAVORITE")
     List<Favorite> getFavorites();
 
+    @Query("SELECT * FROM FAVORITE")
+    LiveData<List<Favorite>> observeFavorites();
+
     @Query("SELECT COUNT(*) FROM FAVORITE WHERE WORD = :word")
     LiveData<Integer> getCountLiveData(String word);
 

@@ -19,6 +19,7 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
@@ -34,9 +35,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.Favorite;
+import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
@@ -58,6 +63,7 @@ public class ResultListFragment<T> extends Fragment {
     private Tab mTab;
     @Inject Tts mTts;
     @Inject SettingsPrefs mPrefs;
+    @Inject Favorites mFavorites;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,8 +93,10 @@ public class ResultListFragment<T> extends Fragment {
             headerFragment = ResultListHeaderFragment.newInstance(mTab);
             getChildFragmentManager().beginTransaction().replace(R.id.result_list_header, headerFragment).commit();
         }
+        mFavorites.observeFavorites().observe(this, mFavoritesObserver);
         return mBinding.getRoot();
     }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -162,19 +170,16 @@ public class ResultListFragment<T> extends Fragment {
     private final BindingCallbackAdapter mShowHeaderChanged =
             new BindingCallbackAdapter(() -> mHeaderViewModel.showHeader.set(mViewModel.showHeader.get()));
 
-    private final BindingCallbackAdapter mFilterChanged =
-            new BindingCallbackAdapter(() -> {
-                Bundle args = new Bundle(2);
-                args.putString(EXTRA_QUERY, mHeaderViewModel.query.get());
-                args.putString(EXTRA_FILTER, mHeaderViewModel.filter.get());
-                getLoaderManager().restartLoader(mTab.ordinal(), args, mViewModel.loaderCallbacks);
-            });
+    private final BindingCallbackAdapter mFilterChanged = new BindingCallbackAdapter(this::reload);
 
-    private final BindingCallbackAdapter mLayoutSettingChanged =
-            new BindingCallbackAdapter(() -> {
-                Bundle args = new Bundle(2);
-                args.putString(EXTRA_QUERY, mHeaderViewModel.query.get());
-                args.putString(EXTRA_FILTER, mHeaderViewModel.filter.get());
-                getLoaderManager().restartLoader(mTab.ordinal(), args, mViewModel.loaderCallbacks);
-            });
+    private final BindingCallbackAdapter mLayoutSettingChanged = new BindingCallbackAdapter(this::reload);
+
+    private Observer<List<Favorite>> mFavoritesObserver = favorites -> reload();
+
+    private void reload() {
+        Bundle args = new Bundle(2);
+        args.putString(EXTRA_QUERY, mHeaderViewModel.query.get());
+        args.putString(EXTRA_FILTER, mHeaderViewModel.filter.get());
+        getLoaderManager().restartLoader(mTab.ordinal(), args, mViewModel.loaderCallbacks);
+    }
 }
