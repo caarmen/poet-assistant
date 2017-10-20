@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.settings;
 
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -36,9 +37,6 @@ import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.util.Log;
 import android.view.View;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import javax.inject.Inject;
 
@@ -87,6 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             DaggerHelper.getSettingsComponent(getContext()).inject(this);
             mViewModel = ViewModelProviders.of(this).get(SettingsViewModel.class);
+            mTts.getTtsLiveData().observe(this, mTtsObserver);
         }
 
         @Override
@@ -138,7 +137,6 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onResume() {
             super.onResume();
-            EventBus.getDefault().register(this);
             if (mRestartTtsOnResume) {
                 mTts.restart();
                 mRestartTtsOnResume = false;
@@ -148,7 +146,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         public void onPause() {
-            EventBus.getDefault().unregister(this);
             mViewModel.snackbarText.removeOnPropertyChangedCallback(mSnackbarCallback);
             mTts.stop();
             super.onPause();
@@ -187,14 +184,6 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
-        @SuppressWarnings("unused")
-        @Subscribe
-        public void onTtsInitialized(Tts.OnTtsInitialized event) {
-            Log.v(TAG, "onTtsInitialized, event = " + event + ", status = " + event.status);
-            getPreferenceScreen().removeAll();
-            loadPreferences();
-        }
-
         private void removePreferences(String categoryKey, String... preferenceKeys) {
             for (String preferenceKey : preferenceKeys) {
                 removePreference(categoryKey, findPreference(preferenceKey));
@@ -223,5 +212,15 @@ public class SettingsActivity extends AppCompatActivity {
                 Snackbar.make(rootView, mViewModel.snackbarText.get(), Snackbar.LENGTH_LONG).show();
             }
         });
+
+        private final Observer<Tts.TtsState> mTtsObserver = ttsState -> {
+            Log.v(TAG, "ttsState = " + ttsState);
+            if (ttsState != null
+                    && ttsState.previousStatus == Tts.TtsStatus.UNINITIALIZED
+                    && ttsState.currentStatus == Tts.TtsStatus.INITIALIZED) {
+                getPreferenceScreen().removeAll();
+                loadPreferences();
+            }
+        };
     }
 }

@@ -50,7 +50,8 @@ public class DaggerHelper {
         return getAppComponent(application).getWotdComponent();
     }
 
-    private static AppComponent getAppComponent(Context context) {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    public static AppComponent getAppComponent(Context context) {
         return getAppComponent((Application) context.getApplicationContext());
     }
 

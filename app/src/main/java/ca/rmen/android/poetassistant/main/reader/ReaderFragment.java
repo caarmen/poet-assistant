@@ -20,12 +20,14 @@
 package ca.rmen.android.poetassistant.main.reader;
 
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -61,6 +63,8 @@ public class ReaderFragment extends Fragment implements
     private static final int ACTION_FILE_NEW = 2;
 
     private ReaderViewModel mViewModel;
+    private Handler mHandler;
+    private FragmentReaderBinding mBinding;
 
     public static ReaderFragment newInstance(String initialText) {
         Log.d(TAG, "newInstance() called with: " + "initialText = [" + initialText + "]");
@@ -77,6 +81,7 @@ public class ReaderFragment extends Fragment implements
         Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mHandler = new Handler();
     }
 
     @Override
@@ -89,16 +94,17 @@ public class ReaderFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView() called with: " + "inflater = [" + inflater + "], container = [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
-        FragmentReaderBinding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false);
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false);
         mViewModel = ViewModelProviders.of(this).get(ReaderViewModel.class);
-        binding.setViewModel(mViewModel);
+        mBinding.setViewModel(mViewModel);
         mViewModel.snackbarText.addOnPropertyChangedCallback(mSnackbarCallback);
         mViewModel.ttsError.addOnPropertyChangedCallback(mTtsErrorCallback);
         mViewModel.poemFile.addOnPropertyChangedCallback(mPoemFileCallback);
-        binding.tvText.setImeListener(() -> AppBarLayoutHelper.forceExpandAppBarLayout(getActivity()));
-        DebounceTextWatcher.observe(binding.tvText).subscribe(text -> mViewModel.updatePoemText());
-        TextPopupMenu.addSelectionPopupMenu(binding.tvText, (OnWordClickListener) getActivity());
-        return binding.getRoot();
+        mBinding.tvText.setImeListener(() -> AppBarLayoutHelper.forceExpandAppBarLayout(getActivity()));
+        DebounceTextWatcher.observe(mBinding.tvText).subscribe(text -> mViewModel.updatePoemText());
+        TextPopupMenu.addSelectionPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
+        mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver);
+        return mBinding.getRoot();
     }
 
     @Override
@@ -221,6 +227,15 @@ public class ReaderFragment extends Fragment implements
         mViewModel.loadPoem();
     }
 
+    private void updatePlayButton() {
+        ReaderViewModel.PlayButtonState playButtonState = mViewModel.playButtonStateLiveData.getValue();
+        Log.v(TAG, "updatePlayButton: playButtonState = " + playButtonState);
+        if (playButtonState != null) {
+            mBinding.btnPlay.setEnabled(playButtonState.isEnabled);
+            mBinding.btnPlay.setImageResource(playButtonState.iconId);
+        }
+    }
+
     private final Observable.OnPropertyChangedCallback mSnackbarCallback =
             new BindingCallbackAdapter(
                     () -> {
@@ -253,6 +268,17 @@ public class ReaderFragment extends Fragment implements
 
     private final Observable.OnPropertyChangedCallback mPoemFileCallback =
             new BindingCallbackAdapter(() -> getActivity().invalidateOptionsMenu());
+
+    private final Observer<ReaderViewModel.PlayButtonState> mPlayButtonStateObserver = playButtonState -> {
+        Log.v(TAG, "playButtonStateLiveData " + playButtonState);
+        updatePlayButton();
+        // Sometimes when the tts engine is initialized, the "isSpeaking()" method returns true
+        // if you call it immediately.  If we call updatePlayButton only once at this point, we
+        // will show a "stop" button instead of a "play" button.  We workaround this by updating
+        // the button again after a brief moment, hoping that isSpeaking() will correctly
+        // return false, allowing us to display a "play" button.
+        mHandler.postDelayed(this::updatePlayButton, 5000);
+    };
 
 }
 

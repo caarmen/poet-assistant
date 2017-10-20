@@ -26,7 +26,6 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -37,6 +36,7 @@ import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding;
 import ca.rmen.android.poetassistant.main.Tab;
@@ -242,7 +242,7 @@ public final class ResultListFactory {
      * Set the various buttons which appear in the result list header (ex: tts play,
      * web search, filter, help) to visible or gone, depending on the tab.
      */
-    static void updateListHeaderButtonsVisibility(ResultListHeaderBinding binding, Tab tab, int textToSpeechStatus) {
+    static void updateListHeaderButtonsVisibility(ResultListHeaderBinding binding, Tab tab, @NonNull Tts.TtsStatus ttsStatus) {
         switch (tab) {
             case FAVORITES:
                 binding.btnPlay.setVisibility(View.GONE);
@@ -266,7 +266,8 @@ public final class ResultListFactory {
             case THESAURUS:
                 binding.btnFilter.setVisibility(View.VISIBLE);
             case DICTIONARY:
-                int playButtonVisibility = textToSpeechStatus == TextToSpeech.SUCCESS ? View.VISIBLE : View.GONE;
+                int playButtonVisibility = ttsStatus == Tts.TtsStatus.UNINITIALIZED?
+                        View.GONE: View.VISIBLE;
                 binding.btnPlay.setVisibility(playButtonVisibility);
             default:
         }

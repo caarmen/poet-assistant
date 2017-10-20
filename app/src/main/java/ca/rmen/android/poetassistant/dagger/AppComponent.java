@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.dagger;
 
 import javax.inject.Singleton;
 
+import ca.rmen.android.poetassistant.PoemAudioExport;
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderViewModel;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListViewModel;
@@ -64,6 +65,7 @@ public interface AppComponent {
         void inject(RTEntryViewModel rtEntry);
         void inject(ResultListHeaderViewModel resultListHeaderViewModel);
         void inject(ReaderViewModel readerViewModel);
+        void inject(PoemAudioExport poemAudioExport);
         void inject(RhymerLiveData rhymerLiveData);
         void inject(ThesaurusLiveData thesaurusLiveData);
         void inject(DictionaryLiveData dictionaryLiveData);

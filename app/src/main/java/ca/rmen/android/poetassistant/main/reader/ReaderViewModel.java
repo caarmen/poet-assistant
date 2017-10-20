@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.main.reader;
 import android.annotation.TargetApi;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.MediatorLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,9 +30,8 @@ import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.print.PrintJob;
-import android.speech.tts.TextToSpeech;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.preference.PreferenceManager;
@@ -39,16 +39,13 @@ import android.text.Selection;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
-import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
+import ca.rmen.android.poetassistant.databinding.LiveDataMapping;
 import ca.rmen.android.poetassistant.main.dictionaries.Share;
 
 public class ReaderViewModel extends AndroidViewModel {
@@ -71,22 +68,24 @@ public class ReaderViewModel extends AndroidViewModel {
     final ObservableField<SnackbarText> snackbarText = new ObservableField<>();
     final ObservableBoolean ttsError = new ObservableBoolean();
     final ObservableField<PoemFile> poemFile = new ObservableField<>();
+    final MediatorLiveData<PlayButtonState> playButtonStateLiveData;
     @Inject
     Tts mTts;
-    private final Handler mHandler;
     private final PoemPrefs mPoemPrefs;
     private final SharedPreferences mSharedPreferences;
 
     public ReaderViewModel(Application application) {
         super(application);
         DaggerHelper.getMainScreenComponent(application).inject(this);
-        mHandler = new Handler();
-        poem.addOnPropertyChangedCallback(new BindingCallbackAdapter(this::updatePlayButton));
-        EventBus.getDefault().register(this);
         mPoemPrefs = new PoemPrefs(application);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(application);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(mPrefsListener);
         poemFile.set(mPoemPrefs.getSavedPoem());
+        playButtonStateLiveData = new MediatorLiveData<>();
+        playButtonStateLiveData.addSource(mTts.getTtsLiveData(),
+                ttsState -> playButtonStateLiveData.setValue(toPlayButtonState(ttsState, poem.get())));
+        playButtonStateLiveData.addSource(LiveDataMapping.fromObservableField(poem),
+                poemText -> playButtonStateLiveData.setValue(toPlayButtonState(mTts.getTtsState(), poemText)));
     }
 
     // begin TTS
@@ -95,56 +94,54 @@ public class ReaderViewModel extends AndroidViewModel {
      * The button shall be disabled if TTS isn't initialized, or if there is no text to play.
      * The button should display a "Play" icon if TTS isn't running but can be started.
      * The button should display a "Stop" icon if TTS is currently running.
-     * This is called from a background thread by TTS.
      */
-    private void updatePlayButton() {
-        Log.d(TAG, "updatePlayButton: tts status = " + mTts.getStatus() + ", tts is speaking = " + mTts.isSpeaking());
-        mHandler.post(() -> {
-            boolean enabled = !TextUtils.isEmpty(poem.get());
-            playButtonEnabled.set(enabled);
-            if (mTts.isSpeaking()) {
-                playButtonDrawable.set(R.drawable.ic_stop);
-            } else if (!enabled) {
-                playButtonDrawable.set(R.drawable.ic_play_disabled);
+    private static PlayButtonState toPlayButtonState(Tts.TtsState ttsState, String poemText) {
+        Log.v(TAG, "toPlayButtonState: ttsState = " + ttsState + ", poemText = " + poemText);
+        if (ttsState != null) {
+            if (ttsState.currentStatus == Tts.TtsStatus.INITIALIZED) {
+                if (TextUtils.isEmpty(poemText)) {
+                    return new PlayButtonState(false, R.drawable.ic_play_disabled);
+                } else {
+                    return new PlayButtonState(true, R.drawable.ic_play_enabled);
+                }
+            } else if (ttsState.currentStatus == Tts.TtsStatus.SPEAKING) {
+                return new PlayButtonState(true, R.drawable.ic_stop);
             } else {
-                playButtonDrawable.set(R.drawable.ic_play_enabled);
+                return new PlayButtonState(false, R.drawable.ic_play_disabled);
             }
-        });
+        } else {
+            return new PlayButtonState(false, R.drawable.ic_play_disabled);
+        }
+    }
+
+    static class PlayButtonState {
+        final boolean isEnabled;
+        @DrawableRes
+        final int iconId;
+        PlayButtonState(boolean isEnabled, int iconId) {
+            this.isEnabled = isEnabled;
+            this.iconId = iconId;
+        }
+
+        @Override
+        public String toString() {
+            return "PlayButtonState{" +
+                    "isEnabled=" + isEnabled +
+                    ", iconId=" + iconId +
+                    '}';
+        }
     }
 
     public void onPlayButtonClicked() {
         Log.v(TAG, "Play button clicked");
         if (mTts.isSpeaking()) {
             mTts.stop();
-        } else if (mTts.getStatus() == TextToSpeech.SUCCESS) {
+        } else if (mTts.getTtsState() != null && mTts.getTtsState().currentStatus == Tts.TtsStatus.INITIALIZED) {
             speak();
         } else {
             ttsError.set(true);
             ttsError.set(false);
         }
-        updatePlayButton();
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe(sticky = true)
-    public void onTtsInitialized(Tts.OnTtsInitialized event) {
-        Log.d(TAG, "onTtsInitialized() called with: " + "event = [" + event + "]");
-
-        updatePlayButton();
-        // Sometimes when the tts engine is initialized, the "isSpeaking()" method returns true
-        // if you call it immediately.  If we call updatePlayButton only once at this point, we
-        // will show a "stop" button instead of a "play" button.  We workaround this by updating
-        // the button again after a brief moment, hoping that isSpeaking() will correctly
-        // return false, allowing us to display a "play" button.
-        mHandler.postDelayed(this::updatePlayButton, 5000);
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onTtsUtteranceCompleted(Tts.OnUtteranceCompleted event) {
-        Log.d(TAG, "onTtsUtteranceCompleted() called with: " + "event = [" + event + "]");
-        updatePlayButton();
-        mHandler.postDelayed(this::updatePlayButton, 1000);
     }
 
     /**
@@ -296,7 +293,6 @@ public class ReaderViewModel extends AndroidViewModel {
 
     @Override
     protected void onCleared() {
-        EventBus.getDefault().unregister(this);
         mSharedPreferences.unregisterOnSharedPreferenceChangeListener(mPrefsListener);
         super.onCleared();
     }

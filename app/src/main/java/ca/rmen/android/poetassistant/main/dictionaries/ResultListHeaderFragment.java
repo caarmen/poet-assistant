@@ -33,9 +33,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
 import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
@@ -78,15 +75,14 @@ public class ResultListHeaderFragment extends Fragment
         mBinding.setViewModel(mViewModel);
         mViewModel.snackbarText.addOnPropertyChangedCallback(mSnackbarTextChanged);
         mViewModel.isFavoriteLiveData.observe(this, mFavoriteObserver);
+        mViewModel.ttsStateLiveData.observe(this, mTtsObserver);
 
-        EventBus.getDefault().register(this);
         return mBinding.getRoot();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        EventBus.getDefault().unregister(this);
         mViewModel.snackbarText.removeOnPropertyChangedCallback(mSnackbarTextChanged);
     }
 
@@ -103,13 +99,6 @@ public class ResultListHeaderFragment extends Fragment
         }
     }
 
-    @SuppressWarnings("unused")
-    @Subscribe (sticky = true)
-    public void onTtsInitialized(Tts.OnTtsInitialized event) {
-        Log.d(TAG, mTab + ": onTtsInitialized() called with: " + "event = [" + event + "]");
-        if (mTab != null) ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, event.status);
-    }
-
     private final Observable.OnPropertyChangedCallback mSnackbarTextChanged =
             new BindingCallbackAdapter(() -> {
                 String text = mViewModel.snackbarText.get();
@@ -119,6 +108,10 @@ public class ResultListHeaderFragment extends Fragment
             });
 
     private final Observer<Boolean> mFavoriteObserver = isFavorite -> mBinding.btnStarQuery.setChecked(isFavorite == Boolean.TRUE);
+    private final Observer<Tts.TtsState> mTtsObserver = ttsState -> {
+        Log.d(TAG, mTab + ": ttsState = " + ttsState);
+        if (mTab != null && ttsState != null) ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, ttsState.currentStatus);
+    };
 
     public class ButtonListener {
 

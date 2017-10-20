@@ -165,7 +165,6 @@ dependencies {
     compile 'com.android.support:design:26.1.0'
     compile 'com.android.support:preference-v7:26.1.0'
     compile 'com.android.support:preference-v14:26.1.0'
-    compile 'org.greenrobot:eventbus:3.0.0'
     compile 'ca.rmen:rhymer:1.2.0'
     compile 'ca.rmen:porter-stemmer:1.0.0'
     compile 'org.jraf:prefs:1.2.2'
