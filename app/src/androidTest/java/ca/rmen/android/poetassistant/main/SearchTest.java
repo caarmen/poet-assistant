@@ -32,6 +32,7 @@ import org.junit.runner.RunWith;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -85,12 +86,14 @@ public class SearchTest {
 
         searchAutoComplete.perform(pressImeActionButton());
 
+        getInstrumentation().waitForIdleSync();
         openSearchView();
         checkSearchSuggestions("carmen");
 
         typeQuery("benoit");
         checkSingleRootView(mActivityTestRule.getActivity());
         searchAutoComplete.perform(pressImeActionButton());
+        getInstrumentation().waitForIdleSync();
 
         openSearchView();
         checkSearchSuggestions("benoit", "carmen");
