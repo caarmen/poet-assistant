@@ -19,6 +19,7 @@
 
 package ca.rmen.android.poetassistant.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.SystemClock;
@@ -50,6 +51,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.waitForViewVisible;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.is;
@@ -149,7 +151,8 @@ class TestAppUtils {
                 .check(matches(isNotChecked()));
     }
 
-    static ViewInteraction openFilter(String expectedPrefilledFilter) {
+    static ViewInteraction openFilter(Activity activity, String expectedPrefilledFilter) {
+        waitForViewVisible(activity, R.id.btn_filter);
         onView(allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()))
                 .perform(click());
         SystemClock.sleep(200);
@@ -161,8 +164,8 @@ class TestAppUtils {
         return result;
     }
 
-    static void addFilter(String filter, String firstExpectedFilteredMatch) {
-        ViewInteraction filterView = openFilter("");
+    static void addFilter(Activity activity, String filter, String firstExpectedFilteredMatch) {
+        ViewInteraction filterView = openFilter(activity, "");
         filterView.perform(typeText(filter), closeSoftKeyboard());
         clickDialogPositiveButton(android.R.string.ok);
 

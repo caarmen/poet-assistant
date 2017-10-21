@@ -50,11 +50,11 @@ import static ca.rmen.android.poetassistant.main.CustomChecks.checkAllStarredWor
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkClipboard;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkStarredInList;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.addFilter;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearFilter;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearSearchHistory;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearStarredWords;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.addFilter;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clickDialogPositiveButton;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openDictionary;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openDictionaryCleanLayout;
@@ -134,10 +134,10 @@ public class IntegrationTest {
         checkAllStarredWords(context, data.secondSynonymForFirstRhyme);
         swipeViewPagerRight(3);
         checkStarredInList(data.secondSynonymForFirstRhyme);
-        addFilter(data.thesaurusFilter, data.thesaurusFilterMatch);
+        addFilter(mActivityTestRule.getActivity(), data.thesaurusFilter, data.thesaurusFilterMatch);
         clearFilter(data.firstSynonymForFirstRhyme);
         swipeViewPagerRight(1);
-        addFilter(data.rhymerFilter, data.rhymerFilterMatch);
+        addFilter(mActivityTestRule.getActivity(), data.rhymerFilter, data.rhymerFilterMatch);
         clearFilter(data.firstRhyme);
         swipeViewPagerLeft(3);
         typeAndSpeakPoem(data.poem);
@@ -165,10 +165,10 @@ public class IntegrationTest {
         checkAllStarredWords(context, data.secondSynonymForFirstRhyme);
         swipeViewPagerRight(3);
         checkStarredInList(data.secondSynonymForFirstRhyme);
-        addFilter(data.thesaurusFilter, data.thesaurusFilterMatch);
+        addFilter(mActivityTestRule.getActivity(), data.thesaurusFilter, data.thesaurusFilterMatch);
         clearFilter(data.firstSynonymForFirstRhyme);
         swipeViewPagerRight(1);
-        addFilter(data.rhymerFilter, data.rhymerFilterMatch);
+        addFilter(mActivityTestRule.getActivity(), data.rhymerFilter, data.rhymerFilterMatch);
         clearFilter(data.firstRhyme);
         swipeViewPagerLeft(3);
         typeAndSpeakPoem(data.poem);
@@ -263,8 +263,8 @@ public class IntegrationTest {
     @Test
     public void saveFilterTest() {
         search("pugnacious");
-        addFilter("vulturous", "rapacious");
-        ViewInteraction filterView = openFilter("vulturous");
+        addFilter(mActivityTestRule.getActivity(), "vulturous", "rapacious");
+        ViewInteraction filterView = openFilter(mActivityTestRule.getActivity(), "vulturous");
         filterView.perform(closeSoftKeyboard());
         clickDialogPositiveButton(android.R.string.ok);
     }

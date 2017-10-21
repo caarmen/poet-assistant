@@ -19,11 +19,16 @@
 
 package ca.rmen.android.poetassistant.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.SystemClock;
+import android.support.annotation.IdRes;
 import android.support.annotation.StringRes;
+import android.support.test.espresso.IdlingRegistry;
+import android.support.test.espresso.IdlingResource;
 
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.rules.DisplayedViewIdlingResource;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -79,6 +84,13 @@ class TestUiUtils {
         } else {
             checkTitleStripCenterTitle(context, titleRes);
         }
+    }
+
+    static void waitForViewVisible(Activity activity, @IdRes int viewId) {
+        IdlingResource waitForViewResource = new DisplayedViewIdlingResource(activity, viewId);
+        IdlingRegistry.getInstance().register(waitForViewResource);
+        onView(withId(android.R.id.content)).check(matches(isDisplayed()));
+        IdlingRegistry.getInstance().unregister(waitForViewResource);
     }
 
     private static void checkTitleStripCenterTitle(Context context, @StringRes int titleRes) {
