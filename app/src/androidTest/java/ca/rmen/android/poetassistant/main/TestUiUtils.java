@@ -22,13 +22,9 @@ package ca.rmen.android.poetassistant.main;
 import android.content.Context;
 import android.os.SystemClock;
 import android.support.annotation.StringRes;
-import android.support.test.espresso.IdlingRegistry;
-import android.support.test.espresso.IdlingResource;
 
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.rules.SearchResultReadyIdlingResource;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
@@ -83,13 +79,6 @@ class TestUiUtils {
         } else {
             checkTitleStripCenterTitle(context, titleRes);
         }
-    }
-
-    static void waitForSearchResultList() {
-        IdlingResource waitForSearchResultResource = new SearchResultReadyIdlingResource();
-        IdlingRegistry.getInstance().register(waitForSearchResultResource);
-        getInstrumentation().waitForIdleSync();
-        IdlingRegistry.getInstance().unregister(waitForSearchResultResource);
     }
 
     private static void checkTitleStripCenterTitle(Context context, @StringRes int titleRes) {
