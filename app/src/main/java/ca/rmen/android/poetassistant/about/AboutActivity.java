@@ -100,9 +100,12 @@ public class AboutActivity extends AppCompatActivity {
         hackSetIcon(mBinding.tvThesaurusLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvDictionaryLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvGoogleNgramDatasetLicense, R.drawable.ic_bullet);
+        hackSetIcon(mBinding.tvSupportLibLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvRetrolambdaLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvDaggerLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvRxJavaLicense, R.drawable.ic_bullet);
+        hackSetIcon(mBinding.tvRxAndroidLicense, R.drawable.ic_bullet);
+        hackSetIcon(mBinding.tvPrefsLicense, R.drawable.ic_bullet);
         hackSetIcon(mBinding.tvStemmerLicense, R.drawable.ic_bullet);
     }
 

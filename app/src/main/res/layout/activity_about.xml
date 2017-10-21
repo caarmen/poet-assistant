@@ -123,6 +123,11 @@
 
                 <TextView
                     style="@style/AboutActivitySubItem"
+                    android:id="@+id/tv_support_lib_license"
+                    android:text="@string/about_license_support_lib"/>
+
+                <TextView
+                    style="@style/AboutActivitySubItem"
                     android:id="@+id/tv_retrolambda_license"
                     android:text="@string/about_license_retrolambda"/>
 
@@ -135,6 +140,16 @@
                     style="@style/AboutActivitySubItem"
                     android:id="@+id/tv_rx_java_license"
                     android:text="@string/about_license_rx_java"/>
+
+                <TextView
+                    style="@style/AboutActivitySubItem"
+                    android:id="@+id/tv_rx_android_license"
+                    android:text="@string/about_license_rx_android"/>
+
+                <TextView
+                    style="@style/AboutActivitySubItem"
+                    android:id="@+id/tv_prefs_license"
+                    android:text="@string/about_license_prefs"/>
 
                 <TextView
                     style="@style/AboutActivitySubItem"
