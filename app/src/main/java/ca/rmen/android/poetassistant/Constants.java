@@ -22,5 +22,4 @@ package ca.rmen.android.poetassistant;
 public class Constants {
     public static final String TAG = "PoetAssistant/";
     public static final String DEEP_LINK_QUERY =  "query";
-    public static final int MAX_RESULTS = 500;
 }

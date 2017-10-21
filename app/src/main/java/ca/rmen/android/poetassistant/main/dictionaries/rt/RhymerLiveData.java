@@ -68,7 +68,7 @@ public class RhymerLiveData extends ResultListLiveData<RTEntryViewModel> {
         List<RTEntryViewModel> data = new ArrayList<>();
         if (TextUtils.isEmpty(mQuery)) return emptyResult();
 
-        List<RhymeResult> rhymeResults = mRhymer.getRhymingWords(mQuery, Constants.MAX_RESULTS);
+        List<RhymeResult> rhymeResults = mRhymer.getRhymingWords(mQuery);
         if (rhymeResults == null) {
             return emptyResult();
         }
@@ -147,13 +147,6 @@ public class RhymerLiveData extends ResultListLiveData<RTEntryViewModel> {
                         favorites.contains(rhymes[i]),
                         hasDefinition,
                         layout == Settings.Layout.EFFICIENT));
-            }
-            if (results.size() >= Constants.MAX_RESULTS) {
-                results.add(new RTEntryViewModel(
-                        getContext(),
-                        RTEntryViewModel.Type.SUBHEADING,
-                        getContext().getString(R.string.max_results, Constants.MAX_RESULTS))
-                );
             }
         }
     }

@@ -88,13 +88,6 @@ public class PatternLiveData extends ResultListLiveData<RTEntryViewModel> {
                     favorites.contains(matches[i]),
                     layout == Settings.Layout.EFFICIENT));
         }
-        if (matches.length == Constants.MAX_RESULTS) {
-            data.add(new RTEntryViewModel(
-                    getContext(),
-                    RTEntryViewModel.Type.SUBHEADING,
-                    getContext().getString(R.string.max_results, Constants.MAX_RESULTS))
-            );
-        }
         return new ResultListData<>(mQuery, data);
     }
 

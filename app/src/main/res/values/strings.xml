@@ -172,8 +172,6 @@
 <b>?</b> matches a single character<br/>
 <b>*</b> matches multiple characters]]></string>
 
-    <string name="max_results" tools:ignore="PluralsCandidate">Limited to %d matches</string>
-
     <string name="content_description_icon_suggested_word">Suggested word icon</string>
 
     <!-- Strings related to Settings -->
