@@ -54,7 +54,6 @@ public class ResultListViewModel<T> extends AndroidViewModel {
     public final ObservableField<Settings.Layout> layout = new ObservableField<>();
     public final ObservableField<CharSequence> emptyText = new ObservableField<>();
     final ObservableBoolean showHeader = new ObservableBoolean();
-    private final ObservableField<ResultListData<T>> data = new ObservableField<>();
     private ResultListAdapter<T> mAdapter;
     private Tab mTab;
     @Inject
@@ -103,11 +102,15 @@ public class ResultListViewModel<T> extends AndroidViewModel {
     }
 
     void share(Tab tab, String query, String filter) {
-        Share.share(getApplication(), tab, query, filter, data.get().data);
+        Share.share(getApplication(), tab, query, filter, mAdapter.getAll());
     }
 
     String getUsedQueryWord() {
-        return data.get() == null ? null : data.get().matchedWord;
+        QueryParams queryParams = mQueryParams.getValue();
+        if (queryParams == null || TextUtils.isEmpty(queryParams.word)) {
+            return ResultListFactory.getTabName(getApplication(), mTab);
+        }
+        return queryParams.word;
     }
 
     private void updateDataAvailable() {
@@ -119,12 +122,11 @@ public class ResultListViewModel<T> extends AndroidViewModel {
         Log.v(TAG, mTab + ": setData " + loadedData);
         mAdapter.clear();
         if (loadedData != null) mAdapter.addAll(loadedData.data);
-        data.set(loadedData);
-        boolean hasQuery = data.get() != null && !TextUtils.isEmpty(data.get().matchedWord);
+        boolean hasQuery = loadedData != null && !TextUtils.isEmpty(loadedData.matchedWord);
         if (!hasQuery) {
             emptyText.set(getNoQueryEmptyText());
-        } else if (data.get().data != null) {
-            emptyText.set(getNoResultsEmptyText(data.get().matchedWord));
+        } else if (loadedData.data != null) {
+            emptyText.set(getNoResultsEmptyText(loadedData.matchedWord));
         } else {
             emptyText.set(null);
         }
@@ -159,6 +161,5 @@ public class ResultListViewModel<T> extends AndroidViewModel {
             layout.set(Settings.getLayout(SettingsPrefs.get(getApplication())));
         }
     };
-
 
 }

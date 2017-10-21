@@ -36,6 +36,8 @@ import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
 import android.view.ViewGroup;
 
+import java.util.Locale;
+
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory;
@@ -136,7 +138,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         Tab tab = getTabForPosition(position);
-        return ResultListFactory.getTabName(mContext, tab);
+        return ResultListFactory.getTabName(mContext, tab).toUpperCase(Locale.getDefault());
     }
 
     @Nullable

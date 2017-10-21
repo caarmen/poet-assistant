@@ -39,6 +39,10 @@ public abstract class ResultListAdapter<T> extends RecyclerView.Adapter<ResultLi
         notifyDataSetChanged();
     }
 
+    List<T> getAll() {
+        return mData;
+    }
+
     protected T getItem(int position) {
         return mData.get(position);
     }
