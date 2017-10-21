@@ -54,6 +54,7 @@ public class ResultListViewModel<T> extends AndroidViewModel {
     public final ObservableField<Settings.Layout> layout = new ObservableField<>();
     public final ObservableField<CharSequence> emptyText = new ObservableField<>();
     final ObservableBoolean showHeader = new ObservableBoolean();
+    final ObservableField<String> usedQueryWord = new ObservableField<>();
     private ResultListAdapter<T> mAdapter;
     private Tab mTab;
     @Inject
@@ -105,14 +106,6 @@ public class ResultListViewModel<T> extends AndroidViewModel {
         Share.share(getApplication(), tab, query, filter, mAdapter.getAll());
     }
 
-    String getUsedQueryWord() {
-        QueryParams queryParams = mQueryParams.getValue();
-        if (queryParams == null || TextUtils.isEmpty(queryParams.word)) {
-            return ResultListFactory.getTabName(getApplication(), mTab);
-        }
-        return queryParams.word;
-    }
-
     private void updateDataAvailable() {
         isDataAvailable.set(mAdapter != null && mAdapter.getItemCount() > 0);
         isDataAvailable.notifyChange();
@@ -131,6 +124,9 @@ public class ResultListViewModel<T> extends AndroidViewModel {
             emptyText.set(null);
         }
         showHeader.set(hasQuery);
+        if (loadedData != null) {
+            usedQueryWord.set(loadedData.matchedWord);
+        }
         updateDataAvailable();
     }
 
