@@ -28,6 +28,7 @@ import android.support.test.espresso.ViewInteraction;
 
 import ca.rmen.android.poetassistant.R;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -98,6 +99,7 @@ class TestAppUtils {
 
         // Type the query term and search
         typeQuery(query).perform(pressImeActionButton());
+        getInstrumentation().waitForIdleSync();
     }
 
     static void openThesaurus(Context context, String entry, String expectedFirstSynonym) {

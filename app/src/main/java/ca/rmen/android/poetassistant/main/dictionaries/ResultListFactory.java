@@ -26,38 +26,37 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 
-import java.util.Locale;
-
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListExporter;
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLiveData;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesListExporter;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLiveData;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternListExporter;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLiveData;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListExporter;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLiveData;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusListExporter;
-import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLiveData;
 import ca.rmen.android.poetassistant.wotd.WotdAdapter;
 import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel;
 import ca.rmen.android.poetassistant.wotd.WotdListExporter;
-import ca.rmen.android.poetassistant.wotd.WotdLoader;
+import ca.rmen.android.poetassistant.wotd.WotdLiveData;
 
 
 public final class ResultListFactory {
@@ -117,7 +116,8 @@ public final class ResultListFactory {
     private static ViewModelProvider.Factory createViewModelFactory(Tab tab, Application application) {
         return new ViewModelProvider.Factory() {
             @Override
-            public <T extends ViewModel> T create(Class<T> aClass) {
+            @NonNull
+            public <T extends ViewModel> T create(@NonNull Class<T> aClass) {
                 switch(tab) {
                     case PATTERN:
                     case FAVORITES:
@@ -137,22 +137,21 @@ public final class ResultListFactory {
         };
     }
 
-    static ResultListLoader<? extends ResultListData<?>> createLoader(Tab tab, Context context, String query, String filter) {
+    static ResultListLiveData<? extends ResultListData<?>> createLiveData(Tab tab, Context context, String query, String filter) {
         switch (tab) {
             case PATTERN:
-                return new PatternLoader(context, query);
+                return new PatternLiveData(context, query);
             case FAVORITES:
-                return new FavoritesLoader(context);
+                return new FavoritesLiveData(context);
             case WOTD:
-                return new WotdLoader(context);
+                return new WotdLiveData(context);
             case RHYMER:
-                return new RhymerLoader(context, query, filter);
+                return new RhymerLiveData(context, query, filter);
             case THESAURUS:
-                return new ThesaurusLoader(context, query, filter);
+                return new ThesaurusLiveData(context, query, filter);
             case DICTIONARY:
             default:
-                return new DictionaryLoader(context, query);
-
+                return new DictionaryLiveData(context, query);
         }
     }
 
@@ -188,28 +187,29 @@ public final class ResultListFactory {
         return FilterDialogFragment.newInstance(dialogMessage, text);
     }
 
-    static void inject(Tab tab, ResultListFragment<?> fragment) {
+    static void inject(Context context, Tab tab, ResultListViewModel<?> viewModel) {
         switch (tab) {
             case RHYMER:
             case THESAURUS:
             case PATTERN:
             case FAVORITES:
                 //noinspection unchecked
-                DaggerHelper.getMainScreenComponent(fragment.getContext())
-                        .inject((ResultListFragment<RTEntryViewModel>) fragment);
+                DaggerHelper.getMainScreenComponent(context)
+                        .inject((ResultListViewModel<RTEntryViewModel>) viewModel);
                 break;
             case WOTD:
                 //noinspection unchecked
-                DaggerHelper.getMainScreenComponent(fragment.getContext())
-                        .injectWotd((ResultListFragment<WotdEntryViewModel>) fragment);
+                DaggerHelper.getMainScreenComponent(context)
+                        .injectWotd((ResultListViewModel<WotdEntryViewModel>) viewModel);
             case DICTIONARY:
                 //noinspection unchecked
-                DaggerHelper.getMainScreenComponent(fragment.getContext())
-                        .injectDict((ResultListFragment<DictionaryEntry>) fragment);
+                DaggerHelper.getMainScreenComponent(context)
+                        .injectDict((ResultListViewModel<DictionaryEntry>) viewModel);
                 break;
             default:
         }
     }
+
     static String getFilterLabel(Context context, Tab tab) {
         switch (tab) {
             case RHYMER:
@@ -236,11 +236,21 @@ public final class ResultListFactory {
         }
     }
 
+    static boolean isLoadWithoutQuerySupported(Tab tab) {
+        switch (tab) {
+            case FAVORITES:
+            case WOTD:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     /**
      * Set the various buttons which appear in the result list header (ex: tts play,
      * web search, filter, help) to visible or gone, depending on the tab.
      */
-    static void updateListHeaderButtonsVisibility(ResultListHeaderBinding binding, Tab tab, int textToSpeechStatus) {
+    static void updateListHeaderButtonsVisibility(ResultListHeaderBinding binding, Tab tab, @NonNull Tts.TtsStatus ttsStatus) {
         switch (tab) {
             case FAVORITES:
                 binding.btnPlay.setVisibility(View.GONE);
@@ -264,7 +274,8 @@ public final class ResultListFactory {
             case THESAURUS:
                 binding.btnFilter.setVisibility(View.VISIBLE);
             case DICTIONARY:
-                int playButtonVisibility = textToSpeechStatus == TextToSpeech.SUCCESS ? View.VISIBLE : View.GONE;
+                int playButtonVisibility = ttsStatus == Tts.TtsStatus.UNINITIALIZED?
+                        View.GONE: View.VISIBLE;
                 binding.btnPlay.setVisibility(playButtonVisibility);
             default:
         }
@@ -272,18 +283,18 @@ public final class ResultListFactory {
 
     public static String getTabName(Context context, Tab tab) {
         if (tab == Tab.PATTERN)
-            return context.getString(R.string.tab_pattern).toUpperCase(Locale.getDefault());
+            return context.getString(R.string.tab_pattern);
         else if (tab == Tab.FAVORITES)
-            return context.getString(R.string.tab_favorites).toUpperCase(Locale.getDefault());
+            return context.getString(R.string.tab_favorites);
         else if (tab == Tab.WOTD)
-            return context.getString(R.string.tab_wotd).toUpperCase(Locale.getDefault());
+            return context.getString(R.string.tab_wotd);
         else if (tab == Tab.RHYMER)
-            return context.getString(R.string.tab_rhymer).toUpperCase(Locale.getDefault());
+            return context.getString(R.string.tab_rhymer);
         else if (tab == Tab.THESAURUS)
-            return context.getString(R.string.tab_thesaurus).toUpperCase(Locale.getDefault());
+            return context.getString(R.string.tab_thesaurus);
         else if (tab == Tab.DICTIONARY)
-            return context.getString(R.string.tab_dictionary).toUpperCase(Locale.getDefault());
+            return context.getString(R.string.tab_dictionary);
         else
-            return context.getString(R.string.tab_reader).toUpperCase(Locale.getDefault());
+            return context.getString(R.string.tab_reader);
     }
 }

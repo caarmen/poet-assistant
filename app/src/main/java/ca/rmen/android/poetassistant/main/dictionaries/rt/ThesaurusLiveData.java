@@ -34,17 +34,17 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.dagger.DaggerHelper;
-import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Favorites;
+import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData;
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
-public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntryViewModel>> {
+public class ThesaurusLiveData extends ResultListLiveData<ResultListData<RTEntryViewModel>> {
 
-    private static final String TAG = Constants.TAG + ThesaurusLoader.class.getSimpleName();
+    private static final String TAG = Constants.TAG + ThesaurusLiveData.class.getSimpleName();
 
     @Inject Rhymer mRhymer;
     @Inject Thesaurus mThesaurus;
@@ -53,7 +53,7 @@ public class ThesaurusLoader extends ResultListLoader<ResultListData<RTEntryView
     private final String mQuery;
     private final String mFilter;
 
-    public ThesaurusLoader(Context context, String query, String filter) {
+    public ThesaurusLiveData(Context context, String query, String filter) {
         super(context);
         mQuery = query;
         mFilter = filter;

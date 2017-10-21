@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,15 +17,20 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger;
+package ca.rmen.android.poetassistant.databinding;
 
-import javax.inject.Singleton;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.databinding.ObservableField;
 
-import ca.rmen.android.poetassistant.Tts;
-import dagger.Component;
+public final class LiveDataMapping {
+    private LiveDataMapping() {
+        // prevent instantiation
+    }
 
-@Singleton
-@Component(modules = {AppModule.class, TestDbModule.class})
-public interface TestAppComponent extends AppComponent {
-    Tts getTts();
+    public static LiveData<String> fromObservableField(ObservableField<String>observableField) {
+        MutableLiveData<String> liveData = new MutableLiveData<>();
+        observableField.addOnPropertyChangedCallback(new BindingCallbackAdapter(() -> liveData.setValue(observableField.get())));
+        return liveData;
+    }
 }

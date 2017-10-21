@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 
-public class ThesaurusLoaderTest {
+public class ThesaurusLiveDataTest {
 
 
     @Test
@@ -43,7 +43,7 @@ public class ThesaurusLoaderTest {
                         new String[]{"garbage", "buncombe", "drivel", "bunk", "rot", "guff", "bunkim"}, new String[0])
         };
 
-        ThesaurusEntry.ThesaurusEntryDetails[] actual = ThesaurusLoader.filter(thesaurusEntryDetails, rhymes);
+        ThesaurusEntry.ThesaurusEntryDetails[] actual = ThesaurusLiveData.filter(thesaurusEntryDetails, rhymes);
         assertNotNull(actual);
         assertEquals(1, actual.length);
         assertNotNull(actual[0].antonyms);
@@ -64,7 +64,7 @@ public class ThesaurusLoaderTest {
                 new ThesaurusEntry.ThesaurusEntryDetails(ThesaurusEntry.WordType.NOUN, new String[]{"musician", "instrumentalist", "performing artist", "performer"}, new String[0])
         };
 
-        ThesaurusEntry.ThesaurusEntryDetails[] actual = ThesaurusLoader.filter(thesaurusEntryDetails, rhymes);
+        ThesaurusEntry.ThesaurusEntryDetails[] actual = ThesaurusLiveData.filter(thesaurusEntryDetails, rhymes);
         assertNotNull(actual);
         assertEquals(1, actual.length);
         assertNotNull(actual[0].antonyms);
@@ -87,7 +87,7 @@ public class ThesaurusLoaderTest {
                         new String[]{"cry"})
         };
 
-        ThesaurusEntry.ThesaurusEntryDetails[] actual = ThesaurusLoader.filter(thesaurusEntryDetails, rhymes);
+        ThesaurusEntry.ThesaurusEntryDetails[] actual = ThesaurusLiveData.filter(thesaurusEntryDetails, rhymes);
         assertNotNull(actual);
         assertEquals(1, actual.length);
         assertNotNull(actual[0].antonyms);

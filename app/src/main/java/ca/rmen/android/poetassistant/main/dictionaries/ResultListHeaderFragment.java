@@ -19,6 +19,7 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
@@ -31,9 +32,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Locale;
 
@@ -76,15 +74,15 @@ public class ResultListHeaderFragment extends Fragment
         mViewModel = ViewModelProviders.of(getParentFragment()).get(ResultListHeaderViewModel.class);
         mBinding.setViewModel(mViewModel);
         mViewModel.snackbarText.addOnPropertyChangedCallback(mSnackbarTextChanged);
+        mViewModel.isFavoriteLiveData.observe(this, mFavoriteObserver);
+        mViewModel.ttsStateLiveData.observe(this, mTtsObserver);
 
-        EventBus.getDefault().register(this);
         return mBinding.getRoot();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        EventBus.getDefault().unregister(this);
         mViewModel.snackbarText.removeOnPropertyChangedCallback(mSnackbarTextChanged);
     }
 
@@ -101,20 +99,19 @@ public class ResultListHeaderFragment extends Fragment
         }
     }
 
-    @SuppressWarnings("unused")
-    @Subscribe (sticky = true)
-    public void onTtsInitialized(Tts.OnTtsInitialized event) {
-        Log.d(TAG, mTab + ": onTtsInitialized() called with: " + "event = [" + event + "]");
-        if (mTab != null) ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, event.status);
-    }
-
-    private Observable.OnPropertyChangedCallback mSnackbarTextChanged =
+    private final Observable.OnPropertyChangedCallback mSnackbarTextChanged =
             new BindingCallbackAdapter(() -> {
                 String text = mViewModel.snackbarText.get();
                 if (!TextUtils.isEmpty(text)) {
                     Snackbar.make(mBinding.getRoot(), text, Snackbar.LENGTH_SHORT).show();
                 }
             });
+
+    private final Observer<Boolean> mFavoriteObserver = isFavorite -> mBinding.btnStarQuery.setChecked(isFavorite == Boolean.TRUE);
+    private final Observer<Tts.TtsState> mTtsObserver = ttsState -> {
+        Log.d(TAG, mTab + ": ttsState = " + ttsState);
+        if (mTab != null && ttsState != null) ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, ttsState.currentStatus);
+    };
 
     public class ButtonListener {
 

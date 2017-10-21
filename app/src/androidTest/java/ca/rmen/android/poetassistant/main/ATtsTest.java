@@ -21,7 +21,9 @@ package ca.rmen.android.poetassistant.main;
 
 
 import android.annotation.TargetApi;
+import android.arch.lifecycle.Observer;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.GeneralLocation;
@@ -30,8 +32,6 @@ import android.support.test.espresso.action.Tap;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,8 +40,11 @@ import org.junit.runners.MethodSorters;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
+import ca.rmen.android.poetassistant.dagger.TestAppComponent;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
@@ -72,14 +75,15 @@ public class ATtsTest {
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 
-    public static class EventBusReceiver {
+    public static class TtsObserver implements Observer<Tts.TtsState> {
         long timeUtteranceCompleted;
 
-        @Subscribe
-        public void onUtteranceCompleted(Tts.OnUtteranceCompleted event) {
+        @Override
+        public void onChanged(@Nullable Tts.TtsState ttsState) {
             timeUtteranceCompleted = System.currentTimeMillis();
         }
     }
+
 
     @Test
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -139,24 +143,27 @@ public class ATtsTest {
                 greaterThan(2000L));
     }
 
+    private Tts getTts() {
+        return ((TestAppComponent) DaggerHelper.getAppComponent(mActivityTestRule.getActivity())).getTts();
+    }
     private long timePoem(String poem) {
-        EventBusReceiver receiver = new EventBusReceiver();
-        EventBus.getDefault().register(receiver);
+        TtsObserver receiver = new TtsObserver();
+        getTts().getTtsLiveData().observeForever(receiver);
         typePoem(poem);
         long before = System.currentTimeMillis();
         speakPoem();
         long poemSpeechTime = receiver.timeUtteranceCompleted - before;
-        EventBus.getDefault().unregister(receiver);
+        getInstrumentation().runOnMainSync(() -> getTts().getTtsLiveData().removeObserver(receiver));
         return poemSpeechTime;
     }
 
     private long timeTtsPreview() {
-        EventBusReceiver receiver = new EventBusReceiver();
-        EventBus.getDefault().register(receiver);
+        TtsObserver receiver = new TtsObserver();
+        getTts().getTtsLiveData().observeForever(receiver);
         long before = System.currentTimeMillis();
         clickPreference(R.string.pref_voice_preview_title);
         long defaultSpeechTime = receiver.timeUtteranceCompleted - before;
-        EventBus.getDefault().unregister(receiver);
+        getInstrumentation().runOnMainSync(() -> getTts().getTtsLiveData().removeObserver(receiver));
         return defaultSpeechTime;
     }
 

@@ -23,26 +23,26 @@ import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.support.annotation.MainThread;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
-import android.support.v4.content.FileProvider;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.util.HashMap;
 
+import javax.inject.Inject;
+
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.dictionaries.Share;
 import io.reactivex.Completable;
@@ -50,7 +50,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
-class PoemAudioExport {
+public class PoemAudioExport {
     private static final String TAG = Constants.TAG + PoemAudioExport.class.getSimpleName();
     private static final int EXPORT_PROGRESS_NOTIFICATION_ID = 1336;
     private static final int EXPORT_FINISH_NOTIFICATION_ID = 1337;
@@ -59,11 +59,13 @@ class PoemAudioExport {
     private static final String TEMP_AUDIO_FILE = "poem.wav";
 
     private final Context mContext;
-    private final Handler mHandler;
+
+    @Inject
+    Tts mTts;
 
     PoemAudioExport(Context context) {
         mContext = context;
-        mHandler = new Handler();
+        DaggerHelper.getMainScreenComponent(context).inject(this);
     }
 
     void speakToFile(TextToSpeech textToSpeech, String text) {
@@ -71,7 +73,7 @@ class PoemAudioExport {
         if (audioFile == null) {
             notifyPoemAudioFailed();
         } else {
-            EventBus.getDefault().register(this);
+            mTts.getTtsLiveData().observeForever(mTtsObserver);
             notifyPoemAudioInProgress();
             String textToRead = text.substring(0, Math.min(text.length(), TextToSpeech.getMaxSpeechInputLength()));
             Completable.fromRunnable(() -> deleteExistingAudioFile(audioFile))
@@ -114,19 +116,6 @@ class PoemAudioExport {
         textToSpeech.synthesizeToFile(text, params, audioFile, TEMP_AUDIO_FILE);
     }
 
-    @SuppressWarnings("unused")
-    @Subscribe
-    public void onTtsUtteranceCompleted(Tts.OnUtteranceCompleted event) {
-        Log.d(TAG, "onTtsUtteranceCompleted() called with: " + "event = [" + event + "]");
-        if (TEMP_AUDIO_FILE.equals(event.utteranceId)) {
-            mHandler.post(() -> {
-                EventBus.getDefault().unregister(this);
-                File audioFile = getAudioFile();
-                if (event.success && audioFile != null && audioFile.exists()) notifyPoemAudioReady();
-                else notifyPoemAudioFailed();
-            });
-        }
-    }
 
     private void cancelNotifications() {
         Log.v(TAG, "cancelNotifications");
@@ -208,5 +197,17 @@ class PoemAudioExport {
         return new File(exportFolder, TEMP_AUDIO_FILE);
     }
 
-
+    private final Observer<Tts.TtsState> mTtsObserver = new Observer<Tts.TtsState>() {
+        @Override
+        public void onChanged(@Nullable Tts.TtsState ttsState) {
+            if (ttsState != null
+                    && (ttsState.currentStatus == Tts.TtsStatus.UTTERANCE_COMPLETE || ttsState.currentStatus == Tts.TtsStatus.UTTERANCE_ERROR)
+                    && TEMP_AUDIO_FILE.equals(ttsState.utteranceId)) {
+                mTts.getTtsLiveData().removeObserver(this);
+                File audioFile = getAudioFile();
+                if (ttsState.currentStatus == Tts.TtsStatus.UTTERANCE_COMPLETE && audioFile != null && audioFile.exists()) notifyPoemAudioReady();
+                else notifyPoemAudioFailed();
+            }
+        }
+    };
 }

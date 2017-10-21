@@ -19,14 +19,14 @@
 
 package ca.rmen.android.poetassistant;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Transformations;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.MainThread;
 import android.support.annotation.WorkerThread;
 import android.text.TextUtils;
 import android.util.Log;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -36,12 +36,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import io.reactivex.Completable;
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 public class Favorites {
@@ -50,21 +49,16 @@ public class Favorites {
 
     private final FavoriteDao mFavoriteDao;
 
-    /**
-     * Subscribe to this using EventBus to know when favorites are changed.
-     */
-    public static class OnFavoritesChanged {
-        private OnFavoritesChanged() {
-        }
-    }
-
     public Favorites(FavoriteDao favoriteDao) {
         mFavoriteDao = favoriteDao;
     }
 
-    @WorkerThread
-    public boolean isFavorite(String word) {
-        return !TextUtils.isEmpty(word) && mFavoriteDao.getCount(word) > 0;
+    public LiveData<Boolean> getIsFavoriteLiveData(String word) {
+        return Transformations.map(mFavoriteDao.getCountLiveData(word), count -> count > 0);
+    }
+
+    public LiveData<List<Favorite>> getFavoritesLiveData() {
+        return mFavoriteDao.getFavoritesLiveData();
     }
 
     @WorkerThread
@@ -94,7 +88,7 @@ public class Favorites {
 
     @MainThread
     public void saveFavorite(String word, boolean isFavorite) {
-        if (isFavorite) executeDbOperation(() -> mFavoriteDao.insert(new Favorite(word)));
+        if (isFavorite) Schedulers.io().scheduleDirect(() -> mFavoriteDao.insert(new Favorite(word)));
         else removeFavorite(word);
     }
 
@@ -119,27 +113,18 @@ public class Favorites {
             mFavoriteDao.insertAll(favoritesToAdd);
         } finally {
             if (reader != null) reader.close();
-            AndroidSchedulers.mainThread().scheduleDirect(() -> EventBus.getDefault().post(new OnFavoritesChanged()));
         }
     }
 
     @MainThread
     private void removeFavorite(String favorite) {
         Log.v(TAG, "removeFavorite " + favorite);
-        executeDbOperation(() -> mFavoriteDao.delete(new Favorite(favorite)));
+        Schedulers.io().scheduleDirect(() -> mFavoriteDao.delete(new Favorite(favorite)));
     }
 
     @MainThread
     public void clear() {
-        executeDbOperation(mFavoriteDao::deleteAll);
-    }
-
-    @MainThread
-    private static void executeDbOperation(Runnable dbOperation) {
-        Completable.fromRunnable(dbOperation)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> EventBus.getDefault().post(new OnFavoritesChanged()));
+        Schedulers.io().scheduleDirect(mFavoriteDao::deleteAll);
     }
 
 }

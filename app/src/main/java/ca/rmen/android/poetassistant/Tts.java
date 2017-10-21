@@ -20,6 +20,8 @@
 package ca.rmen.android.poetassistant;
 
 import android.annotation.TargetApi;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -31,8 +33,6 @@ import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +41,7 @@ import java.util.StringTokenizer;
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class Tts {
     private static final String TAG = Constants.TAG + Tts.class.getSimpleName();
@@ -54,37 +55,38 @@ public class Tts {
     private int mTtsStatus = TextToSpeech.ERROR;
     private final SettingsPrefs mSettingsPrefs;
 
-    public static class OnTtsInitialized {
-        public final int status;
+    public class TtsState {
+        public final TtsStatus previousStatus;
+        public final TtsStatus currentStatus;
+        public final String utteranceId;
 
-        private OnTtsInitialized(int status) {
-            this.status = status;
+        public TtsState(TtsStatus previousStatus, TtsStatus currentStatus, String utteranceId) {
+            this.previousStatus = previousStatus;
+            this.currentStatus = currentStatus;
+            this.utteranceId = utteranceId;
         }
 
         @Override
         public String toString() {
-            return "OnTtsInitialized{" +
-                    "status=" + status +
+            return "TtsState{" +
+                    "previousStatus=" + previousStatus +
+                    ", currentStatus=" + currentStatus +
+                    ", utteranceId='" + utteranceId + '\'' +
                     '}';
         }
     }
 
-    public static class OnUtteranceCompleted {
-        final String utteranceId;
-        final boolean success;
+    public enum TtsStatus {
+        UNINITIALIZED,
+        INITIALIZED,
+        SPEAKING,
+        UTTERANCE_COMPLETE,
+        UTTERANCE_ERROR
+    }
 
-        OnUtteranceCompleted(String utteranceId, boolean success) {
-            this.utteranceId = utteranceId;
-            this.success = success;
-        }
-
-        @Override
-        public String toString() {
-            return "OnUtteranceCompleted{" +
-                    "success=" + success +
-                    ", utteranceId='" + utteranceId + '\'' +
-                    '}';
-        }
+    private final MutableLiveData<TtsState> mTtsLiveData = new MutableLiveData<>();
+    public LiveData<TtsState> getTtsLiveData() {
+        return mTtsLiveData;
     }
 
     public Tts(Context context, SettingsPrefs settingsPrefs) {
@@ -96,6 +98,7 @@ public class Tts {
 
     private void init() {
         Log.v(TAG, "init");
+        mTtsLiveData.setValue(new TtsState(null, TtsStatus.UNINITIALIZED, null));
         mTextToSpeech = new TextToSpeech(mContext, mInitListener);
         mTextToSpeech.setOnUtteranceProgressListener(mUtteranceListener);
     }
@@ -110,8 +113,8 @@ public class Tts {
         init();
     }
 
-    public int getStatus() {
-        return mTtsStatus;
+    public TtsState getTtsState() {
+        return mTtsLiveData.getValue();
     }
 
     public boolean isSpeaking() {
@@ -229,7 +232,7 @@ public class Tts {
             mTextToSpeech.setOnUtteranceCompletedListener(null);
             mTextToSpeech.shutdown();
             mTtsStatus = TextToSpeech.ERROR;
-            EventBus.getDefault().removeStickyEvent(OnTtsInitialized.class);
+            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsStatus.INITIALIZED, TtsStatus.UNINITIALIZED, null)));
             mTextToSpeech = null;
         }
     }
@@ -243,8 +246,11 @@ public class Tts {
         if (status == TextToSpeech.SUCCESS) {
             setVoiceSpeedFromSettings();
             setVoicePitchFromSettings();
+            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsStatus.UNINITIALIZED, TtsStatus.INITIALIZED, null)));
+            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsStatus.INITIALIZED, TtsStatus.INITIALIZED, null)));
+        } else {
+            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsStatus.UNINITIALIZED, TtsStatus.UNINITIALIZED, null)));
         }
-        EventBus.getDefault().postSticky(new OnTtsInitialized(status));
     };
 
     // This can't be local or it will be removed from the shared prefs manager!
@@ -312,10 +318,11 @@ public class Tts {
     }
 
     @SuppressWarnings("deprecation")
-    private static class UtteranceListener extends UtteranceProgressListener {
+    private class UtteranceListener extends UtteranceProgressListener {
 
         @Override
         public void onStart(String utteranceId) {
+            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsStatus.INITIALIZED, TtsStatus.SPEAKING, utteranceId)));
         }
 
         @Override
@@ -341,11 +348,17 @@ public class Tts {
         }
 
         private void onUtteranceCompleted(String utteranceId) {
-            EventBus.getDefault().post(new OnUtteranceCompleted(utteranceId, true));
+            AndroidSchedulers.mainThread().scheduleDirect(() -> {
+                mTtsLiveData.setValue(new TtsState(TtsStatus.SPEAKING, TtsStatus.UTTERANCE_COMPLETE, utteranceId));
+                mTtsLiveData.setValue(new TtsState(TtsStatus.UTTERANCE_COMPLETE, TtsStatus.INITIALIZED, null));
+            });
         }
 
         private void onUtteranceError(String utteranceId) {
-            EventBus.getDefault().post(new OnUtteranceCompleted(utteranceId, false));
+            AndroidSchedulers.mainThread().scheduleDirect(() -> {
+                mTtsLiveData.setValue(new TtsState(TtsStatus.SPEAKING, TtsStatus.UTTERANCE_ERROR, utteranceId));
+                mTtsLiveData.setValue(new TtsState(TtsStatus.UTTERANCE_ERROR, TtsStatus.INITIALIZED, null));
+            });
         }
     }
 

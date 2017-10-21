@@ -21,20 +21,26 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Transformations;
 import android.content.SharedPreferences;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
 import android.util.Log;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.Favorite;
+import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.compat.VectorCompat;
 import ca.rmen.android.poetassistant.main.Tab;
@@ -48,27 +54,56 @@ public class ResultListViewModel<T> extends AndroidViewModel {
     public final ObservableField<Settings.Layout> layout = new ObservableField<>();
     public final ObservableField<CharSequence> emptyText = new ObservableField<>();
     final ObservableBoolean showHeader = new ObservableBoolean();
-    private final ObservableField<ResultListData<T>> data = new ObservableField<>();
+    final ObservableField<String> usedQueryWord = new ObservableField<>();
     private ResultListAdapter<T> mAdapter;
     private Tab mTab;
+    @Inject
+    Favorites mFavorites;
+
+    static class QueryParams {
+        final String word;
+        final String filter;
+
+        QueryParams(String word, String filter) {
+            this.word = word;
+            this.filter = filter;
+        }
+
+        @Override
+        public String toString() {
+            return "QueryParams{" +
+                    "word='" + word + '\'' +
+                    ", filter='" + filter + '\'' +
+                    '}';
+        }
+    }
+    private final MutableLiveData<QueryParams> mQueryParams = new MutableLiveData<>();
+    @SuppressWarnings("unchecked")
+    final LiveData<ResultListData<T>> resultListDataLiveData =
+            Transformations.switchMap(mQueryParams, queryParams -> (LiveData<ResultListData<T>>) ResultListFactory.createLiveData(mTab, getApplication(), queryParams.word, queryParams.filter));
+    final LiveData<List<Favorite>> favoritesLiveData;
 
     ResultListViewModel(Application application, Tab tab) {
         super(application);
+        ResultListFactory.inject(application, tab, this);
         mTab = tab;
         emptyText.set(getNoQueryEmptyText());
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mPrefsListener);
+        favoritesLiveData = mFavorites.getFavoritesLiveData();
     }
 
+    void setQueryParams(QueryParams queryParams) {
+        Log.v(TAG, mTab + ": setQueryParams " + queryParams);
+        if (!TextUtils.isEmpty(queryParams.word) || ResultListFactory.isLoadWithoutQuerySupported(mTab)) {
+            mQueryParams.setValue(queryParams);
+        }
+    }
     void setAdapter(ResultListAdapter<T> adapter) {
         mAdapter = adapter;
     }
 
     void share(Tab tab, String query, String filter) {
-        Share.share(getApplication(), tab, query, filter, data.get().data);
-    }
-
-    String getUsedQueryWord() {
-        return data.get() == null ? null : data.get().matchedWord;
+        Share.share(getApplication(), tab, query, filter, mAdapter.getAll());
     }
 
     private void updateDataAvailable() {
@@ -76,20 +111,22 @@ public class ResultListViewModel<T> extends AndroidViewModel {
         isDataAvailable.notifyChange();
     }
 
-    private void setData(ResultListData<T> loadedData) {
-        Log.v(TAG, "setData " + loadedData);
+    void setData(ResultListData<T> loadedData) {
+        Log.v(TAG, mTab + ": setData " + loadedData);
         mAdapter.clear();
         if (loadedData != null) mAdapter.addAll(loadedData.data);
-        data.set(loadedData);
-        boolean hasQuery = data.get() != null && !TextUtils.isEmpty(data.get().matchedWord);
+        boolean hasQuery = loadedData != null && !TextUtils.isEmpty(loadedData.matchedWord);
         if (!hasQuery) {
             emptyText.set(getNoQueryEmptyText());
-        } else if (data.get().data != null) {
-            emptyText.set(getNoResultsEmptyText(data.get().matchedWord));
+        } else if (loadedData.data != null) {
+            emptyText.set(getNoResultsEmptyText(loadedData.matchedWord));
         } else {
             emptyText.set(null);
         }
         showHeader.set(hasQuery);
+        if (loadedData != null) {
+            usedQueryWord.set(loadedData.matchedWord);
+        }
         updateDataAvailable();
     }
 
@@ -118,40 +155,6 @@ public class ResultListViewModel<T> extends AndroidViewModel {
     private final SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener = (sharedPreferences, key) -> {
         if (Settings.PREF_LAYOUT.equals(key)) {
             layout.set(Settings.getLayout(SettingsPrefs.get(getApplication())));
-        }
-    };
-
-    // Should replace this with LiveData.
-    final LoaderManager.LoaderCallbacks<ResultListData<T>> loaderCallbacks = new LoaderManager.LoaderCallbacks<ResultListData<T>>() {
-
-        @Override
-        public Loader<ResultListData<T>> onCreateLoader(int id, Bundle args) {
-            Log.d(TAG, mTab + ": onCreateLoader() called with: " + "id = [" + id + "], args = [" + args + "]");
-
-            String query = "";
-            String filter = "";
-            if (args != null && args.containsKey(ResultListFragment.EXTRA_QUERY)) {
-                query = args.getString(ResultListFragment.EXTRA_QUERY);
-                filter = args.getString(ResultListFragment.EXTRA_FILTER);
-                setData(new ResultListData<>(query, null));
-            } else {
-                setData(null);
-            }
-
-            //noinspection unchecked
-            return (Loader<ResultListData<T>>) ResultListFactory.createLoader(mTab, getApplication(), query, filter);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<ResultListData<T>> loader, ResultListData<T> data) {
-            Log.d(TAG, mTab + ": onLoadFinished() called with: " + "loader = [" + loader + "], data = [" + data + "]");
-            setData(data);
-        }
-
-        @Override
-        public void onLoaderReset(Loader<ResultListData<T>> loader) {
-            Log.d(TAG, mTab + ": onLoaderReset() called with: " + "loader = [" + loader + "]");
-            setData(null);
         }
     };
 

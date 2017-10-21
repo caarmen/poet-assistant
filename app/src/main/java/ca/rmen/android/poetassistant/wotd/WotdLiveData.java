@@ -36,24 +36,24 @@ import java.util.TimeZone;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.dagger.DaggerHelper;
-import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Favorites;
+import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
-public class WotdLoader extends ResultListLoader<ResultListData<WotdEntryViewModel>> {
+public class WotdLiveData extends ResultListLiveData<ResultListData<WotdEntryViewModel>> {
 
-    private static final String TAG = Constants.TAG + WotdLoader.class.getSimpleName();
+    private static final String TAG = Constants.TAG + WotdLiveData.class.getSimpleName();
 
     @Inject Dictionary mDictionary;
     @Inject SettingsPrefs mPrefs;
     @Inject Favorites mFavorites;
 
-    public WotdLoader(Context context) {
+    public WotdLiveData(Context context) {
         super(context);
         DaggerHelper.getWotdComponent(context).inject(this);
     }

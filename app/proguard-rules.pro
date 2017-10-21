@@ -26,13 +26,6 @@
    public <init>(android.content.Context, android.util.AttributeSet);
 }
 
-# Eventbus:
-# http://greenrobot.org/eventbus/documentation/proguard/
--keepclassmembers class ** {
-    @org.greenrobot.eventbus.Subscribe <methods>;
-}
--keep enum org.greenrobot.eventbus.ThreadMode { *; }
-
 # streamsupport:
 -dontwarn java8.util.**
 -dontnote java8.util.**

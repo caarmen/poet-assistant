@@ -32,16 +32,16 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData;
 
-public class DictionaryLoader extends ResultListLoader<ResultListData<DictionaryEntry.DictionaryEntryDetails>> {
+public class DictionaryLiveData extends ResultListLiveData<ResultListData<DictionaryEntry.DictionaryEntryDetails>> {
 
-    private static final String TAG = Constants.TAG + DictionaryLoader.class.getSimpleName();
+    private static final String TAG = Constants.TAG + DictionaryLiveData.class.getSimpleName();
 
     private final String mQuery;
     @Inject Dictionary mDictionary;
 
-    public DictionaryLoader(Context context, String query) {
+    public DictionaryLiveData(Context context, String query) {
         super(context);
         DaggerHelper.getMainScreenComponent(context).inject(this);
         mQuery = query;

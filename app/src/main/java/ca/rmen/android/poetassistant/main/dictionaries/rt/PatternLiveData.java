@@ -34,26 +34,26 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.dagger.DaggerHelper;
-import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Favorites;
-import ca.rmen.android.poetassistant.main.dictionaries.search.Patterns;
+import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListLoader;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
+import ca.rmen.android.poetassistant.main.dictionaries.search.Patterns;
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
-public class PatternLoader extends ResultListLoader<ResultListData<RTEntryViewModel>> {
+public class PatternLiveData extends ResultListLiveData<ResultListData<RTEntryViewModel>> {
 
-    private static final String TAG = Constants.TAG + PatternLoader.class.getSimpleName();
+    private static final String TAG = Constants.TAG + PatternLiveData.class.getSimpleName();
 
     private final String mQuery;
     @Inject Dictionary mDictionary;
     @Inject SettingsPrefs mPrefs;
     @Inject Favorites mFavorites;
 
-    public PatternLoader(Context context, String query) {
+    public PatternLiveData(Context context, String query) {
         super(context);
         mQuery = query;
         DaggerHelper.getMainScreenComponent(context).inject(this);

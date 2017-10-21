@@ -50,11 +50,11 @@ import static ca.rmen.android.poetassistant.main.CustomChecks.checkAllStarredWor
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkClipboard;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkStarredInList;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.addFilter;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearFilter;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearSearchHistory;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearStarredWords;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.addFilter;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clickDialogPositiveButton;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openDictionary;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openDictionaryCleanLayout;
