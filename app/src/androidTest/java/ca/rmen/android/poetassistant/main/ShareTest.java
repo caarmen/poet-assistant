@@ -48,7 +48,6 @@ import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.waitForViewVisible;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
@@ -94,7 +93,7 @@ public class ShareTest {
         Context context = mActivityTestRule.getActivity();
         search("happy");
         swipeViewPagerLeft(1);
-        addFilter(mActivityTestRule.getActivity(), "messed", "blessed");
+        addFilter("messed", "blessed");
         openMenuItem(R.string.share);
         String expectedContent = context.getString(R.string.share_thesaurus_title_with_filter, "happy", "messed");
         checkShareIntentContains(expectedContent);
@@ -111,7 +110,6 @@ public class ShareTest {
     @Test
     public void shareFavoritesTest() {
         search("happy");
-        waitForViewVisible(mActivityTestRule.getActivity(), R.id.btn_star_result);
         onView(allOf(withId(R.id.btn_star_result), isDisplayed(), hasSibling(withText("snappy")))).perform(click());
         onView(allOf(withId(R.id.btn_star_result), isDisplayed(), hasSibling(withText("crappy")))).perform(click());
         swipeViewPagerLeft(4);
@@ -146,7 +144,6 @@ public class ShareTest {
     @Test
     public void sharePopupTest() {
         search("strawberry");
-        waitForViewVisible(mActivityTestRule.getActivity(), R.id.btn_filter);
         Context context = mActivityTestRule.getActivity();
         onView(allOf(withText("adversary"), isDisplayed())).perform(click());
         onView(allOf(withText(endsWith(context.getString(R.string.share))), isDisplayed())).perform(click());

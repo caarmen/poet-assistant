@@ -19,7 +19,6 @@
 
 package ca.rmen.android.poetassistant.main;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.SystemClock;
@@ -29,6 +28,7 @@ import android.support.test.espresso.ViewInteraction;
 
 import ca.rmen.android.poetassistant.R;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -51,7 +51,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.waitForViewVisible;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.is;
@@ -100,6 +99,7 @@ class TestAppUtils {
 
         // Type the query term and search
         typeQuery(query).perform(pressImeActionButton());
+        getInstrumentation().waitForIdleSync();
     }
 
     static void openThesaurus(Context context, String entry, String expectedFirstSynonym) {
@@ -151,8 +151,7 @@ class TestAppUtils {
                 .check(matches(isNotChecked()));
     }
 
-    static ViewInteraction openFilter(Activity activity, String expectedPrefilledFilter) {
-        waitForViewVisible(activity, R.id.btn_filter);
+    static ViewInteraction openFilter(String expectedPrefilledFilter) {
         onView(allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()))
                 .perform(click());
         SystemClock.sleep(200);
@@ -164,8 +163,8 @@ class TestAppUtils {
         return result;
     }
 
-    static void addFilter(Activity activity, String filter, String firstExpectedFilteredMatch) {
-        ViewInteraction filterView = openFilter(activity, "");
+    static void addFilter(String filter, String firstExpectedFilteredMatch) {
+        ViewInteraction filterView = openFilter("");
         filterView.perform(typeText(filter), closeSoftKeyboard());
         clickDialogPositiveButton(android.R.string.ok);
 

@@ -134,10 +134,10 @@ public class IntegrationTest {
         checkAllStarredWords(context, data.secondSynonymForFirstRhyme);
         swipeViewPagerRight(3);
         checkStarredInList(data.secondSynonymForFirstRhyme);
-        addFilter(mActivityTestRule.getActivity(), data.thesaurusFilter, data.thesaurusFilterMatch);
+        addFilter(data.thesaurusFilter, data.thesaurusFilterMatch);
         clearFilter(data.firstSynonymForFirstRhyme);
         swipeViewPagerRight(1);
-        addFilter(mActivityTestRule.getActivity(), data.rhymerFilter, data.rhymerFilterMatch);
+        addFilter(data.rhymerFilter, data.rhymerFilterMatch);
         clearFilter(data.firstRhyme);
         swipeViewPagerLeft(3);
         typeAndSpeakPoem(data.poem);
@@ -165,10 +165,10 @@ public class IntegrationTest {
         checkAllStarredWords(context, data.secondSynonymForFirstRhyme);
         swipeViewPagerRight(3);
         checkStarredInList(data.secondSynonymForFirstRhyme);
-        addFilter(mActivityTestRule.getActivity(), data.thesaurusFilter, data.thesaurusFilterMatch);
+        addFilter(data.thesaurusFilter, data.thesaurusFilterMatch);
         clearFilter(data.firstSynonymForFirstRhyme);
         swipeViewPagerRight(1);
-        addFilter(mActivityTestRule.getActivity(), data.rhymerFilter, data.rhymerFilterMatch);
+        addFilter(data.rhymerFilter, data.rhymerFilterMatch);
         clearFilter(data.firstRhyme);
         swipeViewPagerLeft(3);
         typeAndSpeakPoem(data.poem);
@@ -263,8 +263,8 @@ public class IntegrationTest {
     @Test
     public void saveFilterTest() {
         search("pugnacious");
-        addFilter(mActivityTestRule.getActivity(), "vulturous", "rapacious");
-        ViewInteraction filterView = openFilter(mActivityTestRule.getActivity(), "vulturous");
+        addFilter("vulturous", "rapacious");
+        ViewInteraction filterView = openFilter("vulturous");
         filterView.perform(closeSoftKeyboard());
         clickDialogPositiveButton(android.R.string.ok);
     }
