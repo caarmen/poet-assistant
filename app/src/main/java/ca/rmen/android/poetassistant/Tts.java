@@ -247,6 +247,7 @@ public class Tts {
             setVoiceSpeedFromSettings();
             setVoicePitchFromSettings();
             AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsStatus.UNINITIALIZED, TtsStatus.INITIALIZED, null)));
+            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsStatus.INITIALIZED, TtsStatus.INITIALIZED, null)));
         } else {
             AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsStatus.UNINITIALIZED, TtsStatus.UNINITIALIZED, null)));
         }

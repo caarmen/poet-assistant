@@ -238,6 +238,16 @@ public final class ResultListFactory {
         }
     }
 
+    static boolean isLoadWithoutQuerySupported(Tab tab) {
+        switch (tab) {
+            case FAVORITES:
+            case WOTD:
+                return true;
+            default:
+                return false;
+        }
+    }
+
     /**
      * Set the various buttons which appear in the result list header (ex: tts play,
      * web search, filter, help) to visible or gone, depending on the tab.

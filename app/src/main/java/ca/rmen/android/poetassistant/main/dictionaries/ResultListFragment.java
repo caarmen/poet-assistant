@@ -134,6 +134,7 @@ public class ResultListFragment<T> extends Fragment {
 
     private void queryFromArguments() {
         Bundle args = getArguments();
+        Log.v(TAG, mTab + ": queryFromArguments " + args);
         if (args != null && args.containsKey(EXTRA_QUERY)) {
             mViewModel.setQueryParams(new ResultListViewModel.QueryParams(
                     args.getString(EXTRA_QUERY),
@@ -177,6 +178,7 @@ public class ResultListFragment<T> extends Fragment {
     private final Observer<List<Favorite>> mFavoritesObserver = favorites -> reload();
 
     private void reload() {
+        Log.v(TAG, mTab + ": reload: query = " + mHeaderViewModel.query.get() + ", filter = " + mHeaderViewModel.filter.get());
         mViewModel.setQueryParams(new ResultListViewModel.QueryParams(mHeaderViewModel.query.get(),
                 mHeaderViewModel.filter.get()));
     }

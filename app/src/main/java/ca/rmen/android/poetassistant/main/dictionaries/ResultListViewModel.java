@@ -68,6 +68,14 @@ public class ResultListViewModel<T> extends AndroidViewModel {
             this.word = word;
             this.filter = filter;
         }
+
+        @Override
+        public String toString() {
+            return "QueryParams{" +
+                    "word='" + word + '\'' +
+                    ", filter='" + filter + '\'' +
+                    '}';
+        }
     }
     private final MutableLiveData<QueryParams> mQueryParams = new MutableLiveData<>();
     @SuppressWarnings("unchecked")
@@ -85,7 +93,10 @@ public class ResultListViewModel<T> extends AndroidViewModel {
     }
 
     void setQueryParams(QueryParams queryParams) {
-        mQueryParams.setValue(queryParams);
+        Log.v(TAG, mTab + ": setQueryParams " + queryParams);
+        if (!TextUtils.isEmpty(queryParams.word) || ResultListFactory.isLoadWithoutQuerySupported(mTab)) {
+            mQueryParams.setValue(queryParams);
+        }
     }
     void setAdapter(ResultListAdapter<T> adapter) {
         mAdapter = adapter;
@@ -105,7 +116,7 @@ public class ResultListViewModel<T> extends AndroidViewModel {
     }
 
     void setData(ResultListData<T> loadedData) {
-        Log.v(TAG, "setData " + loadedData);
+        Log.v(TAG, mTab + ": setData " + loadedData);
         mAdapter.clear();
         if (loadedData != null) mAdapter.addAll(loadedData.data);
         data.set(loadedData);

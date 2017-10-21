@@ -44,6 +44,7 @@ import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.dagger.TestAppComponent;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
@@ -152,7 +153,7 @@ public class ATtsTest {
         long before = System.currentTimeMillis();
         speakPoem();
         long poemSpeechTime = receiver.timeUtteranceCompleted - before;
-        getTts().getTtsLiveData().removeObserver(receiver);
+        getInstrumentation().runOnMainSync(() -> getTts().getTtsLiveData().removeObserver(receiver));
         return poemSpeechTime;
     }
 
@@ -162,7 +163,7 @@ public class ATtsTest {
         long before = System.currentTimeMillis();
         clickPreference(R.string.pref_voice_preview_title);
         long defaultSpeechTime = receiver.timeUtteranceCompleted - before;
-        getTts().getTtsLiveData().removeObserver(receiver);
+        getInstrumentation().runOnMainSync(() -> getTts().getTtsLiveData().removeObserver(receiver));
         return defaultSpeechTime;
     }
 
