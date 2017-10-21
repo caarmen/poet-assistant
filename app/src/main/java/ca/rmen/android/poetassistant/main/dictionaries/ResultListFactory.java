@@ -32,8 +32,6 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 
-import java.util.Locale;
-
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
@@ -285,18 +283,18 @@ public final class ResultListFactory {
 
     public static String getTabName(Context context, Tab tab) {
         if (tab == Tab.PATTERN)
-            return context.getString(R.string.tab_pattern).toUpperCase(Locale.getDefault());
+            return context.getString(R.string.tab_pattern);
         else if (tab == Tab.FAVORITES)
-            return context.getString(R.string.tab_favorites).toUpperCase(Locale.getDefault());
+            return context.getString(R.string.tab_favorites);
         else if (tab == Tab.WOTD)
-            return context.getString(R.string.tab_wotd).toUpperCase(Locale.getDefault());
+            return context.getString(R.string.tab_wotd);
         else if (tab == Tab.RHYMER)
-            return context.getString(R.string.tab_rhymer).toUpperCase(Locale.getDefault());
+            return context.getString(R.string.tab_rhymer);
         else if (tab == Tab.THESAURUS)
-            return context.getString(R.string.tab_thesaurus).toUpperCase(Locale.getDefault());
+            return context.getString(R.string.tab_thesaurus);
         else if (tab == Tab.DICTIONARY)
-            return context.getString(R.string.tab_dictionary).toUpperCase(Locale.getDefault());
+            return context.getString(R.string.tab_dictionary);
         else
-            return context.getString(R.string.tab_reader).toUpperCase(Locale.getDefault());
+            return context.getString(R.string.tab_reader);
     }
 }
