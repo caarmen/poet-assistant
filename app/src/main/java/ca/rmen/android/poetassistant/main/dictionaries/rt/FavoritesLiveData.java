@@ -40,7 +40,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData;
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
-public class FavoritesLiveData extends ResultListLiveData<ResultListData<RTEntryViewModel>> {
+public class FavoritesLiveData extends ResultListLiveData<RTEntryViewModel> {
 
     private static final String TAG = Constants.TAG + FavoritesLiveData.class.getSimpleName();
 

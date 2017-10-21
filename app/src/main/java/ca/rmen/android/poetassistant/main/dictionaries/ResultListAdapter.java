@@ -19,37 +19,21 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries;
 
+import android.arch.paging.PagedListAdapter;
 import android.databinding.ViewDataBinding;
+import android.support.annotation.NonNull;
+import android.support.v7.recyclerview.extensions.DiffCallback;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.List;
+import ca.rmen.android.poetassistant.Constants;
 
-public abstract class ResultListAdapter<T> extends RecyclerView.Adapter<ResultListAdapter.ResultListEntryViewHolder> {
+public abstract class ResultListAdapter<T> extends PagedListAdapter<T, ResultListAdapter.ResultListEntryViewHolder> {
 
-    private final List<T> mData = new ArrayList<>();
+    private static final String TAG = Constants.TAG + ResultListAdapter.class.getSimpleName();
 
-    void clear() {
-        mData.clear();
-        notifyDataSetChanged();
-    }
-
-    void addAll(List<T> data) {
-        if (data != null) mData.addAll(data);
-        notifyDataSetChanged();
-    }
-
-    List<T> getAll() {
-        return mData;
-    }
-
-    protected T getItem(int position) {
-        return mData.get(position);
-    }
-
-    @Override
-    public int getItemCount() {
-        return mData.size();
+    protected ResultListAdapter() {
+        super(new ResultListDiffCallback<>());
     }
 
     public static class ResultListEntryViewHolder extends RecyclerView.ViewHolder {
@@ -59,6 +43,20 @@ public abstract class ResultListAdapter<T> extends RecyclerView.Adapter<ResultLi
         public ResultListEntryViewHolder(ViewDataBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+        }
+    }
+
+    private static class ResultListDiffCallback<T> extends DiffCallback<T> {
+        @Override
+        public boolean areItemsTheSame(@NonNull T oldEntry, @NonNull T newEntry) {
+            Log.v(TAG, "areItemsTheSame: " + oldEntry + ", " + newEntry);
+            return oldEntry.equals(newEntry);
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull T oldEntry, @NonNull T newEntry) {
+            Log.v(TAG, "areContentsTheSame: " + oldEntry + ", " + newEntry);
+            return oldEntry.equals(newEntry);
         }
     }
 

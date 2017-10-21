@@ -26,7 +26,7 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public abstract class ResultListLiveData<T> extends LiveData<T> {
+public abstract class ResultListLiveData<T> extends LiveData<ResultListData<T>> {
 
     private final Context mContext;
     private boolean mIsLoading = false;
@@ -39,7 +39,7 @@ public abstract class ResultListLiveData<T> extends LiveData<T> {
         return mContext;
     }
 
-    protected abstract T loadInBackground();
+    protected abstract ResultListData<T> loadInBackground();
 
     @Override
     protected void onActive() {

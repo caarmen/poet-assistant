@@ -34,7 +34,7 @@ import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData;
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData;
 
-public class DictionaryLiveData extends ResultListLiveData<ResultListData<DictionaryEntry.DictionaryEntryDetails>> {
+public class DictionaryLiveData extends ResultListLiveData<DictionaryEntry.DictionaryEntryDetails> {
 
     private static final String TAG = Constants.TAG + DictionaryLiveData.class.getSimpleName();
 

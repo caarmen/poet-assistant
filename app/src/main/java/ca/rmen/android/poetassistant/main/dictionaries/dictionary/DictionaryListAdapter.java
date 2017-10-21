@@ -51,9 +51,11 @@ public class DictionaryListAdapter extends ResultListAdapter<DictionaryEntry.Dic
     @Override
     public void onBindViewHolder(ResultListAdapter.ResultListEntryViewHolder holder, int position) {
         DictionaryEntry.DictionaryEntryDetails entry = getItem(position);
-        ListItemDictionaryEntryBinding binding = (ListItemDictionaryEntryBinding) holder.binding;
-        TextPopupMenu.addSelectionPopupMenu(binding.definition,  mListener);
-        binding.setEntry(entry);
-        binding.executePendingBindings();
+        if (entry != null) {
+            ListItemDictionaryEntryBinding binding = (ListItemDictionaryEntryBinding) holder.binding;
+            TextPopupMenu.addSelectionPopupMenu(binding.definition, mListener);
+            binding.setEntry(entry);
+            binding.executePendingBindings();
+        }
     }
 }

@@ -24,6 +24,7 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
+import android.arch.paging.PagedList;
 import android.content.SharedPreferences;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
@@ -76,10 +77,10 @@ public class ResultListViewModel<T> extends AndroidViewModel {
                     '}';
         }
     }
+
     private final MutableLiveData<QueryParams> mQueryParams = new MutableLiveData<>();
-    @SuppressWarnings("unchecked")
-    final LiveData<ResultListData<T>> resultListDataLiveData =
-            Transformations.switchMap(mQueryParams, queryParams -> (LiveData<ResultListData<T>>) ResultListFactory.createLiveData(mTab, getApplication(), queryParams.word, queryParams.filter));
+    final LiveData<PagedList<T>> resultListDataLiveData =
+            Transformations.switchMap(mQueryParams, this::createPagedListLiveData);
     final LiveData<List<Favorite>> favoritesLiveData;
 
     ResultListViewModel(Application application, Tab tab) {
@@ -91,18 +92,44 @@ public class ResultListViewModel<T> extends AndroidViewModel {
         favoritesLiveData = mFavorites.getFavoritesLiveData();
     }
 
+    private LiveData<PagedList<T>> createPagedListLiveData(QueryParams queryParams) {
+        Log.v(TAG, mTab + ": Create LiveData<PagedList>> from " + queryParams);
+        @SuppressWarnings("unchecked") ResultListLiveData<T> resultListLiveData = (ResultListLiveData<T>) ResultListFactory.createLiveData(mTab, getApplication(), queryParams.word, queryParams.filter);
+        return createPagedListLiveData(resultListLiveData);
+    }
+
+    private LiveData<PagedList<T>> createPagedListLiveData(ResultListLiveData<T> resultListLiveData) {
+        Log.v(TAG, mTab + ": Create LiveData<PagedList>> from LiveData<ResultListData>");
+        return Transformations.switchMap(resultListLiveData, this::createPagedListLiveData);
+    }
+
+    private LiveData<PagedList<T>> createPagedListLiveData(ResultListData<T> resultListData) {
+        Log.v(TAG, mTab + ": Create LiveData<PagedList>> from ResultListData " + resultListData);
+        ResultListDataSource<T> dataSource = new ResultListDataSource<>(mTab, resultListData);
+        ResultListLivePagedListProvider<T> provider = new ResultListLivePagedListProvider<>(dataSource);
+        return provider.create(0,
+                new PagedList.Config.Builder()
+                        .setPageSize(50)
+                        .setPrefetchDistance(50)
+                        .build());
+    }
+
     void setQueryParams(QueryParams queryParams) {
         Log.v(TAG, mTab + ": setQueryParams " + queryParams);
         if (!TextUtils.isEmpty(queryParams.word) || ResultListFactory.isLoadWithoutQuerySupported(mTab)) {
             mQueryParams.setValue(queryParams);
         }
     }
+
     void setAdapter(ResultListAdapter<T> adapter) {
         mAdapter = adapter;
     }
 
     void share(Tab tab, String query, String filter) {
-        Share.share(getApplication(), tab, query, filter, mAdapter.getAll());
+        PagedList<T> currentList = mAdapter.getCurrentList();
+        if (currentList != null) {
+            Share.share(getApplication(), tab, query, filter, currentList);
+        }
     }
 
     String getUsedQueryWord() {
@@ -113,25 +140,21 @@ public class ResultListViewModel<T> extends AndroidViewModel {
         return queryParams.word;
     }
 
-    private void updateDataAvailable() {
-        isDataAvailable.set(mAdapter != null && mAdapter.getItemCount() > 0);
-        isDataAvailable.notifyChange();
-    }
-
-    void setData(ResultListData<T> loadedData) {
-        Log.v(TAG, mTab + ": setData " + loadedData);
-        mAdapter.clear();
-        if (loadedData != null) mAdapter.addAll(loadedData.data);
-        boolean hasQuery = loadedData != null && !TextUtils.isEmpty(loadedData.matchedWord);
+    void setData(PagedList<T> loadedData) {
+        Log.v(TAG, mTab + ": setData");
+        mAdapter.setList(loadedData);
+        String query = mQueryParams.getValue() == null ? null : mQueryParams.getValue().word;
+        boolean hasQuery = !TextUtils.isEmpty(query);
         if (!hasQuery) {
             emptyText.set(getNoQueryEmptyText());
-        } else if (loadedData.data != null) {
-            emptyText.set(getNoResultsEmptyText(loadedData.matchedWord));
+        } else if (loadedData != null) {
+            emptyText.set(getNoResultsEmptyText(query));
         } else {
             emptyText.set(null);
         }
-        showHeader.set(hasQuery);
-        updateDataAvailable();
+        showHeader.set(hasQuery || (loadedData != null && loadedData.size() > 0));
+        isDataAvailable.set(loadedData != null && loadedData.size() > 0);
+        isDataAvailable.notifyChange();
     }
 
     // If we have an empty list because the user didn't enter any search term,

@@ -137,7 +137,7 @@ public final class ResultListFactory {
         };
     }
 
-    static ResultListLiveData<? extends ResultListData<?>> createLiveData(Tab tab, Context context, String query, String filter) {
+    static ResultListLiveData<?> createLiveData(Tab tab, Context context, String query, String filter) {
         switch (tab) {
             case PATTERN:
                 return new PatternLiveData(context, query);

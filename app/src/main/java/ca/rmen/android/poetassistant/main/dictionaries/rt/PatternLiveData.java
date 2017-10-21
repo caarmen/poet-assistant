@@ -44,7 +44,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.search.Patterns;
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
-public class PatternLiveData extends ResultListLiveData<ResultListData<RTEntryViewModel>> {
+public class PatternLiveData extends ResultListLiveData<RTEntryViewModel> {
 
     private static final String TAG = Constants.TAG + PatternLiveData.class.getSimpleName();
 

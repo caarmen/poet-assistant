@@ -60,14 +60,16 @@ public class WotdAdapter extends ResultListAdapter<WotdEntryViewModel> {
     @Override
     public void onBindViewHolder(ResultListEntryViewHolder holder, int position) {
         WotdEntryViewModel viewModel = getItem(position);
-        ListItemWotdBinding binding = (ListItemWotdBinding) holder.binding;
-        binding.setViewModel(viewModel);
-        binding.setEntryIconClickListener(mEntryIconClickListener);
-        TextPopupMenu.addPopupMenu(
-                viewModel.showButtons ? TextPopupMenu.Style.SYSTEM : TextPopupMenu.Style.FULL,
-                binding.text1,
-                mWordClickedListener);
-        binding.executePendingBindings();
+        if (viewModel != null) {
+            ListItemWotdBinding binding = (ListItemWotdBinding) holder.binding;
+            binding.setViewModel(viewModel);
+            binding.setEntryIconClickListener(mEntryIconClickListener);
+            TextPopupMenu.addPopupMenu(
+                    viewModel.showButtons ? TextPopupMenu.Style.SYSTEM : TextPopupMenu.Style.FULL,
+                    binding.text1,
+                    mWordClickedListener);
+            binding.executePendingBindings();
+        }
     }
 
     public class EntryIconClickListener {

@@ -42,7 +42,7 @@ import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.rhymer.RhymeResult;
 
-public class RhymerLiveData extends ResultListLiveData<ResultListData<RTEntryViewModel>> {
+public class RhymerLiveData extends ResultListLiveData<RTEntryViewModel> {
 
     private static final String TAG = Constants.TAG + RhymerLiveData.class.getSimpleName();
 
