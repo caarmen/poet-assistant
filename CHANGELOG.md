@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.22.2  *(2017-10-22)*
+--------------------
+* Library updates: dagger 2.12, rxjava 2.1.5, robolectric 3.5
+* Use LiveData instead of EventBus and loaders.
+
 1.22.1  *(2017-10-19)*
 --------------------
 * Fix crash when sharing poem text or search results, or when doing a web search.

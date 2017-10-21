@@ -49,8 +49,8 @@ android {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 112201
-        versionName "1.22.1"
+        versionCode 112202
+        versionName "1.22.2"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
@@ -168,18 +168,18 @@ dependencies {
     compile 'ca.rmen:rhymer:1.2.0'
     compile 'ca.rmen:porter-stemmer:1.0.0'
     compile 'org.jraf:prefs:1.2.2'
-    compile 'com.google.dagger:dagger:2.11'
-    compile "io.reactivex.rxjava2:rxjava:2.1.4"
+    compile 'com.google.dagger:dagger:2.12'
+    compile "io.reactivex.rxjava2:rxjava:2.1.5"
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'android.arch.lifecycle:extensions:1.0.0-rc1'
     compile 'android.arch.persistence.room:runtime:1.0.0-rc1'
     annotationProcessor 'android.arch.persistence.room:compiler:1.0.0-rc1'
     androidTestCompile 'android.arch.persistence.room:testing:1.0.0-rc1'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.11'
-    androidTestAnnotationProcessor 'com.google.dagger:dagger-compiler:2.11'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.12'
+    androidTestAnnotationProcessor 'com.google.dagger:dagger-compiler:2.12'
 
     testCompile 'junit:junit:4.12'
-    testCompile "org.robolectric:robolectric:3.4.2"
+    testCompile "org.robolectric:robolectric:3.5"
 
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
@@ -208,6 +208,9 @@ dependencyUpdates.resolutionStrategy = {
         rules.all { ComponentSelection selection ->
             boolean rejected = ['alpha', 'alpha-preview', 'beta', 'rc', 'cr', 'm'].any { qualifier ->
                 selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
+            }
+            if ("com.android.databinding" == selection.candidate.group) {
+                rejected = true
             }
             if (rejected) {
                 selection.reject('Release candidate')
