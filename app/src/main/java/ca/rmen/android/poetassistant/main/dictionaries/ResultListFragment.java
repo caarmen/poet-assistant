@@ -77,6 +77,7 @@ public class ResultListFragment<T> extends Fragment {
         mViewModel.layout.addOnPropertyChangedCallback(mLayoutSettingChanged);
         mViewModel.showHeader.addOnPropertyChangedCallback(mShowHeaderChanged);
         mViewModel.isDataAvailable.addOnPropertyChangedCallback(mDataAvailableChanged);
+        mViewModel.usedQueryWord.addOnPropertyChangedCallback(mUsedQueryWordChanged);
         mHeaderViewModel = ViewModelProviders.of(this).get(ResultListHeaderViewModel.class);
         mHeaderViewModel.filter.addOnPropertyChangedCallback(mFilterChanged);
         Fragment headerFragment = getChildFragmentManager().findFragmentById(R.id.result_list_header);
@@ -114,6 +115,7 @@ public class ResultListFragment<T> extends Fragment {
         mViewModel.layout.removeOnPropertyChangedCallback(mLayoutSettingChanged);
         mViewModel.layout.removeOnPropertyChangedCallback(mShowHeaderChanged);
         mViewModel.isDataAvailable.removeOnPropertyChangedCallback(mDataAvailableChanged);
+        mViewModel.usedQueryWord.removeOnPropertyChangedCallback(mUsedQueryWordChanged);
         mHeaderViewModel.filter.removeOnPropertyChangedCallback(mFilterChanged);
         super.onDestroyView();
     }
@@ -161,7 +163,6 @@ public class ResultListFragment<T> extends Fragment {
                 }
                 getActivity().invalidateOptionsMenu();
 
-                mHeaderViewModel.query.set(mViewModel.getUsedQueryWord());
                 // Hide the keyboard
                 mBinding.recyclerView.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -177,6 +178,8 @@ public class ResultListFragment<T> extends Fragment {
 
     private final Observer<List<Favorite>> mFavoritesObserver = favorites -> reload();
 
+    private final BindingCallbackAdapter mUsedQueryWordChanged =
+            new BindingCallbackAdapter(() -> mHeaderViewModel.query.set(mViewModel.usedQueryWord.get()));
     private void reload() {
         Log.v(TAG, mTab + ": reload: query = " + mHeaderViewModel.query.get() + ", filter = " + mHeaderViewModel.filter.get());
         mViewModel.setQueryParams(new ResultListViewModel.QueryParams(mHeaderViewModel.query.get(),
