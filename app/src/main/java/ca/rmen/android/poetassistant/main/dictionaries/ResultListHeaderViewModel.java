@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
@@ -41,8 +42,8 @@ public class ResultListHeaderViewModel extends AndroidViewModel {
     public final ObservableField<String> filter = new ObservableField<>();
     public final ObservableBoolean isFavorite = new ObservableBoolean();
     public final ObservableBoolean showHeader = new ObservableBoolean();
-    final ObservableField<String> snackbarText = new ObservableField<>();
 
+    final MutableLiveData<String> snackbarText = new MutableLiveData<>();
     final LiveData<Boolean> isFavoriteLiveData;
     final LiveData<Tts.TtsState> ttsStateLiveData;
 
@@ -79,7 +80,7 @@ public class ResultListHeaderViewModel extends AndroidViewModel {
 
     void clearFavorites () {
         mFavorites.clear();
-        snackbarText.set(getApplication().getString(R.string.favorites_cleared));
+        snackbarText.setValue(getApplication().getString(R.string.favorites_cleared));
     }
 
     @Override

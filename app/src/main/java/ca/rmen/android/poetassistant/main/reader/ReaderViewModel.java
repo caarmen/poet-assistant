@@ -22,6 +22,7 @@ import android.annotation.TargetApi;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MediatorLiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -65,9 +66,9 @@ public class ReaderViewModel extends AndroidViewModel {
     public final ObservableField<String> poem = new ObservableField<>("");
     public final ObservableInt playButtonDrawable = new ObservableInt();
     public final ObservableBoolean playButtonEnabled = new ObservableBoolean();
-    final ObservableField<SnackbarText> snackbarText = new ObservableField<>();
-    final ObservableBoolean ttsError = new ObservableBoolean();
-    final ObservableField<PoemFile> poemFile = new ObservableField<>();
+    final MutableLiveData<SnackbarText> snackbarText = new MutableLiveData<>();
+    final MutableLiveData<Boolean> ttsError = new MutableLiveData<>();
+    final MutableLiveData<PoemFile> poemFile = new MutableLiveData<>();
     final MediatorLiveData<PlayButtonState> playButtonStateLiveData;
     @Inject
     Tts mTts;
@@ -80,7 +81,7 @@ public class ReaderViewModel extends AndroidViewModel {
         mPoemPrefs = new PoemPrefs(application);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(application);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(mPrefsListener);
-        poemFile.set(mPoemPrefs.getSavedPoem());
+        poemFile.setValue(mPoemPrefs.getSavedPoem());
         playButtonStateLiveData = new MediatorLiveData<>();
         playButtonStateLiveData.addSource(mTts.getTtsLiveData(),
                 ttsState -> playButtonStateLiveData.setValue(toPlayButtonState(ttsState, poem.get())));
@@ -139,8 +140,8 @@ public class ReaderViewModel extends AndroidViewModel {
         } else if (mTts.getTtsState() != null && mTts.getTtsState().currentStatus == Tts.TtsStatus.INITIALIZED) {
             speak();
         } else {
-            ttsError.set(true);
-            ttsError.set(false);
+            ttsError.setValue(true);
+            ttsError.setValue(false);
         }
     }
 
@@ -159,7 +160,7 @@ public class ReaderViewModel extends AndroidViewModel {
 
     void speakToFile() {
         mTts.speakToFile(poem.get());
-        snackbarText.set(new SnackbarText(R.string.share_poem_audio_snackbar));
+        snackbarText.setValue(new SnackbarText(R.string.share_poem_audio_snackbar));
     }
 
     // end TTS
@@ -201,8 +202,8 @@ public class ReaderViewModel extends AndroidViewModel {
     @TargetApi(Build.VERSION_CODES.KITKAT)
     Intent getOpenFileIntent() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        if (poemFile.get() != null) {
-            intent.setData(poemFile.get().uri);
+        if (poemFile.getValue() != null) {
+            intent.setData(poemFile.getValue().uri);
         }
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("text/plain");
@@ -240,10 +241,10 @@ public class ReaderViewModel extends AndroidViewModel {
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     void print(Context context) {
-        if (poemFile.get() == null) {
+        if (poemFile.getValue() == null) {
             PoemFile.print(context, new PoemFile(null, PoemFile.generateFileName(poem.get()), poem.get()), mPoemFileCallback);
         } else {
-            PoemFile.print(context, poemFile.get(), mPoemFileCallback);
+            PoemFile.print(context, poemFile.getValue(), mPoemFileCallback);
         }
     }
 
@@ -253,21 +254,21 @@ public class ReaderViewModel extends AndroidViewModel {
             Log.d(TAG, "onPoemLoaded() called with: " + "poemFile = [" + loadedPoem + "]");
             if (loadedPoem == null) {
                 clearPoem();
-                snackbarText.set(new SnackbarText(R.string.file_opened_error));
+                snackbarText.setValue(new SnackbarText(R.string.file_opened_error));
             } else {
                 setSavedPoem(loadedPoem);
-                snackbarText.set(new SnackbarText(R.string.file_opened, loadedPoem.name));
+                snackbarText.setValue(new SnackbarText(R.string.file_opened, loadedPoem.name));
             }
         }
 
         @Override
         public void onPoemSaved(PoemFile savedPoem) {
             if (savedPoem == null) {
-                snackbarText.set(new SnackbarText(R.string.file_saved_error));
+                snackbarText.setValue(new SnackbarText(R.string.file_saved_error));
             } else {
                 Log.d(TAG, "onPoemSaved() called with: " + "poemFile = [" + savedPoem + "]");
                 setSavedPoem(savedPoem);
-                snackbarText.set(new SnackbarText(R.string.file_saved, savedPoem.name));
+                snackbarText.setValue(new SnackbarText(R.string.file_saved, savedPoem.name));
             }
         }
 
@@ -285,7 +286,7 @@ public class ReaderViewModel extends AndroidViewModel {
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                    poemFile.set(mPoemPrefs.getSavedPoem());
+                    poemFile.setValue(mPoemPrefs.getSavedPoem());
                 }
             };
     // end saving/opening files

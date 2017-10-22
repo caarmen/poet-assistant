@@ -44,6 +44,7 @@ import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding;
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper;
 import ca.rmen.android.poetassistant.main.Tab;
+import ca.rmen.android.poetassistant.settings.Settings;
 
 
 public class ResultListFragment<T> extends Fragment {
@@ -74,10 +75,10 @@ public class ResultListFragment<T> extends Fragment {
         //noinspection unchecked
         mViewModel = (ResultListViewModel<T>) ResultListFactory.createViewModel(mTab, this);
         mBinding.setViewModel(mViewModel);
-        mViewModel.layout.addOnPropertyChangedCallback(mLayoutSettingChanged);
-        mViewModel.showHeader.addOnPropertyChangedCallback(mShowHeaderChanged);
+        mViewModel.layout.observe(this, mLayoutSettingChanged);
+        mViewModel.showHeader.observe(this, mShowHeaderChanged);
+        mViewModel.usedQueryWord.observe(this, mUsedQueryWordChanged);
         mViewModel.isDataAvailable.addOnPropertyChangedCallback(mDataAvailableChanged);
-        mViewModel.usedQueryWord.addOnPropertyChangedCallback(mUsedQueryWordChanged);
         mHeaderViewModel = ViewModelProviders.of(this).get(ResultListHeaderViewModel.class);
         mHeaderViewModel.filter.addOnPropertyChangedCallback(mFilterChanged);
         Fragment headerFragment = getChildFragmentManager().findFragmentById(R.id.result_list_header);
@@ -112,10 +113,7 @@ public class ResultListFragment<T> extends Fragment {
     @Override
     public void onDestroyView() {
         Log.v(TAG, mTab + " onDestroyView");
-        mViewModel.layout.removeOnPropertyChangedCallback(mLayoutSettingChanged);
-        mViewModel.layout.removeOnPropertyChangedCallback(mShowHeaderChanged);
         mViewModel.isDataAvailable.removeOnPropertyChangedCallback(mDataAvailableChanged);
-        mViewModel.usedQueryWord.removeOnPropertyChangedCallback(mUsedQueryWordChanged);
         mHeaderViewModel.filter.removeOnPropertyChangedCallback(mFilterChanged);
         super.onDestroyView();
     }
@@ -169,17 +167,16 @@ public class ResultListFragment<T> extends Fragment {
                 imm.hideSoftInputFromWindow(mBinding.recyclerView.getWindowToken(), 0);
             });
 
-    private final BindingCallbackAdapter mShowHeaderChanged =
-            new BindingCallbackAdapter(() -> mHeaderViewModel.showHeader.set(mViewModel.showHeader.get()));
-
     private final BindingCallbackAdapter mFilterChanged = new BindingCallbackAdapter(this::reload);
 
-    private final BindingCallbackAdapter mLayoutSettingChanged = new BindingCallbackAdapter(this::reload);
+    private final Observer<Boolean> mShowHeaderChanged = showHeader -> mHeaderViewModel.showHeader.set(showHeader == Boolean.TRUE);
+
+    private final Observer<Settings.Layout> mLayoutSettingChanged = layout -> reload();
 
     private final Observer<List<Favorite>> mFavoritesObserver = favorites -> reload();
 
-    private final BindingCallbackAdapter mUsedQueryWordChanged =
-            new BindingCallbackAdapter(() -> mHeaderViewModel.query.set(mViewModel.usedQueryWord.get()));
+    private final Observer<String> mUsedQueryWordChanged = usedQueryWord -> mHeaderViewModel.query.set(usedQueryWord);
+
     private void reload() {
         Log.v(TAG, mTab + ": reload: query = " + mHeaderViewModel.query.get() + ", filter = " + mHeaderViewModel.filter.get());
         mViewModel.setQueryParams(new ResultListViewModel.QueryParams(mHeaderViewModel.query.get(),
