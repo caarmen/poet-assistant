@@ -23,8 +23,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.util.Log;
+
+import ca.rmen.android.poetassistant.Constants;
 
 class PoemPrefs {
+    private static final String TAG = Constants.TAG + PoemPrefs.class.getSimpleName();
     private final SharedPreferences mSharedPreferences;
     private static final String PREF_POEM_TEXT = "poem_text";
     private static final String PREF_POEM_URI = "poem_uri";
@@ -48,6 +52,7 @@ class PoemPrefs {
     }
 
     void setSavedPoem(PoemFile poemFile) {
+        Log.v(TAG, "setSavedPoem " + poemFile);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         if (poemFile.uri != null)
             editor.putString(PREF_POEM_URI, poemFile.uri.toString());
@@ -59,6 +64,7 @@ class PoemPrefs {
     }
 
     void updatePoemText(String text) {
+        Log.v(TAG, "updatePoemText " + text);
         mSharedPreferences.edit().putString(PREF_POEM_TEXT, text).apply();
     }
 
@@ -73,6 +79,7 @@ class PoemPrefs {
     }
 
     void clear() {
+        Log.v(TAG, "clear");
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.remove(PREF_POEM_TEXT);
         editor.remove(PREF_POEM_URI);

@@ -172,6 +172,7 @@ public class ReaderViewModel extends AndroidViewModel {
     }
 
     void setSavedPoem(PoemFile savedPoem) {
+        Log.v(TAG, "setSavedPoem " + savedPoem);
         mPoemPrefs.setSavedPoem(savedPoem);
         poem.set(savedPoem.text);
     }
