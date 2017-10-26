@@ -20,13 +20,12 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.getkeepsafe.dexcount'
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'jacoco'
 
 
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion "26.0.2"
 
     compileOptions {
@@ -54,15 +53,15 @@ android {
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
-        jackOptions {
-            enabled false // too slow! :(
-        }
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
 
         // used by Room, to test migrations
         sourceSets {
             androidTest.assets.srcDirs +=
                     files("$projectDir/src/androidTest/schemas".toString())
+            test {
+                manifest.srcFile "src/test/AndroidManifest.xml"
+            }
         }
 
         // used by Room, to test migrations
@@ -88,10 +87,14 @@ android {
     }
 
     testOptions {
-        unitTests.all {
-            jacoco {
-                includeNoLocationClasses = true
+        unitTests {
+            all {
+                jacoco {
+                    includeNoLocationClasses = true
+                }
+                jvmArgs '-noverify', '-ea'
             }
+            includeAndroidResources = true
         }
     }
 
@@ -152,49 +155,48 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.15.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.1'
-        classpath 'me.tatarka:gradle-retrolambda:3.7.0'
     }
 }
 
 dependencies {
     annotationProcessor 'org.jraf:prefs-compiler:1.2.2'
 
-    compile 'com.android.support:appcompat-v7:26.1.0'
-    compile 'com.android.support:design:26.1.0'
-    compile 'com.android.support:preference-v7:26.1.0'
-    compile 'com.android.support:preference-v14:26.1.0'
-    compile 'ca.rmen:rhymer:1.2.0'
-    compile 'ca.rmen:porter-stemmer:1.0.0'
-    compile 'org.jraf:prefs:1.2.2'
-    compile 'com.google.dagger:dagger:2.12'
-    compile "io.reactivex.rxjava2:rxjava:2.1.5"
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'android.arch.lifecycle:extensions:1.0.0-rc1'
-    compile 'android.arch.persistence.room:runtime:1.0.0-rc1'
+    implementation 'com.android.support:appcompat-v7:27.0.0'
+    implementation 'com.android.support:design:27.0.0'
+    implementation 'com.android.support:preference-v7:27.0.0'
+    implementation 'com.android.support:preference-v14:27.0.0'
+    implementation 'ca.rmen:rhymer:1.2.0'
+    implementation 'ca.rmen:porter-stemmer:1.0.0'
+    implementation 'org.jraf:prefs:1.2.2'
+    implementation 'com.google.dagger:dagger:2.12'
+    implementation "io.reactivex.rxjava2:rxjava:2.1.5"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'android.arch.lifecycle:extensions:1.0.0-rc1'
+    implementation 'android.arch.persistence.room:runtime:1.0.0-rc1'
     annotationProcessor 'android.arch.persistence.room:compiler:1.0.0-rc1'
-    androidTestCompile 'android.arch.persistence.room:testing:1.0.0-rc1'
+    androidTestImplementation 'android.arch.persistence.room:testing:1.0.0-rc1'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.12'
     androidTestAnnotationProcessor 'com.google.dagger:dagger-compiler:2.12'
 
-    testCompile 'junit:junit:4.12'
-    testCompile "org.robolectric:robolectric:3.5"
+    testImplementation 'junit:junit:4.12'
+    testImplementation "org.robolectric:robolectric:3.5"
 
 
-    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5.1'
-    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-    testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-    androidTestCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.1'
-    androidTestCompile group: 'org.easytesting', name: 'fest-reflect', version: '1.4.1'
+    testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    androidTestImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
+    androidTestImplementation group: 'org.easytesting', name: 'fest-reflect', version: '1.4.1'
 
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1', {
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestCompile 'com.android.support.test.espresso:espresso-intents:3.0.1', {
+    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestCompile 'com.android.support.test.espresso:espresso-contrib:3.0.1', {
+    androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:3.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'design'

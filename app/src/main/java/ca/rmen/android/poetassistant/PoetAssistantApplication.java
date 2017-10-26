@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant;
 import android.app.Application;
 
 import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
@@ -28,13 +29,14 @@ public class PoetAssistantApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        LeakCanary.install(this);
+        setupLeakCanary();
         Theme.setThemeFromSettings(SettingsPrefs.get(this));
+    }
+    protected RefWatcher setupLeakCanary() {
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return RefWatcher.DISABLED;
+        }
+        return LeakCanary.install(this);
     }
 
 }

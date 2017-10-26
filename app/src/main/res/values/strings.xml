@@ -81,7 +81,6 @@
     <string name="about_license_dictionary">WordNet Dictionary License</string>
     <string name="about_license_google_ngram_dataset">Google Ngram Dataset License</string>
     <string name="about_license_support_lib">Android Support Library and Architecture Components License (Apache2): https://android.googlesource.com/platform/frameworks/support/+/master/LICENSE.txt</string>
-    <string name="about_license_retrolambda">Gradle Retrolambda Plugin License (Apache2): https://github.com/evant/gradle-retrolambda/blob/master/LICENSE.txt</string>
     <string name="about_license_dagger">Dagger License (Apache2): https://github.com/google/dagger/blob/master/LICENSE.txt</string>
     <string name="about_license_rx_java">RxJava License (Apache2): https://github.com/ReactiveX/RxJava/blob/2.x/LICENSE</string>
     <string name="about_license_rx_android">RxAndroid License (Apache2): https://github.com/ReactiveX/RxAndroid/blob/2.x/LICENSE</string>
