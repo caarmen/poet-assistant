@@ -19,6 +19,7 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -152,7 +153,11 @@ public class ResultListFragment<T> extends Fragment {
             AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
         }
         mViewModel.setQueryParams(new ResultListViewModel.QueryParams(query, null));
-        getActivity().invalidateOptionsMenu();
+        Activity activity = getActivity();
+        if (activity != null) {
+            Log.v(TAG, "query: invalidate options menu");
+            activity.invalidateOptionsMenu();
+        }
     }
 
     private final BindingCallbackAdapter mDataAvailableChanged =
@@ -165,7 +170,11 @@ public class ResultListFragment<T> extends Fragment {
                     }
                     AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
                 }
-                getActivity().invalidateOptionsMenu();
+                Activity activity = getActivity();
+                if (activity != null) {
+                    Log.v(TAG, "dataAvailableChanged: invalidateOptionsMenu");
+                    activity.invalidateOptionsMenu();
+                }
 
                 // Hide the keyboard
                 mBinding.recyclerView.requestFocus();
