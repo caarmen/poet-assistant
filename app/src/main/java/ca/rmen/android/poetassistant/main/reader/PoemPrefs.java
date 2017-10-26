@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import ca.rmen.android.poetassistant.Constants;
@@ -68,6 +69,7 @@ class PoemPrefs {
         mSharedPreferences.edit().putString(PREF_POEM_TEXT, text).apply();
     }
 
+    @Nullable
     PoemFile getSavedPoem() {
         String uri = mSharedPreferences.getString(PREF_POEM_URI, null);
         if (uri != null) {
