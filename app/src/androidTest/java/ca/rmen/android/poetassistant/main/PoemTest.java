@@ -43,6 +43,7 @@ import java.util.Locale;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
+import static android.support.test.espresso.Espresso.closeSoftKeyboard;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.clearText;
@@ -147,6 +148,7 @@ public class PoemTest {
         assertPopupMissing("thesaurus");
         assertPopupMissing("dictionary");
         pressBack();
+        closeSoftKeyboard();
 
         openMenuItem(R.string.action_settings);
         clickPreference(R.string.pref_selection_lookup_title);

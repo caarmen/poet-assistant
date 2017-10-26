@@ -84,9 +84,11 @@ class TestAppUtils {
 
     static ViewInteraction typeQuery(String query) {
         // Type the query term and search
+        getInstrumentation().waitForIdleSync();
         ViewInteraction searchAutoComplete = onView(allOf(withId(R.id.search_src_text), isDisplayed()));
         searchAutoComplete.check(matches(isDisplayed()));
         searchAutoComplete.perform(typeText(query));
+        getInstrumentation().waitForIdleSync();
         return searchAutoComplete;
     }
 
@@ -98,7 +100,6 @@ class TestAppUtils {
         openSearchView();
 
         // Type the query term and search
-        getInstrumentation().waitForIdleSync();
         typeQuery(query).perform(pressImeActionButton());
         getInstrumentation().waitForIdleSync();
     }
