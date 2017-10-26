@@ -21,9 +21,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'jacoco'
-
-
-
+ext {
+    jacocoVersion = "0.7.4.201502262128"
+}
 android {
     compileSdkVersion 27
     buildToolsVersion "26.0.2"
@@ -89,9 +89,6 @@ android {
     testOptions {
         unitTests {
             all {
-                jacoco {
-                    includeNoLocationClasses = true
-                }
                 jvmArgs '-noverify', '-ea'
             }
             includeAndroidResources = true
@@ -188,6 +185,14 @@ dependencies {
 
     testImplementation 'junit:junit:4.12'
     testImplementation "org.robolectric:robolectric:3.5"
+
+    jacocoAnt "org.jacoco:org.jacoco.ant:${project.jacocoVersion}"
+    jacocoAgent "org.jacoco:org.jacoco.agent:${project.jacocoVersion}"
+    androidJacocoAgent "org.jacoco:org.jacoco.agent:${project.jacocoVersion}"
+    androidJacocoAnt "org.jacoco:org.jacoco.ant:${project.jacocoVersion}"
+    androidJacocoAnt "org.jacoco:org.jacoco.core:${project.jacocoVersion}"
+    androidJacocoAnt "org.jacoco:org.jacoco.report:${project.jacocoVersion}"
+    androidJacocoAnt "org.jacoco:org.jacoco.agent:${project.jacocoVersion}"
 
 
     testImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
