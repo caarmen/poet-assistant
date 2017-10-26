@@ -132,6 +132,18 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
     }
 
+    @Override
+    public void onBackPressed() {
+        Log.v(TAG, "onBackPressed");
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.v(TAG, "onPause");
+        super.onPause();
+    }
+
     @WorkerThread
     private boolean loadDatabase() {
         DaggerHelper.getMainScreenComponent(getApplication()).inject(MainActivity.this);

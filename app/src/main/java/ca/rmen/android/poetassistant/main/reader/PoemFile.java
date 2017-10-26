@@ -79,6 +79,35 @@ public class PoemFile {
         this.text = text;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PoemFile poemFile = (PoemFile) o;
+
+        if (uri != null ? !uri.equals(poemFile.uri) : poemFile.uri != null) return false;
+        if (name != null ? !name.equals(poemFile.name) : poemFile.name != null) return false;
+        return text != null ? text.equals(poemFile.text) : poemFile.text == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = uri != null ? uri.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (text != null ? text.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "PoemFile{" +
+                "uri=" + uri +
+                ", name='" + name + '\'' +
+                ", text='" + text + '\'' +
+                '}';
+    }
+
     static void open(final Context context, final Uri uri, final PoemFileCallback callback) {
         Log.d(TAG, "open() called with: " + "uri = [" + uri + "]");
         Single.fromCallable(() -> readPoemFile(context, uri))

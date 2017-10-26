@@ -73,7 +73,7 @@ final class ActivityTestRules {
 
     private static void cleanup(Context targetContext) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(targetContext);
-        prefs.edit().clear().apply();
+        prefs.edit().clear().commit();
         File filesDir = targetContext.getFilesDir();
         if (filesDir.exists()) {
             deleteFiles(filesDir);

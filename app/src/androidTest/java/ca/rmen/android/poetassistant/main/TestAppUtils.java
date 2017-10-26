@@ -100,7 +100,9 @@ class TestAppUtils {
         openSearchView();
 
         // Type the query term and search
-        typeQuery(query).perform(pressImeActionButton());
+        ViewInteraction vi = typeQuery(query);
+        getInstrumentation().waitForIdleSync();
+        vi.perform(pressImeActionButton());
         getInstrumentation().waitForIdleSync();
     }
 

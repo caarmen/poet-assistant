@@ -208,6 +208,7 @@ public class ReaderFragment extends Fragment implements
             if (!TextUtils.isEmpty(initialText)) {
                 PoemFile poemFile = new PoemFile(null, null, initialText);
                 mViewModel.setSavedPoem(poemFile);
+                Log.v(TAG, "loadPoem: invalidateOptionsMenu");
                 getActivity().invalidateOptionsMenu();
                 return;
             }
@@ -249,7 +250,13 @@ public class ReaderFragment extends Fragment implements
         }
     };
 
-    private final Observer<PoemFile> mPoemFileCallback = poemFile -> getActivity().invalidateOptionsMenu();
+    private final Observer<PoemFile> mPoemFileCallback = poemFile -> {
+        Activity activity = getActivity();
+        if (activity != null) {
+            Log.v(TAG, "poemFileCallback: invalidateOptionsMenu");
+            activity.invalidateOptionsMenu();
+        }
+    };
 
     private final Observer<ReaderViewModel.PlayButtonState> mPlayButtonStateObserver = playButtonState -> {
         Log.v(TAG, "playButtonStateLiveData " + playButtonState);

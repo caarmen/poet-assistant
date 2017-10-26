@@ -146,6 +146,12 @@ android.applicationVariants.all { variant ->
     }
 }
 
+project.gradle.taskGraph.whenReady {
+    connectedDebugAndroidTest {
+        ignoreFailures = true
+    }
+}
+
 repositories {
     jcenter();
 }
