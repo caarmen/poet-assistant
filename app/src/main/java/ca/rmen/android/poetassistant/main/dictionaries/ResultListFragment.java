@@ -146,6 +146,10 @@ public class ResultListFragment<T> extends Fragment {
     public void query(String query) {
         Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
         mHeaderViewModel.filter.set(null);
+        if (getUserVisibleHint()) {
+            AppBarLayoutHelper.disableAutoHide(getActivity());
+            AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
+        }
         mViewModel.setQueryParams(new ResultListViewModel.QueryParams(query, null));
         getActivity().invalidateOptionsMenu();
     }
@@ -158,6 +162,7 @@ public class ResultListFragment<T> extends Fragment {
                     } else {
                         AppBarLayoutHelper.disableAutoHide(getActivity());
                     }
+                    AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
                 }
                 getActivity().invalidateOptionsMenu();
 

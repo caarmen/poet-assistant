@@ -21,16 +21,21 @@ package ca.rmen.android.poetassistant.main;
 
 import android.app.Activity;
 import android.support.design.widget.AppBarLayout;
+import android.util.Log;
 import android.view.View;
 
+import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 
 public final class AppBarLayoutHelper {
+    private static final String TAG = Constants.TAG + AppBarLayoutHelper.class.getSimpleName();
+
     private AppBarLayoutHelper() {
         // prevent instantiation
     }
 
     public static void enableAutoHide(Activity activity) {
+        Log.v(TAG, "enableAutohide " + activity);
         if (activity == null || activity.isFinishing()) return;
         if (activity.getResources().getBoolean(R.bool.toolbar_auto_hide)) {
             enableAutoHide(activity.findViewById(R.id.toolbar));
@@ -39,6 +44,7 @@ public final class AppBarLayoutHelper {
     }
 
     public static void disableAutoHide(Activity activity) {
+        Log.v(TAG, "disableAutohide" + activity);
         if (activity == null || activity.isFinishing()) return;
         if (activity.getResources().getBoolean(R.bool.toolbar_auto_hide)) {
             disableAutoHide(activity.findViewById(R.id.toolbar));
@@ -47,6 +53,7 @@ public final class AppBarLayoutHelper {
     }
 
     private static void enableAutoHide(View view) {
+        Log.v(TAG, "enableAutohide " + view);
         if (view == null) return;
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) view.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
@@ -54,6 +61,7 @@ public final class AppBarLayoutHelper {
     }
 
     private static void disableAutoHide(View view) {
+        Log.v(TAG, "disableAutohide " + view);
         if (view == null) return;
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) view.getLayoutParams();
         params.setScrollFlags(params.getScrollFlags() & ~(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP));
@@ -61,6 +69,7 @@ public final class AppBarLayoutHelper {
     }
 
     public static void forceExpandAppBarLayout(Activity activity) {
+        Log.v(TAG, "forceExpandAppBarLayout " + activity);
         if (activity == null || activity.isFinishing()) return;
         AppBarLayout appBarLayout = activity.findViewById(R.id.app_bar_layout);
         if (appBarLayout != null) {
@@ -68,7 +77,8 @@ public final class AppBarLayoutHelper {
         }
     }
 
-    static void forceExpandAppBarLayout(final AppBarLayout appBarLayout) {
+    static void forceExpandAppBarLayout(AppBarLayout appBarLayout) {
+        Log.v(TAG, "forceExpandAppBarLayout " + appBarLayout);
         if (!appBarLayout.getContext().getResources().getBoolean(R.bool.toolbar_auto_hide)) return;
         // Add a 100ms delay to prevent this issue:
         // * The user is in the reader tab, with the keyboard open
