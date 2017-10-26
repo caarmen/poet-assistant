@@ -287,7 +287,24 @@ public class ReaderViewModel extends AndroidViewModel {
             new SharedPreferences.OnSharedPreferenceChangeListener() {
                 @Override
                 public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                    poemFile.setValue(mPoemPrefs.getSavedPoem());
+                    Log.v(TAG, "onSharedPreferenceChanged: key = " + key);
+
+                    // Prevent the search EditText from disappearing while the user is typing,
+                    // by only notifying actual changes in the poem text.
+                    // When starting a new instrumentation test after completing another instrumentation
+                    // test, we get a shared prefs change with a null value before and after for the shared poem.
+                    // This resulted in an invalidation of the options menu, causing problems when entering
+                    // search text.
+                    PoemFile oldPoemText = poemFile.getValue();
+                    PoemFile newPoemText = mPoemPrefs.getSavedPoem();
+                    Log.v(TAG, "old: " + oldPoemText + ", new: " + newPoemText);
+                    if ((oldPoemText == null && newPoemText == null)
+                            || (oldPoemText != null && oldPoemText.equals(newPoemText))
+                            || (newPoemText != null && newPoemText.equals(oldPoemText))) {
+                        Log.v(TAG, "Ignoring uninteresting poem file change");
+                    } else {
+                        poemFile.setValue(mPoemPrefs.getSavedPoem());
+                    }
                 }
             };
     // end saving/opening files
