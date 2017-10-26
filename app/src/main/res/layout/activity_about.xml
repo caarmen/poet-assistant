@@ -128,11 +128,6 @@
 
                 <TextView
                     style="@style/AboutActivitySubItem"
-                    android:id="@+id/tv_retrolambda_license"
-                    android:text="@string/about_license_retrolambda"/>
-
-                <TextView
-                    style="@style/AboutActivitySubItem"
                     android:id="@+id/tv_dagger_license"
                     android:text="@string/about_license_dagger"/>
 
