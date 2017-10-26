@@ -98,6 +98,7 @@ class TestAppUtils {
         openSearchView();
 
         // Type the query term and search
+        getInstrumentation().waitForIdleSync();
         typeQuery(query).perform(pressImeActionButton());
         getInstrumentation().waitForIdleSync();
     }
@@ -202,6 +203,7 @@ class TestAppUtils {
         typePoem(poem);
         speakPoem();
         pressBack();
+        getInstrumentation().waitForIdleSync();
     }
 
     static void typePoem(String poem) {
