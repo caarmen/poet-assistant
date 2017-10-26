@@ -87,11 +87,14 @@ android {
     }
 
     testOptions {
-        unitTests.all {
-            jacoco {
-                includeNoLocationClasses = true
+        unitTests {
+            all {
+                jacoco {
+                    includeNoLocationClasses = true
+                }
+                jvmArgs '-noverify', '-ea'
             }
-            jvmArgs '-noverify', '-ea'
+            includeAndroidResources = true
         }
     }
 
