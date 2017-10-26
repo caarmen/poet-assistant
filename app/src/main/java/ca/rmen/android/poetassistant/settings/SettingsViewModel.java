@@ -22,8 +22,8 @@ package ca.rmen.android.poetassistant.settings;
 import android.annotation.TargetApi;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Intent;
-import android.databinding.ObservableField;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v7.preference.PreferenceManager;
@@ -47,7 +47,7 @@ public class SettingsViewModel extends AndroidViewModel {
     @Inject
     Tts mTts;
 
-    final ObservableField<String> snackbarText = new ObservableField<>();
+    final MutableLiveData<String> snackbarText = new MutableLiveData<>();
     private final SettingsChangeListener mListener;
 
     public SettingsViewModel(Application application) {
@@ -84,8 +84,8 @@ public class SettingsViewModel extends AndroidViewModel {
         Completable.fromAction(() -> mFavorites.exportFavorites(getApplication(), uri))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> snackbarText.set(getApplication().getString(R.string.export_favorites_success, fileDisplayName)),
-                        throwable -> snackbarText.set(getApplication().getString(R.string.export_favorites_error, fileDisplayName)));
+                .subscribe(() -> snackbarText.setValue(getApplication().getString(R.string.export_favorites_success, fileDisplayName)),
+                        throwable -> snackbarText.setValue(getApplication().getString(R.string.export_favorites_error, fileDisplayName)));
 
     }
 
@@ -94,8 +94,8 @@ public class SettingsViewModel extends AndroidViewModel {
         Completable.fromAction(() -> mFavorites.importFavorites(getApplication(), uri))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> snackbarText.set(getApplication().getString(R.string.import_favorites_success, fileDisplayName)),
-                        throwable -> snackbarText.set(getApplication().getString(R.string.import_favorites_error, fileDisplayName)));
+                .subscribe(() -> snackbarText.setValue(getApplication().getString(R.string.import_favorites_success, fileDisplayName)),
+                        throwable -> snackbarText.setValue(getApplication().getString(R.string.import_favorites_error, fileDisplayName)));
 
     }
 
@@ -103,7 +103,7 @@ public class SettingsViewModel extends AndroidViewModel {
         Completable.fromRunnable(() -> getApplication().getContentResolver().delete(SuggestionsProvider.CONTENT_URI, null, null))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> snackbarText.set(getApplication().getString(R.string.search_history_cleared)));
+                .subscribe(() -> snackbarText.setValue(getApplication().getString(R.string.search_history_cleared)));
     }
 
     @Override

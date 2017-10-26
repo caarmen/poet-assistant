@@ -24,7 +24,6 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.databinding.Observable;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
@@ -35,6 +34,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceCategory;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -44,7 +44,6 @@ import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
-import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -86,6 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
             DaggerHelper.getSettingsComponent(getContext()).inject(this);
             mViewModel = ViewModelProviders.of(this).get(SettingsViewModel.class);
             mTts.getTtsLiveData().observe(this, mTtsObserver);
+            mViewModel.snackbarText.observe(this, mSnackbarCallback);
         }
 
         @Override
@@ -141,12 +141,10 @@ public class SettingsActivity extends AppCompatActivity {
                 mTts.restart();
                 mRestartTtsOnResume = false;
             }
-            mViewModel.snackbarText.addOnPropertyChangedCallback(mSnackbarCallback);
         }
 
         @Override
         public void onPause() {
-            mViewModel.snackbarText.removeOnPropertyChangedCallback(mSnackbarCallback);
             mTts.stop();
             super.onPause();
         }
@@ -206,12 +204,12 @@ public class SettingsActivity extends AppCompatActivity {
             });
         }
 
-        private final Observable.OnPropertyChangedCallback mSnackbarCallback = new BindingCallbackAdapter(() -> {
+        private final Observer<String> mSnackbarCallback = snackbarText -> {
             View rootView = getView();
-            if (rootView != null) {
-                Snackbar.make(rootView, mViewModel.snackbarText.get(), Snackbar.LENGTH_LONG).show();
+            if (rootView != null && !TextUtils.isEmpty(snackbarText)) {
+                Snackbar.make(rootView, snackbarText, Snackbar.LENGTH_LONG).show();
             }
-        });
+        };
 
         private final Observer<Tts.TtsState> mTtsObserver = ttsState -> {
             Log.v(TAG, "ttsState = " + ttsState);

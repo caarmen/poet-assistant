@@ -24,7 +24,6 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.databinding.Observable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,7 +43,6 @@ import android.view.ViewGroup;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.compat.HtmlCompat;
-import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding;
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper;
 import ca.rmen.android.poetassistant.main.TextPopupMenu;
@@ -97,9 +95,9 @@ public class ReaderFragment extends Fragment implements
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false);
         mViewModel = ViewModelProviders.of(this).get(ReaderViewModel.class);
         mBinding.setViewModel(mViewModel);
-        mViewModel.snackbarText.addOnPropertyChangedCallback(mSnackbarCallback);
-        mViewModel.ttsError.addOnPropertyChangedCallback(mTtsErrorCallback);
-        mViewModel.poemFile.addOnPropertyChangedCallback(mPoemFileCallback);
+        mViewModel.snackbarText.observe(this, mSnackbarCallback);
+        mViewModel.ttsError.observe(this, mTtsErrorCallback);
+        mViewModel.poemFile.observe(this, mPoemFileCallback);
         mBinding.tvText.setImeListener(() -> AppBarLayoutHelper.forceExpandAppBarLayout(getActivity()));
         DebounceTextWatcher.observe(mBinding.tvText).subscribe(text -> mViewModel.updatePoemText());
         TextPopupMenu.addSelectionPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
@@ -124,7 +122,7 @@ public class ReaderFragment extends Fragment implements
         if (menuItem == null) {
             Log.d(TAG, "Unexpected: save menu item missing from reader fragment. Monkey?");
         } else {
-            menuItem.setEnabled(mViewModel.poemFile.get() != null);
+            menuItem.setEnabled(mViewModel.poemFile.getValue() != null);
         }
     }
 
@@ -169,15 +167,6 @@ public class ReaderFragment extends Fragment implements
         Log.d(TAG, "onPause() called with: " + "");
         mViewModel.updatePoemText();
         super.onPause();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d(TAG, "onDestroyView");
-        mViewModel.snackbarText.removeOnPropertyChangedCallback(mSnackbarCallback);
-        mViewModel.ttsError.removeOnPropertyChangedCallback(mTtsErrorCallback);
-        mViewModel.poemFile.removeOnPropertyChangedCallback(mPoemFileCallback);
     }
 
     @Override
@@ -236,38 +225,31 @@ public class ReaderFragment extends Fragment implements
         }
     }
 
-    private final Observable.OnPropertyChangedCallback mSnackbarCallback =
-            new BindingCallbackAdapter(
-                    () -> {
-                        View root = getView();
-                        if (root != null) {
-                            ReaderViewModel.SnackbarText text = mViewModel.snackbarText.get();
-                            String message = getString(text.stringResId, text.params);
-                            Snackbar.make(root, message, Snackbar.LENGTH_LONG).show();
-                        }
-                    });
+    private final Observer<ReaderViewModel.SnackbarText> mSnackbarCallback = text -> {
+        View root = getView();
+        if (root != null && text != null) {
+            String message = getString(text.stringResId, text.params);
+            Snackbar.make(root, message, Snackbar.LENGTH_LONG).show();
+        }
+    };
 
-    private final Observable.OnPropertyChangedCallback mTtsErrorCallback =
-            new BindingCallbackAdapter(
-                    () -> {
-                        if (mViewModel.ttsError.get()) {
-                            View root = getView();
-                            if (root != null) {
-                                Snackbar snackBar = Snackbar.make(root, HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG);
-                                final Intent intent = new Intent("com.android.settings.TTS_SETTINGS");
-                                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-                                    snackBar.setAction(R.string.tts_error_open_system_settings, view -> startActivity(intent));
-                                } else {
-                                    snackBar.setAction(R.string.tts_error_open_app_settings, view -> startActivity(new Intent(getContext(), SettingsActivity.class)));
-                                }
-                                snackBar.show();
-                            }
-                        }
-                    }
-            );
+    private final Observer<Boolean> mTtsErrorCallback = hasTtsError -> {
+        if (hasTtsError == Boolean.TRUE) {
+            View root = getView();
+            if (root != null) {
+                Snackbar snackBar = Snackbar.make(root, HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG);
+                final Intent intent = new Intent("com.android.settings.TTS_SETTINGS");
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    snackBar.setAction(R.string.tts_error_open_system_settings, view -> startActivity(intent));
+                } else {
+                    snackBar.setAction(R.string.tts_error_open_app_settings, view -> startActivity(new Intent(getContext(), SettingsActivity.class)));
+                }
+                snackBar.show();
+            }
+        }
+    };
 
-    private final Observable.OnPropertyChangedCallback mPoemFileCallback =
-            new BindingCallbackAdapter(() -> getActivity().invalidateOptionsMenu());
+    private final Observer<PoemFile> mPoemFileCallback = poemFile -> getActivity().invalidateOptionsMenu();
 
     private final Observer<ReaderViewModel.PlayButtonState> mPlayButtonStateObserver = playButtonState -> {
         Log.v(TAG, "playButtonStateLiveData " + playButtonState);

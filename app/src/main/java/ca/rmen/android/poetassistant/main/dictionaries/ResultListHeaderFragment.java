@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.databinding.DataBindingUtil;
-import android.databinding.Observable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -38,7 +37,6 @@ import java.util.Locale;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
-import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 
@@ -73,17 +71,11 @@ public class ResultListHeaderFragment extends Fragment
         mBinding.setButtonListener(new ButtonListener());
         mViewModel = ViewModelProviders.of(getParentFragment()).get(ResultListHeaderViewModel.class);
         mBinding.setViewModel(mViewModel);
-        mViewModel.snackbarText.addOnPropertyChangedCallback(mSnackbarTextChanged);
+        mViewModel.snackbarText.observe(this, mSnackbarTextChanged);
         mViewModel.isFavoriteLiveData.observe(this, mFavoriteObserver);
         mViewModel.ttsStateLiveData.observe(this, mTtsObserver);
 
         return mBinding.getRoot();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        mViewModel.snackbarText.removeOnPropertyChangedCallback(mSnackbarTextChanged);
     }
 
     @Override
@@ -99,13 +91,11 @@ public class ResultListHeaderFragment extends Fragment
         }
     }
 
-    private final Observable.OnPropertyChangedCallback mSnackbarTextChanged =
-            new BindingCallbackAdapter(() -> {
-                String text = mViewModel.snackbarText.get();
-                if (!TextUtils.isEmpty(text)) {
-                    Snackbar.make(mBinding.getRoot(), text, Snackbar.LENGTH_SHORT).show();
-                }
-            });
+    private final Observer<String> mSnackbarTextChanged = text -> {
+        if (!TextUtils.isEmpty(text)) {
+            Snackbar.make(mBinding.getRoot(), text, Snackbar.LENGTH_SHORT).show();
+        }
+    };
 
     private final Observer<Boolean> mFavoriteObserver = isFavorite -> mBinding.btnStarQuery.setChecked(isFavorite == Boolean.TRUE);
     private final Observer<Tts.TtsState> mTtsObserver = ttsState -> {

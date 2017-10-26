@@ -51,10 +51,10 @@ public class ResultListViewModel<T> extends AndroidViewModel {
     private static final String TAG = Constants.TAG + ResultListViewModel.class.getSimpleName();
 
     public final ObservableBoolean isDataAvailable = new ObservableBoolean();
-    public final ObservableField<Settings.Layout> layout = new ObservableField<>();
     public final ObservableField<CharSequence> emptyText = new ObservableField<>();
-    final ObservableBoolean showHeader = new ObservableBoolean();
-    final ObservableField<String> usedQueryWord = new ObservableField<>();
+    final MutableLiveData<Settings.Layout> layout = new MutableLiveData<>();
+    final MutableLiveData<Boolean> showHeader = new MutableLiveData<>();
+    final MutableLiveData<String> usedQueryWord = new MutableLiveData<>();
     private ResultListAdapter<T> mAdapter;
     private Tab mTab;
     @Inject
@@ -123,9 +123,9 @@ public class ResultListViewModel<T> extends AndroidViewModel {
         } else {
             emptyText.set(null);
         }
-        showHeader.set(hasQuery);
+        showHeader.setValue(hasQuery);
         if (loadedData != null) {
-            usedQueryWord.set(loadedData.matchedWord);
+            usedQueryWord.setValue(loadedData.matchedWord);
         }
         updateDataAvailable();
     }
@@ -154,8 +154,7 @@ public class ResultListViewModel<T> extends AndroidViewModel {
 
     private final SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener = (sharedPreferences, key) -> {
         if (Settings.PREF_LAYOUT.equals(key)) {
-            layout.set(Settings.getLayout(SettingsPrefs.get(getApplication())));
+            layout.setValue(Settings.getLayout(SettingsPrefs.get(getApplication())));
         }
     };
-
 }
