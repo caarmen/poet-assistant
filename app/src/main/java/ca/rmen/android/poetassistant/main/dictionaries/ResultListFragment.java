@@ -107,6 +107,7 @@ public class ResultListFragment<T> extends Fragment {
         Log.v(TAG, mTab + " onStart");
         super.onStart();
         queryFromArguments();
+        Log.v(TAG, "onStart: invalidateOptionsMenu");
         getActivity().invalidateOptionsMenu();
     }
 

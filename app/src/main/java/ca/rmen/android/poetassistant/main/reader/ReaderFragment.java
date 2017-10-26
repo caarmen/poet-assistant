@@ -208,6 +208,7 @@ public class ReaderFragment extends Fragment implements
             if (!TextUtils.isEmpty(initialText)) {
                 PoemFile poemFile = new PoemFile(null, null, initialText);
                 mViewModel.setSavedPoem(poemFile);
+                Log.v(TAG, "loadPoem: invalidateOptionsMenu");
                 getActivity().invalidateOptionsMenu();
                 return;
             }
