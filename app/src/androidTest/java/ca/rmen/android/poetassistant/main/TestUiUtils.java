@@ -22,12 +22,17 @@ package ca.rmen.android.poetassistant.main;
 import android.content.Context;
 import android.os.SystemClock;
 import android.support.annotation.StringRes;
+import android.support.test.espresso.NoMatchingViewException;
+import android.util.Log;
+import android.view.KeyEvent;
 
+import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.pressKey;
 import static android.support.test.espresso.action.ViewActions.swipeDown;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
@@ -52,6 +57,8 @@ import static org.hamcrest.Matchers.equalToIgnoringCase;
  */
 class TestUiUtils {
 
+    private static final String TAG = Constants.TAG + TestUiUtils.class.getSimpleName();
+
     private TestUiUtils() {
         // prevent instantiation
     }
@@ -59,7 +66,14 @@ class TestUiUtils {
     static void openMenuItem(@StringRes int titleRes) {
         getInstrumentation().waitForIdleSync();
         swipeDown();
-        onView(allOf(isDisplayed(), withClassName(endsWith("OverflowMenuButton")))).perform(click());
+        try {
+            onView(allOf(isDisplayed(), withClassName(endsWith("OverflowMenuButton")))).perform(click());
+        } catch (NoMatchingViewException e) {
+            Log.wtf(TAG, "Couldn't press the menu button in the action bar. Resorting to the menu key event. Is this cheating?", e);
+            onView(withId(android.R.id.content)).perform(pressKey(KeyEvent.KEYCODE_MENU));
+            getInstrumentation().waitForIdleSync();
+            SystemClock.sleep(400); // :(
+        }
         onView(allOf(withId(R.id.title), withText(titleRes), isDisplayed())).perform(click());
     }
 
