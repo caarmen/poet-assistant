@@ -150,12 +150,19 @@ public class ReaderViewModel extends AndroidViewModel {
      */
     private void speak() {
         CharSequence text = poemSelection.get();
-        int startPosition = Selection.getSelectionStart(text);
-        if (startPosition == text.length() || startPosition == -1) startPosition = 0;
-        int endPosition = Selection.getSelectionEnd(text);
-        if (startPosition == endPosition || endPosition == -1) endPosition = text.length();
-        Log.d(TAG, "selection " + startPosition + " - " + endPosition);
-        mTts.speak(text.toString().substring(startPosition, endPosition));
+        if (TextUtils.isEmpty(text)) {
+            mTts.speak(poem.get());
+        } else {
+            int startPosition = Selection.getSelectionStart(text);
+            int endPosition = Selection.getSelectionEnd(text);
+            Log.d(TAG, "selection " + startPosition + " - " + endPosition);
+            if (startPosition == -1) startPosition = 0;
+            if (endPosition == -1) endPosition = 0;
+            if (startPosition == text.length()) startPosition = 0;
+            if (startPosition == endPosition) endPosition = text.length();
+            Log.d(TAG, "now selection " + startPosition + " - " + endPosition);
+            mTts.speak(text.toString().substring(startPosition, endPosition));
+        }
     }
 
     void speakToFile() {
