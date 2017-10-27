@@ -25,6 +25,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -67,7 +68,7 @@ public class ResultListFragment<T> extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
         Log.v(TAG, mTab + " onCreateView");
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false);
@@ -109,7 +110,8 @@ public class ResultListFragment<T> extends Fragment {
         super.onStart();
         queryFromArguments();
         Log.v(TAG, "onStart: invalidateOptionsMenu");
-        getActivity().invalidateOptionsMenu();
+        Activity activity = getActivity();
+        if (activity != null) activity.invalidateOptionsMenu();
     }
 
     @Override
@@ -164,15 +166,18 @@ public class ResultListFragment<T> extends Fragment {
      * Enable auto-hiding the toolbar only if not all items in the list are visible.
      */
     public void enableAutoHideIfNeeded() {
-        Log.v(TAG, mTab + ": enableAutoHideIfNeeded: last visible item " + ((LinearLayoutManager) mBinding.recyclerView.getLayoutManager()).findLastVisibleItemPosition()
-                + ", item count " + mBinding.recyclerView.getAdapter().getItemCount());
-        if (mBinding.recyclerView.getAdapter().getItemCount() > 0
-                && ((LinearLayoutManager) mBinding.recyclerView.getLayoutManager()).findLastVisibleItemPosition() < mBinding.recyclerView.getAdapter().getItemCount() - 1) {
-            AppBarLayoutHelper.enableAutoHide(getActivity());
-        } else {
-            AppBarLayoutHelper.disableAutoHide(getActivity());
+        Log.v(TAG, mTab + ": enableAutoHideIfNeeded");
+        if (mBinding != null && mBinding.recyclerView.getAdapter() != null) {
+            Log.v(TAG, mTab + ": enableAutoHideIfNeeded: last visible item " + ((LinearLayoutManager) mBinding.recyclerView.getLayoutManager()).findLastVisibleItemPosition()
+                    + ", item count " + mBinding.recyclerView.getAdapter().getItemCount());
+            if (mBinding.recyclerView.getAdapter().getItemCount() > 0
+                    && ((LinearLayoutManager) mBinding.recyclerView.getLayoutManager()).findLastVisibleItemPosition() < mBinding.recyclerView.getAdapter().getItemCount() - 1) {
+                AppBarLayoutHelper.enableAutoHide(getActivity());
+            } else {
+                AppBarLayoutHelper.disableAutoHide(getActivity());
+            }
+            AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
         }
-        AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
     }
 
     private final View.OnLayoutChangeListener mRecyclerViewLayoutListener = new View.OnLayoutChangeListener() {
@@ -197,7 +202,9 @@ public class ResultListFragment<T> extends Fragment {
                 // Hide the keyboard
                 mBinding.recyclerView.requestFocus();
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mBinding.recyclerView.getWindowToken(), 0);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(mBinding.recyclerView.getWindowToken(), 0);
+                }
             });
 
     private final BindingCallbackAdapter mFilterChanged = new BindingCallbackAdapter(this::reload);

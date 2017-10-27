@@ -28,6 +28,7 @@ import ca.rmen.android.poetassistant.R;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.swipeDown;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.swipeRight;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -57,6 +58,7 @@ class TestUiUtils {
 
     static void openMenuItem(@StringRes int titleRes) {
         getInstrumentation().waitForIdleSync();
+        swipeDown();
         onView(allOf(isDisplayed(), withClassName(endsWith("OverflowMenuButton")))).perform(click());
         onView(allOf(withId(R.id.title), withText(titleRes), isDisplayed())).perform(click());
     }

@@ -156,8 +156,10 @@ class TestAppUtils {
     }
 
     static ViewInteraction openFilter(String expectedPrefilledFilter) {
-        onView(allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()))
-                .perform(click());
+        getInstrumentation().waitForIdleSync();
+        ViewInteraction vi = onView(allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()));
+        vi.check(matches(isDisplayed()));
+        vi.perform(click());
         SystemClock.sleep(200);
         ViewInteraction result = onView(allOf(
                 withId(R.id.edit),
