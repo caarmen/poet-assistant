@@ -48,11 +48,12 @@ import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.BuildConfig;
 import ca.rmen.android.poetassistant.Constants;
-import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.about.AboutActivity;
+import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer;
@@ -272,6 +273,10 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
                 // Hide the keyboard when we navigate to any tab other than the reader tab.
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mBinding.viewPager.getWindowToken(), 0);
+            }
+            Fragment fragment = mPagerAdapter.getFragment(mBinding.viewPager, tab);
+            if (fragment instanceof ResultListFragment) {
+                ((ResultListFragment) fragment).enableAutoHideIfNeeded();
             }
             AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
         }

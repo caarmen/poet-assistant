@@ -44,7 +44,7 @@ public final class AppBarLayoutHelper {
     }
 
     public static void disableAutoHide(Activity activity) {
-        Log.v(TAG, "disableAutohide" + activity);
+        Log.v(TAG, "disableAutohide " + activity);
         if (activity == null || activity.isFinishing()) return;
         if (activity.getResources().getBoolean(R.bool.toolbar_auto_hide)) {
             disableAutoHide(activity.findViewById(R.id.toolbar));

@@ -160,16 +160,34 @@ public class ResultListFragment<T> extends Fragment {
         }
     }
 
+    /**
+     * Enable auto-hiding the toolbar only if not all items in the list are visible.
+     */
+    public void enableAutoHideIfNeeded() {
+        Log.v(TAG, mTab + ": enableAutoHideIfNeeded: last visible item " + ((LinearLayoutManager) mBinding.recyclerView.getLayoutManager()).findLastVisibleItemPosition()
+                + ", item count " + mBinding.recyclerView.getAdapter().getItemCount());
+        if (mBinding.recyclerView.getAdapter().getItemCount() > 0
+                && ((LinearLayoutManager) mBinding.recyclerView.getLayoutManager()).findLastVisibleItemPosition() < mBinding.recyclerView.getAdapter().getItemCount() - 1) {
+            AppBarLayoutHelper.enableAutoHide(getActivity());
+        } else {
+            AppBarLayoutHelper.disableAutoHide(getActivity());
+        }
+        AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
+    }
+
+    private final View.OnLayoutChangeListener mRecyclerViewLayoutListener = new View.OnLayoutChangeListener() {
+        @Override
+        public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            if (getUserVisibleHint()) {
+                enableAutoHideIfNeeded();
+            }
+            mBinding.recyclerView.removeOnLayoutChangeListener(this);
+        }
+    };
+
     private final BindingCallbackAdapter mDataAvailableChanged =
             new BindingCallbackAdapter(() -> {
-                if (getUserVisibleHint()) {
-                    if (mViewModel.isDataAvailable.get()) {
-                        AppBarLayoutHelper.enableAutoHide(getActivity());
-                    } else {
-                        AppBarLayoutHelper.disableAutoHide(getActivity());
-                    }
-                    AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
-                }
+                mBinding.recyclerView.addOnLayoutChangeListener(mRecyclerViewLayoutListener);
                 Activity activity = getActivity();
                 if (activity != null) {
                     Log.v(TAG, "dataAvailableChanged: invalidateOptionsMenu");
