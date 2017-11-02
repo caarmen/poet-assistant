@@ -45,8 +45,8 @@ android {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 112202
-        versionName "1.22.2"
+        versionCode 112203
+        versionName "1.22.3"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true

@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+1.22.3  *(2017-11-02)*
+--------------------
+* Maintenance release: update environment:
+  - target api level 27
+  - RxJava 2.1.6
+  - Jacoco 0.7.9
+  - Robolectric 3.5.1
+
 1.22.2  *(2017-10-22)*
 --------------------
 * Library updates: dagger 2.12, rxjava 2.1.5, robolectric 3.5
