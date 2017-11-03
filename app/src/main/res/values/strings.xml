@@ -143,6 +143,8 @@
     <string name="match_ao_aa_setting_description">AO /ɔ/: "off".\nAA /ɑ/: "father".</string>
     <string name="match_aor_ao_setting_title">AOR /ɔr/ matches AO /ɔ/</string>
     <string name="match_aor_ao_setting_description">AOR /ɔr/: "more".\nAO /ɔ/: "thaw".</string>
+    <string name="thesaurus_reverse_lookup_setting_title">Include reverse lookup</string>
+    <string name="thesaurus_reverse_lookup_setting_description">May be slower and include less relevant results.</string>
     <string name="share">Share</string>
     <string name="share_poem_text">Share poem text</string>
     <string name="share_poem_audio">Share poem audio</string>
@@ -182,7 +184,8 @@
     <string translatable="false" name="pref_voice_value_with_country"><![CDATA[%1$s (%2$s)<br/><font color=\'#888888\'><small>%3$s</small></font>]]></string>
     <string translatable="false" name="pref_voice_value_without_country"><![CDATA[%1$s<br/><font color=\'#888888\'><small>%2$s</small></font>]]></string>
     <string name="pref_category_voice">Voice settings</string>
-    <string name="pref_category_rhyming">Rhyming</string>
+    <string name="pref_category_rhyming">Rhymer</string>
+    <string name="pref_category_thesaurus">Thesaurus</string>
     <string name="pref_category_user_data">User data</string>
     <string name="pref_category_notifications">Notifications</string>
     <string name="pref_category_ui">Interface</string>

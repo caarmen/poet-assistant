@@ -132,7 +132,7 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
         for (int i = 0; i < queryCount; i++) {
             String[] queryWords = EmbeddedDb.getArgsInQuery(words, i);
             Log.v(TAG, "getWordsWithDefinitions: query " + i + " has " + queryWords.length + " words");
-            String selection = "word in " + buildInClause(queryWords.length) + " AND has_definition=1";
+            String selection = "word in " + EmbeddedDb.buildInClause(queryWords.length) + " AND has_definition=1";
             Cursor cursor = mEmbeddedDb.query("word_variants", projection, selection, queryWords);
             if (cursor != null) {
                 try {
@@ -147,18 +147,6 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
         }
 
         return result;
-    }
-
-
-    private static String buildInClause(int size) {
-        StringBuilder builder = new StringBuilder(size * 2 + 1);
-        builder.append('(');
-        for (int i = 0; i < size; i++) {
-            builder.append('?');
-            if (i != size - 1) builder.append(',');
-        }
-        builder.append(')');
-        return builder.toString();
     }
 
     @NonNull

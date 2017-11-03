@@ -22,19 +22,40 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.EnumSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;
 
+import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities;
+import io.reactivex.Observable;
 
 public class Thesaurus {
 
+    private static final String TAG = Constants.TAG + Thesaurus.class.getSimpleName();
+
     private final EmbeddedDb mEmbeddedDb;
+
+    private enum RelationType {
+        SYNONYM("synonyms"),
+        ANTONYM("antonyms");
+        public final String columnName;
+
+        RelationType(String columnName) {
+            this.columnName = columnName;
+        }
+    }
 
     @Inject
     public Thesaurus(EmbeddedDb embeddedDb) {
@@ -46,7 +67,12 @@ public class Thesaurus {
     }
 
     @NonNull
-    ThesaurusEntry lookup(String word) {
+    ThesaurusEntry lookup(String word, boolean includeReverseLookup) {
+        return lookup(word, EnumSet.allOf(RelationType.class), includeReverseLookup);
+    }
+
+    @NonNull
+    private ThesaurusEntry lookup(String word, Set<RelationType> relationTypes, boolean includeReverseLookup) {
         String[] projection = new String[]{"word_type", "synonyms", "antonyms"};
         String selection = "word=?";
         String[] selectionArgs = new String[]{word};
@@ -64,17 +90,36 @@ public class Thesaurus {
         }
 
         if (cursor != null) {
-            ThesaurusEntry.ThesaurusEntryDetails[] result = new ThesaurusEntry.ThesaurusEntryDetails[cursor.getCount()];
+            List<ThesaurusEntry.ThesaurusEntryDetails> result = new ArrayList<>();
             try {
+                List<String> forwardSynonyms = new ArrayList<>();
+                List<String> forwardAntonyms = new ArrayList<>();
                 while (cursor.moveToNext()) {
                     ThesaurusEntry.WordType wordType = ThesaurusEntry.WordType.valueOf(cursor.getString(0));
-                    String synonymsList = cursor.getString(1);
-                    String antonymsList = cursor.getString(2);
-                    String[] synonyms = split(synonymsList);
-                    String[] antonyms = split(antonymsList);
-                    result[cursor.getPosition()] = new ThesaurusEntry.ThesaurusEntryDetails(wordType, synonyms, antonyms);
+                    String[] synonyms = new String[0];
+                    String[] antonyms = new String[0];
+                    if (relationTypes.contains(RelationType.SYNONYM)) {
+                        String synonymsList = cursor.getString(1);
+                        synonyms = split(synonymsList);
+                        forwardSynonyms.addAll(Arrays.asList(synonyms));
+                    }
+                    if (relationTypes.contains(RelationType.ANTONYM)) {
+                        String antonymsList = cursor.getString(2);
+                        antonyms = split(antonymsList);
+                        forwardAntonyms.addAll(Arrays.asList(antonyms));
+                    }
+                    result.add(new ThesaurusEntry.ThesaurusEntryDetails(wordType, synonyms, antonyms));
                 }
-                return new ThesaurusEntry(lookupWord, result);
+                if (includeReverseLookup) {
+                    if (relationTypes.contains(RelationType.SYNONYM)) {
+                        result.addAll(lookupReverseRelatedWords(RelationType.SYNONYM, lookupWord, forwardSynonyms));
+                    }
+                    if (relationTypes.contains(RelationType.ANTONYM)) {
+                        result.addAll(lookupReverseRelatedWords(RelationType.ANTONYM, lookupWord, forwardAntonyms));
+                    }
+                }
+                return new ThesaurusEntry(lookupWord, result.toArray(new ThesaurusEntry.ThesaurusEntryDetails[result.size()]));
+
             } finally {
                 cursor.close();
             }
@@ -83,34 +128,91 @@ public class Thesaurus {
     }
 
     /**
-     * @return the synonyms of the given word, in any order.
+     * @param relationType        whether we want to look up synonyms or antonyms
+     * @param word                the word for which we want to find synonyms or antonyms
+     * @param excludeRelatedWords words from this collection will be excluded from the result
+     * @return words which have an entry in the thesaurus table containing the given word as a synonym or antonym.
      */
-    @NonNull
-    Set<String> getFlatSynonyms(String word) {
-        Set<String> flatSynonyms = new HashSet<>();
-
-        String[] projection = new String[]{"synonyms"};
-        String selection = "word=?";
-        String[] selectionArgs = new String[]{word};
+    private List<ThesaurusEntry.ThesaurusEntryDetails> lookupReverseRelatedWords(RelationType relationType, String word, Collection<String> excludeRelatedWords) {
+        Log.v(TAG, "lookupReverseRelatedWords: relationType = " + relationType + ", word = " + word + ", exclude " + excludeRelatedWords);
+        String[] projection = new String[]{"word", "word_type"};
+        String selection = String.format(Locale.US, "(%s = ? OR %s LIKE ? OR %s LIKE ? OR %s LIKE ?) ",
+                relationType.columnName, relationType.columnName, relationType.columnName, relationType.columnName);
+        String[] selectionArgs = new String[4 + excludeRelatedWords.size()];
+        int i = 0;
+        selectionArgs[i++] = word; // only relatedWord
+        selectionArgs[i++] = String.format(Locale.US, "%s,%%", word); // first relatedWord
+        selectionArgs[i++] = String.format(Locale.US, "%%,%s", word); // last relatedWord
+        selectionArgs[i++] = String.format(Locale.US, "%%,%s,%%", word); // somewhere in the list of relatedWords
+        if (!excludeRelatedWords.isEmpty()) {
+            selection += " AND word NOT IN " + EmbeddedDb.buildInClause(excludeRelatedWords.size());
+            for (String forwardRelatedWord : excludeRelatedWords) {
+                selectionArgs[i++] = forwardRelatedWord;
+            }
+        }
+        Log.v(TAG, "Query: selection = " + selection);
+        Log.v(TAG, "Query: selectionArgs = " + Arrays.toString(selectionArgs));
         Cursor cursor = mEmbeddedDb.query("thesaurus", projection, selection, selectionArgs);
         if (cursor != null) {
+
             try {
+                ThesaurusEntry.ThesaurusEntryDetails[] reverseRelatedWords = new ThesaurusEntry.ThesaurusEntryDetails[cursor.getCount()];
                 while (cursor.moveToNext()) {
-                    String synonymsList = cursor.getString(0);
-                    String[] synonyms = split(synonymsList);
-                    Collections.addAll(flatSynonyms, synonyms);
+                    String relatedWord = cursor.getString(0);
+                    ThesaurusEntry.WordType wordType = ThesaurusEntry.WordType.valueOf(cursor.getString(1));
+                    ThesaurusEntry.ThesaurusEntryDetails entryDetails = relationType == RelationType.SYNONYM ?
+                            new ThesaurusEntry.ThesaurusEntryDetails(wordType, new String[]{relatedWord}, new String[0])
+                            : new ThesaurusEntry.ThesaurusEntryDetails(wordType, new String[0], new String[]{relatedWord});
+
+                    reverseRelatedWords[cursor.getPosition()] = entryDetails;
                 }
+                List<ThesaurusEntry.ThesaurusEntryDetails> result = merge(reverseRelatedWords);
+                Log.v(TAG, "lookupReverseRelatedWords: result = " + result);
+                return result;
             } finally {
                 cursor.close();
             }
         }
-        return flatSynonyms;
+        return Collections.emptyList();
+    }
+
+    /**
+     * @param entries a list of {@link ThesaurusEntry.ThesaurusEntryDetails} possibly containing multiple items for a given word type.
+     * @return a list of one {@link ThesaurusEntry.ThesaurusEntryDetails} per word type.
+     */
+    private List<ThesaurusEntry.ThesaurusEntryDetails> merge(ThesaurusEntry.ThesaurusEntryDetails[] entries) {
+        return Observable.fromArray(entries)
+                .groupBy(thesaurusEntryDetails -> thesaurusEntryDetails.wordType)
+                .flatMapSingle(group -> group.reduce(
+                        new ThesaurusEntry.ThesaurusEntryDetails(group.getKey(), new String[0], new String[0]),
+                        (acc, thesaurusEntryDetails) -> new ThesaurusEntry.ThesaurusEntryDetails(acc.wordType,
+                                union(acc.synonyms, thesaurusEntryDetails.synonyms),
+                                union(acc.antonyms, thesaurusEntryDetails.antonyms))))
+                .toList()
+                .blockingGet();
+    }
+
+    private static String[] union(String[] first, String[] second) {
+        Set<String> result = new LinkedHashSet<>();
+        result.addAll(Arrays.asList(first));
+        result.addAll(Arrays.asList(second));
+        return result.toArray(new String[result.size()]);
+    }
+
+    /**
+     * @return the synonyms of the given word.
+     */
+    @NonNull
+    Collection<String> getFlatSynonyms(String word, boolean includeReverseLookup) {
+        ThesaurusEntry.ThesaurusEntryDetails[] entries = lookup(word, EnumSet.of(RelationType.SYNONYM), includeReverseLookup).entries;
+        return Observable.fromIterable(merge(entries))
+                .flatMap((thesaurusEntryDetails -> Observable.fromArray(thesaurusEntryDetails.synonyms)))
+                .toList()
+                .blockingGet();
     }
 
     private static String[] split(String string) {
         if (TextUtils.isEmpty(string)) return new String[0];
         return string.split(",");
     }
-
-
 }

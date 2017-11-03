@@ -26,6 +26,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -73,7 +74,7 @@ public class RhymerLiveData extends ResultListLiveData<ResultListData<RTEntryVie
             return emptyResult();
         }
         if (!TextUtils.isEmpty(mFilter)) {
-            Set<String> synonyms = mThesaurus.getFlatSynonyms(mFilter);
+            Collection<String> synonyms = mThesaurus.getFlatSynonyms(mFilter, mPrefs.isIsThesaurusReverseLookupEnabled());
             if (synonyms.isEmpty()) return emptyResult();
             rhymeResults = filter(rhymeResults, synonyms);
         }
@@ -159,7 +160,7 @@ public class RhymerLiveData extends ResultListLiveData<ResultListData<RTEntryVie
     }
 
 
-    private static List<RhymeResult> filter(List<RhymeResult> rhymes, Set<String> filter) {
+    private static List<RhymeResult> filter(List<RhymeResult> rhymes, Collection<String> filter) {
         List<RhymeResult> filteredRhymes = new ArrayList<>();
         for (RhymeResult rhymeResult : rhymes) {
             RhymeResult filteredRhymeResult = filter(rhymeResult, filter);
@@ -168,7 +169,7 @@ public class RhymerLiveData extends ResultListLiveData<ResultListData<RTEntryVie
         return filteredRhymes;
     }
 
-    private static RhymeResult filter(RhymeResult rhyme, Set<String> filter) {
+    private static RhymeResult filter(RhymeResult rhyme, Collection<String> filter) {
         RhymeResult result = new RhymeResult(rhyme.variantNumber,
                 RTUtils.filter(rhyme.strictRhymes, filter),
                 RTUtils.filter(rhyme.oneSyllableRhymes, filter),

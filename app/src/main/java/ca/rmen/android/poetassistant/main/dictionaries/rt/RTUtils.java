@@ -22,8 +22,8 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt;
 import android.support.annotation.VisibleForTesting;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
 public final class RTUtils {
@@ -35,7 +35,7 @@ public final class RTUtils {
     /**
      * @return all the Strings in the array words which are present in the Set filter
      */
-    static String[] filter(String[] words, Set<String> filter) {
+    static String[] filter(String[] words, Collection<String> filter) {
         if (words == null) return new String[0];
         List<String> filteredWords = new ArrayList<>();
         for (String word : words) {

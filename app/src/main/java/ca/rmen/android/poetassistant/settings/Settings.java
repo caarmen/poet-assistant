@@ -77,6 +77,9 @@ public class Settings {
     private static final String PREF_MATCH_AO_AA_ENABLED = "PREF_MATCH_AO_AA_ENABLED";
     @SuppressWarnings("unused")
     private static final String PREF_MATCH_AOR_AO_ENABLED = "PREF_MATCH_AOR_AO_ENABLED";
+    @SuppressWarnings("unused")
+    private static final String PREF_THESAURUS_REVERSE_LOOKUP_ENABLED = "PREF_THESAURUS_REVERSE_LOOKUP_ENABLED";
+
 
     @SuppressWarnings("unused")
     @Name(PREF_VOICE)
@@ -131,6 +134,11 @@ public class Settings {
     @Name(PREF_MATCH_AOR_AO_ENABLED)
     @DefaultBoolean(false)
     Boolean isAORAOMatchEnabled;
+
+    @SuppressWarnings("unused")
+    @Name(PREF_THESAURUS_REVERSE_LOOKUP_ENABLED)
+    @DefaultBoolean(false)
+    Boolean isThesaurusReverseLookupEnabled;
 
     public static void migrateSettings(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
