@@ -38,7 +38,9 @@ import ca.rmen.android.poetassistant.R;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.contrib.RecyclerViewActions.scrollTo;
 import static android.support.test.espresso.matcher.RootMatchers.isPlatformPopup;
+import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
@@ -86,6 +88,12 @@ class CustomChecks {
                                 1),
                         isDisplayed()));
         secondRhymeWord.check(matches(withText(secondRhyme)));
+    }
+
+    static void checkRhyme(String expectedRhyme) {
+        // Scroll to the item in case it's not visible
+        onView(allOf(withId(R.id.recycler_view), isDisplayed()))
+                .perform(scrollTo(hasDescendant(withText(expectedRhyme))));
     }
 
     static void checkPatterns(Context context, String query, String... patterns) {
@@ -204,5 +212,11 @@ class CustomChecks {
                                 1),
                         isDisplayed()));
         firstSynonymWord.check(matches(withText(expectedFirstSynonym)));
+    }
+
+    static void checkSynonym(String expectedSynonym) {
+        // Scroll to the item in case it's not visible
+        onView(allOf(withId(R.id.recycler_view), isDisplayed()))
+                .perform(scrollTo(hasDescendant(withText(expectedSynonym))));
     }
 }
