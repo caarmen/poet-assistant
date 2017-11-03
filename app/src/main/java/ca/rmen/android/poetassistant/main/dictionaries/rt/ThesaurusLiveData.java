@@ -66,7 +66,7 @@ public class ThesaurusLiveData extends ResultListLiveData<ResultListData<RTEntry
 
         List<RTEntryViewModel> data = new ArrayList<>();
         if(TextUtils.isEmpty(mQuery)) return emptyResult();
-        ThesaurusEntry result  = mThesaurus.lookup(mQuery);
+        ThesaurusEntry result  = mThesaurus.lookup(mQuery, mPrefs.isIsThesaurusReverseLookupEnabled());
         ThesaurusEntry.ThesaurusEntryDetails[] entries = result.entries;
         if (entries.length == 0) return emptyResult();
 

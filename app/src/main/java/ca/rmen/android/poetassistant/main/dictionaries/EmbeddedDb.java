@@ -113,6 +113,17 @@ public class EmbeddedDb {
         }
     }
 
+    public static String buildInClause(int size) {
+        StringBuilder builder = new StringBuilder(size * 2 + 1);
+        builder.append('(');
+        for (int i = 0; i < size; i++) {
+            builder.append('?');
+            if (i != size - 1) builder.append(',');
+        }
+        builder.append(')');
+        return builder.toString();
+    }
+
     /**
      * SQLite doesn't support unlimited number of query arguments.  If we have to do a mega huge
      * query, for example with a clause like `WHERE word in (?, ?, ?, ?, ?, ... ?)', with thousands

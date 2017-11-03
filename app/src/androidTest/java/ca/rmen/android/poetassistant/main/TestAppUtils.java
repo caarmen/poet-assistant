@@ -25,6 +25,7 @@ import android.os.SystemClock;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.test.espresso.ViewInteraction;
+import android.text.TextUtils;
 
 import ca.rmen.android.poetassistant.R;
 
@@ -174,11 +175,18 @@ class TestAppUtils {
         filterView.perform(typeText(filter), closeSoftKeyboard());
         clickDialogPositiveButton(android.R.string.ok);
 
-        onView(allOf(withId(R.id.text1),
-                withText(firstExpectedFilteredMatch),
-                withParent(withParent(withId(R.id.recycler_view))),
-                isDisplayed()))
-                .check(matches(withText(firstExpectedFilteredMatch)));
+        if (TextUtils.isEmpty(firstExpectedFilteredMatch)) {
+            onView(allOf(withId(R.id.empty), hasSibling(withId(R.id.recycler_view)), isDisplayed()))
+                    .check(matches(isDisplayed()));
+        } else {
+            onView(allOf(withId(R.id.empty), hasSibling(allOf(withId(R.id.recycler_view), isDisplayed()))))
+                    .check(matches(not(isDisplayed())));
+            onView(allOf(withId(R.id.text1),
+                    withText(firstExpectedFilteredMatch),
+                    withParent(withParent(withId(R.id.recycler_view))),
+                    isDisplayed()))
+                    .check(matches(withText(firstExpectedFilteredMatch)));
+        }
 
     }
 

@@ -88,6 +88,16 @@
             android:title="@string/match_aor_ao_setting_title" />
     </PreferenceCategory>
     <PreferenceCategory
+        android:key="PREF_CATEGORY_THESAURUS"
+        android:title="@string/pref_category_thesaurus">
+        <!--suppress AndroidElementNotAllowed -->
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="PREF_THESAURUS_REVERSE_LOOKUP_ENABLED"
+            android:summary="@string/thesaurus_reverse_lookup_setting_description"
+            android:title="@string/thesaurus_reverse_lookup_setting_title" />
+    </PreferenceCategory>
+    <PreferenceCategory
         android:key="PREF_CATEGORY_UI"
         android:title="@string/pref_category_ui">
 
