@@ -109,9 +109,15 @@ public final class ResultListFactory {
     }
 
     static ResultListViewModel<?> createViewModel(Tab tab, Fragment fragment) {
-        ViewModelProvider.Factory factory = createViewModelFactory(tab, (Application) fragment.getContext().getApplicationContext());
-        return ViewModelProviders.of(fragment,factory).get(ResultListViewModel.class);
+        Context context = fragment.getContext();
+        if (context != null) {
+            ViewModelProvider.Factory factory = createViewModelFactory(tab, (Application) context.getApplicationContext());
+            return ViewModelProviders.of(fragment, factory).get(ResultListViewModel.class);
+        } else {
+            return null;
+        }
     }
+
 
     private static ViewModelProvider.Factory createViewModelFactory(Tab tab, Application application) {
         return new ViewModelProvider.Factory() {

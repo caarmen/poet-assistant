@@ -178,7 +178,7 @@ public class Tts {
      *
      * @return the input split into multiple tokens. An empty-string token in the result indicates a pause.
      */
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    @VisibleForTesting
     static List<String> split(String text) {
         List<String> tokens = new ArrayList<>();
         StringTokenizer stringTokenizer = new StringTokenizer(text, ".", true);

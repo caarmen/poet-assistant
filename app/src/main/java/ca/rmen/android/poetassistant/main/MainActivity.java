@@ -272,7 +272,9 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
             } else {
                 // Hide the keyboard when we navigate to any tab other than the reader tab.
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mBinding.viewPager.getWindowToken(), 0);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(mBinding.viewPager.getWindowToken(), 0);
+                }
             }
             Fragment fragment = mPagerAdapter.getFragment(mBinding.viewPager, tab);
             if (fragment instanceof ResultListFragment) {

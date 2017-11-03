@@ -53,7 +53,8 @@
             android:paddingRight="8dp"
             android:paddingEnd="8dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:focusable="true"/>
         <TextView
             android:id="@+id/text1"
             style="?attr/textAppearanceListItem"
@@ -64,7 +65,8 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:text="@{viewModel.text}"
-            tools:text="happy" />
+            tools:text="happy"
+            android:focusable="true"/>
 
         <!--
              Define AppCompatImageView instead of ImageView
@@ -86,7 +88,8 @@
             android:paddingStart="@dimen/list_rtd_icon_padding"
             android:paddingEnd="@dimen/list_rtd_icon_padding"
             android:visibility="@{viewModel.showButtons? View.VISIBLE:View.GONE}"
-            app:srcCompat="@drawable/ic_rhymer" />
+            app:srcCompat="@drawable/ic_rhymer"
+            android:focusable="true"/>
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/btn_thesaurus"

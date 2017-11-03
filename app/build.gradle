@@ -74,12 +74,12 @@ android {
         debug {
             testCoverageEnabled = true
             applicationIdSuffix = ".test"
-            resValue "string", "search_provider_authority", android.defaultConfig.applicationId + applicationIdSuffix + ".SuggestionsProvider";
+            resValue "string", "search_provider_authority", android.defaultConfig.applicationId + applicationIdSuffix + ".SuggestionsProvider"
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            resValue "string", "search_provider_authority", android.defaultConfig.applicationId + ".SuggestionsProvider";
+            resValue "string", "search_provider_authority", android.defaultConfig.applicationId + ".SuggestionsProvider"
         }
     }
 
@@ -150,7 +150,7 @@ project.gradle.taskGraph.whenReady {
 }
 
 repositories {
-    jcenter();
+    jcenter()
 }
 
 buildscript {

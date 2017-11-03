@@ -79,6 +79,7 @@ public class PoemFile {
         this.text = text;
     }
 
+    @SuppressWarnings("SimplifiableIfStatement")
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -165,7 +166,7 @@ public class PoemFile {
         print(context, webView, poemFile, callback);
     }
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    @VisibleForTesting
     @TargetApi(Build.VERSION_CODES.KITKAT)
     static void print(Context context, WebView webView, @NonNull PoemFile poemFile, PoemFileCallback callback) {
         webView.setWebViewClient(new WebViewClient(){
@@ -184,8 +185,10 @@ public class PoemFile {
                                 : webView.createPrintDocumentAdapter();
                 PrintAttributes printAttributes = new PrintAttributes.Builder().build();
                 PrintManager printManager = (PrintManager) context.getSystemService(Context.PRINT_SERVICE);
-                PrintJob printJob = printManager.print(title, printDocumentAdapter, printAttributes);
-                callback.onPrintJobCreated(poemFile, printJob);
+                if (printManager != null) {
+                    PrintJob printJob = printManager.print(title, printDocumentAdapter, printAttributes);
+                    callback.onPrintJobCreated(poemFile, printJob);
+                }
             }
         });
         String formattedText = context.getString(R.string.print_preview_html, poemFile.text);

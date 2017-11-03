@@ -54,16 +54,18 @@ public final class WotdAlarm {
     static void schedule(Context context) {
         Log.d(TAG, "schedule() called with: " + "context = [" + context + "]");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(),
-                Wotd.NOTIFICATION_FREQUENCY_MS,
-                getAlarmPendingIntent(context));
+        if (alarmManager != null) {
+            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME,
+                    SystemClock.elapsedRealtime(),
+                    Wotd.NOTIFICATION_FREQUENCY_MS,
+                    getAlarmPendingIntent(context));
+        }
     }
 
     static void cancel(Context context) {
         Log.d(TAG, "cancel() called with: " + "context = [" + context + "]");
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(getAlarmPendingIntent(context));
+        if (alarmManager != null) alarmManager.cancel(getAlarmPendingIntent(context));
     }
 
     private static PendingIntent getAlarmPendingIntent(Context context) {

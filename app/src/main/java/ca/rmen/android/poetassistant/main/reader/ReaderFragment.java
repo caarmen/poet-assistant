@@ -28,6 +28,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -90,7 +91,7 @@ public class ReaderFragment extends Fragment implements
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView() called with: " + "inflater = [" + inflater + "], container = [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false);
         mViewModel = ViewModelProviders.of(this).get(ReaderViewModel.class);
@@ -194,7 +195,10 @@ public class ReaderFragment extends Fragment implements
             // On some devices, clearing the poem text auto-hides the app bar layout.
             // Let's expand it again.
             AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
-            getActivity().invalidateOptionsMenu();
+            Activity activity = getActivity();
+            if (activity != null) {
+                activity.invalidateOptionsMenu();
+            }
         }
     }
 
@@ -209,7 +213,10 @@ public class ReaderFragment extends Fragment implements
                 PoemFile poemFile = new PoemFile(null, null, initialText);
                 mViewModel.setSavedPoem(poemFile);
                 Log.v(TAG, "loadPoem: invalidateOptionsMenu");
-                getActivity().invalidateOptionsMenu();
+                Activity activity = getActivity();
+                if (activity != null) {
+                    activity.invalidateOptionsMenu();
+                }
                 return;
             }
         }
@@ -240,7 +247,7 @@ public class ReaderFragment extends Fragment implements
             if (root != null) {
                 Snackbar snackBar = Snackbar.make(root, HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG);
                 final Intent intent = new Intent("com.android.settings.TTS_SETTINGS");
-                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                if (intent.resolveActivity(root.getContext().getPackageManager()) != null) {
                     snackBar.setAction(R.string.tts_error_open_system_settings, view -> startActivity(intent));
                 } else {
                     snackBar.setAction(R.string.tts_error_open_app_settings, view -> startActivity(new Intent(getContext(), SettingsActivity.class)));

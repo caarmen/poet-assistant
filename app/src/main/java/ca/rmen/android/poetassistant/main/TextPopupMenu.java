@@ -118,6 +118,7 @@ public final class TextPopupMenu {
                     // Hide our own process text action meant for other apps.
                     if (intent != null
                             && Intent.ACTION_PROCESS_TEXT.equals(intent.getAction())
+                            && intent.getComponent() != null
                             && textView.getContext().getApplicationInfo().packageName.equals(intent.getComponent().getPackageName())) {
                         menuItem.setVisible(false);
                     }
@@ -150,9 +151,11 @@ public final class TextPopupMenu {
             listener.onWordClick(selectedWord, Tab.DICTIONARY);
         } else if (itemId == R.id.action_copy) {
             ClipboardManager clipboard = (ClipboardManager) view.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText(selectedWord, selectedWord);
-            clipboard.setPrimaryClip(clip);
-            Snackbar.make(view, R.string.snackbar_copied_text, Snackbar.LENGTH_SHORT).show();
+            if (clipboard != null) {
+                ClipData clip = ClipData.newPlainText(selectedWord, selectedWord);
+                clipboard.setPrimaryClip(clip);
+                Snackbar.make(view, R.string.snackbar_copied_text, Snackbar.LENGTH_SHORT).show();
+            }
         } else if (itemId == R.id.action_share) {
             Share.share(view.getContext(), selectedWord);
         } else {

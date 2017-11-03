@@ -54,20 +54,23 @@ public class WarningNoSpaceDialogFragment extends DialogFragment {
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.v(TAG, "onCreateDialog: savedInstanceState = " + savedInstanceState);
-        Context context = getActivity();
+        Context context = getContext();
 
-        OnClickListener positiveListener = (dialog, which) -> notifyListener();
+        if (context != null) {
+            OnClickListener positiveListener = (dialog, which) -> notifyListener();
 
-        DialogInterface.OnDismissListener dismissListener = dialog -> notifyListener();
+            DialogInterface.OnDismissListener dismissListener = dialog -> notifyListener();
 
-        Dialog dialog = new AlertDialog.Builder(context)
-                .setTitle(context.getString(R.string.warning_no_space_title))
-                .setMessage(context.getString(R.string.warning_no_space_message))
-                .setPositiveButton(android.R.string.ok, positiveListener)
-                .setOnDismissListener(dismissListener)
-                .create();
-        dialog.setOnDismissListener(dismissListener);
-        return dialog;
+            Dialog dialog = new AlertDialog.Builder(context)
+                    .setTitle(context.getString(R.string.warning_no_space_title))
+                    .setMessage(context.getString(R.string.warning_no_space_message))
+                    .setPositiveButton(android.R.string.ok, positiveListener)
+                    .setOnDismissListener(dismissListener)
+                    .create();
+            dialog.setOnDismissListener(dismissListener);
+            return dialog;
+        }
+        return super.onCreateDialog(savedInstanceState);
     }
 
     private void notifyListener() {

@@ -48,9 +48,11 @@ public final class WotdJob {
     static void reschedule(Context context) {
         Log.d(TAG, "reschedule() called with: " + "context = [" + context + "]");
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        List<JobInfo> jobs = jobScheduler.getAllPendingJobs();
-        Log.v(TAG, "Pending jobs: " + jobs);
-        if (jobs.isEmpty()) schedule(context);
+        if (jobScheduler != null) {
+            List<JobInfo> jobs = jobScheduler.getAllPendingJobs();
+            Log.v(TAG, "Pending jobs: " + jobs);
+            if (jobs.isEmpty()) schedule(context);
+        }
     }
 
     static void schedule(Context context) {
@@ -63,12 +65,12 @@ public final class WotdJob {
                 .setRequiresCharging(false)
                 .build();
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.schedule(jobInfo);
+        if (jobScheduler != null) jobScheduler.schedule(jobInfo);
     }
 
     static void cancel(Context context) {
         Log.d(TAG, "cancel() called with: " + "context = [" + context + "]");
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.cancel(TAG.hashCode());
+        if (jobScheduler != null) jobScheduler.cancel(TAG.hashCode());
     }
 }

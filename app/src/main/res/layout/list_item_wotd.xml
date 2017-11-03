@@ -57,7 +57,8 @@
             android:paddingEnd="8dp"
             android:paddingLeft="4dp"
             android:paddingRight="8dp"
-            android:paddingStart="4dp" />
+            android:paddingStart="4dp"
+            android:focusable="true"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -109,7 +110,8 @@
             android:paddingRight="@dimen/list_rtd_icon_padding"
             android:paddingStart="@dimen/list_rtd_icon_padding"
             android:visibility="@{viewModel.showButtons? View.VISIBLE:View.GONE}"
-            app:srcCompat="@drawable/ic_rhymer" />
+            app:srcCompat="@drawable/ic_rhymer"
+            android:focusable="true"/>
 
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/btn_thesaurus"

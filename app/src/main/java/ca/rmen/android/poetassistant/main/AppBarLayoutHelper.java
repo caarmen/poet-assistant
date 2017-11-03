@@ -35,7 +35,7 @@ public final class AppBarLayoutHelper {
     }
 
     public static void enableAutoHide(Activity activity) {
-        Log.v(TAG, "enableAutohide " + activity);
+        Log.v(TAG, "enableAutoHide " + activity);
         if (activity == null || activity.isFinishing()) return;
         if (activity.getResources().getBoolean(R.bool.toolbar_auto_hide)) {
             enableAutoHide(activity.findViewById(R.id.toolbar));
@@ -44,7 +44,7 @@ public final class AppBarLayoutHelper {
     }
 
     public static void disableAutoHide(Activity activity) {
-        Log.v(TAG, "disableAutohide " + activity);
+        Log.v(TAG, "disableAutoHide " + activity);
         if (activity == null || activity.isFinishing()) return;
         if (activity.getResources().getBoolean(R.bool.toolbar_auto_hide)) {
             disableAutoHide(activity.findViewById(R.id.toolbar));
@@ -53,7 +53,7 @@ public final class AppBarLayoutHelper {
     }
 
     private static void enableAutoHide(View view) {
-        Log.v(TAG, "enableAutohide " + view);
+        Log.v(TAG, "enableAutoHide " + view);
         if (view == null) return;
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) view.getLayoutParams();
         params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
@@ -61,7 +61,7 @@ public final class AppBarLayoutHelper {
     }
 
     private static void disableAutoHide(View view) {
-        Log.v(TAG, "disableAutohide " + view);
+        Log.v(TAG, "disableAutoHide " + view);
         if (view == null) return;
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) view.getLayoutParams();
         params.setScrollFlags(params.getScrollFlags() & ~(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP));

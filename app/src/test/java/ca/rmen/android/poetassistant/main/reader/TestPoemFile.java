@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.main.reader;
 
 import android.net.Uri;
 import android.print.PrintJob;
+import android.util.Log;
 import android.webkit.WebView;
 
 import org.junit.Before;
@@ -40,6 +41,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import ca.rmen.android.poetassistant.BuildConfig;
+import ca.rmen.android.poetassistant.Constants;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.plugins.RxJavaPlugins;
 
@@ -53,6 +55,7 @@ import static org.junit.Assert.assertTrue;
 @Config(constants = BuildConfig.class)
 public class TestPoemFile {
 
+    private static final String TAG = Constants.TAG + TestPoemFile.class.getSimpleName();
     private File mPoemFile;
     private Uri mPoemUri;
 
@@ -168,6 +171,7 @@ public class TestPoemFile {
         assertNull(poemFile.uri);
 
         PrintJob printJob = callback.getPrintJob();
+        Log.v(TAG, "printJob = " + printJob);
         /* From robolectric, no print job is actually created :(
         assertNotNull(printJob);
         */

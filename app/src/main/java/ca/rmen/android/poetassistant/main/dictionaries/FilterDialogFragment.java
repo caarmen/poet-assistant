@@ -73,43 +73,48 @@ public class FilterDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.v(TAG, "onCreateDialog: savedInstanceState = " + savedInstanceState);
         Context context = getActivity();
-        LayoutInflater themedLayoutInflater = LayoutInflater.from(new ContextThemeWrapper(getActivity(), R.style.AppAlertDialog));
-        final InputDialogEditTextBinding binding = DataBindingUtil.inflate(themedLayoutInflater,
-                R.layout.input_dialog_edit_text,
-                null,
-                false);
-        Bundle arguments = getArguments();
-        binding.edit.setText(arguments.getString(EXTRA_TEXT));
+        if (context != null) {
+            LayoutInflater themedLayoutInflater = LayoutInflater.from(new ContextThemeWrapper(getActivity(), R.style.AppAlertDialog));
+            final InputDialogEditTextBinding binding = DataBindingUtil.inflate(themedLayoutInflater,
+                    R.layout.input_dialog_edit_text,
+                    null,
+                    false);
+            Bundle arguments = getArguments();
+            if (arguments != null) {
+                binding.edit.setText(arguments.getString(EXTRA_TEXT));
 
-        OnClickListener positiveListener = (dialog, which) -> {
-            FilterDialogListener listener;
-            Fragment parentFragment = getParentFragment();
-            if (parentFragment instanceof FilterDialogListener)
-                listener = (FilterDialogListener) parentFragment;
-            else listener = (FilterDialogListener) getActivity();
-            listener.onFilterSubmitted(binding.edit.getText().toString());
-        };
+                OnClickListener positiveListener = (dialog, which) -> {
+                    FilterDialogListener listener;
+                    Fragment parentFragment = getParentFragment();
+                    if (parentFragment instanceof FilterDialogListener)
+                        listener = (FilterDialogListener) parentFragment;
+                    else listener = (FilterDialogListener) getActivity();
+                    listener.onFilterSubmitted(binding.edit.getText().toString());
+                };
 
-        final Dialog dialog = new AlertDialog.Builder(context)
-                .setView(binding.getRoot())
-                .setTitle(R.string.filter_title)
-                .setMessage(arguments.getString(EXTRA_MESSAGE))
-                .setPositiveButton(android.R.string.ok, positiveListener)
-                .setNegativeButton(android.R.string.cancel, null)
-                .create();
+                final Dialog dialog = new AlertDialog.Builder(context)
+                        .setView(binding.getRoot())
+                        .setTitle(R.string.filter_title)
+                        .setMessage(arguments.getString(EXTRA_MESSAGE))
+                        .setPositiveButton(android.R.string.ok, positiveListener)
+                        .setNegativeButton(android.R.string.cancel, null)
+                        .create();
 
-        binding.edit.setOnFocusChangeListener((v, hasFocus) -> {
-            Window window = dialog.getWindow();
-            if (window != null) {
-                if (hasFocus) {
-                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-                } else {
-                    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-                }
+                binding.edit.setOnFocusChangeListener((v, hasFocus) -> {
+                    Window window = dialog.getWindow();
+                    if (window != null) {
+                        if (hasFocus) {
+                            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                        } else {
+                            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+                        }
+                    }
+                });
+
+                return dialog;
             }
-        });
-
-        return dialog;
+        }
+        return super.onCreateDialog(savedInstanceState);
     }
 
     @Override

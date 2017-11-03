@@ -79,7 +79,9 @@ final class ActivityTestRules {
             deleteFiles(filesDir);
         }
         NotificationManager notificationManager = (NotificationManager) targetContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
+        if (notificationManager != null) {
+            notificationManager.cancelAll();
+        }
     }
 
     private static void deleteFiles(File folder) {

@@ -24,12 +24,12 @@ import android.databinding.InverseBindingAdapter;
 import android.databinding.InverseBindingListener;
 import android.support.annotation.DrawableRes;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+@SuppressWarnings("WeakerAccess")
 final class DataBindingAdapters {
     @BindingAdapter("srcCompat")
     public static void setImageResource(ImageView imageView, @DrawableRes int resource) {
@@ -50,12 +50,7 @@ final class DataBindingAdapters {
 
     @BindingAdapter("charSequenceChanged")
     public static void setCharSequenceChanged(EditText textView, InverseBindingListener listener) {
-        textView.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                listener.onChange();
-            }
-            return false;
-        });
+        textView.setOnClickListener(view -> listener.onChange());
     }
 
     @InverseBindingAdapter(attribute = "charSequence", event = "charSequenceChanged")

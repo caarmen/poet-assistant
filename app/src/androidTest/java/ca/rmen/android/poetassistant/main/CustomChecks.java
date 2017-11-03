@@ -182,6 +182,7 @@ class CustomChecks {
 
     static void checkClipboard(Context context, String clipboardContent) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        assertNotNull(clipboard);
         assertTrue("Expected to find " + clipboardContent + " in the clipboard", clipboard.hasPrimaryClip());
         ClipData primaryClip = clipboard.getPrimaryClip();
         assertNotNull(primaryClip);

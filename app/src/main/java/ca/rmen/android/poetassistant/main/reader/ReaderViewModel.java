@@ -200,7 +200,9 @@ public class ReaderViewModel extends AndroidViewModel {
 
     void save(Context context) {
         PoemFile savedPoem = mPoemPrefs.getSavedPoem();
-        PoemFile.save(context, savedPoem.uri, poem.get(), mPoemFileCallback);
+        if (savedPoem != null) {
+            PoemFile.save(context, savedPoem.uri, poem.get(), mPoemFileCallback);
+        }
     }
 
     void saveAs(Context context, Uri uri) {
@@ -236,7 +238,9 @@ public class ReaderViewModel extends AndroidViewModel {
         // Load the poem we previously saved
         if (mPoemPrefs.hasSavedPoem()) {
             PoemFile savedPoem = mPoemPrefs.getSavedPoem();
-            poem.set(savedPoem.text);
+            if (savedPoem != null) {
+                poem.set(savedPoem.text);
+            }
         } else if (mPoemPrefs.hasTempPoem()) {
             String tempPoemText = mPoemPrefs.getTempPoem();
             poem.set(tempPoemText);

@@ -135,7 +135,9 @@ public final class Wotd {
         }
         Notification notification = builder.build();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(TAG.hashCode(), notification);
+        if (notificationManager != null) {
+            notificationManager.notify(TAG.hashCode(), notification);
+        }
     }
 
     private static CharSequence buildWotdNotificationContent(Context context, DictionaryEntry entry) {

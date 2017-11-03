@@ -26,6 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
@@ -118,11 +119,14 @@ public class PagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public int getItemPosition(Object object) {
+    public int getItemPosition(@NonNull Object object) {
         Log.v(TAG, "getItemPosition " + object);
         if (object instanceof ResultListFragment<?>) {
-            Tab tab = (Tab) ((ResultListFragment<?>)object).getArguments().getSerializable(ResultListFragment.EXTRA_TAB);
-            return getPositionForTab(tab);
+            Bundle arguments = ((ResultListFragment<?>)object).getArguments();
+            if (arguments != null) {
+                Tab tab = (Tab) arguments.getSerializable(ResultListFragment.EXTRA_TAB);
+                return getPositionForTab(tab);
+            }
         }
         if (object instanceof ReaderFragment) {
             return getPositionForTab(Tab.READER);

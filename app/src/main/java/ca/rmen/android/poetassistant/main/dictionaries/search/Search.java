@@ -71,8 +71,10 @@ public class Search {
 
     public void setSearchView(SearchView searchView) {
         SearchManager searchManager = (SearchManager) mContext.getSystemService(Context.SEARCH_SERVICE);
-        ComponentName searchableActivityComponentName = new ComponentName(mContext, mContext.getClass());
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(searchableActivityComponentName));
+        if (searchManager != null) {
+            ComponentName searchableActivityComponentName = new ComponentName(mContext, mContext.getClass());
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(searchableActivityComponentName));
+        }
     }
 
     /**

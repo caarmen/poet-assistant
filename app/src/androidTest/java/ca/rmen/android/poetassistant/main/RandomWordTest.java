@@ -66,6 +66,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertNotNull;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -111,6 +112,7 @@ public class RandomWordTest {
         clickPreference(R.string.wotd_setting_title);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             NotificationManager notificationManager = (NotificationManager) getInstrumentation().getTargetContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            assertNotNull(notificationManager);
             StatusBarNotification[] activeNotifications = notificationManager.getActiveNotifications();
             boolean foundNotification = false;
             for (StatusBarNotification statusBarNotification : activeNotifications) {

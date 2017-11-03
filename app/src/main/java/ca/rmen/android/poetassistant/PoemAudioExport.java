@@ -120,8 +120,10 @@ public class PoemAudioExport {
     private void cancelNotifications() {
         Log.v(TAG, "cancelNotifications");
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(EXPORT_PROGRESS_NOTIFICATION_ID);
-        notificationManager.cancel(EXPORT_FINISH_NOTIFICATION_ID);
+        if (notificationManager != null) {
+            notificationManager.cancel(EXPORT_PROGRESS_NOTIFICATION_ID);
+            notificationManager.cancel(EXPORT_FINISH_NOTIFICATION_ID);
+        }
     }
 
     private void notifyPoemAudioInProgress() {
@@ -136,26 +138,32 @@ public class PoemAudioExport {
                 .setSmallIcon(Share.getNotificationIcon())
                 .build();
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(EXPORT_PROGRESS_NOTIFICATION_ID, notification);
+        if (notificationManager != null) {
+            notificationManager.notify(EXPORT_PROGRESS_NOTIFICATION_ID, notification);
+        }
     }
 
     private void notifyPoemAudioReady() {
         Log.v(TAG, "notifyPoemAudioReady");
         cancelNotifications();
         PendingIntent shareIntent = getFileShareIntent();
-        Notification notification = new NotificationCompat.Builder(mContext, NotificationChannel.createNotificationChannel(mContext))
-                .setAutoCancel(true)
-                .setContentIntent(shareIntent)
-                .setContentTitle(mContext.getString(R.string.share_poem_audio_ready_notification_title))
-                .setContentText(mContext.getString(R.string.share_poem_audio_ready_notification_message))
-                .setSmallIcon(Share.getNotificationIcon())
-                .addAction(
-                        Share.getShareIconId(),
-                        mContext.getString(R.string.share),
-                        shareIntent)
-                .build();
-        NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(EXPORT_FINISH_NOTIFICATION_ID, notification);
+        if (shareIntent != null) {
+            Notification notification = new NotificationCompat.Builder(mContext, NotificationChannel.createNotificationChannel(mContext))
+                    .setAutoCancel(true)
+                    .setContentIntent(shareIntent)
+                    .setContentTitle(mContext.getString(R.string.share_poem_audio_ready_notification_title))
+                    .setContentText(mContext.getString(R.string.share_poem_audio_ready_notification_message))
+                    .setSmallIcon(Share.getNotificationIcon())
+                    .addAction(
+                            Share.getShareIconId(),
+                            mContext.getString(R.string.share),
+                            shareIntent)
+                    .build();
+            NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (notificationManager != null) {
+                notificationManager.notify(EXPORT_FINISH_NOTIFICATION_ID, notification);
+            }
+        }
     }
 
     private void notifyPoemAudioFailed() {
@@ -169,17 +177,25 @@ public class PoemAudioExport {
                 .setSmallIcon(Share.getNotificationIcon())
                 .build();
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(EXPORT_FINISH_NOTIFICATION_ID, notification);
+        if (notificationManager != null) {
+            notificationManager.notify(EXPORT_FINISH_NOTIFICATION_ID, notification);
+        }
     }
 
+    @Nullable
     private PendingIntent getFileShareIntent() {
-        // Bring up the chooser to share the file.
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        Uri uri = FileProvider.getUriForFile(mContext, BuildConfig.APPLICATION_ID + ".fileprovider", getAudioFile());
-        sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
-        sendIntent.setType("audio/x-wav");
-        return PendingIntent.getActivity(mContext, 0, sendIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        File file = getAudioFile();
+        if (file != null) {
+            // Bring up the chooser to share the file.
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            Uri uri = FileProvider.getUriForFile(mContext, BuildConfig.APPLICATION_ID + ".fileprovider", file);
+            sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
+            sendIntent.setType("audio/x-wav");
+            return PendingIntent.getActivity(mContext, 0, sendIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        } else {
+            return null;
+        }
     }
 
     private PendingIntent getMainActivityIntent() {

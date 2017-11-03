@@ -46,14 +46,17 @@ public class HelpDialogFragment extends DialogFragment {
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.v(TAG, "onCreateDialog: savedInstanceState = " + savedInstanceState);
-        Context context = getActivity();
-
-        // For now, we only show help about pattern searching
-        return new AlertDialog.Builder(context)
-                .setTitle(context.getString(R.string.pattern_help_title))
-                .setMessage(HtmlCompat.fromHtml(context.getString(R.string.pattern_help_message)))
-                .setPositiveButton(android.R.string.ok, null)
-                .create();
+        Context context = getContext();
+        if (context != null) {
+            // For now, we only show help about pattern searching
+            return new AlertDialog.Builder(context)
+                    .setTitle(context.getString(R.string.pattern_help_title))
+                    .setMessage(HtmlCompat.fromHtml(context.getString(R.string.pattern_help_message)))
+                    .setPositiveButton(android.R.string.ok, null)
+                    .create();
+        } else {
+            return super.onCreateDialog(savedInstanceState);
+        }
     }
 
 }

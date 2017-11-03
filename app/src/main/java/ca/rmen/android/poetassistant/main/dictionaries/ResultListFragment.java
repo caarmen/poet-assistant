@@ -69,7 +69,10 @@ public class ResultListFragment<T> extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mTab = (Tab) getArguments().getSerializable(EXTRA_TAB);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mTab = (Tab) arguments.getSerializable(EXTRA_TAB);
+        }
         Log.v(TAG, mTab + " onCreateView");
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false);
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));

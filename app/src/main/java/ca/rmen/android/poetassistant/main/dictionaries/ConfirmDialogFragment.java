@@ -68,21 +68,24 @@ public class ConfirmDialogFragment extends DialogFragment {
         Log.v(TAG, "onCreateDialog: savedInstanceState = " + savedInstanceState);
         Context context = getActivity();
         Bundle arguments = getArguments();
-        final int actionId = arguments.getInt(EXTRA_ACTION_ID);
+        if (context != null && arguments != null) {
+            final int actionId = arguments.getInt(EXTRA_ACTION_ID);
 
-        OnClickListener positiveListener = (dialog, which) -> {
-            Fragment parentFragment = getParentFragment();
-            ConfirmDialogListener listener;
-            if (parentFragment instanceof ConfirmDialogListener)
-                listener = (ConfirmDialogListener) parentFragment;
-            else listener = (ConfirmDialogListener) getActivity();
-            listener.onOk(actionId);
-        };
+            OnClickListener positiveListener = (dialog, which) -> {
+                Fragment parentFragment = getParentFragment();
+                ConfirmDialogListener listener;
+                if (parentFragment instanceof ConfirmDialogListener)
+                    listener = (ConfirmDialogListener) parentFragment;
+                else listener = (ConfirmDialogListener) getActivity();
+                listener.onOk(actionId);
+            };
 
-        return new AlertDialog.Builder(context)
-                .setMessage(arguments.getString(EXTRA_MESSAGE))
-                .setPositiveButton(arguments.getString(EXTRA_POSITIVE_ACTION), positiveListener)
-                .setNegativeButton(android.R.string.cancel, null)
-                .create();
+            return new AlertDialog.Builder(context)
+                    .setMessage(arguments.getString(EXTRA_MESSAGE))
+                    .setPositiveButton(arguments.getString(EXTRA_POSITIVE_ACTION), positiveListener)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .create();
+        }
+        return super.onCreateDialog(savedInstanceState);
     }
 }

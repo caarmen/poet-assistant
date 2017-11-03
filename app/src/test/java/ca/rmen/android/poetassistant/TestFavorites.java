@@ -51,19 +51,19 @@ public class TestFavorites {
                 .allowMainThreadQueries()
                 .addMigrations(UserDb.MIGRATION_1_2).build();
         Favorites favorites = new Favorites(db.favoriteDao());
-        Set<String> favs = favorites.getFavorites();
-        assertEquals(0, favs.size());
+        Set<String> favoriteWords = favorites.getFavorites();
+        assertEquals(0, favoriteWords.size());
         Uri uri = createFavoritesFile();
         shadowOf(RuntimeEnvironment.application.getContentResolver()).registerInputStream(uri, openInputStream(uri));
         favorites.importFavorites(RuntimeEnvironment.application, uri);
-        favs = favorites.getFavorites();
-        assertEquals(2, favs.size());
+        favoriteWords = favorites.getFavorites();
+        assertEquals(2, favoriteWords.size());
         db.close();
     }
 
     private Uri createFavoritesFile() throws IOException {
         ShadowEnvironment.setExternalStorageState(Environment.MEDIA_MOUNTED);
-        File file = new File(RuntimeEnvironment.application.getExternalFilesDir(null), "my-favs.txt");
+        File file = new File(RuntimeEnvironment.application.getExternalFilesDir(null), "my-favorite-words.txt");
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
         writer.write("hello");
         writer.newLine();

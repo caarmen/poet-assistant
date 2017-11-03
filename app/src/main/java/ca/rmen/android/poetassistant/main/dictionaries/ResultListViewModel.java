@@ -56,7 +56,7 @@ public class ResultListViewModel<T> extends AndroidViewModel {
     final MutableLiveData<Boolean> showHeader = new MutableLiveData<>();
     final MutableLiveData<String> usedQueryWord = new MutableLiveData<>();
     private ResultListAdapter<T> mAdapter;
-    private Tab mTab;
+    private final Tab mTab;
     @Inject
     Favorites mFavorites;
 
@@ -78,18 +78,18 @@ public class ResultListViewModel<T> extends AndroidViewModel {
         }
     }
     private final MutableLiveData<QueryParams> mQueryParams = new MutableLiveData<>();
-    @SuppressWarnings("unchecked")
-    final LiveData<ResultListData<T>> resultListDataLiveData =
-            Transformations.switchMap(mQueryParams, queryParams -> (LiveData<ResultListData<T>>) ResultListFactory.createLiveData(mTab, getApplication(), queryParams.word, queryParams.filter));
+    final LiveData<ResultListData<T>> resultListDataLiveData;
     final LiveData<List<Favorite>> favoritesLiveData;
 
     ResultListViewModel(Application application, Tab tab) {
         super(application);
-        ResultListFactory.inject(application, tab, this);
         mTab = tab;
+        ResultListFactory.inject(application, tab, this);
         emptyText.set(getNoQueryEmptyText());
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mPrefsListener);
         favoritesLiveData = mFavorites.getFavoritesLiveData();
+        //noinspection unchecked
+        resultListDataLiveData = Transformations.switchMap(mQueryParams, queryParams -> (LiveData<ResultListData<T>>) ResultListFactory.createLiveData(mTab, getApplication(), queryParams.word, queryParams.filter));
     }
 
     void setQueryParams(QueryParams queryParams) {

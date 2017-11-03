@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.settings;
 import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.media.AudioManager;
@@ -29,6 +30,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.Preference;
@@ -94,43 +96,46 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         private void loadPreferences() {
-            addPreferencesFromResource(R.xml.pref_general);
-            setOnPreferenceClickListener(PREF_CLEAR_SEARCH_HISTORY, () -> ConfirmDialogFragment.show(
-                    ACTION_CLEAR_SEARCH_HISTORY,
-                    getString(R.string.confirm_clear_search_history),
-                    getString(R.string.action_clear),
-                    getChildFragmentManager(),
-                    DIALOG_TAG));
-            // Hide the voice preference if we can't load any voices
-            VoicePreference voicePreference = (VoicePreference) findPreference(Settings.PREF_VOICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                voicePreference.loadVoices(getContext());
-            }
-            if (voicePreference.getEntries() == null || voicePreference.getEntries().length < 2) {
-                removePreference(PREF_CATEGORY_VOICE, voicePreference);
-            }
-            setOnPreferenceClickListener(Settings.PREF_VOICE_PREVIEW, () -> mViewModel.playTtsPreview());
+            Context context = getContext();
+            if (context != null) {
+                addPreferencesFromResource(R.xml.pref_general);
+                setOnPreferenceClickListener(PREF_CLEAR_SEARCH_HISTORY, () -> ConfirmDialogFragment.show(
+                        ACTION_CLEAR_SEARCH_HISTORY,
+                        getString(R.string.confirm_clear_search_history),
+                        getString(R.string.action_clear),
+                        getChildFragmentManager(),
+                        DIALOG_TAG));
+                // Hide the voice preference if we can't load any voices
+                VoicePreference voicePreference = (VoicePreference) findPreference(Settings.PREF_VOICE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    voicePreference.loadVoices(context);
+                }
+                if (voicePreference.getEntries() == null || voicePreference.getEntries().length < 2) {
+                    removePreference(PREF_CATEGORY_VOICE, voicePreference);
+                }
+                setOnPreferenceClickListener(Settings.PREF_VOICE_PREVIEW, () -> mViewModel.playTtsPreview());
 
-            // Hide the system tts settings if no system app can handle it
-            Preference systemTtsSettings = findPreference(Settings.PREF_SYSTEM_TTS_SETTINGS);
-            Intent intent = systemTtsSettings.getIntent();
-            if (intent.resolveActivity(getActivity().getPackageManager()) == null) {
-                removePreference(PREF_CATEGORY_VOICE, systemTtsSettings);
-            } else {
-                setOnPreferenceClickListener(systemTtsSettings, () -> mRestartTtsOnResume = true);
-            }
+                // Hide the system tts settings if no system app can handle it
+                Preference systemTtsSettings = findPreference(Settings.PREF_SYSTEM_TTS_SETTINGS);
+                Intent intent = systemTtsSettings.getIntent();
+                if (intent.resolveActivity(context.getPackageManager()) == null) {
+                    removePreference(PREF_CATEGORY_VOICE, systemTtsSettings);
+                } else {
+                    setOnPreferenceClickListener(systemTtsSettings, () -> mRestartTtsOnResume = true);
+                }
 
-            // Android O users can change the priority in the system settings.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                removePreferences(PREF_CATEGORY_NOTIFICATIONS, Settings.PREF_WOTD_NOTIFICATION_PRIORITY);
-            }
+                // Android O users can change the priority in the system settings.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    removePreferences(PREF_CATEGORY_NOTIFICATIONS, Settings.PREF_WOTD_NOTIFICATION_PRIORITY);
+                }
 
-            // Importing/exporting files is only available from KitKat.
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                removePreferences(PREF_CATEGORY_USER_DATA, PREF_EXPORT_FAVORITES, PREF_IMPORT_FAVORITES);
-            } else {
-                setOnPreferenceClickListener(PREF_EXPORT_FAVORITES, () -> startActivityForResult(mViewModel.getExportFavoritesIntent(), ACTION_EXPORT_FAVORITES));
-                setOnPreferenceClickListener(PREF_IMPORT_FAVORITES, () -> startActivityForResult(mViewModel.getImportFavoritesIntent(), ACTION_IMPORT_FAVORITES));
+                // Importing/exporting files is only available from KitKat.
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                    removePreferences(PREF_CATEGORY_USER_DATA, PREF_EXPORT_FAVORITES, PREF_IMPORT_FAVORITES);
+                } else {
+                    setOnPreferenceClickListener(PREF_EXPORT_FAVORITES, () -> startActivityForResult(mViewModel.getExportFavoritesIntent(), ACTION_EXPORT_FAVORITES));
+                    setOnPreferenceClickListener(PREF_IMPORT_FAVORITES, () -> startActivityForResult(mViewModel.getImportFavoritesIntent(), ACTION_IMPORT_FAVORITES));
+                }
             }
         }
 
@@ -171,12 +176,13 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onDisplayPreferenceDialog(Preference preference) {
             if (Settings.PREF_VOICE.equals(preference.getKey())) {
-                if (getFragmentManager().findFragmentByTag(DIALOG_TAG) != null) {
+                FragmentManager fragmentManager = getFragmentManager();
+                if (fragmentManager == null || fragmentManager.findFragmentByTag(DIALOG_TAG) != null) {
                     return;
                 }
                 VoicePreferenceDialogFragment fragment = VoicePreferenceDialogFragment.newInstance(preference.getKey());
                 fragment.setTargetFragment(this, 0);
-                fragment.show(getFragmentManager(), DIALOG_TAG);
+                fragment.show(fragmentManager, DIALOG_TAG);
             } else {
                 super.onDisplayPreferenceDialog(preference);
             }
