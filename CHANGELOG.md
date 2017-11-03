@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.23.0  *(2017-11-03)*
+--------------------
+* Added setting to include reverse lookups in thesaurus searches.
+
 1.22.3  *(2017-11-02)*
 --------------------
 * Maintenance release: update environment:
