@@ -34,7 +34,7 @@ import android.view.View;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.TtsState;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding;
 import ca.rmen.android.poetassistant.main.Tab;
@@ -256,7 +256,7 @@ public final class ResultListFactory {
      * Set the various buttons which appear in the result list header (ex: tts play,
      * web search, filter, help) to visible or gone, depending on the tab.
      */
-    static void updateListHeaderButtonsVisibility(ResultListHeaderBinding binding, Tab tab, @NonNull Tts.TtsStatus ttsStatus) {
+    static void updateListHeaderButtonsVisibility(ResultListHeaderBinding binding, Tab tab, @NonNull TtsState.TtsStatus ttsStatus) {
         switch (tab) {
             case FAVORITES:
                 binding.btnPlay.setVisibility(View.GONE);
@@ -280,7 +280,7 @@ public final class ResultListFactory {
             case THESAURUS:
                 binding.btnFilter.setVisibility(View.VISIBLE);
             case DICTIONARY:
-                int playButtonVisibility = ttsStatus == Tts.TtsStatus.UNINITIALIZED?
+                int playButtonVisibility = ttsStatus == TtsState.TtsStatus.UNINITIALIZED?
                         View.GONE: View.VISIBLE;
                 binding.btnPlay.setVisibility(playButtonVisibility);
             default:

@@ -45,6 +45,7 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.TtsState;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.LiveDataMapping;
 import ca.rmen.android.poetassistant.main.dictionaries.Share;
@@ -96,16 +97,16 @@ public class ReaderViewModel extends AndroidViewModel {
      * The button should display a "Play" icon if TTS isn't running but can be started.
      * The button should display a "Stop" icon if TTS is currently running.
      */
-    private static PlayButtonState toPlayButtonState(Tts.TtsState ttsState, String poemText) {
+    private static PlayButtonState toPlayButtonState(TtsState ttsState, String poemText) {
         Log.v(TAG, "toPlayButtonState: ttsState = " + ttsState + ", poemText = " + poemText);
         if (ttsState != null) {
-            if (ttsState.currentStatus == Tts.TtsStatus.INITIALIZED) {
+            if (ttsState.currentStatus == TtsState.TtsStatus.INITIALIZED) {
                 if (TextUtils.isEmpty(poemText)) {
                     return new PlayButtonState(false, R.drawable.ic_play_disabled);
                 } else {
                     return new PlayButtonState(true, R.drawable.ic_play_enabled);
                 }
-            } else if (ttsState.currentStatus == Tts.TtsStatus.SPEAKING) {
+            } else if (ttsState.currentStatus == TtsState.TtsStatus.SPEAKING) {
                 return new PlayButtonState(true, R.drawable.ic_stop);
             } else {
                 return new PlayButtonState(false, R.drawable.ic_play_disabled);
@@ -137,7 +138,7 @@ public class ReaderViewModel extends AndroidViewModel {
         Log.v(TAG, "Play button clicked");
         if (mTts.isSpeaking()) {
             mTts.stop();
-        } else if (mTts.getTtsState() != null && mTts.getTtsState().currentStatus == Tts.TtsStatus.INITIALIZED) {
+        } else if (mTts.getTtsState() != null && mTts.getTtsState().currentStatus == TtsState.TtsStatus.INITIALIZED) {
             speak();
         } else {
             ttsError.setValue(true);

@@ -37,7 +37,7 @@ import java.util.Locale;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.TtsState;
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding;
 import ca.rmen.android.poetassistant.main.Tab;
 
@@ -105,7 +105,7 @@ public class ResultListHeaderFragment extends Fragment
     };
 
     private final Observer<Boolean> mFavoriteObserver = isFavorite -> mBinding.btnStarQuery.setChecked(isFavorite == Boolean.TRUE);
-    private final Observer<Tts.TtsState> mTtsObserver = ttsState -> {
+    private final Observer<TtsState> mTtsObserver = ttsState -> {
         Log.d(TAG, mTab + ": ttsState = " + ttsState);
         if (mTab != null && ttsState != null) ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, ttsState.currentStatus);
     };
