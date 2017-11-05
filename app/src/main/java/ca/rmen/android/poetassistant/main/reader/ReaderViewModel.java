@@ -33,6 +33,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.print.PrintJob;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v7.preference.PreferenceManager;
@@ -287,7 +288,7 @@ public class ReaderViewModel extends AndroidViewModel {
 
         @Override
         @TargetApi(Build.VERSION_CODES.KITKAT)
-        public void onPrintJobCreated(PoemFile poemFile, @Nullable PrintJob printJob) {
+        public void onPrintJobCreated(@NonNull PoemFile poemFile, @Nullable PrintJob printJob) {
             Log.d(TAG, "onPrintJobCreated() called with: poemFile = [" + poemFile + "], printJob = [" + printJob + "]");
             if (printJob != null) {
                 Log.d(TAG, "Print job id = " + printJob.getId() + ", info = " +  printJob.getInfo());
