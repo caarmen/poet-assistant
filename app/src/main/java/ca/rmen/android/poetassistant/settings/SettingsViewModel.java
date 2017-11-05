@@ -80,7 +80,7 @@ public class SettingsViewModel extends AndroidViewModel {
     }
 
     void exportFavorites(Uri uri) {
-        String fileDisplayName = PoemFile.readDisplayName(getApplication(), uri);
+        String fileDisplayName = PoemFile.Companion.readDisplayName(getApplication(), uri);
         Completable.fromAction(() -> mFavorites.exportFavorites(getApplication(), uri))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -90,7 +90,7 @@ public class SettingsViewModel extends AndroidViewModel {
     }
 
     void importFavorites(Uri uri) {
-        String fileDisplayName = PoemFile.readDisplayName(getApplication(), uri);
+        String fileDisplayName = PoemFile.Companion.readDisplayName(getApplication(), uri);
         Completable.fromAction(() -> mFavorites.importFavorites(getApplication(), uri))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
