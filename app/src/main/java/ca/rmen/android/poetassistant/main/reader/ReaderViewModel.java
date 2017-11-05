@@ -45,6 +45,7 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.TtsState;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.LiveDataMapping;
 import ca.rmen.android.poetassistant.main.dictionaries.Share;
@@ -96,16 +97,16 @@ public class ReaderViewModel extends AndroidViewModel {
      * The button should display a "Play" icon if TTS isn't running but can be started.
      * The button should display a "Stop" icon if TTS is currently running.
      */
-    private static PlayButtonState toPlayButtonState(Tts.TtsState ttsState, String poemText) {
+    private static PlayButtonState toPlayButtonState(TtsState ttsState, String poemText) {
         Log.v(TAG, "toPlayButtonState: ttsState = " + ttsState + ", poemText = " + poemText);
         if (ttsState != null) {
-            if (ttsState.currentStatus == Tts.TtsStatus.INITIALIZED) {
+            if (ttsState.currentStatus == TtsState.TtsStatus.INITIALIZED) {
                 if (TextUtils.isEmpty(poemText)) {
                     return new PlayButtonState(false, R.drawable.ic_play_disabled);
                 } else {
                     return new PlayButtonState(true, R.drawable.ic_play_enabled);
                 }
-            } else if (ttsState.currentStatus == Tts.TtsStatus.SPEAKING) {
+            } else if (ttsState.currentStatus == TtsState.TtsStatus.SPEAKING) {
                 return new PlayButtonState(true, R.drawable.ic_stop);
             } else {
                 return new PlayButtonState(false, R.drawable.ic_play_disabled);
@@ -137,7 +138,7 @@ public class ReaderViewModel extends AndroidViewModel {
         Log.v(TAG, "Play button clicked");
         if (mTts.isSpeaking()) {
             mTts.stop();
-        } else if (mTts.getTtsState() != null && mTts.getTtsState().currentStatus == Tts.TtsStatus.INITIALIZED) {
+        } else if (mTts.getTtsState() != null && mTts.getTtsState().currentStatus == TtsState.TtsStatus.INITIALIZED) {
             speak();
         } else {
             ttsError.setValue(true);
@@ -189,7 +190,7 @@ public class ReaderViewModel extends AndroidViewModel {
         if (poemFile != null) {
             return poemFile.name;
         } else {
-            return PoemFile.generateFileName(poem.get());
+            return PoemFile.Companion.generateFileName(poem.get());
         }
     }
 
@@ -201,12 +202,12 @@ public class ReaderViewModel extends AndroidViewModel {
     void save(Context context) {
         PoemFile savedPoem = mPoemPrefs.getSavedPoem();
         if (savedPoem != null) {
-            PoemFile.save(context, savedPoem.uri, poem.get(), mPoemFileCallback);
+            PoemFile.Companion.save(context, savedPoem.uri, poem.get(), mPoemFileCallback);
         }
     }
 
     void saveAs(Context context, Uri uri) {
-        PoemFile.save(context, uri, poem.get(), mPoemFileCallback);
+        PoemFile.Companion.save(context, uri, poem.get(), mPoemFileCallback);
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -231,7 +232,7 @@ public class ReaderViewModel extends AndroidViewModel {
     }
 
     void open(Context context, Uri uri) {
-        PoemFile.open(context, uri, mPoemFileCallback);
+        PoemFile.Companion.open(context, uri, mPoemFileCallback);
     }
 
     void loadPoem() {
@@ -254,13 +255,13 @@ public class ReaderViewModel extends AndroidViewModel {
     @TargetApi(Build.VERSION_CODES.KITKAT)
     void print(Context context) {
         if (poemFile.getValue() == null) {
-            PoemFile.print(context, new PoemFile(null, PoemFile.generateFileName(poem.get()), poem.get()), mPoemFileCallback);
+            PoemFile.Companion.print(context, new PoemFile(null, PoemFile.Companion.generateFileName(poem.get()), poem.get()), mPoemFileCallback);
         } else {
-            PoemFile.print(context, poemFile.getValue(), mPoemFileCallback);
+            PoemFile.Companion.print(context, poemFile.getValue(), mPoemFileCallback);
         }
     }
 
-    private final PoemFile.PoemFileCallback mPoemFileCallback = new PoemFile.PoemFileCallback() {
+    private final PoemFileCallback mPoemFileCallback = new PoemFileCallback() {
         @Override
         public void onPoemLoaded(@SuppressWarnings("SameParameterValue") PoemFile loadedPoem) {
             Log.d(TAG, "onPoemLoaded() called with: " + "poemFile = [" + loadedPoem + "]");

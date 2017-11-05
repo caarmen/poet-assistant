@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.fail;
 
-class CountDownPoemFileCallback implements PoemFile.PoemFileCallback {
+class CountDownPoemFileCallback implements PoemFileCallback {
 
     private final CountDownLatch mLatch = new CountDownLatch(1);
     private PoemFile mPoemFile;

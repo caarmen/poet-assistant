@@ -55,35 +55,6 @@ public class Tts {
     private int mTtsStatus = TextToSpeech.ERROR;
     private final SettingsPrefs mSettingsPrefs;
 
-    public class TtsState {
-        public final TtsStatus previousStatus;
-        public final TtsStatus currentStatus;
-        public final String utteranceId;
-
-        public TtsState(TtsStatus previousStatus, TtsStatus currentStatus, String utteranceId) {
-            this.previousStatus = previousStatus;
-            this.currentStatus = currentStatus;
-            this.utteranceId = utteranceId;
-        }
-
-        @Override
-        public String toString() {
-            return "TtsState{" +
-                    "previousStatus=" + previousStatus +
-                    ", currentStatus=" + currentStatus +
-                    ", utteranceId='" + utteranceId + '\'' +
-                    '}';
-        }
-    }
-
-    public enum TtsStatus {
-        UNINITIALIZED,
-        INITIALIZED,
-        SPEAKING,
-        UTTERANCE_COMPLETE,
-        UTTERANCE_ERROR
-    }
-
     private final MutableLiveData<TtsState> mTtsLiveData = new MutableLiveData<>();
     public LiveData<TtsState> getTtsLiveData() {
         return mTtsLiveData;
@@ -98,7 +69,7 @@ public class Tts {
 
     private void init() {
         Log.v(TAG, "init");
-        mTtsLiveData.setValue(new TtsState(null, TtsStatus.UNINITIALIZED, null));
+        mTtsLiveData.setValue(new TtsState(null, TtsState.TtsStatus.UNINITIALIZED, null));
         mTextToSpeech = new TextToSpeech(mContext, mInitListener);
         mTextToSpeech.setOnUtteranceProgressListener(mUtteranceListener);
     }
@@ -232,7 +203,7 @@ public class Tts {
             mTextToSpeech.setOnUtteranceCompletedListener(null);
             mTextToSpeech.shutdown();
             mTtsStatus = TextToSpeech.ERROR;
-            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsStatus.INITIALIZED, TtsStatus.UNINITIALIZED, null)));
+            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null)));
             mTextToSpeech = null;
         }
     }
@@ -246,10 +217,10 @@ public class Tts {
         if (status == TextToSpeech.SUCCESS) {
             setVoiceSpeedFromSettings();
             setVoicePitchFromSettings();
-            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsStatus.UNINITIALIZED, TtsStatus.INITIALIZED, null)));
-            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsStatus.INITIALIZED, TtsStatus.INITIALIZED, null)));
+            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.INITIALIZED, null)));
+            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.INITIALIZED, null)));
         } else {
-            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsStatus.UNINITIALIZED, TtsStatus.UNINITIALIZED, null)));
+            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null)));
         }
     };
 
@@ -322,7 +293,7 @@ public class Tts {
 
         @Override
         public void onStart(String utteranceId) {
-            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsStatus.INITIALIZED, TtsStatus.SPEAKING, utteranceId)));
+            AndroidSchedulers.mainThread().scheduleDirect(() -> mTtsLiveData.setValue(new TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.SPEAKING, utteranceId)));
         }
 
         @Override
@@ -349,15 +320,15 @@ public class Tts {
 
         private void onUtteranceCompleted(String utteranceId) {
             AndroidSchedulers.mainThread().scheduleDirect(() -> {
-                mTtsLiveData.setValue(new TtsState(TtsStatus.SPEAKING, TtsStatus.UTTERANCE_COMPLETE, utteranceId));
-                mTtsLiveData.setValue(new TtsState(TtsStatus.UTTERANCE_COMPLETE, TtsStatus.INITIALIZED, null));
+                mTtsLiveData.setValue(new TtsState(TtsState.TtsStatus.SPEAKING, TtsState.TtsStatus.UTTERANCE_COMPLETE, utteranceId));
+                mTtsLiveData.setValue(new TtsState(TtsState.TtsStatus.UTTERANCE_COMPLETE, TtsState.TtsStatus.INITIALIZED, null));
             });
         }
 
         private void onUtteranceError(String utteranceId) {
             AndroidSchedulers.mainThread().scheduleDirect(() -> {
-                mTtsLiveData.setValue(new TtsState(TtsStatus.SPEAKING, TtsStatus.UTTERANCE_ERROR, utteranceId));
-                mTtsLiveData.setValue(new TtsState(TtsStatus.UTTERANCE_ERROR, TtsStatus.INITIALIZED, null));
+                mTtsLiveData.setValue(new TtsState(TtsState.TtsStatus.SPEAKING, TtsState.TtsStatus.UTTERANCE_ERROR, utteranceId));
+                mTtsLiveData.setValue(new TtsState(TtsState.TtsStatus.UTTERANCE_ERROR, TtsState.TtsStatus.INITIALIZED, null));
             });
         }
     }

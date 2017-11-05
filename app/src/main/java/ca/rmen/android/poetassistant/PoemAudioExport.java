@@ -213,15 +213,15 @@ public class PoemAudioExport {
         return new File(exportFolder, TEMP_AUDIO_FILE);
     }
 
-    private final Observer<Tts.TtsState> mTtsObserver = new Observer<Tts.TtsState>() {
+    private final Observer<TtsState> mTtsObserver = new Observer<TtsState>() {
         @Override
-        public void onChanged(@Nullable Tts.TtsState ttsState) {
+        public void onChanged(@Nullable TtsState ttsState) {
             if (ttsState != null
-                    && (ttsState.currentStatus == Tts.TtsStatus.UTTERANCE_COMPLETE || ttsState.currentStatus == Tts.TtsStatus.UTTERANCE_ERROR)
+                    && (ttsState.currentStatus == TtsState.TtsStatus.UTTERANCE_COMPLETE || ttsState.currentStatus == TtsState.TtsStatus.UTTERANCE_ERROR)
                     && TEMP_AUDIO_FILE.equals(ttsState.utteranceId)) {
                 mTts.getTtsLiveData().removeObserver(this);
                 File audioFile = getAudioFile();
-                if (ttsState.currentStatus == Tts.TtsStatus.UTTERANCE_COMPLETE && audioFile != null && audioFile.exists()) notifyPoemAudioReady();
+                if (ttsState.currentStatus == TtsState.TtsStatus.UTTERANCE_COMPLETE && audioFile != null && audioFile.exists()) notifyPoemAudioReady();
                 else notifyPoemAudioFailed();
             }
         }

@@ -24,6 +24,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 import javax.inject.Inject;
@@ -71,19 +74,19 @@ public class Dictionary {
             }
         }
         if (cursor != null) {
-            DictionaryEntry.DictionaryEntryDetails[] result = new DictionaryEntry.DictionaryEntryDetails[cursor.getCount()];
+            List<DictionaryEntry.DictionaryEntryDetails> result = new ArrayList<>();
             try {
                 while (cursor.moveToNext()) {
                     String partOfSpeech = cursor.getString(0);
                     String definition = cursor.getString(1);
-                    result[cursor.getPosition()] = new DictionaryEntry.DictionaryEntryDetails(partOfSpeech, definition);
+                    result.add(new DictionaryEntry.DictionaryEntryDetails(partOfSpeech, definition));
                 }
                 return new DictionaryEntry(lookupWord, result);
             } finally {
                 cursor.close();
             }
         }
-        return new DictionaryEntry(word, new DictionaryEntry.DictionaryEntryDetails[0]);
+        return new DictionaryEntry(word, Collections.emptyList());
     }
 
     public

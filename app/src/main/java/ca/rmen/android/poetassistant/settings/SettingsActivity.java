@@ -45,6 +45,7 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.TtsState;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
 
@@ -217,11 +218,11 @@ public class SettingsActivity extends AppCompatActivity {
             }
         };
 
-        private final Observer<Tts.TtsState> mTtsObserver = ttsState -> {
+        private final Observer<TtsState> mTtsObserver = ttsState -> {
             Log.v(TAG, "ttsState = " + ttsState);
             if (ttsState != null
-                    && ttsState.previousStatus == Tts.TtsStatus.UNINITIALIZED
-                    && ttsState.currentStatus == Tts.TtsStatus.INITIALIZED) {
+                    && ttsState.previousStatus == TtsState.TtsStatus.UNINITIALIZED
+                    && ttsState.currentStatus == TtsState.TtsStatus.INITIALIZED) {
                 getPreferenceScreen().removeAll();
                 loadPreferences();
             }

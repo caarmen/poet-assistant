@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import ca.rmen.android.poetassistant.Favorites;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.TtsState;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
 import ca.rmen.android.poetassistant.databinding.LiveDataMapping;
@@ -45,7 +46,7 @@ public class ResultListHeaderViewModel extends AndroidViewModel {
 
     final MutableLiveData<String> snackbarText = new MutableLiveData<>();
     final LiveData<Boolean> isFavoriteLiveData;
-    final LiveData<Tts.TtsState> ttsStateLiveData;
+    final LiveData<TtsState> ttsStateLiveData;
 
     @Inject Favorites mFavorites;
     @Inject Tts mTts;

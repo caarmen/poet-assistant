@@ -67,8 +67,8 @@ public class ThesaurusLiveData extends ResultListLiveData<ResultListData<RTEntry
         List<RTEntryViewModel> data = new ArrayList<>();
         if(TextUtils.isEmpty(mQuery)) return emptyResult();
         ThesaurusEntry result  = mThesaurus.lookup(mQuery, mPrefs.isIsThesaurusReverseLookupEnabled());
-        ThesaurusEntry.ThesaurusEntryDetails[] entries = result.entries;
-        if (entries.length == 0) return emptyResult();
+        List<ThesaurusEntry.ThesaurusEntryDetails> entries = result.entries;
+        if (entries.isEmpty()) return emptyResult();
 
         if (!TextUtils.isEmpty(mFilter)) {
             Set<String> rhymes = mRhymer.getFlatRhymes(mFilter);
@@ -89,30 +89,30 @@ public class ThesaurusLiveData extends ResultListLiveData<ResultListData<RTEntry
         return new ResultListData<>(mQuery, new ArrayList<>());
     }
 
-    private void addResultSection(Set<String> favorites, List<RTEntryViewModel> results, int sectionHeadingResId, String[] words, Settings.Layout layout) {
-        if (words.length > 0) {
+    private void addResultSection(Set<String> favorites, List<RTEntryViewModel> results, int sectionHeadingResId, List<String> words, Settings.Layout layout) {
+        if (!words.isEmpty()) {
             results.add(new RTEntryViewModel(getContext(), RTEntryViewModel.Type.SUBHEADING, getContext().getString(sectionHeadingResId)));
-            for (int i = 0; i < words.length; i++) {
+            for (int i = 0; i < words.size(); i++) {
                 @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
                 results.add(new RTEntryViewModel(
                         getContext(),
                         RTEntryViewModel.Type.WORD,
-                        words[i],
+                        words.get(i),
                         ContextCompat.getColor(getContext(), color),
-                        favorites.contains(words[i]),
+                        favorites.contains(words.get(i)),
                         layout == Settings.Layout.EFFICIENT));
             }
         }
     }
 
     @VisibleForTesting
-    static ThesaurusEntry.ThesaurusEntryDetails[] filter(ThesaurusEntry.ThesaurusEntryDetails[] entries, Set<String> filter) {
+    static List<ThesaurusEntry.ThesaurusEntryDetails> filter(List<ThesaurusEntry.ThesaurusEntryDetails> entries, Set<String> filter) {
         List<ThesaurusEntry.ThesaurusEntryDetails> filteredEntries = new ArrayList<>();
         for (ThesaurusEntry.ThesaurusEntryDetails entry : entries) {
             ThesaurusEntry.ThesaurusEntryDetails filteredEntry = filter(entry, filter);
             if (filteredEntry != null) filteredEntries.add(filteredEntry);
         }
-        return filteredEntries.toArray(new ThesaurusEntry.ThesaurusEntryDetails[filteredEntries.size()]);
+        return filteredEntries;
     }
 
     private static ThesaurusEntry.ThesaurusEntryDetails filter(ThesaurusEntry.ThesaurusEntryDetails entry, Set<String> filter) {
@@ -124,7 +124,7 @@ public class ThesaurusLiveData extends ResultListLiveData<ResultListData<RTEntry
     }
 
     private static boolean isEmpty(ThesaurusEntry.ThesaurusEntryDetails entry) {
-        return entry.synonyms.length == 0 && entry.antonyms.length == 0;
+        return entry.synonyms.isEmpty() && entry.antonyms.isEmpty();
     }
 
 

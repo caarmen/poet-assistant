@@ -40,6 +40,7 @@ import org.junit.runners.MethodSorters;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.TtsState;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.dagger.TestAppComponent;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
@@ -75,11 +76,11 @@ public class ATtsTest {
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 
-    public static class TtsObserver implements Observer<Tts.TtsState> {
+    public static class TtsObserver implements Observer<TtsState> {
         long timeUtteranceCompleted;
 
         @Override
-        public void onChanged(@Nullable Tts.TtsState ttsState) {
+        public void onChanged(@Nullable TtsState ttsState) {
             timeUtteranceCompleted = System.currentTimeMillis();
         }
     }

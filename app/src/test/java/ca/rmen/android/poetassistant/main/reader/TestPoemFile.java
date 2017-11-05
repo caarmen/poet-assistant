@@ -72,29 +72,29 @@ public class TestPoemFile {
 
     @Test
     public void testGenerateFileName() {
-        assertNull(PoemFile.generateFileName(""));
-        assertNull(PoemFile.generateFileName("& 2 !,$*-)°"));
-        assertEquals("Unthrifty.txt", PoemFile.generateFileName("Unthrifty loveliness, why dost thou spend"));
-        assertEquals("Against-my-love.txt", PoemFile.generateFileName("Against my love shall be as I am now,"));
-        assertEquals("As-a-decrepit.txt", PoemFile.generateFileName("As a decrepit father takes delight"));
-        assertEquals("Canst-thou-O.txt", PoemFile.generateFileName("Canst thou, O cruel! say I love thee not,"));
-        assertEquals("Farewell-thou.txt", PoemFile.generateFileName("Farewell! thou art too dear for my possessing,"));
-        assertEquals("Lo-in-the.txt", PoemFile.generateFileName("Lo! in the orient when the gracious light"));
-        assertEquals("Roses-are-red.txt", PoemFile.generateFileName("Roses are red,\nviolets are blue"));
-        assertEquals("Róses-àré-réd.txt", PoemFile.generateFileName("Róses àré réd,\nvïólèts áré blüë"));
-        assertEquals("Short.txt", PoemFile.generateFileName("Short"));
-        assertEquals("abcdefgh.txt", PoemFile.generateFileName("abcdefgh"));
-        assertEquals("abcdefghi.txt", PoemFile.generateFileName("abcdefghi"));
-        assertEquals("Short-poem.txt", PoemFile.generateFileName("Short poem"));
-        assertEquals("Short-poem.txt", PoemFile.generateFileName("Short poem"));
-        assertEquals("leading-symbols.txt", PoemFile.generateFileName(",! leading symbols"));
+        assertNull(PoemFile.Companion.generateFileName(""));
+        assertNull(PoemFile.Companion.generateFileName("& 2 !,$*-)°"));
+        assertEquals("Unthrifty.txt", PoemFile.Companion.generateFileName("Unthrifty loveliness, why dost thou spend"));
+        assertEquals("Against-my-love.txt", PoemFile.Companion.generateFileName("Against my love shall be as I am now,"));
+        assertEquals("As-a-decrepit.txt", PoemFile.Companion.generateFileName("As a decrepit father takes delight"));
+        assertEquals("Canst-thou-O.txt", PoemFile.Companion.generateFileName("Canst thou, O cruel! say I love thee not,"));
+        assertEquals("Farewell-thou.txt", PoemFile.Companion.generateFileName("Farewell! thou art too dear for my possessing,"));
+        assertEquals("Lo-in-the.txt", PoemFile.Companion.generateFileName("Lo! in the orient when the gracious light"));
+        assertEquals("Roses-are-red.txt", PoemFile.Companion.generateFileName("Roses are red,\nviolets are blue"));
+        assertEquals("Róses-àré-réd.txt", PoemFile.Companion.generateFileName("Róses àré réd,\nvïólèts áré blüë"));
+        assertEquals("Short.txt", PoemFile.Companion.generateFileName("Short"));
+        assertEquals("abcdefgh.txt", PoemFile.Companion.generateFileName("abcdefgh"));
+        assertEquals("abcdefghi.txt", PoemFile.Companion.generateFileName("abcdefghi"));
+        assertEquals("Short-poem.txt", PoemFile.Companion.generateFileName("Short poem"));
+        assertEquals("Short-poem.txt", PoemFile.Companion.generateFileName("Short poem"));
+        assertEquals("leading-symbols.txt", PoemFile.Companion.generateFileName(",! leading symbols"));
     }
 
     @Test
     public void testSave() throws FileNotFoundException {
         String text = "Roses are red\n";
         CountDownPoemFileCallback callback = new CountDownPoemFileCallback();
-        PoemFile.save(RuntimeEnvironment.application, mPoemUri, text, callback);
+        PoemFile.Companion.save(RuntimeEnvironment.application, mPoemUri, text, callback);
         callback.await();
         assertTrue(mPoemFile.exists());
         PoemFile poemFile = callback.getPoemFile();
@@ -109,7 +109,7 @@ public class TestPoemFile {
         String text = "Violets are blue\n";
         CountDownPoemFileCallback callback = new CountDownPoemFileCallback();
         Uri uri = Uri.parse("file:///invalid/folder/poem.txt");
-        PoemFile.save(RuntimeEnvironment.application, uri, text, callback);
+        PoemFile.Companion.save(RuntimeEnvironment.application, uri, text, callback);
         callback.await();
         assertTrue(callback.wasCalled());
         PoemFile poemFile = callback.getPoemFile();
@@ -125,7 +125,7 @@ public class TestPoemFile {
                 throw new IOException("nothing here");
             }
         });
-        PoemFile.open(RuntimeEnvironment.application, mPoemUri, callback);
+        PoemFile.Companion.open(RuntimeEnvironment.application, mPoemUri, callback);
         callback.await();
         PoemFile poemFile = callback.getPoemFile();
         assertTrue(callback.wasCalled());
@@ -141,7 +141,7 @@ public class TestPoemFile {
 
         CountDownPoemFileCallback callback = new CountDownPoemFileCallback();
         Shadows.shadowOf(RuntimeEnvironment.application.getContentResolver()).registerInputStream(mPoemUri, new FileInputStream(mPoemFile));
-        PoemFile.open(RuntimeEnvironment.application, mPoemUri, callback);
+        PoemFile.Companion.open(RuntimeEnvironment.application, mPoemUri, callback);
         callback.await();
         PoemFile poemFile = callback.getPoemFile();
         assertNotNull(poemFile);
@@ -160,7 +160,7 @@ public class TestPoemFile {
         // We need to shadow the webview from tests, otherwise onPageFinished() is never called
         WebView webView = new WebView(RuntimeEnvironment.application);
         ShadowWebView shadowWebView = Shadows.shadowOf(webView);
-        PoemFile.print(RuntimeEnvironment.application, webView, poemFile, callback);
+        PoemFile.Companion.print(RuntimeEnvironment.application, webView, poemFile, callback);
         shadowWebView.getWebViewClient().onPageFinished(webView, "http://example.com");
 
         callback.await();
