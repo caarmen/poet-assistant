@@ -19,6 +19,7 @@
 package ca.rmen.android.poetassistant.main.reader;
 
 import android.print.PrintJob;
+import android.support.annotation.NonNull;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -44,7 +45,7 @@ class CountDownPoemFileCallback implements PoemFileCallback {
     }
 
     @Override
-    public void onPrintJobCreated(PoemFile poemFile, PrintJob printJob) {
+    public void onPrintJobCreated(@NonNull PoemFile poemFile, PrintJob printJob) {
         mLatch.countDown();
         mPoemFile = poemFile;
         mPrintJob = printJob;
