@@ -26,6 +26,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
@@ -48,6 +49,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.TtsState;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
+import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
 import ca.rmen.android.poetassistant.databinding.LiveDataMapping;
 import ca.rmen.android.poetassistant.main.dictionaries.Share;
 
@@ -55,7 +57,8 @@ public class ReaderViewModel extends AndroidViewModel {
     private static final String TAG = Constants.TAG + ReaderViewModel.class.getSimpleName();
 
     class SnackbarText {
-        final @StringRes int stringResId;
+        final @StringRes
+        int stringResId;
         final Object[] params;
 
         SnackbarText(int stringResId, Object... params) {
@@ -68,10 +71,13 @@ public class ReaderViewModel extends AndroidViewModel {
     public final ObservableField<String> poem = new ObservableField<>("");
     public final ObservableInt playButtonDrawable = new ObservableInt();
     public final ObservableBoolean playButtonEnabled = new ObservableBoolean();
+    public final ObservableInt wordCount = new ObservableInt();
+    public final ObservableBoolean wordCountVisible = new ObservableBoolean();
     final MutableLiveData<SnackbarText> snackbarText = new MutableLiveData<>();
     final MutableLiveData<Boolean> ttsError = new MutableLiveData<>();
     final MutableLiveData<PoemFile> poemFile = new MutableLiveData<>();
     final MediatorLiveData<PlayButtonState> playButtonStateLiveData;
+
     @Inject
     Tts mTts;
     private final PoemPrefs mPoemPrefs;
@@ -89,6 +95,7 @@ public class ReaderViewModel extends AndroidViewModel {
                 ttsState -> playButtonStateLiveData.setValue(toPlayButtonState(ttsState, poem.get())));
         playButtonStateLiveData.addSource(LiveDataMapping.fromObservableField(poem),
                 poemText -> playButtonStateLiveData.setValue(toPlayButtonState(mTts.getTtsState(), poemText)));
+        poem.addOnPropertyChangedCallback(mPoemTextChangedCallback);
     }
 
     // begin TTS
@@ -121,6 +128,7 @@ public class ReaderViewModel extends AndroidViewModel {
         final boolean isEnabled;
         @DrawableRes
         final int iconId;
+
         PlayButtonState(boolean isEnabled, int iconId) {
             this.isEnabled = isEnabled;
             this.iconId = iconId;
@@ -291,7 +299,7 @@ public class ReaderViewModel extends AndroidViewModel {
         public void onPrintJobCreated(@NonNull PoemFile poemFile, @Nullable PrintJob printJob) {
             Log.d(TAG, "onPrintJobCreated() called with: poemFile = [" + poemFile + "], printJob = [" + printJob + "]");
             if (printJob != null) {
-                Log.d(TAG, "Print job id = " + printJob.getId() + ", info = " +  printJob.getInfo());
+                Log.d(TAG, "Print job id = " + printJob.getId() + ", info = " + printJob.getInfo());
             }
         }
     };
@@ -322,6 +330,13 @@ public class ReaderViewModel extends AndroidViewModel {
             };
     // end saving/opening files
 
+    @SuppressWarnings("FieldCanBeLocal")
+    private final Observable.OnPropertyChangedCallback mPoemTextChangedCallback =
+            new BindingCallbackAdapter(() -> {
+                int count = WordCounter.INSTANCE.countWords(poem.get());
+                wordCount.set(count);
+                wordCountVisible.set(count > 0);
+            });
 
     @Override
     protected void onCleared() {

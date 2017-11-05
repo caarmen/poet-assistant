@@ -18,13 +18,14 @@
   -->
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <import type="android.view.View"/>
         <variable
             name="viewModel"
-            type="ca.rmen.android.poetassistant.main.reader.ReaderViewModel" />
+            type="ca.rmen.android.poetassistant.main.reader.ReaderViewModel"/>
     </data>
 
     <ScrollView
@@ -50,7 +51,7 @@
                 android:contentDescription="@string/tts_play"
                 android:onClick="@{v -> viewModel.onPlayButtonClicked()}"
                 app:enabled="@{viewModel.playButtonEnabled}"
-                app:srcCompat="@{viewModel.playButtonDrawable}" />
+                app:srcCompat="@{viewModel.playButtonDrawable}"/>
 
             <ca.rmen.android.poetassistant.widget.CABEditText
                 android:id="@+id/tv_text"
@@ -58,10 +59,17 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 app:charSequence="@={viewModel.poemSelection}"
-                android:text="@={viewModel.poem}"
-                android:hint="@string/tts_hint" />
+                android:hint="@string/tts_hint"
+                android:text="@={viewModel.poem}"/>
 
-
+            <TextView
+                android:id="@+id/reader_word_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{@plurals/reader_word_count(viewModel.wordCount, viewModel.wordCount)}"
+                android:textColor="?android:attr/textColorSecondary"
+                android:visibility="@{viewModel.wordCountVisible ? View.VISIBLE: View.GONE}"
+                tools:text="45 words"/>
         </LinearLayout>
     </ScrollView>
 </layout>
