@@ -22,7 +22,9 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -38,19 +40,18 @@ public class ThesaurusLiveDataTest {
         rhymes.addAll(Arrays.asList(
                 "allot", "baht", "blot", "clot", "dot", "hot", "jot", "khat", "knot", "lat", "lot", "lott", "lotte", "montserrat", "mott", "motte", "not", "plot", "polyglot", "pot", "rot", "sadat", "scot", "scott", "shot", "slot", "spot", "squat", "swat", "tot", "trot", "watt", "yacht"
         ));
-        ThesaurusEntry.ThesaurusEntryDetails[] thesaurusEntryDetails = new ThesaurusEntry.ThesaurusEntryDetails[] {
+        List<ThesaurusEntry.ThesaurusEntryDetails> thesaurusEntryDetails = Collections.singletonList(
                 new ThesaurusEntry.ThesaurusEntryDetails(ThesaurusEntry.WordType.NOUN,
-                        new String[]{"garbage", "buncombe", "drivel", "bunk", "rot", "guff", "bunkim"}, new String[0])
-        };
+                        Arrays.asList("garbage", "buncombe", "drivel", "bunk", "rot", "guff", "bunkim"), Collections.emptyList()));
 
-        ThesaurusEntry.ThesaurusEntryDetails[] actual = ThesaurusLiveData.filter(thesaurusEntryDetails, rhymes);
+        List<ThesaurusEntry.ThesaurusEntryDetails> actual = ThesaurusLiveData.filter(thesaurusEntryDetails, rhymes);
         assertNotNull(actual);
-        assertEquals(1, actual.length);
-        assertNotNull(actual[0].antonyms);
-        assertEquals(0, actual[0].antonyms.length);
-        assertNotNull(actual[0].synonyms);
-        assertEquals(1, actual[0].synonyms.length);
-        assertEquals("rot", actual[0].synonyms[0]);
+        assertEquals(1, actual.size());
+        assertNotNull(actual.get(0).antonyms);
+        assertEquals(0, actual.get(0).antonyms.size());
+        assertNotNull(actual.get(0).synonyms);
+        assertEquals(1, actual.get(0).synonyms.size());
+        assertEquals("rot", actual.get(0).synonyms.get(0));
     }
 
     @Test
@@ -59,19 +60,18 @@ public class ThesaurusLiveDataTest {
         rhymes.addAll(Arrays.asList(
                 "former", "informer", "outperformer", "performer", "reformer", "transformer", "warmer"
         ));
-        ThesaurusEntry.ThesaurusEntryDetails[] thesaurusEntryDetails = new ThesaurusEntry.ThesaurusEntryDetails[] {
-                new ThesaurusEntry.ThesaurusEntryDetails(ThesaurusEntry.WordType.NOUN, new String[]{"contestant", "participant"}, new String[0]),
-                new ThesaurusEntry.ThesaurusEntryDetails(ThesaurusEntry.WordType.NOUN, new String[]{"musician", "instrumentalist", "performing artist", "performer"}, new String[0])
-        };
+        List<ThesaurusEntry.ThesaurusEntryDetails> thesaurusEntryDetails = Arrays.asList(
+                new ThesaurusEntry.ThesaurusEntryDetails(ThesaurusEntry.WordType.NOUN, Arrays.asList("contestant", "participant"), Collections.emptyList()),
+                new ThesaurusEntry.ThesaurusEntryDetails(ThesaurusEntry.WordType.NOUN, Arrays.asList("musician", "instrumentalist", "performing artist", "performer"), Collections.emptyList()));
 
-        ThesaurusEntry.ThesaurusEntryDetails[] actual = ThesaurusLiveData.filter(thesaurusEntryDetails, rhymes);
+        List<ThesaurusEntry.ThesaurusEntryDetails> actual = ThesaurusLiveData.filter(thesaurusEntryDetails, rhymes);
         assertNotNull(actual);
-        assertEquals(1, actual.length);
-        assertNotNull(actual[0].antonyms);
-        assertEquals(0, actual[0].antonyms.length);
-        assertNotNull(actual[0].synonyms);
-        assertEquals(1, actual[0].synonyms.length);
-        assertEquals("performer", actual[0].synonyms[0]);
+        assertEquals(1, actual.size());
+        assertNotNull(actual.get(0).antonyms);
+        assertEquals(0, actual.get(0).antonyms.size());
+        assertNotNull(actual.get(0).synonyms);
+        assertEquals(1, actual.get(0).synonyms.size());
+        assertEquals("performer", actual.get(0).synonyms.get(0));
     }
 
     @Test
@@ -80,20 +80,19 @@ public class ThesaurusLiveDataTest {
         rhymes.addAll(Arrays.asList(
                 "buy", "bye", "cai", "chi", "comply", "cry", "csi", "dai", "decry", "defy"
         ));
-        ThesaurusEntry.ThesaurusEntryDetails[] thesaurusEntryDetails = new ThesaurusEntry.ThesaurusEntryDetails[] {
-                new ThesaurusEntry.ThesaurusEntryDetails(ThesaurusEntry.WordType.NOUN, new String[]{"vocalization", "utterance", "laughter"}, new String[0]),
+        List<ThesaurusEntry.ThesaurusEntryDetails> thesaurusEntryDetails = Arrays.asList(
+                new ThesaurusEntry.ThesaurusEntryDetails(ThesaurusEntry.WordType.NOUN, Arrays.asList("vocalization", "utterance", "laughter"), Collections.emptyList()),
                 new ThesaurusEntry.ThesaurusEntryDetails(ThesaurusEntry.WordType.NOUN,
-                        new String[]{"express emotion", "laugh off", "express feelings", "express joy", "express mirth", "laugh at", "laugh away"},
-                        new String[]{"cry"})
-        };
+                        Arrays.asList("express emotion", "laugh off", "express feelings", "express joy", "express mirth", "laugh at", "laugh away"),
+                        Collections.singletonList("cry")));
 
-        ThesaurusEntry.ThesaurusEntryDetails[] actual = ThesaurusLiveData.filter(thesaurusEntryDetails, rhymes);
+        List<ThesaurusEntry.ThesaurusEntryDetails> actual = ThesaurusLiveData.filter(thesaurusEntryDetails, rhymes);
         assertNotNull(actual);
-        assertEquals(1, actual.length);
-        assertNotNull(actual[0].antonyms);
-        assertEquals(1, actual[0].antonyms.length);
-        assertEquals("cry", actual[0].antonyms[0]);
-        assertNotNull(actual[0].synonyms);
-        assertEquals(0, actual[0].synonyms.length);
+        assertEquals(1, actual.size());
+        assertNotNull(actual.get(0).antonyms);
+        assertEquals(1, actual.get(0).antonyms.size());
+        assertEquals("cry", actual.get(0).antonyms.get(0));
+        assertNotNull(actual.get(0).synonyms);
+        assertEquals(0, actual.get(0).synonyms.size());
     }
 }

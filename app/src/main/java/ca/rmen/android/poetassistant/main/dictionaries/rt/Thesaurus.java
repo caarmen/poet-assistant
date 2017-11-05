@@ -96,17 +96,17 @@ public class Thesaurus {
                 List<String> forwardAntonyms = new ArrayList<>();
                 while (cursor.moveToNext()) {
                     ThesaurusEntry.WordType wordType = ThesaurusEntry.WordType.valueOf(cursor.getString(0));
-                    String[] synonyms = new String[0];
-                    String[] antonyms = new String[0];
+                    List<String> synonyms = new ArrayList<>();
+                    List<String> antonyms = new ArrayList<>();
                     if (relationTypes.contains(RelationType.SYNONYM)) {
                         String synonymsList = cursor.getString(1);
                         synonyms = split(synonymsList);
-                        forwardSynonyms.addAll(Arrays.asList(synonyms));
+                        forwardSynonyms.addAll(synonyms);
                     }
                     if (relationTypes.contains(RelationType.ANTONYM)) {
                         String antonymsList = cursor.getString(2);
                         antonyms = split(antonymsList);
-                        forwardAntonyms.addAll(Arrays.asList(antonyms));
+                        forwardAntonyms.addAll(antonyms);
                     }
                     result.add(new ThesaurusEntry.ThesaurusEntryDetails(wordType, synonyms, antonyms));
                 }
@@ -118,13 +118,13 @@ public class Thesaurus {
                         result.addAll(lookupReverseRelatedWords(RelationType.ANTONYM, lookupWord, forwardAntonyms));
                     }
                 }
-                return new ThesaurusEntry(lookupWord, result.toArray(new ThesaurusEntry.ThesaurusEntryDetails[result.size()]));
+                return new ThesaurusEntry(lookupWord, result);
 
             } finally {
                 cursor.close();
             }
         }
-        return new ThesaurusEntry(word, new ThesaurusEntry.ThesaurusEntryDetails[0]);
+        return new ThesaurusEntry(word, Collections.emptyList());
     }
 
     /**
@@ -156,15 +156,15 @@ public class Thesaurus {
         if (cursor != null) {
 
             try {
-                ThesaurusEntry.ThesaurusEntryDetails[] reverseRelatedWords = new ThesaurusEntry.ThesaurusEntryDetails[cursor.getCount()];
+                List<ThesaurusEntry.ThesaurusEntryDetails> reverseRelatedWords = new ArrayList<>();
                 while (cursor.moveToNext()) {
                     String relatedWord = cursor.getString(0);
                     ThesaurusEntry.WordType wordType = ThesaurusEntry.WordType.valueOf(cursor.getString(1));
                     ThesaurusEntry.ThesaurusEntryDetails entryDetails = relationType == RelationType.SYNONYM ?
-                            new ThesaurusEntry.ThesaurusEntryDetails(wordType, new String[]{relatedWord}, new String[0])
-                            : new ThesaurusEntry.ThesaurusEntryDetails(wordType, new String[0], new String[]{relatedWord});
+                            new ThesaurusEntry.ThesaurusEntryDetails(wordType, Collections.singletonList(relatedWord), Collections.emptyList())
+                            : new ThesaurusEntry.ThesaurusEntryDetails(wordType, Collections.emptyList(), Collections.singletonList(relatedWord));
 
-                    reverseRelatedWords[cursor.getPosition()] = entryDetails;
+                    reverseRelatedWords.add(entryDetails);
                 }
                 List<ThesaurusEntry.ThesaurusEntryDetails> result = merge(reverseRelatedWords);
                 Log.v(TAG, "lookupReverseRelatedWords: result = " + result);
@@ -180,11 +180,11 @@ public class Thesaurus {
      * @param entries a list of {@link ThesaurusEntry.ThesaurusEntryDetails} possibly containing multiple items for a given word type.
      * @return a list of one {@link ThesaurusEntry.ThesaurusEntryDetails} per word type.
      */
-    private List<ThesaurusEntry.ThesaurusEntryDetails> merge(ThesaurusEntry.ThesaurusEntryDetails[] entries) {
-        return Observable.fromArray(entries)
+    private List<ThesaurusEntry.ThesaurusEntryDetails> merge(List<ThesaurusEntry.ThesaurusEntryDetails> entries) {
+        return Observable.fromIterable(entries)
                 .groupBy(thesaurusEntryDetails -> thesaurusEntryDetails.wordType)
                 .flatMapSingle(group -> group.reduce(
-                        new ThesaurusEntry.ThesaurusEntryDetails(group.getKey(), new String[0], new String[0]),
+                        new ThesaurusEntry.ThesaurusEntryDetails(group.getKey(), Collections.emptyList(), Collections.emptyList()),
                         (acc, thesaurusEntryDetails) -> new ThesaurusEntry.ThesaurusEntryDetails(acc.wordType,
                                 union(acc.synonyms, thesaurusEntryDetails.synonyms),
                                 union(acc.antonyms, thesaurusEntryDetails.antonyms))))
@@ -192,11 +192,11 @@ public class Thesaurus {
                 .blockingGet();
     }
 
-    private static String[] union(String[] first, String[] second) {
+    private static List<String> union(List<String> first, List<String> second) {
         Set<String> result = new LinkedHashSet<>();
-        result.addAll(Arrays.asList(first));
-        result.addAll(Arrays.asList(second));
-        return result.toArray(new String[result.size()]);
+        result.addAll(first);
+        result.addAll(second);
+        return new ArrayList<>(result);
     }
 
     /**
@@ -204,15 +204,15 @@ public class Thesaurus {
      */
     @NonNull
     Collection<String> getFlatSynonyms(String word, boolean includeReverseLookup) {
-        ThesaurusEntry.ThesaurusEntryDetails[] entries = lookup(word, EnumSet.of(RelationType.SYNONYM), includeReverseLookup).entries;
+        List<ThesaurusEntry.ThesaurusEntryDetails> entries = lookup(word, EnumSet.of(RelationType.SYNONYM), includeReverseLookup).entries;
         return Observable.fromIterable(merge(entries))
-                .flatMap((thesaurusEntryDetails -> Observable.fromArray(thesaurusEntryDetails.synonyms)))
+                .flatMapIterable((thesaurusEntryDetails -> thesaurusEntryDetails.synonyms))
                 .toList()
                 .blockingGet();
     }
 
-    private static String[] split(String string) {
-        if (TextUtils.isEmpty(string)) return new String[0];
-        return string.split(",");
+    private static List<String> split(String string) {
+        if (TextUtils.isEmpty(string)) return Collections.emptyList();
+        return Arrays.asList(string.split(","));
     }
 }
