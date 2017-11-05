@@ -57,6 +57,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withContentDesc
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewActions.longTap;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
@@ -69,6 +70,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 @LargeTest
@@ -157,6 +159,18 @@ public class PoemTest {
         assertPopupVisible("rhymer");
         assertPopupVisible("thesaurus");
         assertPopupVisible("dictionary");
+    }
+
+    @Test
+    public void testWordCount() {
+        swipeViewPagerLeft(3);
+        onView(withId(R.id.reader_word_count)).check(matches(not(isDisplayed())));
+        typePoem("Here is some text");
+        onView(withId(R.id.reader_word_count))
+                .check(matches(isDisplayed()))
+                .check(matches(withText(mActivityTestRule.getActivity().getResources().getQuantityString(R.plurals.reader_word_count, 4, 4))));
+        clearPoem();
+        onView(withId(R.id.reader_word_count)).check(matches(not(isDisplayed())));
     }
 
     private void assertPopupVisible(String label) {

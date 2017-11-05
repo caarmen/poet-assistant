@@ -232,6 +232,11 @@
     <string name="tts_error_open_system_settings">Voice settings</string>
     <string name="tts_error_open_app_settings">Settings</string>
 
+    <plurals name="reader_word_count">
+        <item quantity="one">%s word</item>
+        <item quantity="other">%s words</item>
+    </plurals>
+
     <string name="print_default_title">Poet Assistant poem</string>
     <string name="print_preview_html" translatable="false">
 <![CDATA[
