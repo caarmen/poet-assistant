@@ -24,7 +24,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -53,7 +52,7 @@ public class DictionaryLiveData extends ResultListLiveData<ResultListData<Dictio
         List<DictionaryEntry.DictionaryEntryDetails> result = new ArrayList<>();
         if (TextUtils.isEmpty(mQuery)) return new ResultListData<>(mQuery, result);
         DictionaryEntry entry = mDictionary.lookup(mQuery);
-        Collections.addAll(result, entry.details);
+        result.addAll(entry.details);
         return new ResultListData<>(entry.word, result);
     }
 

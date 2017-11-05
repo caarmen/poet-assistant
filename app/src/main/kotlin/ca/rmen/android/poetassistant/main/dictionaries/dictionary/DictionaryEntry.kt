@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,24 +17,10 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.dictionary;
+package ca.rmen.android.poetassistant.main.dictionaries.dictionary
 
-public class DictionaryEntry {
-    public final String word;
-    public final DictionaryEntryDetails[] details;
-
-    public DictionaryEntry(String word, DictionaryEntryDetails[] details) {
-        this.word = word;
-        this.details = details;
-    }
-
-    public static class DictionaryEntryDetails {
-        public final String partOfSpeech;
-        public final String definition;
-
-        public DictionaryEntryDetails(String partOfSpeech, String definition) {
-            this.partOfSpeech = partOfSpeech;
-            this.definition = definition;
-        }
-    }
+data class DictionaryEntry(@JvmField val word: String, @JvmField val details: List<DictionaryEntryDetails>) {
+    data class DictionaryEntryDetails(@JvmField val partOfSpeech: String, @JvmField val definition: String)
 }
+
+
