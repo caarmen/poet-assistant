@@ -42,24 +42,6 @@ final class Voices {
     private static final String TAG = Constants.TAG + Voices.class.getSimpleName();
     private final Context mContext;
 
-    static class TtsVoice {
-        public final String id;
-        public final CharSequence name;
-
-        private TtsVoice(String id, CharSequence name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return "TtsVoice{" +
-                    "id='" + id + '\'' +
-                    ", name='" + name + '\'' +
-                    '}';
-        }
-    }
-
     Voices(Context context) {
         mContext = context;
     }

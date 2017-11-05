@@ -67,7 +67,7 @@ public class VoicePreference extends ListPreference {
     void loadVoices(Context context) {
         TextToSpeech tts = mTts.getTextToSpeech();
         if (tts != null) {
-            Observable<Voices.TtsVoice> voices = new Voices(context).getVoices(tts);
+            Observable<TtsVoice> voices = new Voices(context).getVoices(tts);
             voices.map(voice -> voice.id)
                     .toList()
                     .subscribe(voiceIds -> setEntryValues(voiceIds.toArray(new CharSequence[voiceIds.size()])));
