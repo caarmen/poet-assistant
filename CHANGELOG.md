@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.24.0  *(2017-11-06)*
+--------------------
+* Add word and character count.
+* Migrate data classes to Kotlin.
+
 1.23.0  *(2017-11-03)*
 --------------------
 * Added setting to include reverse lookups in thesaurus searches.
