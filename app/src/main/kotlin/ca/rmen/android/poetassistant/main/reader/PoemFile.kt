@@ -65,7 +65,7 @@ data class PoemFile(@JvmField val uri: Uri?, @JvmField val name: String?, @JvmFi
             return PoemFile(uri, displayName, text)
         }
 
-        fun save(context: Context, uri: Uri, text: String, callback: PoemFileCallback) {
+        fun save(context: Context, uri: Uri?, text: String, callback: PoemFileCallback) {
             Log.d(TAG, "save: uri=$uri, text=$text, callback=$callback")
             Single.fromCallable { savePoemFile(context, uri, text) }
                     .doOnError({ throwable -> Log.v(TAG, "Couldn't save file", throwable) })
@@ -76,7 +76,7 @@ data class PoemFile(@JvmField val uri: Uri?, @JvmField val name: String?, @JvmFi
         }
 
         @WorkerThread
-        private fun savePoemFile(context: Context, uri: Uri, text: String): PoemFile {
+        private fun savePoemFile(context: Context, uri: Uri?, text: String): PoemFile {
             val outputStream = context.contentResolver.openOutputStream(uri, "w") ?: throw IOException("Couldn't open OutputStream to uri " + uri)
             val writer = BufferedWriter(OutputStreamWriter(outputStream))
             writer.use {
@@ -155,7 +155,7 @@ data class PoemFile(@JvmField val uri: Uri?, @JvmField val name: String?, @JvmFi
         /**
          * Generate a suggested filename based on the first few words of the poem text.
          */
-        fun readDisplayName(context: Context, uri: Uri): String? {
+        fun readDisplayName(context: Context, uri: Uri?): String? {
             val cursor = context.contentResolver.query(uri, null, null, null, null)
             cursor?.use {
                 if (cursor.moveToFirst()) {
