@@ -35,5 +35,10 @@ object WordCounter {
                 .filterNot({ TextUtils.isEmpty(it) })
         return tokens.size
     }
+
+    fun countCharacters(text: String?) : Int {
+        if (TextUtils.isEmpty(text)) return 0
+        return text!!.length
+    }
 }
 

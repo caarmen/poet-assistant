@@ -131,7 +131,10 @@ public class ResultListHeaderFragment extends Fragment
         }
 
         public void onHelpButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
-            getChildFragmentManager().beginTransaction().add(new HelpDialogFragment(), DIALOG_TAG).commit();
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .add(HelpDialogFragment.create(R.string.pattern_help_title, R.string.pattern_help_message), DIALOG_TAG)
+                    .commit();
         }
     }
 }
