@@ -66,7 +66,6 @@ public class ReaderViewModel extends AndroidViewModel {
         }
     }
 
-    public final ObservableField<CharSequence> poemSelection = new ObservableField<>("");
     public final ObservableField<String> poem = new ObservableField<>("");
     public final ObservableInt playButtonDrawable = new ObservableInt();
     public final ObservableBoolean playButtonEnabled = new ObservableBoolean();
@@ -142,12 +141,12 @@ public class ReaderViewModel extends AndroidViewModel {
         }
     }
 
-    public void onPlayButtonClicked() {
+    void play(CharSequence charSequence) {
         Log.v(TAG, "Play button clicked");
         if (mTts.isSpeaking()) {
             mTts.stop();
         } else if (mTts.getTtsState() != null && mTts.getTtsState().currentStatus == TtsState.TtsStatus.INITIALIZED) {
-            speak();
+            speakSelectedText(charSequence);
         } else {
             ttsError.setValue(true);
             ttsError.setValue(false);
@@ -155,10 +154,9 @@ public class ReaderViewModel extends AndroidViewModel {
     }
 
     /**
-     * Read the text in our text view.
+     * Read the selected text in our text view.
      */
-    private void speak() {
-        CharSequence text = poemSelection.get();
+    private void speakSelectedText(CharSequence text) {
         if (TextUtils.isEmpty(text)) {
             mTts.speak(poem.get());
         } else {

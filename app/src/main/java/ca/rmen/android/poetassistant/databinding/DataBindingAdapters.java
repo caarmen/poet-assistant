@@ -20,14 +20,9 @@
 package ca.rmen.android.poetassistant.databinding;
 
 import android.databinding.BindingAdapter;
-import android.databinding.InverseBindingAdapter;
-import android.databinding.InverseBindingListener;
 import android.support.annotation.DrawableRes;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 @SuppressWarnings("WeakerAccess")
 final class DataBindingAdapters {
@@ -40,22 +35,4 @@ final class DataBindingAdapters {
     public static void setEnabled(View view, boolean enabled) {
         view.setEnabled(enabled);
     }
-
-    @BindingAdapter("charSequence")
-    public static void setCharSequence(TextView textView, CharSequence charSequence) {
-        if (!TextUtils.equals(textView.getText(), charSequence) || !textView.getText().getClass().equals(charSequence.getClass())) {
-            textView.setText(charSequence);
-        }
-    }
-
-    @BindingAdapter("charSequenceChanged")
-    public static void setCharSequenceChanged(EditText textView, InverseBindingListener listener) {
-        textView.setOnClickListener(view -> listener.onChange());
-    }
-
-    @InverseBindingAdapter(attribute = "charSequence", event = "charSequenceChanged")
-    public static CharSequence getCharSequence(TextView textView) {
-        return textView.getText();
-    }
-
 }
