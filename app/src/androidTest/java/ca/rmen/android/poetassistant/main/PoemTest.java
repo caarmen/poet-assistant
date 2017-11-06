@@ -41,6 +41,7 @@ import java.io.File;
 import java.util.Locale;
 
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.reader.WordCounter;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
 import static android.support.test.espresso.Espresso.closeSoftKeyboard;
@@ -58,6 +59,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomViewActions.longTap;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.clickDialogPositiveButton;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
@@ -165,10 +167,17 @@ public class PoemTest {
     public void testWordCount() {
         swipeViewPagerLeft(3);
         onView(withId(R.id.reader_word_count)).check(matches(not(isDisplayed())));
-        typePoem("Here is some text");
+        String poemText = "Here is some text";
+        typePoem(poemText);
         onView(withId(R.id.reader_word_count))
                 .check(matches(isDisplayed()))
-                .check(matches(withText(mActivityTestRule.getActivity().getResources().getQuantityString(R.plurals.reader_word_count, 4, 4))));
+                .check(matches(withText(WordCounter.INSTANCE.getWordCountText(mActivityTestRule.getActivity(), poemText))))
+                .perform(click());
+        onView(withText(R.string.word_count_help_title))
+                .check(matches(isDisplayed()));
+        clickDialogPositiveButton(android.R.string.ok);
+        checkTitleStripOrTab(mActivityTestRule.getActivity(), R.string.tab_reader);
+
         clearPoem();
         onView(withId(R.id.reader_word_count)).check(matches(not(isDisplayed())));
     }

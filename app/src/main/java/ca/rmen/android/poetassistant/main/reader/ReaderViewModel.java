@@ -26,7 +26,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.databinding.Observable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
@@ -72,7 +71,6 @@ public class ReaderViewModel extends AndroidViewModel {
     public final ObservableInt playButtonDrawable = new ObservableInt();
     public final ObservableBoolean playButtonEnabled = new ObservableBoolean();
     public final ObservableField<String> wordCountText = new ObservableField<>();
-    public final ObservableBoolean wordCountVisible = new ObservableBoolean();
     final MutableLiveData<SnackbarText> snackbarText = new MutableLiveData<>();
     final MutableLiveData<Boolean> ttsError = new MutableLiveData<>();
     final MutableLiveData<PoemFile> poemFile = new MutableLiveData<>();
@@ -95,7 +93,8 @@ public class ReaderViewModel extends AndroidViewModel {
                 ttsState -> playButtonStateLiveData.setValue(toPlayButtonState(ttsState, poem.get())));
         playButtonStateLiveData.addSource(LiveDataMapping.fromObservableField(poem),
                 poemText -> playButtonStateLiveData.setValue(toPlayButtonState(mTts.getTtsState(), poemText)));
-        poem.addOnPropertyChangedCallback(mPoemTextChangedCallback);
+        poem.addOnPropertyChangedCallback(
+                new BindingCallbackAdapter(() -> wordCountText.set(WordCounter.INSTANCE.getWordCountText(getApplication(), poem.get()))));
     }
 
     // begin TTS
@@ -329,18 +328,6 @@ public class ReaderViewModel extends AndroidViewModel {
                 }
             };
     // end saving/opening files
-
-    @SuppressWarnings("FieldCanBeLocal")
-    private final Observable.OnPropertyChangedCallback mPoemTextChangedCallback =
-            new BindingCallbackAdapter(() -> {
-                int words = WordCounter.INSTANCE.countWords(poem.get());
-                int characters = WordCounter.INSTANCE.countCharacters(poem.get());
-                String text = getApplication().getString(R.string.reader_word_char_count,
-                        getApplication().getResources().getQuantityString(R.plurals.reader_word_count, words, words),
-                        getApplication().getResources().getQuantityString(R.plurals.reader_char_count, characters, characters));
-                wordCountText.set(text);
-                wordCountVisible.set(words > 0);
-            });
 
     @Override
     protected void onCleared() {
