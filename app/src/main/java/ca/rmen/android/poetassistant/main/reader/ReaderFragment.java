@@ -129,7 +129,7 @@ public class ReaderFragment extends Fragment implements
         }
     }
 
-    private void prepareMenuItemsRequiringEnteredText(Menu menu, @IdRes int ...menuIds) {
+    private void prepareMenuItemsRequiringEnteredText(Menu menu, @IdRes int... menuIds) {
         boolean hasEnteredText = !TextUtils.isEmpty(mViewModel.poem.get());
         for (@IdRes int menuId : menuIds) {
             MenuItem menuItem = menu.findItem(menuId);
@@ -279,6 +279,10 @@ public class ReaderFragment extends Fragment implements
     };
 
     public class ButtonListener {
+
+        public void onPlayButtonClicked() {
+            mViewModel.play(mBinding.tvText.getText());
+        }
 
         public void onWordCountClicked() {
             getChildFragmentManager()
