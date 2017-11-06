@@ -19,18 +19,55 @@
 
 package ca.rmen.android.poetassistant.databinding;
 
+import android.arch.lifecycle.DefaultLifecycleObserver;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.databinding.ObservableField;
+import android.support.annotation.NonNull;
+
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 
 public final class LiveDataMapping {
     private LiveDataMapping() {
         // prevent instantiation
     }
 
-    public static LiveData<String> fromObservableField(ObservableField<String>observableField) {
+    public static LiveData<String> fromObservableField(ObservableField<String> observableField) {
         MutableLiveData<String> liveData = new MutableLiveData<>();
         observableField.addOnPropertyChangedCallback(new BindingCallbackAdapter(() -> liveData.setValue(observableField.get())));
         return liveData;
+    }
+
+    /**
+     * Observe the given LiveData source, but only be notified per the given debounce timeout.
+     */
+    public static <T> void debounceObserve(LiveData<T> source, LifecycleOwner owner, Observer<T> liveDataObserver,
+                                           long timeout, TimeUnit timeUnit) {
+        // Create an Rx observer which will notify the given LiveData observer of the source changes,
+        // but subject to the debounce constraints.
+        Disposable rxObservable = Observable.create((ObservableEmitter<T> emitter) -> {
+            Observer<T> debounceLiveDataObserver = emitter::onNext;
+            source.observe(owner, debounceLiveDataObserver);
+            emitter.setCancellable(() -> source.removeObserver(debounceLiveDataObserver));
+        })
+                .debounce(timeout, timeUnit)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(liveDataObserver::onChanged);
+
+        // When the activity is destroyed, we have to dispose of our Rx observer
+        owner.getLifecycle().addObserver(new DefaultLifecycleObserver() {
+            @Override
+            public void onDestroy(@NonNull LifecycleOwner owner) {
+                rxObservable.dispose();
+                owner.getLifecycle().removeObserver(this);
+            }
+        });
     }
 }

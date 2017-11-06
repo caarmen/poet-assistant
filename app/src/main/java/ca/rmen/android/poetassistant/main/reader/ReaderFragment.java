@@ -41,10 +41,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.concurrent.TimeUnit;
+
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.compat.HtmlCompat;
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding;
+import ca.rmen.android.poetassistant.databinding.LiveDataMapping;
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper;
 import ca.rmen.android.poetassistant.main.TextPopupMenu;
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
@@ -104,7 +107,7 @@ public class ReaderFragment extends Fragment implements
         mBinding.tvText.setImeListener(() -> AppBarLayoutHelper.forceExpandAppBarLayout(getActivity()));
         DebounceTextWatcher.observe(mBinding.tvText).subscribe(text -> mViewModel.updatePoemText());
         TextPopupMenu.addSelectionPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
-        mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver);
+        LiveDataMapping.debounceObserve(mViewModel.playButtonStateLiveData, this, mPlayButtonStateObserver, 500, TimeUnit.MILLISECONDS);
         return mBinding.getRoot();
     }
 
