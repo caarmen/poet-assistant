@@ -85,7 +85,7 @@
                 android:text="@{viewModel.wordCountText}"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="12sp"
-                android:visibility="@{viewModel.wordCountVisible ? View.VISIBLE: View.GONE}"
+                android:visibility="@{viewModel.wordCountText != null? View.VISIBLE: View.GONE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="45 words, 300 characters"/>
         </android.support.constraint.ConstraintLayout>

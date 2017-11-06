@@ -18,7 +18,9 @@
  */
 package ca.rmen.android.poetassistant.main.reader
 
+import android.content.Context
 import android.text.TextUtils
+import ca.rmen.android.poetassistant.R
 
 object WordCounter {
     // The following will each be considered as one word: good-hearted, don't, variable_name
@@ -39,6 +41,15 @@ object WordCounter {
     fun countCharacters(text: String?) : Int {
         if (TextUtils.isEmpty(text)) return 0
         return text!!.length
+    }
+
+    fun getWordCountText(context: Context, text: String?): String? {
+        val words = countWords(text)
+        val characters = countCharacters(text)
+        if (words == 0) return null
+        return context.getString(R.string.reader_word_char_count,
+                context.resources.getQuantityString(R.plurals.reader_word_count, words, words),
+                context.resources.getQuantityString(R.plurals.reader_char_count, characters, characters))
     }
 }
 
