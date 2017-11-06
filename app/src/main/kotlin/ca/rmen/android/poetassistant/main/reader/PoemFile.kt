@@ -157,7 +157,11 @@ data class PoemFile(@JvmField val uri: Uri?, @JvmField val name: String?, @JvmFi
          */
         fun readDisplayName(context: Context, uri: Uri): String? {
             val cursor = context.contentResolver.query(uri, null, null, null, null)
-            cursor?.use { return cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)) }
+            cursor?.use {
+                if (cursor.moveToFirst()) {
+                    return cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                }
+            }
             return null
         }
     }
