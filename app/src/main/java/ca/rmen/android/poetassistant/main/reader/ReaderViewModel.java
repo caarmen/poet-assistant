@@ -71,7 +71,7 @@ public class ReaderViewModel extends AndroidViewModel {
     public final ObservableField<String> poem = new ObservableField<>("");
     public final ObservableInt playButtonDrawable = new ObservableInt();
     public final ObservableBoolean playButtonEnabled = new ObservableBoolean();
-    public final ObservableInt wordCount = new ObservableInt();
+    public final ObservableField<String> wordCountText = new ObservableField<>();
     public final ObservableBoolean wordCountVisible = new ObservableBoolean();
     final MutableLiveData<SnackbarText> snackbarText = new MutableLiveData<>();
     final MutableLiveData<Boolean> ttsError = new MutableLiveData<>();
@@ -333,9 +333,13 @@ public class ReaderViewModel extends AndroidViewModel {
     @SuppressWarnings("FieldCanBeLocal")
     private final Observable.OnPropertyChangedCallback mPoemTextChangedCallback =
             new BindingCallbackAdapter(() -> {
-                int count = WordCounter.INSTANCE.countWords(poem.get());
-                wordCount.set(count);
-                wordCountVisible.set(count > 0);
+                int words = WordCounter.INSTANCE.countWords(poem.get());
+                int characters = WordCounter.INSTANCE.countCharacters(poem.get());
+                String text = getApplication().getString(R.string.reader_word_char_count,
+                        getApplication().getResources().getQuantityString(R.plurals.reader_word_count, words, words),
+                        getApplication().getResources().getQuantityString(R.plurals.reader_char_count, characters, characters));
+                wordCountText.set(text);
+                wordCountVisible.set(words > 0);
             });
 
     @Override

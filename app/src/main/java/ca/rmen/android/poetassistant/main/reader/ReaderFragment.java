@@ -48,6 +48,7 @@ import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding;
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper;
 import ca.rmen.android.poetassistant.main.TextPopupMenu;
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment;
+import ca.rmen.android.poetassistant.main.dictionaries.HelpDialogFragment;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 import ca.rmen.android.poetassistant.widget.DebounceTextWatcher;
@@ -94,6 +95,7 @@ public class ReaderFragment extends Fragment implements
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView() called with: " + "inflater = [" + inflater + "], container = [" + container + "], savedInstanceState = [" + savedInstanceState + "]");
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false);
+        mBinding.setButtonListener(new ButtonListener());
         mViewModel = ViewModelProviders.of(this).get(ReaderViewModel.class);
         mBinding.setViewModel(mViewModel);
         mViewModel.snackbarText.observe(this, mSnackbarCallback);
@@ -275,6 +277,16 @@ public class ReaderFragment extends Fragment implements
         // return false, allowing us to display a "play" button.
         mHandler.postDelayed(this::updatePlayButton, 5000);
     };
+
+    public class ButtonListener {
+
+        public void onWordCountClicked() {
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .add(HelpDialogFragment.create(R.string.word_count_help_title, R.string.word_count_help_message), DIALOG_TAG)
+                    .commit();
+        }
+    }
 
 }
 

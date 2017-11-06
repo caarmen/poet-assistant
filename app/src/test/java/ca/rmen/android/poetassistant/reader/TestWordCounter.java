@@ -33,21 +33,28 @@ public class TestWordCounter {
     @Test
     public void testEmpty() {
         assertEquals(0, WordCounter.INSTANCE.countWords(""));
+        assertEquals(0, WordCounter.INSTANCE.countCharacters(""));
     }
 
     @Test
     public void testSimpleSentence() {
-        assertEquals(3, WordCounter.INSTANCE.countWords("See spot run."));
+        String text = "See spot run.";
+        assertEquals(3, WordCounter.INSTANCE.countWords(text));
+        assertEquals(13, WordCounter.INSTANCE.countCharacters(text));
     }
 
     @Test
     public void testApostrophe() {
-        assertEquals(3, WordCounter.INSTANCE.countWords("I can't even"));
+        String text = "I can't even";
+        assertEquals(3, WordCounter.INSTANCE.countWords(text));
+        assertEquals(12, WordCounter.INSTANCE.countCharacters(text));
     }
 
     @Test
     public void testTaleOfTwoCities() {
-        assertEquals(59, WordCounter.INSTANCE.countWords("we had everything before us, we had nothing before us, we were all going direct to Heaven, we were all going direct the other way— in short, the period was so far like the present period, that some of its noisiest authorities insisted on its being received, for good or for evil, in the superlative degree of comparison only."));
+        String text = "we had everything before us, we had nothing before us, we were all going direct to Heaven, we were all going direct the other way— in short, the period was so far like the present period, that some of its noisiest authorities insisted on its being received, for good or for evil, in the superlative degree of comparison only.";
+        assertEquals(59, WordCounter.INSTANCE.countWords(text));
+        assertEquals(325, WordCounter.INSTANCE.countCharacters(text));
     }
 
     @Test
@@ -58,6 +65,7 @@ public class TestWordCounter {
                 "“No, you didn’t give me no letter.”\n" +
                 "“Well, I must a forgot it.”";
         assertEquals(30, WordCounter.INSTANCE.countWords(text));
+        assertEquals(157, WordCounter.INSTANCE.countCharacters(text));
     }
 
     @Test
@@ -65,6 +73,7 @@ public class TestWordCounter {
         String text = "The count came waddling in to see his wife with a rather guilty look as usual.\n" +
                 "“Well, little countess? What a sauté of game au madère we are to have, my dear! I tasted it. The thousand rubles I paid for Tarás were not ill-spent. He is worth it!”";
         assertEquals(49, WordCounter.INSTANCE.countWords(text));
+        assertEquals(245, WordCounter.INSTANCE.countCharacters(text));
     }
 
     @Test
@@ -74,12 +83,14 @@ public class TestWordCounter {
                 "   And all in war with Time for love of you,\n" +
                 "   As he takes from you, I engraft you new.\n";
         assertEquals(34, WordCounter.INSTANCE.countWords(text));
+        assertEquals(175, WordCounter.INSTANCE.countCharacters(text));
     }
 
     @Test
     public void testDracula() {
         String text = "4 May.—I found that my landlord had got a letter from the Count";
         assertEquals(14, WordCounter.INSTANCE.countWords(text));
+        assertEquals(63, WordCounter.INSTANCE.countCharacters(text));
     }
 
     @Test
@@ -88,15 +99,20 @@ public class TestWordCounter {
                 "\n" +
                 "Lane.  Yes, sir.  [Hands them on a salver.]";
         assertEquals(26, WordCounter.INSTANCE.countWords(text));
+        assertEquals(154, WordCounter.INSTANCE.countCharacters(text));
     }
 
     @Test
     public void testDate1() {
-        assertEquals(9, WordCounter.INSTANCE.countWords("On the 5th of November, I wrote this test."));
+        String text = "On the 5th of November, I wrote this test.";
+        assertEquals(9, WordCounter.INSTANCE.countWords(text));
+        assertEquals(42, WordCounter.INSTANCE.countCharacters(text));
     }
 
     @Test
     public void testDate2() {
-        assertEquals(8, WordCounter.INSTANCE.countWords("On 11/5/2017, I wrote this test."));
+        String text = "On 11/5/2017, I wrote this test.";
+        assertEquals(8, WordCounter.INSTANCE.countWords(text));
+        assertEquals(32, WordCounter.INSTANCE.countCharacters(text));
     }
 }

@@ -23,13 +23,13 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.compat.HtmlCompat;
-import ca.rmen.android.poetassistant.R;
 
 
 /**
@@ -38,7 +38,18 @@ import ca.rmen.android.poetassistant.R;
 public class HelpDialogFragment extends DialogFragment {
 
     private static final String TAG = Constants.TAG + HelpDialogFragment.class.getSimpleName();
+    private static final String EXTRA_TITLE = "extra_title";
+    private static final String EXTRA_MESSAGE = "extra_message";
 
+
+    public static HelpDialogFragment create(@StringRes int titleId, @StringRes int messageId) {
+        HelpDialogFragment fragment = new HelpDialogFragment();
+        Bundle arguments = new Bundle(2);
+        arguments.putInt(EXTRA_TITLE, titleId);
+        arguments.putInt(EXTRA_MESSAGE, messageId);
+        fragment.setArguments(arguments);
+        return fragment;
+    }
     /**
      * @return a Dialog with a title, message and ok button.
      */
@@ -47,16 +58,17 @@ public class HelpDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Log.v(TAG, "onCreateDialog: savedInstanceState = " + savedInstanceState);
         Context context = getContext();
-        if (context != null) {
-            // For now, we only show help about pattern searching
+        Bundle arguments = getArguments();
+        if (context != null && arguments != null) {
+            @StringRes int titleId = arguments.getInt(EXTRA_TITLE);
+            @StringRes int messageId = arguments.getInt(EXTRA_MESSAGE);
             return new AlertDialog.Builder(context)
-                    .setTitle(context.getString(R.string.pattern_help_title))
-                    .setMessage(HtmlCompat.fromHtml(context.getString(R.string.pattern_help_message)))
+                    .setTitle(context.getString(titleId))
+                    .setMessage(HtmlCompat.fromHtml(context.getString(messageId)))
                     .setPositiveButton(android.R.string.ok, null)
                     .create();
         } else {
             return super.onCreateDialog(savedInstanceState);
         }
     }
-
 }

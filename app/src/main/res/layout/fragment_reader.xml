@@ -26,6 +26,9 @@
         <variable
             name="viewModel"
             type="ca.rmen.android.poetassistant.main.reader.ReaderViewModel"/>
+        <variable
+            name="buttonListener"
+            type="ca.rmen.android.poetassistant.main.reader.ReaderFragment.ButtonListener" />
     </data>
 
     <ScrollView
@@ -63,11 +66,16 @@
                 android:text="@={viewModel.poem}"/>
 
             <TextView
+                android:drawableLeft="@drawable/btn_help"
+                android:drawableStart="@drawable/btn_help"
+                android:gravity="center_vertical"
                 android:id="@+id/reader_word_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{@plurals/reader_word_count(viewModel.wordCount, viewModel.wordCount)}"
+                android:layout_gravity="bottom"
+                android:text="@{viewModel.wordCountText}"
                 android:textColor="?android:attr/textColorSecondary"
+                android:onClick="@{v -> buttonListener.onWordCountClicked()}"
                 android:visibility="@{viewModel.wordCountVisible ? View.VISIBLE: View.GONE}"
                 tools:text="45 words"/>
         </LinearLayout>
