@@ -173,6 +173,7 @@ dependencies {
     implementation 'com.android.support:design:27.0.0'
     implementation 'com.android.support:preference-v7:27.0.0'
     implementation 'com.android.support:preference-v14:27.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'ca.rmen:rhymer:1.2.0'
     implementation 'ca.rmen:porter-stemmer:1.0.0'
     implementation 'org.jraf:prefs:1.2.2'

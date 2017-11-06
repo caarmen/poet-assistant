@@ -48,6 +48,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.TtsState;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
+import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter;
 import ca.rmen.android.poetassistant.databinding.LiveDataMapping;
 import ca.rmen.android.poetassistant.main.dictionaries.Share;
 
@@ -55,7 +56,8 @@ public class ReaderViewModel extends AndroidViewModel {
     private static final String TAG = Constants.TAG + ReaderViewModel.class.getSimpleName();
 
     class SnackbarText {
-        final @StringRes int stringResId;
+        final @StringRes
+        int stringResId;
         final Object[] params;
 
         SnackbarText(int stringResId, Object... params) {
@@ -64,14 +66,15 @@ public class ReaderViewModel extends AndroidViewModel {
         }
     }
 
-    public final ObservableField<CharSequence> poemSelection = new ObservableField<>("");
     public final ObservableField<String> poem = new ObservableField<>("");
     public final ObservableInt playButtonDrawable = new ObservableInt();
     public final ObservableBoolean playButtonEnabled = new ObservableBoolean();
+    public final ObservableField<String> wordCountText = new ObservableField<>();
     final MutableLiveData<SnackbarText> snackbarText = new MutableLiveData<>();
     final MutableLiveData<Boolean> ttsError = new MutableLiveData<>();
     final MutableLiveData<PoemFile> poemFile = new MutableLiveData<>();
     final MediatorLiveData<PlayButtonState> playButtonStateLiveData;
+
     @Inject
     Tts mTts;
     private final PoemPrefs mPoemPrefs;
@@ -89,6 +92,8 @@ public class ReaderViewModel extends AndroidViewModel {
                 ttsState -> playButtonStateLiveData.setValue(toPlayButtonState(ttsState, poem.get())));
         playButtonStateLiveData.addSource(LiveDataMapping.fromObservableField(poem),
                 poemText -> playButtonStateLiveData.setValue(toPlayButtonState(mTts.getTtsState(), poemText)));
+        poem.addOnPropertyChangedCallback(
+                new BindingCallbackAdapter(() -> wordCountText.set(WordCounter.INSTANCE.getWordCountText(getApplication(), poem.get()))));
     }
 
     // begin TTS
@@ -121,6 +126,7 @@ public class ReaderViewModel extends AndroidViewModel {
         final boolean isEnabled;
         @DrawableRes
         final int iconId;
+
         PlayButtonState(boolean isEnabled, int iconId) {
             this.isEnabled = isEnabled;
             this.iconId = iconId;
@@ -135,12 +141,12 @@ public class ReaderViewModel extends AndroidViewModel {
         }
     }
 
-    public void onPlayButtonClicked() {
+    void play(CharSequence charSequence) {
         Log.v(TAG, "Play button clicked");
         if (mTts.isSpeaking()) {
             mTts.stop();
         } else if (mTts.getTtsState() != null && mTts.getTtsState().currentStatus == TtsState.TtsStatus.INITIALIZED) {
-            speak();
+            speakSelectedText(charSequence);
         } else {
             ttsError.setValue(true);
             ttsError.setValue(false);
@@ -148,10 +154,9 @@ public class ReaderViewModel extends AndroidViewModel {
     }
 
     /**
-     * Read the text in our text view.
+     * Read the selected text in our text view.
      */
-    private void speak() {
-        CharSequence text = poemSelection.get();
+    private void speakSelectedText(CharSequence text) {
         if (TextUtils.isEmpty(text)) {
             mTts.speak(poem.get());
         } else {
@@ -291,7 +296,7 @@ public class ReaderViewModel extends AndroidViewModel {
         public void onPrintJobCreated(@NonNull PoemFile poemFile, @Nullable PrintJob printJob) {
             Log.d(TAG, "onPrintJobCreated() called with: poemFile = [" + poemFile + "], printJob = [" + printJob + "]");
             if (printJob != null) {
-                Log.d(TAG, "Print job id = " + printJob.getId() + ", info = " +  printJob.getInfo());
+                Log.d(TAG, "Print job id = " + printJob.getId() + ", info = " + printJob.getInfo());
             }
         }
     };
@@ -321,7 +326,6 @@ public class ReaderViewModel extends AndroidViewModel {
                 }
             };
     // end saving/opening files
-
 
     @Override
     protected void onCleared() {
