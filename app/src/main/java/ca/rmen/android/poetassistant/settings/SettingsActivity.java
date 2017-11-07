@@ -207,7 +207,7 @@ public class SettingsActivity extends AppCompatActivity {
         private void setOnPreferenceClickListener(Preference preference, Runnable runnable) {
             preference.setOnPreferenceClickListener(pref -> {
                 runnable.run();
-                return true;
+                return false;
             });
         }
 
