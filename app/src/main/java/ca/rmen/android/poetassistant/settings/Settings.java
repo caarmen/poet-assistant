@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.NotificationCompat;
 
 import org.jraf.android.prefs.DefaultBoolean;
@@ -63,7 +64,8 @@ public class Settings {
     private static final int VOICE_SPEED_NORMAL = 100;
     @SuppressWarnings("unused")
     private static final int VOICE_PITCH_NORMAL = 100;
-    static final String PREF_SYSTEM_TTS_SETTINGS = "PREF_SYSTEM_TTS_SETTINGS";
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public static final String PREF_SYSTEM_TTS_SETTINGS = "PREF_SYSTEM_TTS_SETTINGS";
     static final String PREF_VOICE_PREVIEW = "PREF_VOICE_PREVIEW";
     static final String PREF_THEME = "PREF_THEME";
     static final String PREF_SELECTION_LOOKUP = "PREF_SELECTION_LOOKUP";

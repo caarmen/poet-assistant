@@ -29,6 +29,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -69,7 +70,8 @@ public class SettingsActivity extends AppCompatActivity {
         private static final int ACTION_EXPORT_FAVORITES = 1;
         private static final int ACTION_IMPORT_FAVORITES = 2;
         private static final int ACTION_CLEAR_SEARCH_HISTORY = 3;
-        private static final String PREF_CATEGORY_VOICE = "PREF_CATEGORY_VOICE";
+        @VisibleForTesting
+        public static final String PREF_CATEGORY_VOICE = "PREF_CATEGORY_VOICE";
         private static final String PREF_CATEGORY_NOTIFICATIONS = "PREF_CATEGORY_NOTIFICATIONS";
         private static final String PREF_CATEGORY_USER_DATA = "PREF_CATEGORY_USER_DATA";
         private static final String PREF_EXPORT_FAVORITES = "PREF_EXPORT_FAVORITES";
