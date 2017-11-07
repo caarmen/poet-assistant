@@ -5,6 +5,7 @@ Change Log
 --------------------
 * Add word and character count.
 * Migrate data classes to Kotlin.
+* Fix access to system TTS settings.
 
 1.23.0  *(2017-11-03)*
 --------------------
