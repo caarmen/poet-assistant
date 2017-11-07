@@ -20,8 +20,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.1.51'
+    ext.arch_version = '1.0.0'
+    ext.dagger_version = '2.12'
+    ext.espresso_version = '3.0.1'
     ext.gradle_plugin_version = '3.0.0'
+    ext.kotlin_version = '1.1.51'
+    ext.leak_canary_version = '1.5.4'
+    ext.prefs_version = '1.2.2'
+    ext.support_lib_version = '27.0.0'
     repositories {
         google()
         jcenter()
