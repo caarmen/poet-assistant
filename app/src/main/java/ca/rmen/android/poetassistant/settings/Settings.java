@@ -33,6 +33,8 @@ import org.jraf.android.prefs.Prefs;
 
 import java.util.Locale;
 
+import ca.rmen.android.poetassistant.main.Tab;
+
 @Prefs
 public class Settings {
 
@@ -81,6 +83,10 @@ public class Settings {
     private static final String PREF_MATCH_AOR_AO_ENABLED = "PREF_MATCH_AOR_AO_ENABLED";
     @SuppressWarnings("unused")
     private static final String PREF_THESAURUS_REVERSE_LOOKUP_ENABLED = "PREF_THESAURUS_REVERSE_LOOKUP_ENABLED";
+    @SuppressWarnings("unused")
+    private static final String PREF_TAB = "PREF_TAB";
+    @SuppressWarnings("unused")
+    private static final String PREF_TAB_DEFAULT = "RHYMER";
 
 
     @SuppressWarnings("unused")
@@ -142,6 +148,11 @@ public class Settings {
     @DefaultBoolean(false)
     Boolean isThesaurusReverseLookupEnabled;
 
+    @SuppressWarnings("unused")
+    @Name(PREF_TAB)
+    @DefaultString(PREF_TAB_DEFAULT)
+    String tab;
+
     public static void migrateSettings(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String speedPrefKeyV1 = "PREF_VOICE_SPEED";
@@ -177,6 +188,10 @@ public class Settings {
 
     public static Layout getLayout(SettingsPrefs prefs) {
         return Layout.valueOf(prefs.getLayout().toUpperCase(Locale.US));
+    }
+
+    public static Tab getTab(SettingsPrefs prefs) {
+        return Tab.parse(prefs.getTab());
     }
 
     public enum Layout {

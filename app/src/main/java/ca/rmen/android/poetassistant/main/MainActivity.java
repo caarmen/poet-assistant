@@ -60,7 +60,9 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer;
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus;
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search;
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment;
+import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.android.poetassistant.widget.CABEditText;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
     private Search mSearch;
     private ActivityMainBinding mBinding;
     private PagerAdapter mPagerAdapter;
+    @Inject SettingsPrefs mPrefs;
     @Inject Rhymer mRhymer;
     @Inject Thesaurus mThesaurus;
     @Inject Dictionary mDictionary;
@@ -88,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         super.onCreate(savedInstanceState);
+        DaggerHelper.getMainScreenComponent(getApplication()).inject(MainActivity.this);
         Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         setSupportActionBar(mBinding.toolbar);
@@ -98,6 +102,10 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
 
         // Set up the ViewPager with the sections adapter.
         mBinding.viewPager.setAdapter(mPagerAdapter);
+        Tab savedTab = Settings.getTab(mPrefs);
+        if (savedTab != null && savedTab.ordinal() < mPagerAdapter.getCount()) {
+            mBinding.viewPager.setCurrentItem(savedTab.ordinal());
+        }
         mBinding.viewPager.setOffscreenPageLimit(5);
         mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener);
 
@@ -147,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
 
     @WorkerThread
     private boolean loadDatabase() {
-        DaggerHelper.getMainScreenComponent(getApplication()).inject(MainActivity.this);
         return mRhymer.isLoaded() && mThesaurus.isLoaded() && mDictionary.isLoaded();
     }
 
@@ -281,6 +288,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
                 ((ResultListFragment) fragment).enableAutoHideIfNeeded();
             }
             AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
+            mPrefs.setTab(tab.name());
         }
     };
 
