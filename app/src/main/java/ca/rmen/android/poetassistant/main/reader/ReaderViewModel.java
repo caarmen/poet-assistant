@@ -67,7 +67,7 @@ public class ReaderViewModel extends AndroidViewModel {
     }
 
     public final ObservableField<String> poem = new ObservableField<>("");
-    public final ObservableInt playButtonDrawable = new ObservableInt();
+    public final ObservableInt playButtonDrawable = new ObservableInt(R.drawable.ic_play_disabled);
     public final ObservableBoolean playButtonEnabled = new ObservableBoolean();
     public final ObservableField<String> wordCountText = new ObservableField<>();
     final MutableLiveData<SnackbarText> snackbarText = new MutableLiveData<>();

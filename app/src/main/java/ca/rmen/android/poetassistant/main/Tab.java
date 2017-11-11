@@ -19,9 +19,12 @@
 
 package ca.rmen.android.poetassistant.main;
 
+import android.support.annotation.Nullable;
+
 public enum Tab {
     RHYMER, THESAURUS, DICTIONARY, READER, FAVORITES, PATTERN, WOTD;
 
+    @Nullable
     public static Tab parse(String value) {
         if (FAVORITES.name().equalsIgnoreCase(value)) return FAVORITES;
         if (WOTD.name().equalsIgnoreCase(value)) return WOTD;

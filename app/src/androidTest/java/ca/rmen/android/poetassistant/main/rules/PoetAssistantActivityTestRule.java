@@ -21,12 +21,11 @@ package ca.rmen.android.poetassistant.main.rules;
 import android.app.Activity;
 import android.support.test.rule.ActivityTestRule;
 
-import ca.rmen.android.poetassistant.main.rules.ActivityTestRules;
-
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 
 public class PoetAssistantActivityTestRule<T extends Activity> extends ActivityTestRule<T> {
 
+    private boolean mClearOnLaunch = true;
     public PoetAssistantActivityTestRule(Class<T> clazz, boolean launchActivity) {
         super(clazz, false, launchActivity);
     }
@@ -34,12 +33,19 @@ public class PoetAssistantActivityTestRule<T extends Activity> extends ActivityT
     @Override
     protected void beforeActivityLaunched() {
         super.beforeActivityLaunched();
-        ActivityTestRules.beforeActivityLaunched(getInstrumentation().getTargetContext());
+        if (mClearOnLaunch) ActivityTestRules.beforeActivityLaunched(getInstrumentation().getTargetContext());
     }
 
     @Override
     protected void afterActivityFinished() {
-        ActivityTestRules.afterActivityFinished(getInstrumentation().getTargetContext());
+        if(mClearOnLaunch) ActivityTestRules.afterActivityFinished(getInstrumentation().getTargetContext());
         super.afterActivityFinished();
+    }
+
+    public void relaunch() {
+        mClearOnLaunch = false;
+        finishActivity();
+        launchActivity(getActivityIntent());
+        mClearOnLaunch = true;
     }
 }

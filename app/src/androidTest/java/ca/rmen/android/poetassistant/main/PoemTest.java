@@ -157,7 +157,6 @@ public class PoemTest {
         openMenuItem(R.string.action_settings);
         clickPreference(R.string.pref_selection_lookup_title);
         pressBack();
-        swipeViewPagerLeft(3);
         assertPopupVisible("rhymer");
         assertPopupVisible("thesaurus");
         assertPopupVisible("dictionary");

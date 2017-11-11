@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.25.0  *(2017-11-11)*
+--------------------
+* Open the app in the last tab the user had selected.
+* Update to support library 27.0.1
+
 1.24.0  *(2017-11-06)*
 --------------------
 * Add word and character count.
