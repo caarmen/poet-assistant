@@ -102,14 +102,14 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
 
         // Set up the ViewPager with the sections adapter.
         mBinding.viewPager.setAdapter(mPagerAdapter);
-        Tab savedTab = Settings.getTab(mPrefs);
-        if (savedTab != null && savedTab.ordinal() < mPagerAdapter.getCount()) {
-            mBinding.viewPager.setCurrentItem(savedTab.ordinal());
-        }
         mBinding.viewPager.setOffscreenPageLimit(5);
         mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener);
 
         mBinding.tabs.setupWithViewPager(mBinding.viewPager);
+        Tab savedTab = Settings.getTab(mPrefs);
+        if (savedTab != null && savedTab.ordinal() < mPagerAdapter.getCount()) {
+            mBinding.viewPager.setCurrentItem(savedTab.ordinal());
+        }
         mAdapterChangeListener.onChanged();
 
         // If the app was launched with a query for the a particular tab, focus on that tab.

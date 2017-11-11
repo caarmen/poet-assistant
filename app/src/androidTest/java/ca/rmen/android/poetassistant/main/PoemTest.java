@@ -51,6 +51,7 @@ import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.RootMatchers.isPlatformPopup;
+import static android.support.test.espresso.matcher.ViewMatchers.hasFocus;
 import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
@@ -182,7 +183,7 @@ public class PoemTest {
     }
 
     private void assertPopupVisible(String label) {
-        onView(withId(R.id.tv_text)).perform(longTap(1, 0));
+        onView(allOf(withId(R.id.tv_text), hasFocus())).perform(longTap(1, 0));
         getPopupView(label).check(matches(isDisplayed()));
         pressBack();
     }
