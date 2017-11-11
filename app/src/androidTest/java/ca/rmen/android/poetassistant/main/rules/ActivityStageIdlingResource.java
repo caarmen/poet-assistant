@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main.rules;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
+import android.util.Log;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -58,6 +59,7 @@ public class ActivityStageIdlingResource implements IdlingResource {
     @Override
     public boolean isIdleNow() {
         boolean isInStages = isActivityInStages(mActivityClassName, mMatchingStages);
+        Log.v(TAG, mActivityClassName + " in " + mMatchingStages + "? " + isInStages);
         if (isInStages && mCallback != null) mCallback.onTransitionToIdle();
         return isInStages;
     }
