@@ -119,7 +119,7 @@ public final class Wotd {
                 .setData(uri)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationChannel.createNotificationChannel(context))
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, NotificationChannel.INSTANCE.createNotificationChannel(context))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setContentText(content)
