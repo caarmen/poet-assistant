@@ -40,7 +40,7 @@ public class WotdBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive: intent = " + intent);
         DaggerHelper.getWotdComponent(context).inject(this);
-        Schedulers.io().scheduleDirect(() -> Wotd.notifyWotd(context, mDictionary));
+        Schedulers.io().scheduleDirect(() -> Wotd.INSTANCE.notifyWotd(context, mDictionary));
     }
 
 }

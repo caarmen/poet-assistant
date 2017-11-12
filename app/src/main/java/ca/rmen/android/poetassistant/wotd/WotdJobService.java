@@ -47,7 +47,7 @@ public class WotdJobService extends JobService {
     public boolean onStartJob(JobParameters params) {
         Log.v(TAG, "onStartJob: params " + params);
         Schedulers.io().scheduleDirect(() -> {
-            Wotd.notifyWotd(getApplicationContext(), mDictionary);
+            Wotd.INSTANCE.notifyWotd(getApplicationContext(), mDictionary);
             jobFinished(params, false);
         });
         return true;
