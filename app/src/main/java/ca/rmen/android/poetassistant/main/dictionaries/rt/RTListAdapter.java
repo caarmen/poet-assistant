@@ -80,7 +80,7 @@ public class RTListAdapter extends ResultListAdapter<RTEntryViewModel> {
             ListItemWordBinding wordBinding = (ListItemWordBinding) holder.binding;
             wordBinding.setViewModel(viewModel);
             wordBinding.setEntryIconClickListener(mEntryIconClickListener);
-            TextPopupMenu.addPopupMenu(
+            TextPopupMenu.INSTANCE.addPopupMenu(
                     viewModel.showButtons ? TextPopupMenu.Style.SYSTEM : TextPopupMenu.Style.FULL,
                     wordBinding.text1,
                     mWordClickedListener);

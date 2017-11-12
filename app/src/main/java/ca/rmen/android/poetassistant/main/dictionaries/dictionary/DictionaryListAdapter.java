@@ -52,7 +52,7 @@ public class DictionaryListAdapter extends ResultListAdapter<DictionaryEntry.Dic
     public void onBindViewHolder(ResultListAdapter.ResultListEntryViewHolder holder, int position) {
         DictionaryEntry.DictionaryEntryDetails entry = getItem(position);
         ListItemDictionaryEntryBinding binding = (ListItemDictionaryEntryBinding) holder.binding;
-        TextPopupMenu.addSelectionPopupMenu(binding.definition,  mListener);
+        TextPopupMenu.INSTANCE.addSelectionPopupMenu(binding.definition,  mListener);
         binding.setEntry(entry);
         binding.executePendingBindings();
     }
