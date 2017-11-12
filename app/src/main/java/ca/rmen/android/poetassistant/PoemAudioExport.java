@@ -135,7 +135,7 @@ public class PoemAudioExport {
                 .setContentIntent(getMainActivityIntent())
                 .setContentTitle(mContext.getString(R.string.share_poem_audio_progress_notification_title))
                 .setContentText(mContext.getString(R.string.share_poem_audio_progress_notification_message))
-                .setSmallIcon(Share.getNotificationIcon())
+                .setSmallIcon(Share.INSTANCE.getNotificationIcon())
                 .build();
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null) {
@@ -153,9 +153,9 @@ public class PoemAudioExport {
                     .setContentIntent(shareIntent)
                     .setContentTitle(mContext.getString(R.string.share_poem_audio_ready_notification_title))
                     .setContentText(mContext.getString(R.string.share_poem_audio_ready_notification_message))
-                    .setSmallIcon(Share.getNotificationIcon())
+                    .setSmallIcon(Share.INSTANCE.getNotificationIcon())
                     .addAction(
-                            Share.getShareIconId(),
+                            Share.INSTANCE.getShareIconId(),
                             mContext.getString(R.string.share),
                             shareIntent)
                     .build();
@@ -174,7 +174,7 @@ public class PoemAudioExport {
                 .setContentTitle(mContext.getString(R.string.share_poem_audio_error_notification_title))
                 .setContentText(mContext.getString(R.string.share_poem_audio_error_notification_message))
                 .setContentIntent(getMainActivityIntent())
-                .setSmallIcon(Share.getNotificationIcon())
+                .setSmallIcon(Share.INSTANCE.getNotificationIcon())
                 .build();
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null) {

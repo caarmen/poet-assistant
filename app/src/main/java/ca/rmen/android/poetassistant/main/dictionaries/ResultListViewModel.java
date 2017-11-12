@@ -103,7 +103,7 @@ public class ResultListViewModel<T> extends AndroidViewModel {
     }
 
     void share(Tab tab, String query, String filter) {
-        Share.share(getApplication(), tab, query, filter, mAdapter.getAll());
+        Share.INSTANCE.share(getApplication(), tab, query, filter, mAdapter.getAll());
     }
 
     private void updateDataAvailable() {

@@ -255,7 +255,7 @@ public class ReaderViewModel extends AndroidViewModel {
     }
 
     void sharePoem() {
-        Share.share(getApplication(), poem.get());
+        Share.INSTANCE.share(getApplication(), poem.get());
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

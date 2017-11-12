@@ -124,10 +124,10 @@ public final class Wotd {
                 .setContentIntent(pendingIntent)
                 .setContentText(content)
                 .setContentTitle(title)
-                .setSmallIcon(Share.getNotificationIcon())
+                .setSmallIcon(Share.INSTANCE.getNotificationIcon())
                 .setStyle(bigTextStyle)
                 .addAction(
-                        Share.getShareIconId(),
+                        Share.INSTANCE.getShareIconId(),
                         context.getString(R.string.share),
                         getShareIntent(context, entry));
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
