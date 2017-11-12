@@ -247,7 +247,7 @@ public class ReaderFragment extends Fragment implements
         if (hasTtsError == Boolean.TRUE) {
             View root = getView();
             if (root != null) {
-                Snackbar snackBar = Snackbar.make(root, HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG);
+                Snackbar snackBar = Snackbar.make(root, HtmlCompat.INSTANCE.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG);
                 final Intent intent = new Intent("com.android.settings.TTS_SETTINGS");
                 if (intent.resolveActivity(root.getContext().getPackageManager()) != null) {
                     snackBar.setAction(R.string.tts_error_open_system_settings, view -> startActivity(intent));

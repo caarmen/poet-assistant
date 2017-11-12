@@ -146,7 +146,7 @@ public final class Wotd {
             builder.append(context.getString(R.string.wotd_notification_definition, details.partOfSpeech, details.definition));
         }
         String content = builder.toString();
-        return HtmlCompat.fromHtml(content);
+        return HtmlCompat.INSTANCE.fromHtml(content);
     }
 
     private static CharSequence buildWotdShareContent(Context context, DictionaryEntry entry) {

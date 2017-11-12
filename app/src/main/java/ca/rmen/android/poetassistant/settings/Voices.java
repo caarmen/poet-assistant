@@ -105,20 +105,20 @@ final class Voices {
         if (!TextUtils.isEmpty(country)) {
             // We have a country and gender
             if (!TextUtils.isEmpty(gender)) {
-                return HtmlCompat.fromHtml(mContext.getString(R.string.pref_voice_value_with_country, language, country, gender));
+                return HtmlCompat.INSTANCE.fromHtml(mContext.getString(R.string.pref_voice_value_with_country, language, country, gender));
             }
             // We have a country and no gender
             else {
-                return HtmlCompat.fromHtml(mContext.getString(R.string.pref_voice_value_with_country, language, country, voiceId));
+                return HtmlCompat.INSTANCE.fromHtml(mContext.getString(R.string.pref_voice_value_with_country, language, country, voiceId));
             }
         }
         // We have a gender but no country
         else if (!TextUtils.isEmpty(gender)){
-            return HtmlCompat.fromHtml(mContext.getString(R.string.pref_voice_value_without_country, language, gender));
+            return HtmlCompat.INSTANCE.fromHtml(mContext.getString(R.string.pref_voice_value_without_country, language, gender));
         }
         // We have neither gender nor country.
         else {
-            return HtmlCompat.fromHtml(mContext.getString(R.string.pref_voice_value_without_country, language, voiceId));
+            return HtmlCompat.INSTANCE.fromHtml(mContext.getString(R.string.pref_voice_value_without_country, language, voiceId));
         }
     }
 
