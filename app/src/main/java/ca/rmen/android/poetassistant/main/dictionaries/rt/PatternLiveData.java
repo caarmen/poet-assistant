@@ -65,7 +65,7 @@ public class PatternLiveData extends ResultListLiveData<ResultListData<RTEntryVi
 
         List<RTEntryViewModel> data = new ArrayList<>();
         if (TextUtils.isEmpty(mQuery)) return emptyResult();
-        String[] matches = mDictionary.findWordsByPattern(Patterns.convertForSqlite(mQuery));
+        String[] matches = mDictionary.findWordsByPattern(Patterns.INSTANCE.convertForSqlite(mQuery));
 
         if (matches.length == 0) {
             return emptyResult();

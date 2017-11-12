@@ -99,7 +99,7 @@ public class Search {
         selectTabForSearch(wordTrimmed);
         ViewShownCompletable.create(mViewPager)
                 .subscribe(() -> {
-                    if (Patterns.isPattern(wordTrimmed)) {
+                    if (Patterns.INSTANCE.isPattern(wordTrimmed)) {
                         ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.PATTERN)).query(wordTrimmed);
                     } else {
                         ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.RHYMER)).query(wordTrimmed);
@@ -117,7 +117,7 @@ public class Search {
      *  - Otherwise stay in the current tab
      */
     private void selectTabForSearch(String word) {
-        final boolean isPattern = Patterns.isPattern(word);
+        final boolean isPattern = Patterns.INSTANCE.isPattern(word);
         Tab currentTab = mPagerAdapter.getTabForPosition(mViewPager.getCurrentItem());
         // If we're searching for a pattern, open the pattern tab
         if (isPattern) {
