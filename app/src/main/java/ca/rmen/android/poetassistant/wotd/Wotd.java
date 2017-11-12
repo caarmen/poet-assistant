@@ -72,7 +72,7 @@ public final class Wotd {
         Log.d(TAG, "reschedule() called with: " + "context = [" + context + "]");
         if (settingsPrefs.getIsWotdEnabled()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                WotdJob.reschedule(context);
+                WotdJob.INSTANCE.reschedule(context);
             } else {
                 WotdAlarm.INSTANCE.reschedule(context);
             }
@@ -81,7 +81,7 @@ public final class Wotd {
 
     private static void enableWotd(final Context context, final Dictionary dictionary) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            WotdJob.schedule(context);
+            WotdJob.INSTANCE.schedule(context);
         } else {
             WotdAlarm.INSTANCE.schedule(context);
         }
@@ -90,7 +90,7 @@ public final class Wotd {
 
     private static void disableWotd(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            WotdJob.cancel(context);
+            WotdJob.INSTANCE.cancel(context);
         } else {
             WotdAlarm.INSTANCE.cancel(context);
         }
