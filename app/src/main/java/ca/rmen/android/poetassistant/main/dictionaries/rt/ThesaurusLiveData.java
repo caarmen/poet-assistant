@@ -117,8 +117,8 @@ public class ThesaurusLiveData extends ResultListLiveData<ResultListData<RTEntry
 
     private static ThesaurusEntry.ThesaurusEntryDetails filter(ThesaurusEntry.ThesaurusEntryDetails entry, Set<String> filter) {
         ThesaurusEntry.ThesaurusEntryDetails filteredEntry = new ThesaurusEntry.ThesaurusEntryDetails(entry.wordType,
-                RTUtils.filter(entry.synonyms, filter),
-                RTUtils.filter(entry.antonyms, filter));
+                RTUtils.INSTANCE.filter(entry.synonyms, filter),
+                RTUtils.INSTANCE.filter(entry.antonyms, filter));
         if (isEmpty(filteredEntry)) return null;
         return filteredEntry;
     }

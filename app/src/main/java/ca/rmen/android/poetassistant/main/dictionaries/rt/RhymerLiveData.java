@@ -171,10 +171,10 @@ public class RhymerLiveData extends ResultListLiveData<ResultListData<RTEntryVie
 
     private static RhymeResult filter(RhymeResult rhyme, Collection<String> filter) {
         RhymeResult result = new RhymeResult(rhyme.variantNumber,
-                RTUtils.filter(rhyme.strictRhymes, filter),
-                RTUtils.filter(rhyme.oneSyllableRhymes, filter),
-                RTUtils.filter(rhyme.twoSyllableRhymes, filter),
-                RTUtils.filter(rhyme.threeSyllableRhymes, filter));
+                RTUtils.INSTANCE.filter(rhyme.strictRhymes, filter),
+                RTUtils.INSTANCE.filter(rhyme.oneSyllableRhymes, filter),
+                RTUtils.INSTANCE.filter(rhyme.twoSyllableRhymes, filter),
+                RTUtils.INSTANCE.filter(rhyme.threeSyllableRhymes, filter));
         if (isEmpty(result)) return null;
         return result;
     }
