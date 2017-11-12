@@ -74,7 +74,7 @@ public final class Wotd {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 WotdJob.reschedule(context);
             } else {
-                WotdAlarm.reschedule(context);
+                WotdAlarm.INSTANCE.reschedule(context);
             }
         }
     }
@@ -83,7 +83,7 @@ public final class Wotd {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             WotdJob.schedule(context);
         } else {
-            WotdAlarm.schedule(context);
+            WotdAlarm.INSTANCE.schedule(context);
         }
         Schedulers.io().scheduleDirect(() -> notifyWotd(context, dictionary));
     }
@@ -92,7 +92,7 @@ public final class Wotd {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             WotdJob.cancel(context);
         } else {
-            WotdAlarm.cancel(context);
+            WotdAlarm.INSTANCE.cancel(context);
         }
     }
 
