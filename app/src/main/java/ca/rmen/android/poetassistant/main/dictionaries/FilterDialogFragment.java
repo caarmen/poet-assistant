@@ -120,6 +120,6 @@ public class FilterDialogFragment extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
+        AppBarLayoutHelper.INSTANCE.forceExpandAppBarLayout(getActivity());
     }
 }

@@ -154,8 +154,8 @@ public class ResultListFragment<T> extends Fragment {
         Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
         mHeaderViewModel.filter.set(null);
         if (getUserVisibleHint()) {
-            AppBarLayoutHelper.disableAutoHide(getActivity());
-            AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
+            AppBarLayoutHelper.INSTANCE.disableAutoHide(getActivity());
+            AppBarLayoutHelper.INSTANCE.forceExpandAppBarLayout(getActivity());
         }
         mViewModel.setQueryParams(new ResultListViewModel.QueryParams(query, null));
         Activity activity = getActivity();
@@ -175,11 +175,11 @@ public class ResultListFragment<T> extends Fragment {
                     + ", item count " + mBinding.recyclerView.getAdapter().getItemCount());
             if (mBinding.recyclerView.getAdapter().getItemCount() > 0
                     && ((LinearLayoutManager) mBinding.recyclerView.getLayoutManager()).findLastVisibleItemPosition() < mBinding.recyclerView.getAdapter().getItemCount() - 1) {
-                AppBarLayoutHelper.enableAutoHide(getActivity());
+                AppBarLayoutHelper.INSTANCE.enableAutoHide(getActivity());
             } else {
-                AppBarLayoutHelper.disableAutoHide(getActivity());
+                AppBarLayoutHelper.INSTANCE.disableAutoHide(getActivity());
             }
-            AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
+            AppBarLayoutHelper.INSTANCE.forceExpandAppBarLayout(getActivity());
         }
     }
 

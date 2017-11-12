@@ -101,7 +101,7 @@ public class ReaderFragment extends Fragment implements
         mViewModel.snackbarText.observe(this, mSnackbarCallback);
         mViewModel.ttsError.observe(this, mTtsErrorCallback);
         mViewModel.poemFile.observe(this, mPoemFileCallback);
-        mBinding.tvText.setImeListener(() -> AppBarLayoutHelper.forceExpandAppBarLayout(getActivity()));
+        mBinding.tvText.setImeListener(() -> AppBarLayoutHelper.INSTANCE.forceExpandAppBarLayout(getActivity()));
         DebounceTextWatcher.observe(mBinding.tvText).subscribe(text -> mViewModel.updatePoemText());
         TextPopupMenu.addSelectionPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
         mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver);
@@ -196,7 +196,7 @@ public class ReaderFragment extends Fragment implements
             // Hack for https://github.com/caarmen/poet-assistant/issues/72
             // On some devices, clearing the poem text auto-hides the app bar layout.
             // Let's expand it again.
-            AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
+            AppBarLayoutHelper.INSTANCE.forceExpandAppBarLayout(getActivity());
             Activity activity = getActivity();
             if (activity != null) {
                 activity.invalidateOptionsMenu();
