@@ -55,7 +55,7 @@ final class ActivityTestRules {
                 .testDbModule(new TestDbModule(application))
                 .build();
         DaggerHelper.setAppComponent(testAppComponent);
-        ProcessTextRouter.setEnabled(targetContext, true);
+        ProcessTextRouter.INSTANCE.setEnabled(targetContext, true);
         RxJavaPlugins.setIoSchedulerHandler(scheduler -> {
             IdlingScheduler idlingScheduler = new IdlingScheduler(scheduler);
             IdlingRegistry.getInstance().register(new RxSchedulerIdlingResource(idlingScheduler));

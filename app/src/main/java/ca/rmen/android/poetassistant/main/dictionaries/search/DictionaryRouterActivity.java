@@ -29,7 +29,7 @@ public class DictionaryRouterActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ProcessTextRouter.handleIntent(this, getIntent(), Tab.DICTIONARY);
+        ProcessTextRouter.INSTANCE.handleIntent(this, getIntent(), Tab.DICTIONARY);
         finish();
     }
 }

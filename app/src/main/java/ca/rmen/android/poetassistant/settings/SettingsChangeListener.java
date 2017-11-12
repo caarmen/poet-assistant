@@ -58,7 +58,7 @@ public class SettingsChangeListener implements SharedPreferences.OnSharedPrefere
         } else if (Settings.PREF_WOTD_ENABLED.equals(key) || Settings.PREF_WOTD_NOTIFICATION_PRIORITY.equals(key)) {
             Wotd.setWotdEnabled(mContext, mDictionary, mSettingsPrefs.getIsWotdEnabled());
         } else if (Settings.PREF_SELECTION_LOOKUP.equals(key)) {
-            ProcessTextRouter.setEnabled(mContext, mSettingsPrefs.isSelectionLookupEnabled());
+            ProcessTextRouter.INSTANCE.setEnabled(mContext, mSettingsPrefs.isSelectionLookupEnabled());
             restartSettingsActivity();
         }
     }
