@@ -134,7 +134,7 @@ public class ResultListViewModel<T> extends AndroidViewModel {
     // we'll show a text to tell them to search.
     private CharSequence getNoQueryEmptyText() {
         String emptySearch = getApplication().getString(R.string.empty_list_without_query);
-        ImageSpan imageSpan = VectorCompat.createVectorImageSpan(getApplication(), R.drawable.ic_action_search_dark);
+        ImageSpan imageSpan = VectorCompat.INSTANCE.createVectorImageSpan(getApplication(), R.drawable.ic_action_search_dark);
         SpannableStringBuilder ssb = new SpannableStringBuilder(emptySearch);
         int iconIndex = emptySearch.indexOf("%s");
         ssb.setSpan(imageSpan, iconIndex, iconIndex + 2, Spannable.SPAN_INCLUSIVE_INCLUSIVE);

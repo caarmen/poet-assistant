@@ -109,7 +109,7 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     private void hackSetIcon(TextView textView, @DrawableRes int iconRes) {
-        VectorCompat.setCompoundVectorDrawables(this, textView, iconRes, 0, 0, 0);
+        VectorCompat.INSTANCE.setCompoundVectorDrawables(this, textView, iconRes, 0, 0, 0);
     }
 }
 
