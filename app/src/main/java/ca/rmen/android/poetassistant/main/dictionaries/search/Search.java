@@ -86,7 +86,7 @@ public class Search {
     public void search(String word, Tab tab) {
         Log.d(TAG, "search() called with: " + "word = [" + word + "], tab = [" + tab + "]");
         mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false);
-        ViewShownCompletable.create(mViewPager).subscribe(() -> ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, tab)).query(word.trim().toLowerCase(Locale.US)));
+        ViewShownCompletable.INSTANCE.create(mViewPager).subscribe(() -> ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, tab)).query(word.trim().toLowerCase(Locale.US)));
     }
 
     /**
@@ -97,7 +97,7 @@ public class Search {
         String wordTrimmed = word.trim().toLowerCase(Locale.US);
 
         selectTabForSearch(wordTrimmed);
-        ViewShownCompletable.create(mViewPager)
+        ViewShownCompletable.INSTANCE.create(mViewPager)
                 .subscribe(() -> {
                     if (Patterns.INSTANCE.isPattern(wordTrimmed)) {
                         ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.PATTERN)).query(wordTrimmed);
