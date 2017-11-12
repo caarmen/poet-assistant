@@ -102,7 +102,7 @@ public class ReaderFragment extends Fragment implements
         mViewModel.ttsError.observe(this, mTtsErrorCallback);
         mViewModel.poemFile.observe(this, mPoemFileCallback);
         mBinding.tvText.setImeListener(() -> AppBarLayoutHelper.INSTANCE.forceExpandAppBarLayout(getActivity()));
-        DebounceTextWatcher.observe(mBinding.tvText).subscribe(text -> mViewModel.updatePoemText());
+        DebounceTextWatcher.INSTANCE.observe(mBinding.tvText).subscribe(text -> mViewModel.updatePoemText());
         TextPopupMenu.INSTANCE.addSelectionPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
         mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver);
         return mBinding.getRoot();
