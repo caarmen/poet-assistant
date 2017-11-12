@@ -17,20 +17,16 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.databinding;
+package ca.rmen.android.poetassistant.databinding
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.databinding.ObservableField;
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.databinding.ObservableField
 
-public final class LiveDataMapping {
-    private LiveDataMapping() {
-        // prevent instantiation
-    }
-
-    public static LiveData<String> fromObservableField(ObservableField<String>observableField) {
-        MutableLiveData<String> liveData = new MutableLiveData<>();
-        observableField.addOnPropertyChangedCallback(new BindingCallbackAdapter(() -> liveData.setValue(observableField.get())));
-        return liveData;
+object LiveDataMapping {
+    fun fromObservableField(observableField: ObservableField<String>): LiveData<String> {
+        val liveData = MutableLiveData<String>()
+        observableField.addOnPropertyChangedCallback(BindingCallbackAdapter({ liveData.setValue(observableField.get()) }))
+        return liveData
     }
 }
