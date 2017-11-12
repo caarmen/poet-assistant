@@ -76,7 +76,7 @@ public class ResultListHeaderViewModel extends AndroidViewModel {
     }
 
     public void webSearch() {
-        WebSearch.search(getApplication(), query.get());
+        WebSearch.INSTANCE.search(getApplication(), query.get());
     }
 
     void clearFavorites () {
