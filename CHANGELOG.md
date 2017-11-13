@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.25.1  *(2017-11-13)*
+--------------------
+* Attempt to fix a crash related to the search view hint.
+
 1.25.0  *(2017-11-11)*
 --------------------
 * Open the app in the last tab the user had selected.

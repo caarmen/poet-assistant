@@ -35,6 +35,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 import ca.rmen.android.poetassistant.Constants;
+import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.main.PagerAdapter;
 import ca.rmen.android.poetassistant.main.Tab;
@@ -73,6 +74,7 @@ public class Search {
         SearchManager searchManager = (SearchManager) mContext.getSystemService(Context.SEARCH_SERVICE);
         if (searchManager != null) {
             ComponentName searchableActivityComponentName = new ComponentName(mContext, mContext.getClass());
+            searchView.setQueryHint(mContext.getString(R.string.search_hint)); // To hopefully prevent some crashes (!!) :(
             searchView.setSearchableInfo(searchManager.getSearchableInfo(searchableActivityComponentName));
         }
     }
