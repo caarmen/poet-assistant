@@ -71,7 +71,7 @@ public class ResultListHeaderFragment extends Fragment
             mTab = (Tab) arguments.getSerializable(EXTRA_TAB);
         }
         mBinding = DataBindingUtil.inflate(inflater, R.layout.result_list_header, container, false);
-        mBinding.tvFilterLabel.setText(ResultListFactory.getFilterLabel(getContext(), mTab));
+        mBinding.tvFilterLabel.setText(ResultListFactory.INSTANCE.getFilterLabel(getContext(), mTab));
         mBinding.setButtonListener(new ButtonListener());
         Fragment parentFragment = getParentFragment();
         if (parentFragment != null) {
@@ -107,7 +107,7 @@ public class ResultListHeaderFragment extends Fragment
     private final Observer<Boolean> mFavoriteObserver = isFavorite -> mBinding.btnStarQuery.setChecked(isFavorite == Boolean.TRUE);
     private final Observer<TtsState> mTtsObserver = ttsState -> {
         Log.d(TAG, mTab + ": ttsState = " + ttsState);
-        if (mTab != null && ttsState != null) ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, ttsState.currentStatus);
+        if (mTab != null && ttsState != null) ResultListFactory.INSTANCE.updateListHeaderButtonsVisibility(mBinding, mTab, ttsState.currentStatus);
     };
 
     public class ButtonListener {
@@ -123,7 +123,7 @@ public class ResultListHeaderFragment extends Fragment
 
         public void onFilterButtonClicked(@SuppressWarnings("UnusedParameters") View v) {
             FilterDialogFragment fragment =
-                    ResultListFactory.createFilterDialog(
+                    ResultListFactory.INSTANCE.createFilterDialog(
                             getContext(),
                             mTab,
                             mViewModel.filter.get());
