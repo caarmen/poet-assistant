@@ -22,10 +22,14 @@ package ca.rmen.android.poetassistant.dagger;
 import javax.inject.Singleton;
 
 import ca.rmen.android.poetassistant.Tts;
+import ca.rmen.android.poetassistant.UserDb;
+import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import dagger.Component;
 
 @Singleton
 @Component(modules = {AppModule.class, TestDbModule.class})
 public interface TestAppComponent extends AppComponent {
     Tts getTts();
+    UserDb getUserDb();
+    EmbeddedDb getEmbeddedDb();
 }

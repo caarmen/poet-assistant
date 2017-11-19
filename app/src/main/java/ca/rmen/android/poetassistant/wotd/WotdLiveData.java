@@ -65,9 +65,10 @@ public class WotdLiveData extends ResultListLiveData<ResultListData<WotdEntryVie
         List<WotdEntryViewModel> data = new ArrayList<>(100);
 
         Cursor cursor = mDictionary.getRandomWordCursor();
-        if (cursor == null || cursor.getCount() == 0) return emptyResult();
+        if (cursor == null) return emptyResult();
 
         try {
+            if (cursor.getCount() == 0) return emptyResult();
             Set<String> favorites = mFavorites.getFavorites();
             Calendar calendar = Wotd.INSTANCE.getTodayUTC();
             Calendar calendarDisplay = Wotd.INSTANCE.getTodayUTC();
