@@ -101,9 +101,9 @@ public class ReaderFragment extends Fragment implements
         mViewModel.snackbarText.observe(this, mSnackbarCallback);
         mViewModel.ttsError.observe(this, mTtsErrorCallback);
         mViewModel.poemFile.observe(this, mPoemFileCallback);
-        mBinding.tvText.setImeListener(() -> AppBarLayoutHelper.forceExpandAppBarLayout(getActivity()));
-        DebounceTextWatcher.observe(mBinding.tvText).subscribe(text -> mViewModel.updatePoemText());
-        TextPopupMenu.addSelectionPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
+        mBinding.tvText.setImeListener(() -> AppBarLayoutHelper.INSTANCE.forceExpandAppBarLayout(getActivity()));
+        DebounceTextWatcher.INSTANCE.observe(mBinding.tvText).subscribe(text -> mViewModel.updatePoemText());
+        TextPopupMenu.INSTANCE.addSelectionPopupMenu(mBinding.tvText, (OnWordClickListener) getActivity());
         mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver);
         return mBinding.getRoot();
     }
@@ -196,7 +196,7 @@ public class ReaderFragment extends Fragment implements
             // Hack for https://github.com/caarmen/poet-assistant/issues/72
             // On some devices, clearing the poem text auto-hides the app bar layout.
             // Let's expand it again.
-            AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
+            AppBarLayoutHelper.INSTANCE.forceExpandAppBarLayout(getActivity());
             Activity activity = getActivity();
             if (activity != null) {
                 activity.invalidateOptionsMenu();
@@ -247,7 +247,7 @@ public class ReaderFragment extends Fragment implements
         if (hasTtsError == Boolean.TRUE) {
             View root = getView();
             if (root != null) {
-                Snackbar snackBar = Snackbar.make(root, HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG);
+                Snackbar snackBar = Snackbar.make(root, HtmlCompat.INSTANCE.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG);
                 final Intent intent = new Intent("com.android.settings.TTS_SETTINGS");
                 if (intent.resolveActivity(root.getContext().getPackageManager()) != null) {
                     snackBar.setAction(R.string.tts_error_open_system_settings, view -> startActivity(intent));

@@ -102,17 +102,17 @@ public class PagerAdapter extends FragmentPagerAdapter {
         Log.v(TAG, "getItem " + position);
         Tab tab = getTabForPosition(position);
         if (tab == Tab.PATTERN) {
-            return ResultListFactory.createListFragment(Tab.PATTERN, mInitialPatternQuery);
+            return ResultListFactory.INSTANCE.createListFragment(Tab.PATTERN, mInitialPatternQuery);
         } else if (tab == Tab.FAVORITES) {
-            return ResultListFactory.createListFragment(Tab.FAVORITES, null);
+            return ResultListFactory.INSTANCE.createListFragment(Tab.FAVORITES, null);
         } else if (tab == Tab.WOTD) {
-            return ResultListFactory.createListFragment(Tab.WOTD, null);
+            return ResultListFactory.INSTANCE.createListFragment(Tab.WOTD, null);
         } else if (tab == Tab.RHYMER) {
-            return ResultListFactory.createListFragment(Tab.RHYMER, mInitialRhymeQuery);
+            return ResultListFactory.INSTANCE.createListFragment(Tab.RHYMER, mInitialRhymeQuery);
         } else if (tab == Tab.THESAURUS) {
-            return ResultListFactory.createListFragment(Tab.THESAURUS, mInitialThesaurusQuery);
+            return ResultListFactory.INSTANCE.createListFragment(Tab.THESAURUS, mInitialThesaurusQuery);
         } else if (tab == Tab.DICTIONARY) {
-            return ResultListFactory.createListFragment(Tab.DICTIONARY, mInitialDictionaryQuery);
+            return ResultListFactory.INSTANCE.createListFragment(Tab.DICTIONARY, mInitialDictionaryQuery);
         } else {
             return ReaderFragment.newInstance(mInitialPoemText);
         }
@@ -142,7 +142,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         Tab tab = getTabForPosition(position);
-        return ResultListFactory.getTabName(mContext, tab).toUpperCase(Locale.getDefault());
+        return ResultListFactory.INSTANCE.getTabName(mContext, tab).toUpperCase(Locale.getDefault());
     }
 
     @Nullable

@@ -63,7 +63,7 @@ public class WotdAdapter extends ResultListAdapter<WotdEntryViewModel> {
         ListItemWotdBinding binding = (ListItemWotdBinding) holder.binding;
         binding.setViewModel(viewModel);
         binding.setEntryIconClickListener(mEntryIconClickListener);
-        TextPopupMenu.addPopupMenu(
+        TextPopupMenu.INSTANCE.addPopupMenu(
                 viewModel.showButtons ? TextPopupMenu.Style.SYSTEM : TextPopupMenu.Style.FULL,
                 binding.text1,
                 mWordClickedListener);

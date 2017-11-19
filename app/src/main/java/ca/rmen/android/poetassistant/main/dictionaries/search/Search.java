@@ -86,7 +86,7 @@ public class Search {
     public void search(String word, Tab tab) {
         Log.d(TAG, "search() called with: " + "word = [" + word + "], tab = [" + tab + "]");
         mViewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false);
-        ViewShownCompletable.create(mViewPager).subscribe(() -> ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, tab)).query(word.trim().toLowerCase(Locale.US)));
+        ViewShownCompletable.INSTANCE.create(mViewPager).subscribe(() -> ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, tab)).query(word.trim().toLowerCase(Locale.US)));
     }
 
     /**
@@ -97,9 +97,9 @@ public class Search {
         String wordTrimmed = word.trim().toLowerCase(Locale.US);
 
         selectTabForSearch(wordTrimmed);
-        ViewShownCompletable.create(mViewPager)
+        ViewShownCompletable.INSTANCE.create(mViewPager)
                 .subscribe(() -> {
-                    if (Patterns.isPattern(wordTrimmed)) {
+                    if (Patterns.INSTANCE.isPattern(wordTrimmed)) {
                         ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.PATTERN)).query(wordTrimmed);
                     } else {
                         ((ResultListFragment<?>) mPagerAdapter.getFragment(mViewPager, Tab.RHYMER)).query(wordTrimmed);
@@ -117,7 +117,7 @@ public class Search {
      *  - Otherwise stay in the current tab
      */
     private void selectTabForSearch(String word) {
-        final boolean isPattern = Patterns.isPattern(word);
+        final boolean isPattern = Patterns.INSTANCE.isPattern(word);
         Tab currentTab = mPagerAdapter.getTabForPosition(mViewPager.getCurrentItem());
         // If we're searching for a pattern, open the pattern tab
         if (isPattern) {

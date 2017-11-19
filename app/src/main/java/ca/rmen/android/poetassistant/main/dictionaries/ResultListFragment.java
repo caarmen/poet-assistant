@@ -78,7 +78,7 @@ public class ResultListFragment<T> extends Fragment {
         mBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mBinding.recyclerView.setHasFixedSize(true);
         //noinspection unchecked
-        mViewModel = (ResultListViewModel<T>) ResultListFactory.createViewModel(mTab, this);
+        mViewModel = (ResultListViewModel<T>) ResultListFactory.INSTANCE.createViewModel(mTab, this);
         mBinding.setViewModel(mViewModel);
         mViewModel.layout.observe(this, mLayoutSettingChanged);
         mViewModel.showHeader.observe(this, mShowHeaderChanged);
@@ -102,7 +102,7 @@ public class ResultListFragment<T> extends Fragment {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, mTab + ": onActivityCreated() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         //noinspection unchecked
-        ResultListAdapter<T> adapter = (ResultListAdapter<T>) ResultListFactory.createAdapter(getActivity(), mTab);
+        ResultListAdapter<T> adapter = (ResultListAdapter<T>) ResultListFactory.INSTANCE.createAdapter(getActivity(), mTab);
         mViewModel.setAdapter(adapter);
         mBinding.recyclerView.setAdapter(adapter);
     }
@@ -154,8 +154,8 @@ public class ResultListFragment<T> extends Fragment {
         Log.d(TAG, mTab + ": query() called with: " + "query = [" + query + "]");
         mHeaderViewModel.filter.set(null);
         if (getUserVisibleHint()) {
-            AppBarLayoutHelper.disableAutoHide(getActivity());
-            AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
+            AppBarLayoutHelper.INSTANCE.disableAutoHide(getActivity());
+            AppBarLayoutHelper.INSTANCE.forceExpandAppBarLayout(getActivity());
         }
         mViewModel.setQueryParams(new ResultListViewModel.QueryParams(query, null));
         Activity activity = getActivity();
@@ -175,11 +175,11 @@ public class ResultListFragment<T> extends Fragment {
                     + ", item count " + mBinding.recyclerView.getAdapter().getItemCount());
             if (mBinding.recyclerView.getAdapter().getItemCount() > 0
                     && ((LinearLayoutManager) mBinding.recyclerView.getLayoutManager()).findLastVisibleItemPosition() < mBinding.recyclerView.getAdapter().getItemCount() - 1) {
-                AppBarLayoutHelper.enableAutoHide(getActivity());
+                AppBarLayoutHelper.INSTANCE.enableAutoHide(getActivity());
             } else {
-                AppBarLayoutHelper.disableAutoHide(getActivity());
+                AppBarLayoutHelper.INSTANCE.disableAutoHide(getActivity());
             }
-            AppBarLayoutHelper.forceExpandAppBarLayout(getActivity());
+            AppBarLayoutHelper.INSTANCE.forceExpandAppBarLayout(getActivity());
         }
     }
 

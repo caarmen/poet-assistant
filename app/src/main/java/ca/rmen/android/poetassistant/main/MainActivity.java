@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         // Open about (or settings) and come back to the main activity:
         // the AppBarLayout is hidden (even if it wasn't hidden before).
         // We'll force it to be shown again here.
-        AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
+        AppBarLayoutHelper.INSTANCE.forceExpandAppBarLayout(mBinding.appBarLayout);
     }
 
     @Override
@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
         // In the reader fragment, when the user taps on the EditText, the soft keyboard is opened, and UI scrolls up, hiding the AppBarLayout.
         // When the user taps back to close the soft keyboard, we should show the AppBarLayout again, or else the only way
         // for the user to access the actionbar + tabs would be to swipe left or right to another fragment.
-        AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
+        AppBarLayoutHelper.INSTANCE.forceExpandAppBarLayout(mBinding.appBarLayout);
     }
 
 
@@ -275,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
             Tab tab = mPagerAdapter.getTabForPosition(position);
 
             if (tab == Tab.READER) {
-                AppBarLayoutHelper.enableAutoHide(MainActivity.this);
+                AppBarLayoutHelper.INSTANCE.enableAutoHide(MainActivity.this);
             } else {
                 // Hide the keyboard when we navigate to any tab other than the reader tab.
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
             if (fragment instanceof ResultListFragment) {
                 ((ResultListFragment) fragment).enableAutoHideIfNeeded();
             }
-            AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout);
+            AppBarLayoutHelper.INSTANCE.forceExpandAppBarLayout(mBinding.appBarLayout);
             mPrefs.setTab(tab.name());
         }
     };

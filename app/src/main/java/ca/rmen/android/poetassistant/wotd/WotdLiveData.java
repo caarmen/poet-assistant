@@ -69,8 +69,8 @@ public class WotdLiveData extends ResultListLiveData<ResultListData<WotdEntryVie
 
         try {
             Set<String> favorites = mFavorites.getFavorites();
-            Calendar calendar = Wotd.getTodayUTC();
-            Calendar calendarDisplay = Wotd.getTodayUTC();
+            Calendar calendar = Wotd.INSTANCE.getTodayUTC();
+            Calendar calendarDisplay = Wotd.INSTANCE.getTodayUTC();
             calendarDisplay.setTimeZone(TimeZone.getDefault());
             Settings.Layout layout = Settings.getLayout(mPrefs);
             for (int i = 0; i < 100; i++) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2016 - 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -16,25 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.rmen.android.poetassistant;
 
-import android.app.Application;
+package ca.rmen.android.poetassistant.main.dictionaries.rt
 
-import com.squareup.leakcanary.LeakCanary;
+import java.util.Collections
 
-import ca.rmen.android.poetassistant.settings.SettingsPrefs;
+object RTUtils {
 
-public class PoetAssistantApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        setupLeakCanary();
-        Theme.INSTANCE.setThemeFromSettings(SettingsPrefs.get(this));
+    /**
+     * @return all the Strings in the words which are present in the Set filter
+     */
+    fun filter(words : Array<String>, filter: Collection<String>) : Array<String> {
+        return filter(words.toList(), filter).toTypedArray()
     }
 
-    void setupLeakCanary() {
-        if (!LeakCanary.isInAnalyzerProcess(this)) {
-            LeakCanary.install(this);
-        }
+    /**
+     * @return all the Strings in the words which are present in the Set filter
+     */
+    fun filter(words : List<String>?, filter: Collection<String>) : List<String> {
+        if (words == null) return Collections.emptyList()
+        return words.filter({word -> filter.contains(word)})
     }
 }

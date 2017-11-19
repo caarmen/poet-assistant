@@ -64,7 +64,7 @@ public class HelpDialogFragment extends DialogFragment {
             @StringRes int messageId = arguments.getInt(EXTRA_MESSAGE);
             return new AlertDialog.Builder(context)
                     .setTitle(context.getString(titleId))
-                    .setMessage(HtmlCompat.fromHtml(context.getString(messageId)))
+                    .setMessage(HtmlCompat.INSTANCE.fromHtml(context.getString(messageId)))
                     .setPositiveButton(android.R.string.ok, null)
                     .create();
         } else {

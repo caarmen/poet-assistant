@@ -60,7 +60,7 @@ public class ResultListHeaderViewModel extends AndroidViewModel {
         // was clicked in *another* fragment. If we only had one screen where the user could change
         // the favorites, a simple databinding between the star checkbox and this ViewModel would
         // suffice to sync the db and the UI.
-        isFavoriteLiveData = Transformations.switchMap(LiveDataMapping.fromObservableField(query),
+        isFavoriteLiveData = Transformations.switchMap(LiveDataMapping.INSTANCE.fromObservableField(query),
                 query -> mFavorites.getIsFavoriteLiveData(query));
         // When the user taps on the star icon, update the favorite in the DB
         isFavorite.addOnPropertyChangedCallback(
@@ -76,7 +76,7 @@ public class ResultListHeaderViewModel extends AndroidViewModel {
     }
 
     public void webSearch() {
-        WebSearch.search(getApplication(), query.get());
+        WebSearch.INSTANCE.search(getApplication(), query.get());
     }
 
     void clearFavorites () {

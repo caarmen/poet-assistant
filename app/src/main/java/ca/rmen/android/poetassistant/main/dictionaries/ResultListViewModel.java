@@ -84,17 +84,17 @@ public class ResultListViewModel<T> extends AndroidViewModel {
     ResultListViewModel(Application application, Tab tab) {
         super(application);
         mTab = tab;
-        ResultListFactory.inject(application, tab, this);
+        ResultListFactory.INSTANCE.inject(application, tab, this);
         emptyText.set(getNoQueryEmptyText());
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mPrefsListener);
         favoritesLiveData = mFavorites.getFavoritesLiveData();
         //noinspection unchecked
-        resultListDataLiveData = Transformations.switchMap(mQueryParams, queryParams -> (LiveData<ResultListData<T>>) ResultListFactory.createLiveData(mTab, getApplication(), queryParams.word, queryParams.filter));
+        resultListDataLiveData = Transformations.switchMap(mQueryParams, queryParams -> (LiveData<ResultListData<T>>) ResultListFactory.INSTANCE.createLiveData(mTab, getApplication(), queryParams.word, queryParams.filter));
     }
 
     void setQueryParams(QueryParams queryParams) {
         Log.v(TAG, mTab + ": setQueryParams " + queryParams);
-        if (!TextUtils.isEmpty(queryParams.word) || ResultListFactory.isLoadWithoutQuerySupported(mTab)) {
+        if (!TextUtils.isEmpty(queryParams.word) || ResultListFactory.INSTANCE.isLoadWithoutQuerySupported(mTab)) {
             mQueryParams.setValue(queryParams);
         }
     }
@@ -103,7 +103,7 @@ public class ResultListViewModel<T> extends AndroidViewModel {
     }
 
     void share(Tab tab, String query, String filter) {
-        Share.share(getApplication(), tab, query, filter, mAdapter.getAll());
+        Share.INSTANCE.share(getApplication(), tab, query, filter, mAdapter.getAll());
     }
 
     private void updateDataAvailable() {
@@ -134,7 +134,7 @@ public class ResultListViewModel<T> extends AndroidViewModel {
     // we'll show a text to tell them to search.
     private CharSequence getNoQueryEmptyText() {
         String emptySearch = getApplication().getString(R.string.empty_list_without_query);
-        ImageSpan imageSpan = VectorCompat.createVectorImageSpan(getApplication(), R.drawable.ic_action_search_dark);
+        ImageSpan imageSpan = VectorCompat.INSTANCE.createVectorImageSpan(getApplication(), R.drawable.ic_action_search_dark);
         SpannableStringBuilder ssb = new SpannableStringBuilder(emptySearch);
         int iconIndex = emptySearch.indexOf("%s");
         ssb.setSpan(imageSpan, iconIndex, iconIndex + 2, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
@@ -143,7 +143,7 @@ public class ResultListViewModel<T> extends AndroidViewModel {
 
     // If the user entered a query and there are no matches, show the normal "no results" text.
     private CharSequence getNoResultsEmptyText(String query) {
-        return ResultListFactory.getEmptyListText(getApplication(), mTab, query);
+        return ResultListFactory.INSTANCE.getEmptyListText(getApplication(), mTab, query);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,30 +17,24 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.compat;
+package ca.rmen.android.poetassistant.compat
 
-import android.annotation.TargetApi;
-import android.os.Build;
-import android.text.Html;
+import android.annotation.TargetApi
+import android.os.Build
+import android.text.Html
 
-public final class HtmlCompat {
-    private HtmlCompat() {
-        // prevent instantiation
-    }
-
-    public static CharSequence fromHtml(String content) {
+object HtmlCompat {
+    fun fromHtml(content: String): CharSequence {
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
-            return fromHtml24(content);
+            return fromHtml24(content)
         } else {
-            //noinspection deprecation
-            return Html.fromHtml(content);
+            @Suppress("DEPRECATION")
+            return Html.fromHtml(content)
         }
-
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    private static CharSequence fromHtml24(String content) {
-        return Html.fromHtml(content, 0);
+    private fun fromHtml24(content: String): CharSequence {
+        return Html.fromHtml(content, 0)
     }
-
 }

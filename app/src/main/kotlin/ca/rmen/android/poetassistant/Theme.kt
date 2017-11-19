@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Carmen Alvarez
+ * Copyright (c) 2016 - 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,20 +17,19 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.databinding;
+package ca.rmen.android.poetassistant
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.databinding.ObservableField;
+import android.support.v7.app.AppCompatDelegate
+import ca.rmen.android.poetassistant.settings.Settings
+import ca.rmen.android.poetassistant.settings.SettingsPrefs
 
-public final class LiveDataMapping {
-    private LiveDataMapping() {
-        // prevent instantiation
-    }
-
-    public static LiveData<String> fromObservableField(ObservableField<String>observableField) {
-        MutableLiveData<String> liveData = new MutableLiveData<>();
-        observableField.addOnPropertyChangedCallback(new BindingCallbackAdapter(() -> liveData.setValue(observableField.get())));
-        return liveData;
+object Theme {
+    fun setThemeFromSettings(settingsPrefs: SettingsPrefs) {
+        val theme = settingsPrefs.theme
+        when (theme) {
+            Settings.THEME_DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            Settings.THEME_LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            Settings.THEME_AUTO -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO)
+        }
     }
 }

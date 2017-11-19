@@ -90,7 +90,7 @@ public class ReaderViewModel extends AndroidViewModel {
         playButtonStateLiveData = new MediatorLiveData<>();
         playButtonStateLiveData.addSource(mTts.getTtsLiveData(),
                 ttsState -> playButtonStateLiveData.setValue(toPlayButtonState(ttsState, poem.get())));
-        playButtonStateLiveData.addSource(LiveDataMapping.fromObservableField(poem),
+        playButtonStateLiveData.addSource(LiveDataMapping.INSTANCE.fromObservableField(poem),
                 poemText -> playButtonStateLiveData.setValue(toPlayButtonState(mTts.getTtsState(), poemText)));
         poem.addOnPropertyChangedCallback(
                 new BindingCallbackAdapter(() -> wordCountText.set(WordCounter.INSTANCE.getWordCountText(getApplication(), poem.get()))));
@@ -255,7 +255,7 @@ public class ReaderViewModel extends AndroidViewModel {
     }
 
     void sharePoem() {
-        Share.share(getApplication(), poem.get());
+        Share.INSTANCE.share(getApplication(), poem.get());
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

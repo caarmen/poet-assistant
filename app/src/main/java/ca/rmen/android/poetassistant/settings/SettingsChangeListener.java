@@ -53,12 +53,12 @@ public class SettingsChangeListener implements SharedPreferences.OnSharedPrefere
         Log.v(TAG, "onSharedPreferenceChanged: key = " + key);
         if (Settings.PREF_THEME.equals(key)) {
             // When the theme changes, restart the activity
-            Theme.setThemeFromSettings(mSettingsPrefs);
+            Theme.INSTANCE.setThemeFromSettings(mSettingsPrefs);
             restartSettingsActivity();
         } else if (Settings.PREF_WOTD_ENABLED.equals(key) || Settings.PREF_WOTD_NOTIFICATION_PRIORITY.equals(key)) {
-            Wotd.setWotdEnabled(mContext, mDictionary, mSettingsPrefs.getIsWotdEnabled());
+            Wotd.INSTANCE.setWotdEnabled(mContext, mDictionary, mSettingsPrefs.getIsWotdEnabled());
         } else if (Settings.PREF_SELECTION_LOOKUP.equals(key)) {
-            ProcessTextRouter.setEnabled(mContext, mSettingsPrefs.isSelectionLookupEnabled());
+            ProcessTextRouter.INSTANCE.setEnabled(mContext, mSettingsPrefs.isSelectionLookupEnabled());
             restartSettingsActivity();
         }
     }

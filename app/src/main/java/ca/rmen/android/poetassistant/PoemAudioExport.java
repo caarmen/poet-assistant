@@ -129,13 +129,13 @@ public class PoemAudioExport {
     private void notifyPoemAudioInProgress() {
         Log.v(TAG, "notifyPoemAudioInProgress");
         cancelNotifications();
-        Notification notification = new NotificationCompat.Builder(mContext, NotificationChannel.createNotificationChannel(mContext))
+        Notification notification = new NotificationCompat.Builder(mContext, NotificationChannel.INSTANCE.createNotificationChannel(mContext))
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setContentIntent(getMainActivityIntent())
                 .setContentTitle(mContext.getString(R.string.share_poem_audio_progress_notification_title))
                 .setContentText(mContext.getString(R.string.share_poem_audio_progress_notification_message))
-                .setSmallIcon(Share.getNotificationIcon())
+                .setSmallIcon(Share.INSTANCE.getNotificationIcon())
                 .build();
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null) {
@@ -148,14 +148,14 @@ public class PoemAudioExport {
         cancelNotifications();
         PendingIntent shareIntent = getFileShareIntent();
         if (shareIntent != null) {
-            Notification notification = new NotificationCompat.Builder(mContext, NotificationChannel.createNotificationChannel(mContext))
+            Notification notification = new NotificationCompat.Builder(mContext, NotificationChannel.INSTANCE.createNotificationChannel(mContext))
                     .setAutoCancel(true)
                     .setContentIntent(shareIntent)
                     .setContentTitle(mContext.getString(R.string.share_poem_audio_ready_notification_title))
                     .setContentText(mContext.getString(R.string.share_poem_audio_ready_notification_message))
-                    .setSmallIcon(Share.getNotificationIcon())
+                    .setSmallIcon(Share.INSTANCE.getNotificationIcon())
                     .addAction(
-                            Share.getShareIconId(),
+                            Share.INSTANCE.getShareIconId(),
                             mContext.getString(R.string.share),
                             shareIntent)
                     .build();
@@ -169,12 +169,12 @@ public class PoemAudioExport {
     private void notifyPoemAudioFailed() {
         Log.v(TAG, "notifyPoemAudioFailed");
         cancelNotifications();
-        Notification notification = new NotificationCompat.Builder(mContext, NotificationChannel.createNotificationChannel(mContext))
+        Notification notification = new NotificationCompat.Builder(mContext, NotificationChannel.INSTANCE.createNotificationChannel(mContext))
                 .setAutoCancel(true)
                 .setContentTitle(mContext.getString(R.string.share_poem_audio_error_notification_title))
                 .setContentText(mContext.getString(R.string.share_poem_audio_error_notification_message))
                 .setContentIntent(getMainActivityIntent())
-                .setSmallIcon(Share.getNotificationIcon())
+                .setSmallIcon(Share.INSTANCE.getNotificationIcon())
                 .build();
         NotificationManager notificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null) {
