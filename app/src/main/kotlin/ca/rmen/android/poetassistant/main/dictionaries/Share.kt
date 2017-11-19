@@ -62,6 +62,7 @@ object Share {
         intent.type = "text/plain"
         val chooserIntent = Intent.createChooser(intent, context.getString(R.string.share))
         chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(chooserIntent)
     }
 
     @DrawableRes
