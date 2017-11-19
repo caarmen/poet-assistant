@@ -29,11 +29,13 @@ import android.support.test.espresso.IdlingResource;
 import java.io.File;
 import java.util.Collection;
 
+import ca.rmen.android.poetassistant.UserDb;
 import ca.rmen.android.poetassistant.dagger.AppModule;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.dagger.DaggerTestAppComponent;
 import ca.rmen.android.poetassistant.dagger.TestAppComponent;
 import ca.rmen.android.poetassistant.dagger.TestDbModule;
+import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter;
 import io.reactivex.plugins.RxJavaPlugins;
 
@@ -47,7 +49,6 @@ final class ActivityTestRules {
 
     static void beforeActivityLaunched(Context targetContext) {
         IdlingRegistry.getInstance().register(new TtsIdlingResource(targetContext));
-        cleanup(targetContext);
 
         Application application = (Application) targetContext.getApplicationContext();
         TestAppComponent testAppComponent = DaggerTestAppComponent.builder()
@@ -55,6 +56,7 @@ final class ActivityTestRules {
                 .testDbModule(new TestDbModule(application))
                 .build();
         DaggerHelper.setAppComponent(testAppComponent);
+        cleanup(targetContext);
         ProcessTextRouter.INSTANCE.setEnabled(targetContext, true);
         RxJavaPlugins.setIoSchedulerHandler(scheduler -> {
             IdlingScheduler idlingScheduler = new IdlingScheduler(scheduler);
@@ -82,6 +84,11 @@ final class ActivityTestRules {
         if (notificationManager != null) {
             notificationManager.cancelAll();
         }
+        TestAppComponent testAppComponent = (TestAppComponent) DaggerHelper.getAppComponent(targetContext.getApplicationContext());
+        UserDb db = testAppComponent.getUserDb();
+        db.close();
+        EmbeddedDb embeddedDb = testAppComponent.getEmbeddedDb();
+        embeddedDb.close();
     }
 
     private static void deleteFiles(File folder) {
