@@ -94,6 +94,13 @@ public class EmbeddedDb {
         }
     }
 
+    public void close() {
+        if (mDb != null) {
+            mDb.close();
+            mDb = null;
+        }
+    }
+
     /**
      * Issue #44 (https://github.com/caarmen/poet-assistant/issues/44):
      * Some users reported an {@link SQLiteDatabaseCorruptException}.  If this happens, we try to
