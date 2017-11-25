@@ -57,7 +57,7 @@ public class ThesaurusLiveData extends ResultListLiveData<ResultListData<RTEntry
         super(context);
         mQuery = query;
         mFilter = filter;
-        DaggerHelper.getMainScreenComponent(context).inject(this);
+        DaggerHelper.INSTANCE.getMainScreenComponent(context).inject(this);
     }
 
     @Override

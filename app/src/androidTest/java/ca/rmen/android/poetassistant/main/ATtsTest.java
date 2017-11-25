@@ -145,7 +145,7 @@ public class ATtsTest {
     }
 
     private Tts getTts() {
-        return ((TestAppComponent) DaggerHelper.getAppComponent(mActivityTestRule.getActivity())).getTts();
+        return ((TestAppComponent) DaggerHelper.INSTANCE.getAppComponent(mActivityTestRule.getActivity())).getTts();
     }
     private long timePoem(String poem) {
         TtsObserver receiver = new TtsObserver();

@@ -55,7 +55,7 @@ public class WotdLiveData extends ResultListLiveData<ResultListData<WotdEntryVie
 
     public WotdLiveData(Context context) {
         super(context);
-        DaggerHelper.getWotdComponent(context).inject(this);
+        DaggerHelper.INSTANCE.getWotdComponent(context).inject(this);
     }
 
     @Override

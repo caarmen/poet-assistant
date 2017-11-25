@@ -42,7 +42,7 @@ public class DictionaryLiveData extends ResultListLiveData<ResultListData<Dictio
 
     public DictionaryLiveData(Context context, String query) {
         super(context);
-        DaggerHelper.getMainScreenComponent(context).inject(this);
+        DaggerHelper.INSTANCE.getMainScreenComponent(context).inject(this);
         mQuery = query;
     }
 

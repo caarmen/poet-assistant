@@ -55,7 +55,7 @@ final class ActivityTestRules {
                 .appModule(new AppModule(application))
                 .testDbModule(new TestDbModule(application))
                 .build();
-        DaggerHelper.setAppComponent(testAppComponent);
+        DaggerHelper.INSTANCE.setAppComponent(testAppComponent);
         cleanup(targetContext);
         ProcessTextRouter.INSTANCE.setEnabled(targetContext, true);
         RxJavaPlugins.setIoSchedulerHandler(scheduler -> {
@@ -84,7 +84,7 @@ final class ActivityTestRules {
         if (notificationManager != null) {
             notificationManager.cancelAll();
         }
-        TestAppComponent testAppComponent = (TestAppComponent) DaggerHelper.getAppComponent(targetContext.getApplicationContext());
+        TestAppComponent testAppComponent = (TestAppComponent) DaggerHelper.INSTANCE.getAppComponent(targetContext.getApplicationContext());
         UserDb userDb = testAppComponent.getUserDb();
         userDb.close();
         EmbeddedDb embeddedDb = testAppComponent.getEmbeddedDb();

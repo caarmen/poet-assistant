@@ -82,7 +82,7 @@ public class ReaderViewModel extends AndroidViewModel {
 
     public ReaderViewModel(Application application) {
         super(application);
-        DaggerHelper.getMainScreenComponent(application).inject(this);
+        DaggerHelper.INSTANCE.getMainScreenComponent(application).inject(this);
         mPoemPrefs = new PoemPrefs(application);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(application);
         mSharedPreferences.registerOnSharedPreferenceChangeListener(mPrefsListener);

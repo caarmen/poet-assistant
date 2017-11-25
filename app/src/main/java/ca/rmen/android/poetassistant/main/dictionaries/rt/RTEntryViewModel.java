@@ -54,7 +54,7 @@ public class RTEntryViewModel {
     }
 
     public RTEntryViewModel(Context context, Type type, String text, @ColorInt int backgroundColor, boolean isFavorite, boolean hasDefinition, boolean showButtons) {
-        DaggerHelper.getMainScreenComponent(context).inject(this);
+        DaggerHelper.INSTANCE.getMainScreenComponent(context).inject(this);
         this.type = type;
         this.text = text;
         this.backgroundColor = backgroundColor;

@@ -65,7 +65,7 @@ public class PoemAudioExport {
 
     PoemAudioExport(Context context) {
         mContext = context;
-        DaggerHelper.getMainScreenComponent(context).inject(this);
+        DaggerHelper.INSTANCE.getMainScreenComponent(context).inject(this);
     }
 
     void speakToFile(TextToSpeech textToSpeech, String text) {

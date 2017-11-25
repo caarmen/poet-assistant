@@ -55,7 +55,7 @@ public class SuggestionsCursor extends MatrixCursor {
     SuggestionsCursor(Context context, String filter) {
         super(COLUMNS);
         mFilter = filter;
-        DaggerHelper.getMainScreenComponent(context).inject(this);
+        DaggerHelper.INSTANCE.getMainScreenComponent(context).inject(this);
         loadHistory();
         loadSimilarWords();
     }

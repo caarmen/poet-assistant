@@ -53,7 +53,7 @@ public class ResultListHeaderViewModel extends AndroidViewModel {
 
     public ResultListHeaderViewModel(Application application) {
         super(application);
-        DaggerHelper.getMainScreenComponent(application).inject(this);
+        DaggerHelper.INSTANCE.getMainScreenComponent(application).inject(this);
         ttsStateLiveData = mTts.getTtsLiveData();
         // Expose a LiveData to the fragment, so it can update the star icon when the favorite
         // value changes in the DB. This is relevant when the favorite value changes because the star

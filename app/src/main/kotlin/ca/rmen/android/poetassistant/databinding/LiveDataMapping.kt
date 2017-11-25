@@ -26,7 +26,11 @@ import android.databinding.ObservableField
 object LiveDataMapping {
     fun fromObservableField(observableField: ObservableField<String>): LiveData<String> {
         val liveData = MutableLiveData<String>()
-        observableField.addOnPropertyChangedCallback(BindingCallbackAdapter({ liveData.setValue(observableField.get()) }))
+        observableField.addOnPropertyChangedCallback(BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
+            override fun onChanged() {
+                liveData.value = observableField.get()
+            }
+        }))
         return liveData
     }
 }

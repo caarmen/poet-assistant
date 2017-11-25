@@ -40,7 +40,7 @@ public class WotdBootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive: intent = " + intent);
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-            DaggerHelper.getWotdComponent(context).inject(this);
+            DaggerHelper.INSTANCE.getWotdComponent(context).inject(this);
             Wotd.INSTANCE.reschedule(context, mSettingsPrefs);
         }
     }

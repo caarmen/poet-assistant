@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2016 - 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,30 +17,22 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger;
+package ca.rmen.android.poetassistant.dagger
 
-import android.app.Application;
-import android.arch.persistence.room.Room;
-
-import javax.inject.Singleton;
-
-import ca.rmen.android.poetassistant.UserDb;
-import dagger.Module;
-import dagger.Provides;
+import android.app.Application
+import android.arch.persistence.room.Room
+import ca.rmen.android.poetassistant.UserDb
+import dagger.Module
+import dagger.Provides
+import javax.inject.Singleton
 
 @Module
-public class DbModule {
-
-    private final Application mApplication;
-
-    DbModule(Application application) {
-        mApplication = application;
+class DbModule(private val application: Application) {
+    @Provides
+    @Singleton
+    fun providesUserDb(): UserDb {
+        return Room.databaseBuilder(application,
+                UserDb::class.java, "userdata.db")
+                .addMigrations(UserDb.MIGRATION_1_2).build()
     }
-
-    @Provides @Singleton UserDb providesUserDb() {
-        return Room.databaseBuilder(mApplication,
-                UserDb.class, "userdata.db")
-                .addMigrations(UserDb.MIGRATION_1_2).build();
-    }
-
 }

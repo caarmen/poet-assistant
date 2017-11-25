@@ -48,7 +48,7 @@ public class FavoritesLiveData extends ResultListLiveData<ResultListData<RTEntry
     @Inject Favorites mFavorites;
     public FavoritesLiveData(Context context) {
         super(context);
-        DaggerHelper.getMainScreenComponent(context).inject(this);
+        DaggerHelper.INSTANCE.getMainScreenComponent(context).inject(this);
     }
 
     @Override

@@ -54,7 +54,7 @@ public class SettingsViewModel extends AndroidViewModel {
         super(application);
         mListener = new SettingsChangeListener(application);
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mListener);
-        DaggerHelper.getSettingsComponent(application).inject(this);
+        DaggerHelper.INSTANCE.getSettingsComponent(application).inject(this);
     }
 
     void playTtsPreview() {

@@ -60,7 +60,7 @@ public class VoicePreference extends ListPreference {
     }
 
     private void init() {
-        DaggerHelper.getSettingsComponent(getContext()).inject(this);
+        DaggerHelper.INSTANCE.getSettingsComponent(getContext()).inject(this);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
