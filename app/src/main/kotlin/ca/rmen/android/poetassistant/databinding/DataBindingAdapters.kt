@@ -17,22 +17,16 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.databinding;
+package ca.rmen.android.poetassistant.databinding
 
-import android.databinding.BindingAdapter;
-import android.support.annotation.DrawableRes;
-import android.view.View;
-import android.widget.ImageView;
+import android.databinding.BindingAdapter
+import android.support.annotation.DrawableRes
+import android.widget.ImageView
 
-@SuppressWarnings("WeakerAccess")
-final class DataBindingAdapters {
+object DataBindingAdapters {
+    @JvmStatic
     @BindingAdapter("srcCompat")
-    public static void setImageResource(ImageView imageView, @DrawableRes int resource) {
-        imageView.setImageResource(resource);
-    }
-
-    @BindingAdapter("enabled")
-    public static void setEnabled(View view, boolean enabled) {
-        view.setEnabled(enabled);
+    fun setImageResource(imageView: ImageView, @DrawableRes resource: Int) {
+        imageView.setImageResource(resource)
     }
 }
