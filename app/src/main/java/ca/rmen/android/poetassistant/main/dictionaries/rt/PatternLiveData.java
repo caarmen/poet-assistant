@@ -56,7 +56,7 @@ public class PatternLiveData extends ResultListLiveData<ResultListData<RTEntryVi
     public PatternLiveData(Context context, String query) {
         super(context);
         mQuery = query;
-        DaggerHelper.getMainScreenComponent(context).inject(this);
+        DaggerHelper.INSTANCE.getMainScreenComponent(context).inject(this);
     }
 
     @Override

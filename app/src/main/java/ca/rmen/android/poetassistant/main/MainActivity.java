@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements OnWordClickListen
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         super.onCreate(savedInstanceState);
-        DaggerHelper.getMainScreenComponent(getApplication()).inject(MainActivity.this);
+        DaggerHelper.INSTANCE.getMainScreenComponent(getApplication()).inject(MainActivity.this);
         Log.d(TAG, "onCreate() called with: " + "savedInstanceState = [" + savedInstanceState + "]");
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         setSupportActionBar(mBinding.toolbar);

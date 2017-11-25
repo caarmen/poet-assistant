@@ -45,7 +45,7 @@ public class SettingsChangeListener implements SharedPreferences.OnSharedPrefere
 
     SettingsChangeListener(Context context) {
         mContext = context.getApplicationContext();
-        DaggerHelper.getSettingsComponent(mContext).inject(this);
+        DaggerHelper.INSTANCE.getSettingsComponent(mContext).inject(this);
     }
 
     @Override

@@ -40,7 +40,7 @@ public final class WotdEntryViewModel {
     @Inject Favorites mFavorites;
 
     public WotdEntryViewModel(Context context, String text, String date, @ColorInt int backgroundColor, boolean isFavorite, boolean showButtons) {
-        DaggerHelper.getWotdComponent(context).inject(this);
+        DaggerHelper.INSTANCE.getWotdComponent(context).inject(this);
         this.text = text;
         this.date = date;
         this.backgroundColor = backgroundColor;

@@ -87,7 +87,7 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            DaggerHelper.getSettingsComponent(getContext()).inject(this);
+            DaggerHelper.INSTANCE.getSettingsComponent(getContext()).inject(this);
             mViewModel = ViewModelProviders.of(this).get(SettingsViewModel.class);
             mTts.getTtsLiveData().observe(this, mTtsObserver);
             mViewModel.snackbarText.observe(this, mSnackbarCallback);

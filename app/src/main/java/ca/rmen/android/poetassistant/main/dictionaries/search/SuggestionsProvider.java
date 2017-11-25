@@ -77,13 +77,13 @@ public class SuggestionsProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
         String suggestion = values.getAsString(SearchManager.QUERY);
-        DaggerHelper.getMainScreenComponent(getContext()).getSuggestions().addSuggestion(suggestion);
+        DaggerHelper.INSTANCE.getMainScreenComponent(getContext()).getSuggestions().addSuggestion(suggestion);
         return null;
     }
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        DaggerHelper.getMainScreenComponent(getContext()).getSuggestions().clear();
+        DaggerHelper.INSTANCE.getMainScreenComponent(getContext()).getSuggestions().clear();
         return 0;
     }
 

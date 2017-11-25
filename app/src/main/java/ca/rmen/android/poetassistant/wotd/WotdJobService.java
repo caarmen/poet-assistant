@@ -40,7 +40,7 @@ public class WotdJobService extends JobService {
     @Override
     public void onCreate() {
         super.onCreate();
-        DaggerHelper.getWotdComponent(getApplication()).inject(this);
+        DaggerHelper.INSTANCE.getWotdComponent(getApplication()).inject(this);
     }
 
     @Override

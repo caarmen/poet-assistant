@@ -58,7 +58,7 @@ public class RhymerLiveData extends ResultListLiveData<ResultListData<RTEntryVie
         super(context);
         mQuery = query;
         mFilter = filter;
-        DaggerHelper.getMainScreenComponent(context).inject(this);
+        DaggerHelper.INSTANCE.getMainScreenComponent(context).inject(this);
     }
 
     @Override
