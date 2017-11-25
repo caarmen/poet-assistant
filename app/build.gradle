@@ -61,6 +61,7 @@ android {
                     files("$projectDir/src/androidTest/schemas".toString())
             test {
                 manifest.srcFile "src/test/AndroidManifest.xml"
+                java.srcDirs += "$projectDir/src/test/kotlin"
             }
         }
 
@@ -90,6 +91,9 @@ android {
         unitTests {
             all {
                 jvmArgs '-noverify', '-ea'
+                jacoco {
+                    includeNoLocationClasses = true
+                }
             }
             includeAndroidResources = true
         }
