@@ -141,7 +141,7 @@ public class TestTts {
     }
 
     private void testSplit(String input, String... expectedTokens) {
-        List<String> tokens = Tts.split(input);
+        List<String> tokens = Tts.Companion.split(input);
         assertEquals(Arrays.asList(expectedTokens), tokens);
     }
 }
