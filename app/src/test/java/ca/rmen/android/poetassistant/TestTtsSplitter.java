@@ -30,7 +30,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(RobolectricTestRunner.class)
-public class TestTts {
+public class TestTtsSplitter {
     @Test
     public void testSplit1() {
         testSplit("To be or not to be",
@@ -141,7 +141,7 @@ public class TestTts {
     }
 
     private void testSplit(String input, String... expectedTokens) {
-        List<String> tokens = Tts.split(input);
+        List<String> tokens = TtsSplitter.INSTANCE.split(input);
         assertEquals(Arrays.asList(expectedTokens), tokens);
     }
 }
