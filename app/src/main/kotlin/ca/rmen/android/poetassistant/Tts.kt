@@ -28,14 +28,12 @@ import android.os.Build
 import android.preference.PreferenceManager
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
-import android.support.annotation.VisibleForTesting
 import android.text.TextUtils
 import android.util.Log
 import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import java.util.StringTokenizer
 
 class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs) {
     companion object {
@@ -44,66 +42,6 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
         private const val MIN_VOICE_PITCH = 0.25f
         private const val MIN_VOICE_SPEED = 0.25f
 
-        /**
-         * Splits a string into multiple tokens for pausing playback.
-         *
-         * @param text A "..." in the input text indicates a pause, and each subsequent "." after the initial "..." indicates an additional pause.
-         *
-         * Examples:
-         * "To be or not to be... that is the question":  1 pause:  "To be or not to be", "",     " that is the question"
-         * "To be or not to be.... that is the question": 2 pauses: "To be or not to be", "", "", " that is the question"
-         * "To be or not to be. that is the question":    0 pauses: "To be or not to be. that is the question"
-         *
-         * @return the input split into multiple tokens. An empty-string token in the result indicates a pause.
-         */
-        @VisibleForTesting
-        fun split(text: String): List<String> {
-            val tokens = ArrayList<String>()
-            val stringTokenizer = StringTokenizer(text, ".", true)
-            // In a sequence of dots, we want to skip the first two.
-            var skippedDots = 0
-            var prevToken: String? = null
-            while (stringTokenizer.hasMoreTokens()) {
-                val token = stringTokenizer.nextToken()
-                // The current token is a dot. It may or may not be used to pause.
-                if ("." == token) {
-                    // We've skipped at least two consecutive dots. We can now start adding all dots as
-                    // pause tokens.
-                    if (skippedDots == 2) {
-                        val pauseToken = ""
-                        tokens.add(pauseToken)
-                        prevToken = pauseToken
-                    }
-                    // Beginning of a dot sequence. We have to skip the first two dots.
-                    else {
-                        skippedDots++
-                    }
-                }
-                // The current token is actual text to speak.
-                else {
-                    var textToken: String
-                    // This is either the first text token of the entire input, or a text token after a pause token.
-                    // We simply add it to the list.
-                    if (prevToken == null || "" == prevToken) {
-                        textToken = token
-                        tokens.add(textToken)
-                    }
-                    // The previous token was also actual text.
-                    // Concatenate the previous token with this one, separating by a single period.
-                    // This optimization allows us to minimize the number of tokens we'll return, and to rely
-                    // on the sentence pausing of the TTS engine when less than 3 dots separate two sentences.
-                    else /* prevToken != null && prevToken != "" */ {
-                        textToken = prevToken + "." + token
-                        tokens[tokens.size - 1] = textToken
-                    }
-                    prevToken = textToken
-                    skippedDots = 0
-
-                }
-            }
-            return tokens
-        }
-
     }
 
     private var mTextToSpeech: TextToSpeech? = null
@@ -111,6 +49,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
     private val mTtsLiveData = MutableLiveData<TtsState>()
     private val mUtteranceListener = UtteranceListener()
+    private val mInitListener = TtsInitListener()
     // This can't be local or it will be removed from the shared prefs manager!
     private val mTtsPrefsListener = TtsPreferenceListener()
 
@@ -123,10 +62,15 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
     }
 
     private fun init() {
-        Log.v(TAG, "init")
+        Log.v(TAG, "init: initListener = $mInitListener")
         mTtsLiveData.value = TtsState(null, TtsState.TtsStatus.INITIALIZED, null)
         mTextToSpeech = TextToSpeech(context, mInitListener)
         mTextToSpeech?.setOnUtteranceProgressListener(mUtteranceListener)
+    }
+
+    fun getTextToSpeech(): TextToSpeech? {
+        if (isReady()) return mTextToSpeech
+        return null
     }
 
     /**
@@ -145,7 +89,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
     fun speak(text: String) {
         if (!isReady()) return
-        val splitText = split(text)
+        val splitText = TtsSplitter.split(text)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) speak21(splitText)
         else speak4(splitText)
     }
@@ -198,35 +142,6 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
         }
     }
 
-    private val mInitListener = TextToSpeech.OnInitListener { status ->
-        Log.v(TAG, "onInit: status = $status")
-        mTtsStatus = status
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            useVoiceFromSettings()
-        }
-        if (status == TextToSpeech.SUCCESS) {
-            setVoiceSpeedFromSettings()
-            setVoicePitchFromSettings()
-            AndroidSchedulers.mainThread().scheduleDirect { mTtsLiveData.value = TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.INITIALIZED, null) }
-            AndroidSchedulers.mainThread().scheduleDirect { mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.INITIALIZED, null) }
-        } else {
-            AndroidSchedulers.mainThread().scheduleDirect { mTtsLiveData.value = TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null) }
-
-        }
-    }
-
-    private inner class TtsPreferenceListener : SharedPreferences.OnSharedPreferenceChangeListener {
-        override fun onSharedPreferenceChanged(sharedPreferences : SharedPreferences, key: String) {
-            if (isReady()) {
-                when (key) {
-                    Settings.PREF_VOICE_SPEED -> setVoiceSpeedFromSettings()
-                    Settings.PREF_VOICE_PITCH -> setVoicePitchFromSettings()
-                    Settings.PREF_VOICE -> useVoiceFromSettings()
-                }
-            }
-        }
-    }
-
     private fun useVoiceFromSettings() = useVoice(mTextToSpeech, settingsPrefs.voice)
 
     private fun setVoiceSpeedFromSettings() =
@@ -234,11 +149,6 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
     private fun setVoicePitchFromSettings() =
             mTextToSpeech?.setSpeechRate(Math.max(MIN_VOICE_PITCH, settingsPrefs.voicePitch / 100f))
-
-    fun getTextToSpeech(): TextToSpeech? {
-        if (isReady()) return mTextToSpeech
-        return null
-    }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun useVoice(textToSpeech: TextToSpeech?, voiceId: String?) {
@@ -269,6 +179,36 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
     }
 
     private fun isReady() = mTextToSpeech != null && mTtsStatus == TextToSpeech.SUCCESS
+
+    private inner class TtsInitListener : TextToSpeech.OnInitListener {
+        override fun onInit(status: Int) {
+            Log.v(TAG, "onInit: status = $status")
+            mTtsStatus = status
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                useVoiceFromSettings()
+            }
+            if (status == TextToSpeech.SUCCESS) {
+                setVoiceSpeedFromSettings()
+                setVoicePitchFromSettings()
+                AndroidSchedulers.mainThread().scheduleDirect { mTtsLiveData.value = TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.INITIALIZED, null) }
+                AndroidSchedulers.mainThread().scheduleDirect { mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.INITIALIZED, null) }
+            } else {
+                AndroidSchedulers.mainThread().scheduleDirect { mTtsLiveData.value = TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null) }
+            }
+        }
+    }
+
+    private inner class TtsPreferenceListener : SharedPreferences.OnSharedPreferenceChangeListener {
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+            if (isReady()) {
+                when (key) {
+                    Settings.PREF_VOICE_SPEED -> setVoiceSpeedFromSettings()
+                    Settings.PREF_VOICE_PITCH -> setVoicePitchFromSettings()
+                    Settings.PREF_VOICE -> useVoiceFromSettings()
+                }
+            }
+        }
+    }
 
     private inner class UtteranceListener : UtteranceProgressListener() {
         override fun onStart(utteranceId: String) {
@@ -303,6 +243,5 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
                 mTtsLiveData.value = TtsState(TtsState.TtsStatus.UTTERANCE_ERROR, TtsState.TtsStatus.INITIALIZED, utteranceId)
             }
         }
-
     }
 }
