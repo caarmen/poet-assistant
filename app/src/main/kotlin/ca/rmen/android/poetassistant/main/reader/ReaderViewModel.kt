@@ -279,25 +279,23 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private val mPrefsListener = object : SharedPreferences.OnSharedPreferenceChangeListener {
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-            Log.v(TAG, "onSharedPreferenceChanged: key=$key")
-            // Prevent the search EditText from disappearing while the user is typing,
-            // by only notifying actual changes in the poem text.
-            // When starting a new instrumentation test after completing another instrumentation
-            // test, we get a shared prefs change with a null value before and after for the shared poem.
-            // This resulted in an invalidation of the options menu, causing problems when entering
-            // search text.
-            val oldPoemText = poemFile.value
-            val newPoemText = mPoemPrefs.savedPoem
-            Log.v(TAG, "old: $oldPoemText, new: $newPoemText")
-            if ((oldPoemText == null && newPoemText == null)
-                    || (oldPoemText != null && oldPoemText == newPoemText)
-                    || (newPoemText != null && newPoemText == oldPoemText)) {
-                Log.v(TAG, "Ignoring uninteresting poem file change")
-            } else {
-                poemFile.value = mPoemPrefs.savedPoem
-            }
+    private val mPrefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+        Log.v(TAG, "onSharedPreferenceChanged: key=$key")
+        // Prevent the search EditText from disappearing while the user is typing,
+        // by only notifying actual changes in the poem text.
+        // When starting a new instrumentation test after completing another instrumentation
+        // test, we get a shared prefs change with a null value before and after for the shared poem.
+        // This resulted in an invalidation of the options menu, causing problems when entering
+        // search text.
+        val oldPoemText = poemFile.value
+        val newPoemText = mPoemPrefs.savedPoem
+        Log.v(TAG, "old: $oldPoemText, new: $newPoemText")
+        if ((oldPoemText == null && newPoemText == null)
+                || (oldPoemText != null && oldPoemText == newPoemText)
+                || (newPoemText != null && newPoemText == oldPoemText)) {
+            Log.v(TAG, "Ignoring uninteresting poem file change")
+        } else {
+            poemFile.value = mPoemPrefs.savedPoem
         }
     }
 

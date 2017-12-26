@@ -153,7 +153,7 @@ class SettingsActivity : AppCompatActivity() {
 
         override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
             super.onActivityResult(requestCode, resultCode, data)
-            Log.d(TAG, "onActivityResult: rquestCode=$requestCode, resultCode=$resultCode, data=$data")
+            Log.d(TAG, "onActivityResult: requestCode=$requestCode, resultCode=$resultCode, data=$data")
             val uri = data?.data
             if (requestCode == ACTION_EXPORT_FAVORITES && resultCode == Activity.RESULT_OK && uri != null) {
                 mViewModel.exportFavorites(uri)

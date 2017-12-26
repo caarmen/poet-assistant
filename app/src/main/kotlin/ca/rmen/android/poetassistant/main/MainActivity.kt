@@ -262,9 +262,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
                 imm?.hideSoftInputFromWindow(mBinding.viewPager.windowToken, 0)
             }
             val fragment = mPagerAdapter.getFragment(mBinding.viewPager, tab)
-            if (fragment is ResultListFragment<*>) {
-                fragment.enableAutoHideIfNeeded()
-            }
+            (fragment as? ResultListFragment<*>)?.enableAutoHideIfNeeded()
 
             AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout)
             mPrefs.tab = tab.name
