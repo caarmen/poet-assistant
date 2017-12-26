@@ -114,7 +114,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
         } else if (tab == Tab.DICTIONARY) {
             return ResultListFactory.INSTANCE.createListFragment(Tab.DICTIONARY, mInitialDictionaryQuery);
         } else {
-            return ReaderFragment.newInstance(mInitialPoemText);
+            return ReaderFragment.Companion.newInstance(mInitialPoemText);
         }
     }
 
