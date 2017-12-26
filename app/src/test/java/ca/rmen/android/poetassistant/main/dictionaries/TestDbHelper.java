@@ -22,6 +22,8 @@ package ca.rmen.android.poetassistant.main.dictionaries;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 
 public class TestDbHelper {
 
@@ -29,24 +31,24 @@ public class TestDbHelper {
 
     @Test
     public void testQueryCount() {
-        Assert.assertEquals(1, EmbeddedDb.Companion.getQueryCount(1, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(1, EmbeddedDb.Companion.getQueryCount(2, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(1, EmbeddedDb.Companion.getQueryCount(3, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(1, EmbeddedDb.Companion.getQueryCount(4, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(1, EmbeddedDb.Companion.getQueryCount(5, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(2, EmbeddedDb.Companion.getQueryCount(6, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(2, EmbeddedDb.Companion.getQueryCount(7, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(2, EmbeddedDb.Companion.getQueryCount(8, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(2, EmbeddedDb.Companion.getQueryCount(9, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(2, EmbeddedDb.Companion.getQueryCount(10, MAX_ARGS_PER_QUERY));
-        Assert.assertEquals(3, EmbeddedDb.Companion.getQueryCount(11, MAX_ARGS_PER_QUERY));
+        assertEquals(1, EmbeddedDb.Companion.getQueryCount(1, MAX_ARGS_PER_QUERY));
+        assertEquals(1, EmbeddedDb.Companion.getQueryCount(2, MAX_ARGS_PER_QUERY));
+        assertEquals(1, EmbeddedDb.Companion.getQueryCount(3, MAX_ARGS_PER_QUERY));
+        assertEquals(1, EmbeddedDb.Companion.getQueryCount(4, MAX_ARGS_PER_QUERY));
+        assertEquals(1, EmbeddedDb.Companion.getQueryCount(5, MAX_ARGS_PER_QUERY));
+        assertEquals(2, EmbeddedDb.Companion.getQueryCount(6, MAX_ARGS_PER_QUERY));
+        assertEquals(2, EmbeddedDb.Companion.getQueryCount(7, MAX_ARGS_PER_QUERY));
+        assertEquals(2, EmbeddedDb.Companion.getQueryCount(8, MAX_ARGS_PER_QUERY));
+        assertEquals(2, EmbeddedDb.Companion.getQueryCount(9, MAX_ARGS_PER_QUERY));
+        assertEquals(2, EmbeddedDb.Companion.getQueryCount(10, MAX_ARGS_PER_QUERY));
+        assertEquals(3, EmbeddedDb.Companion.getQueryCount(11, MAX_ARGS_PER_QUERY));
     }
 
     @Test
     public void testArgCountInQuery() {
-        Assert.assertEquals(MAX_ARGS_PER_QUERY, EmbeddedDb.Companion.getArgCountInQuery(11, MAX_ARGS_PER_QUERY, 0));
-        Assert.assertEquals(MAX_ARGS_PER_QUERY, EmbeddedDb.Companion.getArgCountInQuery(11, MAX_ARGS_PER_QUERY, 1));
-        Assert.assertEquals(1, EmbeddedDb.Companion.getArgCountInQuery(11, MAX_ARGS_PER_QUERY, 2));
+        assertEquals(MAX_ARGS_PER_QUERY, EmbeddedDb.Companion.getArgCountInQuery(11, MAX_ARGS_PER_QUERY, 0));
+        assertEquals(MAX_ARGS_PER_QUERY, EmbeddedDb.Companion.getArgCountInQuery(11, MAX_ARGS_PER_QUERY, 1));
+        assertEquals(1, EmbeddedDb.Companion.getArgCountInQuery(11, MAX_ARGS_PER_QUERY, 2));
     }
 
 
@@ -59,5 +61,11 @@ public class TestDbHelper {
         Assert.assertArrayEquals(new String[]{"a", "b", "c", "d", "e"}, EmbeddedDb.Companion.getArgsInQuery(args, 0, MAX_ARGS_PER_QUERY));
         Assert.assertArrayEquals(new String[]{"f", "g", "h", "i", "j"}, EmbeddedDb.Companion.getArgsInQuery(args, 1, MAX_ARGS_PER_QUERY));
         Assert.assertArrayEquals(new String[]{"k"}, EmbeddedDb.Companion.getArgsInQuery(args, 2, MAX_ARGS_PER_QUERY));
+    }
+
+    @Test
+    public void testBuildInClause() {
+        String clause = EmbeddedDb.Companion.buildInClause(5);
+        assertEquals("(?,?,?,?,?)", clause);
     }
 }

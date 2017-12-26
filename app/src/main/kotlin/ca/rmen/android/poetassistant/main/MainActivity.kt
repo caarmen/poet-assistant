@@ -273,7 +273,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
 
     private val mAdapterChangeListener = object : DataSetObserver() {
         override fun onChanged() {
-            for (i in 0..mBinding.tabs.tabCount) {
+            for (i in 0 until mBinding.tabs.tabCount) {
                 val icon = mPagerAdapter.getIcon(i)
                 val tab = mBinding.tabs.getTabAt(i)
                 if (tab != null) {

@@ -103,10 +103,11 @@ class EmbeddedDb(val context: Context) {
         fun buildInClause(size: Int): String {
             val builder = StringBuilder(size * 2 + 1)
             builder.append('(')
-            for (i in 0..size) {
+            for (i in 0 until size) {
                 builder.append('?')
                 if (i != size - 1) builder.append(',')
             }
+            builder.append(')')
             return builder.toString()
         }
     }
@@ -199,7 +200,7 @@ class EmbeddedDb(val context: Context) {
         val dbPath = getDbFile(dbFileName)
         if (!dbPath.exists()) {
             Log.v(TAG, "$dbPath not found")
-            for (i in 0..DB_VERSION) {
+            for (i in 0 until DB_VERSION) {
                 deleteDb(i)
             }
             deleteOldDbs("rhymes")
@@ -235,7 +236,7 @@ class EmbeddedDb(val context: Context) {
         // the max version of all the separate dbs
         // (rhymes, thesaurus, dictionary) was 2.
         val maxVersion = 2
-        for (i in 0 until maxVersion) {
+        for (i in 0..maxVersion) {
             val dbFileName: String = if (i == 1) name + ".db"
             else name + i + ".db"
             val dbPath = getDbFile(dbFileName)
