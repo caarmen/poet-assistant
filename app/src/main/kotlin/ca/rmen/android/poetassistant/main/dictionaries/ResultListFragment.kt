@@ -54,7 +54,7 @@ class ResultListFragment<out T> : Fragment() {
     private lateinit var mViewModel: ResultListViewModel<T>
     private lateinit var mHeaderViewModel: ResultListHeaderViewModel
 
-    private lateinit var mTab: Tab
+    private var mTab: Tab? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.v(TAG, "onCreate")
@@ -64,37 +64,43 @@ class ResultListFragment<out T> : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mTab = arguments?.getSerializable(EXTRA_TAB) as Tab
-        Log.v(TAG, "$mTab onCreateView")
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false)
-        mBinding.recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-        mBinding.recyclerView.setHasFixedSize(true)
-        @Suppress("UNCHECKED_CAST")
-        mViewModel = ResultListFactory.createViewModel(mTab, this) as ResultListViewModel<T>
-        mBinding.viewModel = mViewModel
-        mViewModel.layout.observe(this, mLayoutSettingChanged)
-        mViewModel.showHeader.observe(this, mShowHeaderChanged)
-        mViewModel.usedQueryWord.observe(this, mUsedQueryWordChanged)
-        mViewModel.isDataAvailable.addOnPropertyChangedCallback(mDataAvailableChanged)
-        mHeaderViewModel = ViewModelProviders.of(this).get(ResultListHeaderViewModel::class.java)
-        mHeaderViewModel.filter.addOnPropertyChangedCallback(mFilterChanged)
-        var headerFragment = childFragmentManager.findFragmentById(R.id.result_list_header)
-        if (headerFragment == null) {
-            headerFragment = ResultListHeaderFragment.newInstance(mTab)
-            childFragmentManager.beginTransaction().replace(R.id.result_list_header, headerFragment).commit()
+        mTab?.let {
+            Log.v(TAG, "$mTab onCreateView")
+            mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false)
+            mBinding.recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+            mBinding.recyclerView.setHasFixedSize(true)
+            @Suppress("UNCHECKED_CAST")
+            mViewModel = ResultListFactory.createViewModel(it, this) as ResultListViewModel<T>
+            mBinding.viewModel = mViewModel
+            mViewModel.layout.observe(this, mLayoutSettingChanged)
+            mViewModel.showHeader.observe(this, mShowHeaderChanged)
+            mViewModel.usedQueryWord.observe(this, mUsedQueryWordChanged)
+            mViewModel.isDataAvailable.addOnPropertyChangedCallback(mDataAvailableChanged)
+            mHeaderViewModel = ViewModelProviders.of(this).get(ResultListHeaderViewModel::class.java)
+            mHeaderViewModel.filter.addOnPropertyChangedCallback(mFilterChanged)
+            var headerFragment = childFragmentManager.findFragmentById(R.id.result_list_header)
+            if (headerFragment == null) {
+                headerFragment = ResultListHeaderFragment.newInstance(mTab)
+                childFragmentManager.beginTransaction().replace(R.id.result_list_header, headerFragment).commit()
+            }
+            mViewModel.favoritesLiveData.observe(this, mFavoritesObserver)
+            mViewModel.resultListDataLiveData.observe(this, Observer { data -> mViewModel.setData(data) })
+            return mBinding.root
         }
-        mViewModel.favoritesLiveData.observe(this, mFavoritesObserver)
-        mViewModel.resultListDataLiveData.observe(this, Observer { data -> mViewModel.setData(data) })
-        return mBinding.root
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         Log.d(TAG, "$mTab: onActivityCreated: savedInstanceState=$savedInstanceState")
         activity?.let {
-            @Suppress("UNCHECKED_CAST")
-            val adapter = ResultListFactory.createAdapter(it, mTab) as ResultListAdapter<T>
-            mViewModel.setAdapter(adapter)
-            mBinding.recyclerView.adapter = adapter
+            val tab = mTab
+            if (tab != null) {
+                @Suppress("UNCHECKED_CAST")
+                val adapter = ResultListFactory.createAdapter(it, tab) as ResultListAdapter<T>
+                mViewModel.setAdapter(adapter)
+                mBinding.recyclerView.adapter = adapter
+            }
         }
     }
 
@@ -151,7 +157,7 @@ class ResultListFragment<out T> : Fragment() {
      */
     fun enableAutoHideIfNeeded() {
         Log.v(TAG, "$mTab: enableAutoHideIfNeeded")
-        if (mBinding.recyclerView.adapter != null) {
+        if (mTab != null && mBinding.recyclerView.adapter != null) {
             val lastVisibleItemPosition = (mBinding.recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
             val itemCount = mBinding.recyclerView.adapter.itemCount
             Log.v(TAG, "$mTab: enableAutoHideIfNeeded: last visibleItem $lastVisibleItemPosition, item count $itemCount")
