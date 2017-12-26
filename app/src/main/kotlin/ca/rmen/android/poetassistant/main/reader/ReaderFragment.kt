@@ -59,7 +59,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
         private const val ACTION_FILE_OPEN = 0
         private const val ACTION_FILE_SAVE_AS = 1
         private const val ACTION_FILE_NEW = 2
-        fun newInstance(initialText: String): ReaderFragment {
+        fun newInstance(initialText: String?): ReaderFragment {
             Log.d(TAG, "newInstance: initialText = $initialText")
             val fragment = ReaderFragment()
             fragment.retainInstance = true
