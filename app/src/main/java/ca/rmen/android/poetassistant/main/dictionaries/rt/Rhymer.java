@@ -128,11 +128,11 @@ public class Rhymer extends ca.rmen.rhymer.Rhymer {
         Log.v(TAG, "getWordsWithDefinitions for " + words.length + " words");
         Set<String> result = new HashSet<>();
         String[] projection = new String[]{"word"};
-        int queryCount = EmbeddedDb.getQueryCount(words.length);
+        int queryCount = EmbeddedDb.Companion.getQueryCount(words.length);
         for (int i = 0; i < queryCount; i++) {
-            String[] queryWords = EmbeddedDb.getArgsInQuery(words, i);
+            String[] queryWords = EmbeddedDb.Companion.getArgsInQuery(words, i);
             Log.v(TAG, "getWordsWithDefinitions: query " + i + " has " + queryWords.length + " words");
-            String selection = "word in " + EmbeddedDb.buildInClause(queryWords.length) + " AND has_definition=1";
+            String selection = "word in " + EmbeddedDb.Companion.buildInClause(queryWords.length) + " AND has_definition=1";
             Cursor cursor = mEmbeddedDb.query("word_variants", projection, selection, queryWords);
             if (cursor != null) {
                 try {

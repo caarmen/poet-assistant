@@ -48,7 +48,7 @@ import dagger.Subcomponent
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = arrayOf(AppModule::class, DbModule::class))
+@Component(modules = [(AppModule::class), (DbModule::class)])
 interface AppComponent {
     fun getMainScreenComponent(): AppComponent.MainScreenComponent
     fun getSettingsComponent(): AppComponent.SettingsComponent
