@@ -167,7 +167,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.1'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
     }
 }
 
@@ -182,7 +182,7 @@ dependencies {
     implementation 'ca.rmen:porter-stemmer:1.0.0'
     implementation "org.jraf:prefs:$prefs_version"
     implementation "com.google.dagger:dagger:$dagger_version"
-    implementation "io.reactivex.rxjava2:rxjava:2.1.6"
+    implementation "io.reactivex.rxjava2:rxjava:2.1.7"
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation "android.arch.lifecycle:extensions:$arch_version"
     implementation "android.arch.persistence.room:runtime:$arch_version"
@@ -195,7 +195,7 @@ dependencies {
     kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
 
     testImplementation 'junit:junit:4.12'
-    testImplementation "org.robolectric:robolectric:3.5.1"
+    testImplementation "org.robolectric:robolectric:3.6.1"
 
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leak_canary_version"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leak_canary_version"
