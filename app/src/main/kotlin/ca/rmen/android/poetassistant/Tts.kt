@@ -54,7 +54,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
     private val mTtsPrefsListener = TtsPreferenceListener()
 
 
-    fun getTtsLiveData(): LiveData<TtsState> = mTtsLiveData
+    fun getTtsLiveData(): LiveData<TtsState?> = mTtsLiveData
 
     init {
         PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(mTtsPrefsListener)
@@ -122,7 +122,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
         if (!isReady()) return
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             val poemAudioExport = PoemAudioExport(context)
-            poemAudioExport.speakToFile(mTextToSpeech, text)
+            poemAudioExport.speakToFile(mTextToSpeech!!, text)
         }
     }
 
