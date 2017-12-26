@@ -58,7 +58,7 @@ import ca.rmen.android.poetassistant.wotd.WotdLiveData
 object ResultListFactory {
     private val TAG = Constants.TAG + ResultListFactory::class.java.simpleName
 
-    fun createListFragment(tab: Tab, initialQuery: String?): ResultListFragment<out Any> {
+    fun createListFragment(tab: Tab, initialQuery: String?): ResultListFragment<Any> {
         Log.d(TAG, "createListFragment: tab=$tab, initialQuery = $initialQuery")
         val fragment = when (tab) {
             Tab.PATTERN, Tab.FAVORITES, Tab.RHYMER, Tab.THESAURUS -> ResultListFragment<RTEntryViewModel>()
