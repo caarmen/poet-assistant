@@ -145,7 +145,7 @@ public class Thesaurus {
         selectionArgs[i++] = String.format(Locale.US, "%%,%s", word); // last relatedWord
         selectionArgs[i++] = String.format(Locale.US, "%%,%s,%%", word); // somewhere in the list of relatedWords
         if (!excludeRelatedWords.isEmpty()) {
-            selection += " AND word NOT IN " + EmbeddedDb.buildInClause(excludeRelatedWords.size());
+            selection += " AND word NOT IN " + EmbeddedDb.Companion.buildInClause(excludeRelatedWords.size());
             for (String forwardRelatedWord : excludeRelatedWords) {
                 selectionArgs[i++] = forwardRelatedWord;
             }
