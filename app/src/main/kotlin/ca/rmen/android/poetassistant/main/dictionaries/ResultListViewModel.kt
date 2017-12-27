@@ -55,7 +55,7 @@ class ResultListViewModel<T> constructor(application: Application, private val t
     private var mAdapter: ResultListAdapter<T>? = null
     @Inject lateinit var mFavorites: Favorites
 
-    data class QueryParams(val word: String, val filter: String?)
+    data class QueryParams(val word: String?, val filter: String?)
 
     private val mPrefsListener : PrefsListener
     private val mQueryParams = MutableLiveData<QueryParams>()

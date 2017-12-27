@@ -34,6 +34,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
 import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import java.util.Locale
+import javax.inject.Inject
 
 class ThesaurusLiveData constructor(context: Context, private val query: String, private val filter: String?) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context) {
     companion object {
@@ -62,9 +63,13 @@ class ThesaurusLiveData constructor(context: Context, private val query: String,
 
     }
 
+    @Inject
     lateinit var mRhymer: Rhymer
+    @Inject
     lateinit var mThesaurus: Thesaurus
+    @Inject
     lateinit var mPrefs: SettingsPrefs
+    @Inject
     lateinit var mFavorites: Favorites
 
     init {
