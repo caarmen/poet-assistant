@@ -121,7 +121,7 @@ class ResultListFragment<out T> : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_share) {
-            mViewModel.share(mTab, mHeaderViewModel.query.get(), mHeaderViewModel.filter.get())
+            mViewModel.share(mHeaderViewModel.query.get(), mHeaderViewModel.filter.get())
         }
         return super.onOptionsItemSelected(item)
     }
