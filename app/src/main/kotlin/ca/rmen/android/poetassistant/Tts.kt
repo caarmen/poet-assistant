@@ -148,7 +148,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
             mTextToSpeech?.setSpeechRate(Math.max(MIN_VOICE_SPEED, settingsPrefs.voiceSpeed / 100f))
 
     private fun setVoicePitchFromSettings() =
-            mTextToSpeech?.setSpeechRate(Math.max(MIN_VOICE_PITCH, settingsPrefs.voicePitch / 100f))
+            mTextToSpeech?.setPitch(Math.max(MIN_VOICE_PITCH, settingsPrefs.voicePitch / 100f))
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun useVoice(textToSpeech: TextToSpeech?, voiceId: String?) {
