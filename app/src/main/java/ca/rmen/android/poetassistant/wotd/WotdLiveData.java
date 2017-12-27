@@ -73,7 +73,7 @@ public class WotdLiveData extends ResultListLiveData<ResultListData<WotdEntryVie
             Calendar calendar = Wotd.INSTANCE.getTodayUTC();
             Calendar calendarDisplay = Wotd.INSTANCE.getTodayUTC();
             calendarDisplay.setTimeZone(TimeZone.getDefault());
-            Settings.Layout layout = Settings.getLayout(mPrefs);
+            Settings.Layout layout = Settings.Companion.getLayout(mPrefs);
             for (int i = 0; i < 100; i++) {
                 Random random = new Random();
                 random.setSeed(calendar.getTimeInMillis());

@@ -82,7 +82,7 @@ object ResultListFactory {
         }
     }
 
-    fun createViewModel(tab: Tab, fragment: Fragment): ResultListViewModel<out Any>? {
+    fun createViewModel(tab: Tab, fragment: Fragment): ResultListViewModel<*>? {
         return if (fragment.context != null) {
             val factory = createViewModelFactory(tab, fragment.context!!.applicationContext as Application)
             ViewModelProviders.of(fragment, factory).get(ResultListViewModel::class.java)
@@ -109,8 +109,8 @@ object ResultListFactory {
             Tab.PATTERN -> PatternLiveData(context, query)
             Tab.FAVORITES -> FavoritesLiveData(context)
             Tab.WOTD -> WotdLiveData(context)
-            Tab.RHYMER -> RhymerLiveData(context, query, filter)
-            Tab.THESAURUS -> ThesaurusLiveData(context, query, filter)
+            Tab.RHYMER -> RhymerLiveData(context, query!!, filter)
+            Tab.THESAURUS -> ThesaurusLiveData(context, query!!, filter)
             else -> DictionaryLiveData(context, query)
         }
     }
@@ -134,7 +134,7 @@ object ResultListFactory {
         return FilterDialogFragment.newInstance(dialogMessage, text)
     }
 
-    fun inject(context: Context, tab: Tab, viewModel: ResultListViewModel<out Any>) {
+    fun inject(context: Context, tab: Tab, viewModel: ResultListViewModel<*>) {
         @Suppress("UNCHECKED_CAST")
         when (tab) {
             Tab.RHYMER, Tab.THESAURUS, Tab.PATTERN, Tab.FAVORITES ->

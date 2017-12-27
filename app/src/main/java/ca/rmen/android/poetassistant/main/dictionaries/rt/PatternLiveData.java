@@ -77,7 +77,7 @@ public class PatternLiveData extends ResultListLiveData<ResultListData<RTEntryVi
             Arrays.sort(matches, new MatchComparator(favorites));
         }
 
-        Settings.Layout layout = Settings.getLayout(mPrefs);
+        Settings.Layout layout = Settings.Companion.getLayout(mPrefs);
         for (int i=0; i < matches.length; i++) {
             @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;
             data.add(new RTEntryViewModel(

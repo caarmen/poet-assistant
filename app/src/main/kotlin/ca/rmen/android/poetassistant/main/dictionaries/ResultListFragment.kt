@@ -80,7 +80,7 @@ class ResultListFragment<out T> : Fragment() {
             mHeaderViewModel.filter.addOnPropertyChangedCallback(mFilterChanged)
             var headerFragment = childFragmentManager.findFragmentById(R.id.result_list_header)
             if (headerFragment == null) {
-                headerFragment = ResultListHeaderFragment.newInstance(mTab)
+                headerFragment = ResultListHeaderFragment.newInstance(it)
                 childFragmentManager.beginTransaction().replace(R.id.result_list_header, headerFragment).commit()
             }
             mViewModel.favoritesLiveData.observe(this, mFavoritesObserver)
@@ -121,7 +121,7 @@ class ResultListFragment<out T> : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_share) {
-            mViewModel.share(mTab, mHeaderViewModel.query.get(), mHeaderViewModel.filter.get())
+            mViewModel.share(mHeaderViewModel.query.get(), mHeaderViewModel.filter.get())
         }
         return super.onOptionsItemSelected(item)
     }
