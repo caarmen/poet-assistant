@@ -116,7 +116,7 @@ class Rhymer @Inject constructor(private val embeddedDb: EmbeddedDb, private val
         var selectionColumn = columnName
         var inputSyllables = syllables
         if (prefs.isAORAOMatchEnabled && syllables.contains("AO")) {
-            selectionColumn = String.format(Locale.US, "replace(%s, 'AOR', 'AO'", selectionColumn)
+            selectionColumn = String.format(Locale.US, "replace(%s, 'AOR', 'AO')", selectionColumn)
             inputSyllables = inputSyllables.replace("AOR", "AO")
         }
         if (prefs.isAOAAMatchEnabled && (syllables.contains("AO") || syllables.contains("AA"))) {

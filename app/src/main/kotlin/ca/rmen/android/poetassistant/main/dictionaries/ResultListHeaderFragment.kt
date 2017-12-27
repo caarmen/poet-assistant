@@ -107,10 +107,12 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
 
     inner class ButtonListener {
         fun onDeleteFavoritesButtonClicked(@Suppress("UNUSED_PARAMETER") v: View) {
-            context?.let {
-                val fragment = ResultListFactory.createFilterDialog(it, mTab, mViewModel.filter.get())
-                childFragmentManager.beginTransaction().add(fragment, DIALOG_TAG).commit()
-            }
+            ConfirmDialogFragment.show(
+                    ACTION_CLEAR_FAVORITES,
+                    getString(R.string.action_clear_favorites),
+                    getString(R.string.action_clear),
+                    childFragmentManager,
+                    DIALOG_TAG)
         }
 
         fun onFilterButtonClicked(@Suppress("UNUSED_PARAMETER") v: View) {
