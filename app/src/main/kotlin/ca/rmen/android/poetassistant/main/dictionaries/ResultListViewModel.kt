@@ -67,7 +67,7 @@ class ResultListViewModel<T> constructor(application: Application, private val t
         emptyText.set(getNoQueryEmptyText())
         mPrefsListener = PrefsListener()
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mPrefsListener)
-        favoritesLiveData = mFavorites.favoritesLiveData
+        favoritesLiveData = mFavorites.getFavoritesLiveData()
         resultListDataLiveData = Transformations.switchMap(mQueryParams, { queryParams ->
             @Suppress("UNCHECKED_CAST")
             ResultListFactory.createLiveData(tab, application, queryParams.word, queryParams.filter) as LiveData<ResultListData<T>>

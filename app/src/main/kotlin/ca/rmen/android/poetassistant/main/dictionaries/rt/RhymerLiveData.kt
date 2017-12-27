@@ -97,7 +97,7 @@ class RhymerLiveData(context: Context, val query: String, val filter: String?) :
         }
 
         val layout = Settings.getLayout(mPrefs)
-        val favorites = mFavorites.favorites
+        val favorites = mFavorites.getFavorites()
         if (favorites.isNotEmpty()) {
             addResultSection(favorites, data, R.string.rhyme_section_favorites, getMatchingFavorites(rhymeResults, favorites), layout)
         }
