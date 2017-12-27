@@ -80,7 +80,7 @@ class ResultListFragment<out T> : Fragment() {
             mHeaderViewModel.filter.addOnPropertyChangedCallback(mFilterChanged)
             var headerFragment = childFragmentManager.findFragmentById(R.id.result_list_header)
             if (headerFragment == null) {
-                headerFragment = ResultListHeaderFragment.newInstance(mTab)
+                headerFragment = ResultListHeaderFragment.newInstance(it)
                 childFragmentManager.beginTransaction().replace(R.id.result_list_header, headerFragment).commit()
             }
             mViewModel.favoritesLiveData.observe(this, mFavoritesObserver)
