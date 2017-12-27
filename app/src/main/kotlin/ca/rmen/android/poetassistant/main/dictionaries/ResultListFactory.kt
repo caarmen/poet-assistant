@@ -109,7 +109,7 @@ object ResultListFactory {
             Tab.PATTERN -> PatternLiveData(context, query)
             Tab.FAVORITES -> FavoritesLiveData(context)
             Tab.WOTD -> WotdLiveData(context)
-            Tab.RHYMER -> RhymerLiveData(context, query, filter)
+            Tab.RHYMER -> RhymerLiveData(context, query!!, filter)
             Tab.THESAURUS -> ThesaurusLiveData(context, query, filter)
             else -> DictionaryLiveData(context, query)
         }
