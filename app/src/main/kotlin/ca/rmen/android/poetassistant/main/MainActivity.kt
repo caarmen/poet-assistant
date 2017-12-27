@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
 
     @WorkerThread
     private fun loadDatabase(): Boolean {
-        return mRhymer.isLoaded && mThesaurus.isLoaded() && mDictionary.isLoaded()
+        return mRhymer.isLoaded() && mThesaurus.isLoaded() && mDictionary.isLoaded()
     }
 
     @MainThread
