@@ -106,7 +106,7 @@ class SettingsActivity : AppCompatActivity() {
                 // Hide the voice preference if we can't load any voices
                 val voicePreference = findPreference(Settings.PREF_VOICE) as VoicePreference
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    voicePreference.loadVoices(context)
+                    voicePreference.loadVoices()
                 }
                 if (voicePreference.entries == null || voicePreference.entries.size < 2) {
                     removePreference(PREF_CATEGORY_VOICE, voicePreference)
