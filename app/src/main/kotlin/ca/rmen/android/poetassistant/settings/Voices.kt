@@ -38,9 +38,8 @@ class Voices constructor(private val context: Context) {
 
     fun getVoices(textToSpeech: TextToSpeech): List<TtsVoice> {
 
-        val voices: Set<Voice>
-        try {
-            voices = textToSpeech.voices
+        val voices = try {
+            textToSpeech.voices
         } catch (t: Throwable) {
             // This happens if I choose "SoundAbout TTS" as the preferred engine.
             // That implementation throws a NullPointerException.

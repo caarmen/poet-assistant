@@ -58,13 +58,13 @@ class Dictionary @Inject constructor(private val embeddedDb: EmbeddedDb) {
         }
         if (cursor != null) {
             val result = ArrayList<DictionaryEntry.DictionaryEntryDetails>()
-            try {
+            return try {
                 while (cursor.moveToNext()) {
                     val partOfSpeech = cursor.getString(0)
                     val definition = cursor.getString(1)
                     result.add(DictionaryEntry.DictionaryEntryDetails(partOfSpeech, definition))
                 }
-                return DictionaryEntry(lookupWord, result)
+                DictionaryEntry(lookupWord, result)
             } finally {
                 cursor.close()
             }
