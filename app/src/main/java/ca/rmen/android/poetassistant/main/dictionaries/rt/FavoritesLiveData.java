@@ -61,7 +61,7 @@ public class FavoritesLiveData extends ResultListLiveData<ResultListData<RTEntry
         if (favorites.isEmpty()) return emptyResult();
 
         TreeSet<String> sortedFavorites = new TreeSet<>(favorites);
-        Settings.Layout layout = Settings.getLayout(mPrefs);
+        Settings.Layout layout = Settings.Companion.getLayout(mPrefs);
         int i = 0;
         for (String favorite : sortedFavorites) {
             @ColorRes int color = (i % 2 == 0)? R.color.row_background_color_even : R.color.row_background_color_odd;

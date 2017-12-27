@@ -75,7 +75,7 @@ public class ThesaurusLiveData extends ResultListLiveData<ResultListData<RTEntry
             entries = filter(entries, rhymes);
         }
 
-        Settings.Layout layout = Settings.getLayout(mPrefs);
+        Settings.Layout layout = Settings.Companion.getLayout(mPrefs);
         Set<String> favorites = mFavorites.getFavorites();
         for (ThesaurusEntry.ThesaurusEntryDetails entry : entries) {
             data.add(new RTEntryViewModel(getContext(), RTEntryViewModel.Type.HEADING, entry.wordType.name().toLowerCase(Locale.US)));

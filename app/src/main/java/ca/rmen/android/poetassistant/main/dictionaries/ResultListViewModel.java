@@ -154,7 +154,7 @@ public class ResultListViewModel<T> extends AndroidViewModel {
 
     private final SharedPreferences.OnSharedPreferenceChangeListener mPrefsListener = (sharedPreferences, key) -> {
         if (Settings.PREF_LAYOUT.equals(key)) {
-            layout.setValue(Settings.getLayout(SettingsPrefs.get(getApplication())));
+            layout.setValue(Settings.Companion.getLayout(SettingsPrefs.get(getApplication())));
         }
     };
 }

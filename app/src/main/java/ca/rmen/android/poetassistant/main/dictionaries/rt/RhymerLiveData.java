@@ -78,7 +78,7 @@ public class RhymerLiveData extends ResultListLiveData<ResultListData<RTEntryVie
             if (synonyms.isEmpty()) return emptyResult();
             rhymeResults = filter(rhymeResults, synonyms);
         }
-        Settings.Layout layout = Settings.getLayout(mPrefs);
+        Settings.Layout layout = Settings.Companion.getLayout(mPrefs);
         Set<String> favorites = mFavorites.getFavorites();
         if (!favorites.isEmpty()) {
             addResultSection(favorites, data, R.string.rhyme_section_favorites, getMatchingFavorites(rhymeResults, favorites), layout);
