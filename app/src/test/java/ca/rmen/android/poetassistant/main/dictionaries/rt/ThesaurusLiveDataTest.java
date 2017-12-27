@@ -44,7 +44,7 @@ public class ThesaurusLiveDataTest {
                 new ThesaurusEntry.ThesaurusEntryDetails(ThesaurusEntry.WordType.NOUN,
                         Arrays.asList("garbage", "buncombe", "drivel", "bunk", "rot", "guff", "bunkim"), Collections.emptyList()));
 
-        List<ThesaurusEntry.ThesaurusEntryDetails> actual = ThesaurusLiveData.filter(thesaurusEntryDetails, rhymes);
+        List<ThesaurusEntry.ThesaurusEntryDetails> actual = ThesaurusLiveData.Companion.filter(thesaurusEntryDetails, rhymes);
         assertNotNull(actual);
         assertEquals(1, actual.size());
         assertNotNull(actual.get(0).antonyms);
@@ -64,7 +64,7 @@ public class ThesaurusLiveDataTest {
                 new ThesaurusEntry.ThesaurusEntryDetails(ThesaurusEntry.WordType.NOUN, Arrays.asList("contestant", "participant"), Collections.emptyList()),
                 new ThesaurusEntry.ThesaurusEntryDetails(ThesaurusEntry.WordType.NOUN, Arrays.asList("musician", "instrumentalist", "performing artist", "performer"), Collections.emptyList()));
 
-        List<ThesaurusEntry.ThesaurusEntryDetails> actual = ThesaurusLiveData.filter(thesaurusEntryDetails, rhymes);
+        List<ThesaurusEntry.ThesaurusEntryDetails> actual = ThesaurusLiveData.Companion.filter(thesaurusEntryDetails, rhymes);
         assertNotNull(actual);
         assertEquals(1, actual.size());
         assertNotNull(actual.get(0).antonyms);
@@ -86,7 +86,7 @@ public class ThesaurusLiveDataTest {
                         Arrays.asList("express emotion", "laugh off", "express feelings", "express joy", "express mirth", "laugh at", "laugh away"),
                         Collections.singletonList("cry")));
 
-        List<ThesaurusEntry.ThesaurusEntryDetails> actual = ThesaurusLiveData.filter(thesaurusEntryDetails, rhymes);
+        List<ThesaurusEntry.ThesaurusEntryDetails> actual = ThesaurusLiveData.Companion.filter(thesaurusEntryDetails, rhymes);
         assertNotNull(actual);
         assertEquals(1, actual.size());
         assertNotNull(actual.get(0).antonyms);
