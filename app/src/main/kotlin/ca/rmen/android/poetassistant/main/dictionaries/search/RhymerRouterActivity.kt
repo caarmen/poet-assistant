@@ -16,20 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.rmen.android.poetassistant.main.dictionaries.search;
+package ca.rmen.android.poetassistant.main.dictionaries.search
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.app.Activity
+import android.os.Bundle
+import ca.rmen.android.poetassistant.main.Tab
 
-import ca.rmen.android.poetassistant.main.Tab;
-
-public class RhymerRouterActivity extends Activity {
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ProcessTextRouter.INSTANCE.handleIntent(this, getIntent(), Tab.RHYMER);
-        finish();
+class RhymerRouterActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ProcessTextRouter.handleIntent(this, intent, Tab.RHYMER)
+        finish()
     }
 }
