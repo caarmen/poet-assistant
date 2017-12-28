@@ -25,7 +25,7 @@ import android.support.annotation.ColorInt
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 
-class RTEntryViewModel(context: Context, @JvmField val type: Type, @JvmField val text: String, @ColorInt val backgroundColor: Int,
+class RTEntryViewModel(context: Context, val type: Type, val text: String, @ColorInt val backgroundColor: Int,
                        isFavoriteInitialValue: Boolean, val hasDefinition: Boolean, val showButtons: Boolean) {
     enum class Type {
         HEADING,

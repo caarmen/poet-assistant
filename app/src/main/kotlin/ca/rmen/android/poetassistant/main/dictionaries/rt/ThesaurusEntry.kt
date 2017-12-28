@@ -19,7 +19,7 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.rt
 
-data class ThesaurusEntry(@JvmField val word: String, @JvmField val entries: List<ThesaurusEntryDetails>) {
+data class ThesaurusEntry(val word: String, val entries: List<ThesaurusEntryDetails>) {
     enum class WordType {
         ADJ,
         ADV,
@@ -28,5 +28,5 @@ data class ThesaurusEntry(@JvmField val word: String, @JvmField val entries: Lis
         UNKNOWN
     }
 
-    data class ThesaurusEntryDetails(@JvmField val wordType: WordType, @JvmField val synonyms: List<String>, @JvmField val antonyms: List<String>)
+    data class ThesaurusEntryDetails(val wordType: WordType, @JvmField val synonyms: List<String>, @JvmField val antonyms: List<String>)
 }

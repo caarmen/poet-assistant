@@ -42,5 +42,5 @@ abstract class ResultListAdapter<T> : RecyclerView.Adapter<ResultListAdapter.Res
 
     override fun getItemCount(): Int = mData.size
 
-    class ResultListEntryViewHolder(@JvmField val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root)
+    class ResultListEntryViewHolder(val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root)
 }

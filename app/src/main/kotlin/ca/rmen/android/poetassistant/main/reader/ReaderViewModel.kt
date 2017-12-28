@@ -77,22 +77,21 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    class SnackbarText(@JvmField @StringRes val stringResId: Int, @JvmField vararg val params: Any)
-    data class PlayButtonState(@JvmField val isEnabled: Boolean, @DrawableRes @JvmField val iconId: Int)
+    class SnackbarText(@StringRes val stringResId: Int, vararg val params: Any)
+    data class PlayButtonState(val isEnabled: Boolean, @DrawableRes val iconId: Int)
 
 
-    @JvmField
     val poem = ObservableField<String>("")
     val playButtonDrawable = ObservableInt(R.drawable.ic_play_disabled)
     val playButtonEnabled = ObservableBoolean()
     val wordCountText = ObservableField<String>()
-    @JvmField
+
     val snackbarText = MutableLiveData<SnackbarText>()
-    @JvmField
+
     val ttsError = MutableLiveData<Boolean>()
-    @JvmField
+
     val poemFile = MutableLiveData<PoemFile>()
-    @JvmField
+
     val playButtonStateLiveData = MediatorLiveData<ReaderViewModel.PlayButtonState>()
 
     @Inject

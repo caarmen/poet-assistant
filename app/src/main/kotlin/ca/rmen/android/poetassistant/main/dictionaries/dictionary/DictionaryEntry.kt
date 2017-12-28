@@ -19,8 +19,8 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.dictionary
 
-data class DictionaryEntry(@JvmField val word: String, @JvmField val details: List<DictionaryEntryDetails>) {
-    data class DictionaryEntryDetails(@JvmField val partOfSpeech: String, @JvmField val definition: String)
+data class DictionaryEntry(val word: String, val details: List<DictionaryEntryDetails>) {
+    data class DictionaryEntryDetails(val partOfSpeech: String, val definition: String)
 }
 
 

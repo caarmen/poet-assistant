@@ -43,7 +43,7 @@ import java.io.OutputStreamWriter
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 
-data class PoemFile(@JvmField val uri: Uri?, @JvmField val name: String?, @JvmField val text: String?) {
+data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
     companion object {
         private val TAG = Constants.TAG + PoemFile::class.java.simpleName
 

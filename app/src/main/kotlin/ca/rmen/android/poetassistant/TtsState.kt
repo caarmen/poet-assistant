@@ -19,7 +19,7 @@
 
 package ca.rmen.android.poetassistant
 
-data class TtsState(@JvmField val previousStatus: TtsStatus?, @JvmField val currentStatus: TtsStatus, @JvmField val utteranceId: String?) {
+data class TtsState(val previousStatus: TtsStatus?, val currentStatus: TtsStatus, val utteranceId: String?) {
     enum class TtsStatus {
         UNINITIALIZED,
         INITIALIZED,
