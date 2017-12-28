@@ -223,7 +223,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
     private val mSnackbarCallback = Observer<ReaderViewModel.SnackbarText> { text ->
         val root = view
         if (root != null && text != null) {
-            val message = getString(text.stringResId, text.params)
+            val message = getString(text.stringResId, *text.params)
             Snackbar.make(root, message, Snackbar.LENGTH_LONG).show()
         }
     }
