@@ -19,34 +19,26 @@
 
 package ca.rmen.android.poetassistant.widget
 
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.TextView
-import io.reactivex.Observable
-import io.reactivex.ObservableEmitter
-import java.util.concurrent.TimeUnit
 
 object DebounceTextWatcher {
-    fun observe(textView: TextView): Observable<String> {
-        return Observable.create({ emitter: ObservableEmitter<String> ->
-            val textWatcher = EmitterTextWatcher(emitter)
-            textView.addTextChangedListener(textWatcher)
-            emitter.setCancellable({ textView.removeTextChangedListener(textWatcher) })
-        }).debounce(5000, TimeUnit.MILLISECONDS)
-    }
+    fun debounce(textView: TextView, body: () -> Unit) {
+        val handler = Handler()
+        textView.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
 
-    private class EmitterTextWatcher(emitter: ObservableEmitter<String>) : TextWatcher {
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                handler.removeCallbacksAndMessages(null)
+                handler.postDelayed(body, 5000)
+            }
 
-        private val mEmitter: ObservableEmitter<String> = emitter
+            override fun afterTextChanged(p0: Editable?) {
+            }
 
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-        }
-
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-            mEmitter.onNext(s.toString())
-        }
-
-        override fun afterTextChanged(p0: Editable?) {
-        }
+        })
     }
 }

@@ -23,19 +23,19 @@ import android.os.Build
 import android.view.View
 import android.view.ViewTreeObserver
 
-object ViewShownCompletable {
+object ViewShownScheduler {
 
     // Issue #19: In a specific scenario, the fragments may not be "ready" yet (onCreateView() may not have been called).
     // Wait until the ViewPager is laid out before invoking anything on the fragments.
     // (We assume that the fragments are "ready" once the ViewPager is laid out.)
-    fun runWhenShown(view: View, runnable: ()->Unit) {
+    fun runWhenShown(view: View, block: ()->Unit) {
         if(view.isShown) {
-            runnable()
+            view.post(block)
         } else {
             val onGlobalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     removeOnGlobalLayoutListener(view, this)
-                    view.post({runnable()})
+                    view.post(block)
                 }
             }
             view.viewTreeObserver.addOnGlobalLayoutListener(onGlobalLayoutListener)

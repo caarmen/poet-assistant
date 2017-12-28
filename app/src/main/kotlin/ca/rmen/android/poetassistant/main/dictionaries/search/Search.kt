@@ -35,10 +35,7 @@ import ca.rmen.android.poetassistant.main.PagerAdapter
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
-import ca.rmen.android.poetassistant.widget.ViewShownCompletable
-import io.reactivex.Maybe
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import ca.rmen.android.poetassistant.widget.ViewShownScheduler
 import java.util.Locale
 import javax.inject.Inject
 
@@ -81,10 +78,9 @@ class Search constructor(private val searchableActivity: Activity, private val v
     fun search(word: String, tab: Tab) {
         Log.d(TAG, "search in $tab for $ word")
         viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false)
-        ViewShownCompletable.create(viewPager)
-                .subscribe({
-                    (mPagerAdapter.getFragment(viewPager, tab) as ResultListFragment<*>?)?.query(word.trim().toLowerCase(Locale.US))
-                })
+        ViewShownScheduler.runWhenShown(viewPager, {
+            (mPagerAdapter.getFragment(viewPager, tab) as ResultListFragment<*>?)?.query(word.trim().toLowerCase(Locale.US))
+        })
     }
 
     /**
@@ -95,16 +91,15 @@ class Search constructor(private val searchableActivity: Activity, private val v
         val wordTrimmed = word.trim().toLowerCase(Locale.US)
 
         selectTabForSearch(wordTrimmed)
-        ViewShownCompletable.create(viewPager)
-                .subscribe({
-                    if (Patterns.isPattern(wordTrimmed)) {
-                        (mPagerAdapter.getFragment(viewPager, Tab.PATTERN) as ResultListFragment<*>?)?.query(wordTrimmed)
-                    } else {
-                        (mPagerAdapter.getFragment(viewPager, Tab.RHYMER) as ResultListFragment<*>?)?.query(wordTrimmed)
-                        (mPagerAdapter.getFragment(viewPager, Tab.THESAURUS) as ResultListFragment<*>?)?.query(wordTrimmed)
-                        (mPagerAdapter.getFragment(viewPager, Tab.DICTIONARY) as ResultListFragment<*>?)?.query(wordTrimmed)
-                    }
-                })
+        ViewShownScheduler.runWhenShown(viewPager, {
+            if (Patterns.isPattern(wordTrimmed)) {
+                (mPagerAdapter.getFragment(viewPager, Tab.PATTERN) as ResultListFragment<*>?)?.query(wordTrimmed)
+            } else {
+                (mPagerAdapter.getFragment(viewPager, Tab.RHYMER) as ResultListFragment<*>?)?.query(wordTrimmed)
+                (mPagerAdapter.getFragment(viewPager, Tab.THESAURUS) as ResultListFragment<*>?)?.query(wordTrimmed)
+                (mPagerAdapter.getFragment(viewPager, Tab.DICTIONARY) as ResultListFragment<*>?)?.query(wordTrimmed)
+            }
+        })
     }
 
     /**

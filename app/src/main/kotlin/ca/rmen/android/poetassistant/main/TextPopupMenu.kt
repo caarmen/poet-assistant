@@ -41,7 +41,6 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.widget.HackFor23381
 import ca.rmen.android.poetassistant.widget.PopupMenuHelper
-import io.reactivex.Observable
 
 object TextPopupMenu {
     enum class Style {
@@ -168,7 +167,7 @@ object TextPopupMenu {
     private fun addSystemMenuItems(context: Context, menuInflater: MenuInflater, menu: Menu, text: String) {
         menuInflater.inflate(R.menu.menu_word_other, menu)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Observable.fromIterable(getSupportedActivities(context, text))
+            getSupportedActivities(context, text)
                     .filter({ resolveInfo -> context.applicationInfo.packageName != resolveInfo.activityInfo.packageName })
                     .forEach({ resolveInfo ->
                         menu.add(

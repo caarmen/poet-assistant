@@ -19,16 +19,17 @@
 
 package ca.rmen.android.poetassistant.main.rules;
 
+import android.app.Activity;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
 import android.util.Log;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Set;
 
 import ca.rmen.android.poetassistant.Constants;
-import io.reactivex.Observable;
 
 public class ActivityStageIdlingResource implements IdlingResource {
     private static final String TAG = Constants.TAG + ActivityStageIdlingResource.class.getSimpleName();
@@ -68,10 +69,15 @@ public class ActivityStageIdlingResource implements IdlingResource {
      * @return true if the given activity is in one of the given stages.
      */
     public static boolean isActivityInStages(String activityClassName, Set<Stage> stages) {
-        return Observable.fromIterable(stages)
-                .flatMapIterable(stage -> ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(stage))
-                .any(matchedActivity -> activityClassName.equals(matchedActivity.getClass().getName()))
-                .blockingGet();
+        for (Stage stage : stages) {
+            Collection<Activity> activitesInStage = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(stage);
+            for (Activity matchedActivity: activitesInStage) {
+                if (activityClassName.equals(matchedActivity.getClass().getName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
