@@ -17,40 +17,36 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant;
+package ca.rmen.android.poetassistant
 
-import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.OnConflictStrategy;
-import android.arch.persistence.room.Query;
-
-import java.util.Collection;
-import java.util.List;
+import android.arch.lifecycle.LiveData
+import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Delete
+import android.arch.persistence.room.Insert
+import android.arch.persistence.room.OnConflictStrategy
+import android.arch.persistence.room.Query
 
 @Dao
-public interface FavoriteDao {
+interface FavoriteDao {
 
     @Query("SELECT * FROM FAVORITE")
-    List<Favorite> getFavorites();
+    fun getFavorites(): Array<Favorite>
 
     @Query("SELECT * FROM FAVORITE")
-    LiveData<List<Favorite>> getFavoritesLiveData();
+    fun getFavoritesLiveData(): LiveData<List<Favorite>>
 
     @Query("SELECT COUNT(*) FROM FAVORITE WHERE WORD = :word")
-    LiveData<Integer> getCountLiveData(String word);
+    fun getCountLiveData(word: String): LiveData<Int>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insert(Favorite favorite);
+    fun insert(favorite: Favorite)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insertAll(Collection<Favorite> favorites);
+    fun insertAll(favorites: Array<Favorite>)
 
     @Delete
-    void delete(Favorite word);
+    fun delete(word: Favorite)
 
     @Query("DELETE FROM FAVORITE")
-    void deleteAll();
-
+    fun deleteAll()
 }

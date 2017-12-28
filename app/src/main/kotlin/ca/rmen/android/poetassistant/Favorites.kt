@@ -44,11 +44,11 @@ class Favorites constructor(private val favoriteDao: FavoriteDao) {
         return Transformations.map(favoriteDao.getCountLiveData(word), { count -> count > 0 })
     }
 
-    fun getFavoritesLiveData(): LiveData<List<Favorite>> = favoriteDao.favoritesLiveData
+    fun getFavoritesLiveData(): LiveData<List<Favorite>> = favoriteDao.getFavoritesLiveData()
 
     @WorkerThread
     fun getFavorites(): Set<String> {
-        return favoriteDao.favorites.map(Favorite::getWord).toSet()
+        return favoriteDao.getFavorites().map(Favorite::getWord).toSet()
     }
 
     @WorkerThread
@@ -86,7 +86,7 @@ class Favorites constructor(private val favoriteDao: FavoriteDao) {
                     }
                 }
             }
-            favoriteDao.insertAll(favoritesToAdd)
+            favoriteDao.insertAll(favoritesToAdd.toTypedArray())
         }
     }
 
