@@ -30,6 +30,7 @@ import android.support.v7.widget.SearchView
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.PagerAdapter
 import ca.rmen.android.poetassistant.main.Tab
@@ -57,6 +58,7 @@ class Search constructor(private val searchableActivity: Activity, private val v
     private val mPagerAdapter: PagerAdapter
     @Inject
     lateinit var mDictionary: Dictionary
+    @Inject lateinit var mThreading: Threading
 
     init {
         DaggerHelper.getMainScreenComponent(searchableActivity.application).inject(this)
@@ -136,16 +138,15 @@ class Search constructor(private val searchableActivity: Activity, private val v
 
     fun lookupRandom() {
         Log.d(TAG, "lookupRandom")
-        Maybe.fromCallable({
-            mDictionary.getRandomEntry()
-        })
-                .map({ entry -> entry.word })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ word ->
-                    search(word)
-                    viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false)
-                })
+        mThreading.execute(
+                { mDictionary.getRandomEntry() },
+                { entry ->
+                    entry?.let {
+                        search(entry.word)
+                        viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false)
+                    }
+                }
+        )
     }
 
     /**
@@ -153,7 +154,7 @@ class Search constructor(private val searchableActivity: Activity, private val v
      */
     @MainThread
     fun addSuggestions(suggestion: String) {
-        Schedulers.io().scheduleDirect({
+        mThreading.execute({
             val contentValues = ContentValues(1)
             contentValues.put(SearchManager.QUERY, suggestion)
             searchableActivity.contentResolver.insert(SuggestionsProvider.CONTENT_URI, contentValues)

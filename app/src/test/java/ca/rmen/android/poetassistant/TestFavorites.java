@@ -50,7 +50,8 @@ public class TestFavorites {
                 UserDb.class, "userdata.db")
                 .allowMainThreadQueries()
                 .addMigrations(UserDb.MIGRATION_1_2).build();
-        Favorites favorites = new Favorites(db.favoriteDao());
+        Threading threading = new JunitThreading();
+        Favorites favorites = new Favorites(threading, db.favoriteDao());
         Set<String> favoriteWords = favorites.getFavorites();
         assertEquals(0, favoriteWords.size());
         Uri uri = createFavoritesFile();

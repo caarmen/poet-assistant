@@ -26,7 +26,6 @@ import android.os.Build
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
-import io.reactivex.schedulers.Schedulers
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class WotdJobService : JobService() {
@@ -38,7 +37,8 @@ class WotdJobService : JobService() {
     override fun onStartJob(params: JobParameters?): Boolean {
         Log.v(TAG, "onStartJob: params=$params")
         val dictionary = DaggerHelper.getWotdComponent(application).getDictionary()
-        Schedulers.io().scheduleDirect({
+        val threading = DaggerHelper.getWotdComponent(application).getThreading()
+        threading.execute({
             Wotd.notifyWotd(applicationContext, dictionary)
             jobFinished(params, false)
         })

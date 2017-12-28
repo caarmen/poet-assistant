@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.dagger
 
 import android.app.Application
 import ca.rmen.android.poetassistant.Favorites
+import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.UserDb
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
@@ -38,7 +39,7 @@ import javax.inject.Singleton
 class AppModule(private val application: Application) {
     @Provides
     @Singleton
-    fun providesTts(settingsPrefs: SettingsPrefs): Tts = Tts(application, settingsPrefs)
+    fun providesTts(settingsPrefs: SettingsPrefs, threading: Threading): Tts = Tts(application, settingsPrefs, threading)
 
     @Provides
     @Singleton
@@ -65,7 +66,7 @@ class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesFavorites(userDb: UserDb) = Favorites(userDb.favoriteDao())
+    fun providesFavorites(threading: Threading, userDb: UserDb) = Favorites(threading, userDb.favoriteDao())
 
     @Provides
     @Singleton

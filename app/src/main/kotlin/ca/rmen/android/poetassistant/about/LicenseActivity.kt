@@ -28,13 +28,13 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.Threading
+import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.ActivityLicenseBinding
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
+import javax.inject.Inject
 
 class LicenseActivity : AppCompatActivity() {
     companion object {
@@ -49,10 +49,12 @@ class LicenseActivity : AppCompatActivity() {
         }
     }
 
+    @Inject lateinit var threading: Threading
     private lateinit var mBinding: ActivityLicenseBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DaggerHelper.getMainScreenComponent(this).inject(this)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_license)
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
@@ -62,10 +64,9 @@ class LicenseActivity : AppCompatActivity() {
         val title = intent.getStringExtra(EXTRA_TITLE)
         val licenseFile = intent.getStringExtra(EXTRA_LICENSE_TEXT_ASSET_FILE)
         mBinding.tvTitle.text = title
-        Single.fromCallable({ readFile(licenseFile) })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ licenseText -> mBinding.tvLicenseText.text = licenseText })
+        threading.execute(
+                {readFile(licenseFile)},
+                {mBinding.tvLicenseText.text = it})
     }
 
     @WorkerThread

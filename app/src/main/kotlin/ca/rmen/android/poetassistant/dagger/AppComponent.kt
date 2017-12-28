@@ -21,6 +21,8 @@ package ca.rmen.android.poetassistant.dagger
 
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.PoemAudioExport
+import ca.rmen.android.poetassistant.Threading
+import ca.rmen.android.poetassistant.about.LicenseActivity
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderViewModel
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListViewModel
@@ -48,7 +50,7 @@ import dagger.Subcomponent
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [(AppModule::class), (DbModule::class)])
+@Component(modules = [(AppModule::class), (DbModule::class), (ThreadingModule::class)])
 interface AppComponent {
     fun getMainScreenComponent(): AppComponent.MainScreenComponent
     fun getSettingsComponent(): AppComponent.SettingsComponent
@@ -59,6 +61,7 @@ interface AppComponent {
         fun getSuggestions(): Suggestions
         fun getFavorites(): Favorites
         fun getSettingsPrefs(): SettingsPrefs
+        fun getThreading(): Threading
     }
     @Subcomponent
     interface MainScreenComponent :BaseComponent {
@@ -77,6 +80,8 @@ interface AppComponent {
         fun inject(favoritesLiveData: FavoritesLiveData)
         fun inject(suggestionsCursor: SuggestionsCursor)
         fun inject(search: Search)
+
+        fun inject(licenseActivity: LicenseActivity)
     }
 
     @Subcomponent

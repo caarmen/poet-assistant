@@ -21,9 +21,7 @@ package ca.rmen.android.poetassistant.main.dictionaries
 
 import android.arch.lifecycle.LiveData
 import android.content.Context
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import ca.rmen.android.poetassistant.dagger.DaggerHelper
 
 abstract class ResultListLiveData<T> protected constructor(protected val context: Context) : LiveData<T>() {
     private var mIsLoading = false
@@ -32,13 +30,14 @@ abstract class ResultListLiveData<T> protected constructor(protected val context
     override fun onActive() {
         if (value == null && !mIsLoading) {
             mIsLoading = true
-            Single.fromCallable(this::loadInBackground)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ data ->
-                        value = data
+            val threading = DaggerHelper.getMainScreenComponent(context).getThreading()
+            threading.execute(
+                    { loadInBackground() },
+                    {
+                        value = it
                         mIsLoading = false
-                    })
+                    }
+            )
         }
     }
 }

@@ -31,13 +31,13 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.NotificationChannel
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.HtmlCompat
+import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.Share
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
-import io.reactivex.schedulers.Schedulers
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
@@ -78,7 +78,8 @@ object Wotd {
         } else {
             WotdAlarm.schedule(context)
         }
-        Schedulers.io().scheduleDirect({notifyWotd(context, dictionary)})
+        val threading = DaggerHelper.getWotdComponent(context).getThreading()
+        threading.execute({ notifyWotd(context, dictionary) })
     }
 
     private fun disableWotd(context : Context) {

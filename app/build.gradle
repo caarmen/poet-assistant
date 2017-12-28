@@ -63,6 +63,7 @@ android {
                 manifest.srcFile "src/test/AndroidManifest.xml"
                 java.srcDirs += "$projectDir/src/test/kotlin"
             }
+            androidTest.java.srcDirs += "$projectDir/src/androidTest/kotlin"
         }
 
         // used by Room, to test migrations
@@ -182,11 +183,10 @@ dependencies {
     implementation 'ca.rmen:porter-stemmer:1.0.0'
     implementation "org.jraf:prefs:$prefs_version"
     implementation "com.google.dagger:dagger:$dagger_version"
-    implementation "io.reactivex.rxjava2:rxjava:2.1.7"
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation "android.arch.lifecycle:extensions:$arch_version"
     implementation "android.arch.persistence.room:runtime:$arch_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
     kapt "android.arch.persistence.room:compiler:$arch_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     kapt "org.jraf:prefs-compiler:$prefs_version"
@@ -196,6 +196,7 @@ dependencies {
 
     testImplementation 'junit:junit:4.12'
     testImplementation "org.robolectric:robolectric:3.6.1"
+    kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
 
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leak_canary_version"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leak_canary_version"

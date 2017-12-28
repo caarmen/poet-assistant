@@ -27,7 +27,6 @@ import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
 import android.text.TextUtils
 import android.util.Log
-import io.reactivex.schedulers.Schedulers
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.IOException
@@ -35,7 +34,7 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.util.Locale
 
-class Favorites constructor(private val favoriteDao: FavoriteDao) {
+class Favorites (private val threading: Threading, private val favoriteDao: FavoriteDao) {
     companion object {
         private val TAG = Constants.TAG + Favorites::class.java.simpleName
     }
@@ -66,7 +65,7 @@ class Favorites constructor(private val favoriteDao: FavoriteDao) {
 
     @MainThread
     fun saveFavorite(word: String, isFavorite: Boolean) {
-        if (isFavorite) Schedulers.io().scheduleDirect({ favoriteDao.insert(Favorite(word)) })
+        if (isFavorite) threading.execute({ favoriteDao.insert(Favorite(word)) })
         else removeFavorite(word)
     }
 
@@ -93,11 +92,11 @@ class Favorites constructor(private val favoriteDao: FavoriteDao) {
     @MainThread
     private fun removeFavorite(favorite: String) {
         Log.v(TAG, "removeFavorite $favorite")
-        Schedulers.io().scheduleDirect({ favoriteDao.delete(Favorite(favorite)) })
+        threading.execute({ favoriteDao.delete(Favorite(favorite)) })
     }
 
     @MainThread
     fun clear() {
-        Schedulers.io().scheduleDirect(favoriteDao::deleteAll)
+        threading.execute({ favoriteDao.deleteAll() })
     }
 }

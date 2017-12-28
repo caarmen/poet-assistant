@@ -37,7 +37,6 @@ import ca.rmen.android.poetassistant.dagger.TestAppComponent;
 import ca.rmen.android.poetassistant.dagger.TestDbModule;
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter;
-import io.reactivex.plugins.RxJavaPlugins;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -58,11 +57,6 @@ final class ActivityTestRules {
         DaggerHelper.INSTANCE.setAppComponent(testAppComponent);
         cleanup(targetContext);
         ProcessTextRouter.INSTANCE.setEnabled(targetContext, true);
-        RxJavaPlugins.setIoSchedulerHandler(scheduler -> {
-            IdlingScheduler idlingScheduler = new IdlingScheduler(scheduler);
-            IdlingRegistry.getInstance().register(new RxSchedulerIdlingResource(idlingScheduler));
-            return idlingScheduler;
-        });
     }
 
     static void afterActivityFinished(Context targetContext) {
