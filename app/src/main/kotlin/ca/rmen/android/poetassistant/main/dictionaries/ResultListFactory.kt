@@ -106,7 +106,7 @@ object ResultListFactory {
 
     fun createLiveData(tab: Tab, context: Context, query: String?, filter: String?): ResultListLiveData<out ResultListData<out Any>> {
         return when (tab) {
-            Tab.PATTERN -> PatternLiveData(context, query)
+            Tab.PATTERN -> PatternLiveData(context, query!!)
             Tab.FAVORITES -> FavoritesLiveData(context)
             Tab.WOTD -> WotdLiveData(context)
             Tab.RHYMER -> RhymerLiveData(context, query!!, filter)
