@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.wotd
 
 import android.content.Context
-import android.icu.util.Calendar
 import android.support.v4.content.ContextCompat
 import android.text.format.DateUtils
 import android.util.Log
@@ -33,6 +32,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import java.util.Calendar
 import java.util.Random
 import java.util.TimeZone
 import javax.inject.Inject

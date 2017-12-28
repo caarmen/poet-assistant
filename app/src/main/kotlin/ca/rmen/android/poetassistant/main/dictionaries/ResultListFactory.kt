@@ -115,7 +115,7 @@ object ResultListFactory {
         }
     }
 
-    fun createExporter(context: Context, tab: Tab): ResultListExporter<out Any> {
+    fun createExporter(context: Context, tab: Tab): ResultListExporter<*> {
         return when (tab) {
             Tab.PATTERN -> PatternListExporter(context)
             Tab.FAVORITES -> FavoritesListExporter(context)

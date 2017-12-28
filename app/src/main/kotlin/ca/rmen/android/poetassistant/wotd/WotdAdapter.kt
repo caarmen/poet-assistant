@@ -33,7 +33,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 
 class WotdAdapter(activity: Activity) : ResultListAdapter<WotdEntryViewModel>() {
     private val mWordClickedListener: OnWordClickListener = activity as OnWordClickListener
-    private val mentryIconClickListener = EntryIconClickListener()
+    private val mEntryIconClickListener = EntryIconClickListener()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultListEntryViewHolder {
         return ResultListEntryViewHolder(DataBindingUtil.inflate<ListItemWotdBinding>(
@@ -47,7 +47,7 @@ class WotdAdapter(activity: Activity) : ResultListAdapter<WotdEntryViewModel>() 
         val viewModel = getItem(position)
         val binding = holder.binding as ListItemWotdBinding
         binding.viewModel = viewModel
-        binding.entryIconClickListener = mentryIconClickListener
+        binding.entryIconClickListener = mEntryIconClickListener
         TextPopupMenu.addPopupMenu(
                 if (viewModel.showButtons) TextPopupMenu.Style.SYSTEM else TextPopupMenu.Style.FULL,
                 binding.text1,

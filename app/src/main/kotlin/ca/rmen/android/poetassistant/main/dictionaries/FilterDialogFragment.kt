@@ -71,11 +71,9 @@ class FilterDialogFragment : DialogFragment() {
             arguments?.let { args ->
                 binding.edit.setText(args.getString(EXTRA_TEXT))
 
-                val positiveListener = object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface, which: Int) {
-                        val listener = if (parentFragment is FilterDialogListener) parentFragment as FilterDialogListener else activity as FilterDialogListener
-                        listener.onFilterSubmitted(binding.edit.text.toString())
-                    }
+                val positiveListener = DialogInterface.OnClickListener { _, _->
+                    val listener = if (parentFragment is FilterDialogListener) parentFragment as FilterDialogListener else activity as FilterDialogListener
+                    listener.onFilterSubmitted(binding.edit.text.toString())
                 }
 
                 val dialog = AlertDialog.Builder(context)

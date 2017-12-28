@@ -23,7 +23,7 @@ package ca.rmen.android.poetassistant.main.dictionaries
  * Exports the data displayed in a {@link ResultListFragment} to text format.
  * @param <T> must be a List of {@link RTEntryViewModel} or a List of {@link ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry.DictionaryEntryDetails}.
  */
-interface ResultListExporter<T> {
+interface ResultListExporter<in T> {
 
     /**
      * @param word the word the user looked up
