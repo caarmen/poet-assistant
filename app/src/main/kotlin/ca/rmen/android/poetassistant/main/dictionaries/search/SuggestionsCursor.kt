@@ -63,7 +63,7 @@ class SuggestionsCursor(context: Context, private val filter: String?) : MatrixC
                 } else {
                     R.drawable.ic_search_history
                 }
-        val suggestions = mSuggestions.suggestions
+        val suggestions = mSuggestions.getSuggestions()
         suggestions.filter({ TextUtils.isEmpty(filter) || it.contains(filter!!) })
                 .distinct()
                 .sorted()

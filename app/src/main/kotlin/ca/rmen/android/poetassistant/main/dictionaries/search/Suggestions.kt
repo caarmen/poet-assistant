@@ -17,35 +17,18 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.search;
+package ca.rmen.android.poetassistant.main.dictionaries.search
 
-import android.support.annotation.WorkerThread;
+import android.support.annotation.WorkerThread
 
-import java.util.List;
-
-import io.reactivex.Observable;
-
-public class Suggestions {
-
-    private final SuggestionDao mSuggestionDao;
-
-    public Suggestions(SuggestionDao suggestionDao) {
-        mSuggestionDao = suggestionDao;
-    }
+class Suggestions(private val suggestionDao: SuggestionDao) {
 
     @WorkerThread
-    List<String> getSuggestions() {
-        return Observable.fromIterable(mSuggestionDao.getSuggestions()).map(Suggestion::getWord).toList().blockingGet();
-    }
+    fun getSuggestions(): List<String> = suggestionDao.getSuggestions().map(Suggestion::getWord)
 
     @WorkerThread
-    void addSuggestion(final String suggestion) {
-        mSuggestionDao.insertAll(new Suggestion(suggestion));
-    }
+    fun addSuggestion(suggestion: String) = suggestionDao.insertAll(Suggestion(suggestion))
 
     @WorkerThread
-    void clear() {
-        mSuggestionDao.deleteAll();
-    }
-
+    fun clear() = suggestionDao.deleteAll()
 }
