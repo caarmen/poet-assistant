@@ -131,8 +131,8 @@ class SettingsActivity : AppCompatActivity() {
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
                     removePreferences(PREF_CATEGORY_USER_DATA, PREF_EXPORT_FAVORITES, PREF_IMPORT_FAVORITES)
                 } else {
-                    setOnPreferenceClickListener(PREF_EXPORT_FAVORITES, Runnable { startActivityForResult(mViewModel.exportFavoritesIntent, ACTION_EXPORT_FAVORITES) })
-                    setOnPreferenceClickListener(PREF_IMPORT_FAVORITES, Runnable { startActivityForResult(mViewModel.importFavoritesIntent, ACTION_IMPORT_FAVORITES) })
+                    setOnPreferenceClickListener(PREF_EXPORT_FAVORITES, Runnable { startActivityForResult(mViewModel.getExportFavoritesIntent(), ACTION_EXPORT_FAVORITES) })
+                    setOnPreferenceClickListener(PREF_IMPORT_FAVORITES, Runnable { startActivityForResult(mViewModel.getImportFavoritesIntent(), ACTION_IMPORT_FAVORITES) })
                 }
 
             }
