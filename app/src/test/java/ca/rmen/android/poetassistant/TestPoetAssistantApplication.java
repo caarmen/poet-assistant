@@ -21,8 +21,9 @@ package ca.rmen.android.poetassistant;
 
 @SuppressWarnings("unused") // this is picked automagically for tests thanks to the Test prefix.
 public class TestPoetAssistantApplication extends PoetAssistantApplication {
+    @SuppressWarnings("EmptyMethod")
     @Override
-    void setupLeakCanary() {
+    protected void setupLeakCanary() {
         // Don't set up leak canary in tests
     }
 }

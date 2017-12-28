@@ -17,14 +17,24 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant
+package ca.rmen.android.poetassistant.wotd
 
-data class TtsState(val previousStatus: TtsStatus?, val currentStatus: TtsStatus, val utteranceId: String?) {
-    enum class TtsStatus {
-        UNINITIALIZED,
-        INITIALIZED,
-        SPEAKING,
-        UTTERANCE_COMPLETE,
-        UTTERANCE_ERROR
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.util.Log
+import ca.rmen.android.poetassistant.Constants
+import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import io.reactivex.schedulers.Schedulers
+
+class WotdBroadcastReceiver : BroadcastReceiver() {
+    companion object {
+        private val TAG = Constants.TAG + WotdBootReceiver::class.java.simpleName
+    }
+
+    override fun onReceive(context: Context, intent: Intent) {
+        Log.v(TAG, "onReceive: intent=$intent")
+        val dictionary = DaggerHelper.getWotdComponent(context).getDictionary()
+        Schedulers.io().scheduleDirect({ Wotd.notifyWotd(context, dictionary) })
     }
 }

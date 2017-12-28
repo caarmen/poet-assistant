@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2017 Carmen Alvarez
+ * Copyright (c) 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -16,17 +16,16 @@
  * You should have received a copy of the GNU General Public License
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
+package ca.rmen.android.poetassistant.main.dictionaries.search
 
-package ca.rmen.android.poetassistant.main.dictionaries.rt
+import android.app.Activity
+import android.os.Bundle
+import ca.rmen.android.poetassistant.main.Tab
 
-data class ThesaurusEntry(val word: String, val entries: List<ThesaurusEntryDetails>) {
-    enum class WordType {
-        ADJ,
-        ADV,
-        NOUN,
-        VERB,
-        UNKNOWN
+class DictionaryRouterActivity : Activity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ProcessTextRouter.handleIntent(this, intent, Tab.DICTIONARY)
+        finish()
     }
-
-    data class ThesaurusEntryDetails(val wordType: WordType, @JvmField val synonyms: List<String>, @JvmField val antonyms: List<String>)
 }

@@ -19,4 +19,4 @@
 
 package ca.rmen.android.poetassistant.settings
 
-data class TtsVoice(@JvmField val id: String, @JvmField val name: CharSequence)
+data class TtsVoice(val id: String, val name: CharSequence)

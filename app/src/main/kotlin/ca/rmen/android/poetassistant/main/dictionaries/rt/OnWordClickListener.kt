@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2017 Carmen Alvarez
+ * Copyright (c) 2016 - 2017Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -19,14 +19,8 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.rt
 
-data class ThesaurusEntry(val word: String, val entries: List<ThesaurusEntryDetails>) {
-    enum class WordType {
-        ADJ,
-        ADV,
-        NOUN,
-        VERB,
-        UNKNOWN
-    }
+import ca.rmen.android.poetassistant.main.Tab
 
-    data class ThesaurusEntryDetails(val wordType: WordType, @JvmField val synonyms: List<String>, @JvmField val antonyms: List<String>)
+interface OnWordClickListener {
+    fun onWordClick(word: String, tab: Tab)
 }

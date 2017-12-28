@@ -17,16 +17,30 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.rt
+package ca.rmen.android.poetassistant.main.dictionaries
 
-data class ThesaurusEntry(val word: String, val entries: List<ThesaurusEntryDetails>) {
-    enum class WordType {
-        ADJ,
-        ADV,
-        NOUN,
-        VERB,
-        UNKNOWN
+import android.databinding.ViewDataBinding
+import android.support.v7.widget.RecyclerView
+
+abstract class ResultListAdapter<T> : RecyclerView.Adapter<ResultListAdapter.ResultListEntryViewHolder>() {
+
+    private val mData = ArrayList<T>()
+
+    fun clear() {
+        mData.clear()
+        notifyDataSetChanged()
     }
 
-    data class ThesaurusEntryDetails(val wordType: WordType, @JvmField val synonyms: List<String>, @JvmField val antonyms: List<String>)
+    fun addAll(data: List<T>?) {
+        if (data != null) mData.addAll(data)
+        notifyDataSetChanged()
+    }
+
+    fun getAll() = mData
+
+    protected fun getItem(position: Int): T = mData[position]
+
+    override fun getItemCount(): Int = mData.size
+
+    class ResultListEntryViewHolder(val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root)
 }

@@ -104,18 +104,18 @@ object ResultListFactory {
         }
     }
 
-    fun createLiveData(tab: Tab, context: Context, query: String?, filter: String?): ResultListLiveData<out ResultListData<out Any>> {
+    fun createLiveData(tab: Tab, context: Context, query: String?, filter: String?): ResultListLiveData<out ResultListData<Any>> {
         return when (tab) {
-            Tab.PATTERN -> PatternLiveData(context, query)
+            Tab.PATTERN -> PatternLiveData(context, query!!)
             Tab.FAVORITES -> FavoritesLiveData(context)
             Tab.WOTD -> WotdLiveData(context)
             Tab.RHYMER -> RhymerLiveData(context, query!!, filter)
             Tab.THESAURUS -> ThesaurusLiveData(context, query!!, filter)
-            else -> DictionaryLiveData(context, query)
+            else -> DictionaryLiveData(context, query!!)
         }
     }
 
-    fun createExporter(context: Context, tab: Tab): ResultListExporter<out Any> {
+    fun createExporter(context: Context, tab: Tab): ResultListExporter<*> {
         return when (tab) {
             Tab.PATTERN -> PatternListExporter(context)
             Tab.FAVORITES -> FavoritesListExporter(context)

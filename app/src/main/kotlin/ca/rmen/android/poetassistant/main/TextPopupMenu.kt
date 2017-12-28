@@ -135,9 +135,9 @@ object TextPopupMenu {
             return false
         }
         when (itemId) {
-            R.id.action_lookup_rhymer -> listener.onWordClick(selectedWord, Tab.RHYMER)
-            R.id.action_lookup_thesaurus -> listener.onWordClick(selectedWord, Tab.THESAURUS)
-            R.id.action_lookup_dictionary -> listener.onWordClick(selectedWord, Tab.DICTIONARY)
+            R.id.action_lookup_rhymer -> listener.onWordClick(selectedWord!!, Tab.RHYMER)
+            R.id.action_lookup_thesaurus -> listener.onWordClick(selectedWord!!, Tab.THESAURUS)
+            R.id.action_lookup_dictionary -> listener.onWordClick(selectedWord!!, Tab.DICTIONARY)
             R.id.action_copy -> {
                 val clipboard = view.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
                 if (clipboard != null) {

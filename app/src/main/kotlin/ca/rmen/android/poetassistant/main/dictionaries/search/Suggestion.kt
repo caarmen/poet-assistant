@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2017 Carmen Alvarez
+ * Copyright (c) 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,16 +17,21 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.rt
+package ca.rmen.android.poetassistant.main.dictionaries.search
 
-data class ThesaurusEntry(val word: String, val entries: List<ThesaurusEntryDetails>) {
-    enum class WordType {
-        ADJ,
-        ADV,
-        NOUN,
-        VERB,
-        UNKNOWN
-    }
+import android.arch.persistence.room.ColumnInfo
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Index
+import android.arch.persistence.room.PrimaryKey
+import android.support.annotation.NonNull
 
-    data class ThesaurusEntryDetails(val wordType: WordType, @JvmField val synonyms: List<String>, @JvmField val antonyms: List<String>)
+@Entity(tableName = "SUGGESTION", indices = [Index(value = "WORD", unique = true)])
+class Suggestion(word: String) {
+
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "WORD")
+    private val mWord : String = word
+
+    fun getWord() = mWord
 }

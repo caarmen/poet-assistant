@@ -77,22 +77,21 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    class SnackbarText(@JvmField @StringRes val stringResId: Int, @JvmField vararg val params: Any)
-    data class PlayButtonState(@JvmField val isEnabled: Boolean, @DrawableRes @JvmField val iconId: Int)
+    class SnackbarText(@StringRes val stringResId: Int, vararg val params: Any)
+    data class PlayButtonState(val isEnabled: Boolean, @DrawableRes val iconId: Int)
 
 
-    @JvmField
     val poem = ObservableField<String>("")
     val playButtonDrawable = ObservableInt(R.drawable.ic_play_disabled)
     val playButtonEnabled = ObservableBoolean()
     val wordCountText = ObservableField<String>()
-    @JvmField
+
     val snackbarText = MutableLiveData<SnackbarText>()
-    @JvmField
+
     val ttsError = MutableLiveData<Boolean>()
-    @JvmField
+
     val poemFile = MutableLiveData<PoemFile>()
-    @JvmField
+
     val playButtonStateLiveData = MediatorLiveData<ReaderViewModel.PlayButtonState>()
 
     @Inject
@@ -104,7 +103,7 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
         DaggerHelper.getMainScreenComponent(application).inject(this)
         mPoemPrefs = PoemPrefs(application)
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
-        poemFile.value = mPoemPrefs.savedPoem
+        poemFile.value = mPoemPrefs.getSavedPoem()
         playButtonStateLiveData.addSource(mTts.getTtsLiveData(),
                 { ttsState -> playButtonStateLiveData.value = toPlayButtonState(ttsState, poem.get()) })
         playButtonStateLiveData.addSource(LiveDataMapping.fromObservableField(poem),
@@ -166,12 +165,12 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
 
     fun setSavedPoem(savedPoem: PoemFile) {
         Log.v(TAG, "setSavedPoem $savedPoem")
-        mPoemPrefs.savedPoem = savedPoem
+        mPoemPrefs.setSavedPoem(savedPoem)
         poem.set(savedPoem.text)
     }
 
     private fun getSaveAsFilename(): String? {
-        val poemFile = mPoemPrefs.savedPoem
+        val poemFile = mPoemPrefs.getSavedPoem()
         return if (poemFile != null) {
             poemFile.name
         } else {
@@ -185,7 +184,7 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun save(context: Context) {
-        val savedPoem = mPoemPrefs.savedPoem
+        val savedPoem = mPoemPrefs.getSavedPoem()
         if (savedPoem != null) {
             PoemFile.save(context, savedPoem.uri, poem.get(), mPoemFileCallback)
         }
@@ -224,12 +223,12 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
     fun loadPoem() {
         // Load the poem we previously saved
         if (mPoemPrefs.hasSavedPoem()) {
-            val savedPoem = mPoemPrefs.savedPoem
+            val savedPoem = mPoemPrefs.getSavedPoem()
             if (savedPoem != null) {
                 poem.set(savedPoem.text)
             }
         } else if (mPoemPrefs.hasTempPoem()) {
-            val tempPoemText = mPoemPrefs.tempPoem
+            val tempPoemText = mPoemPrefs.getTempPoem()
             poem.set(tempPoemText)
         }
     }
@@ -279,7 +278,7 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private val mPrefsListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+    private val mPrefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         Log.v(TAG, "onSharedPreferenceChanged: key=$key")
         // Prevent the search EditText from disappearing while the user is typing,
         // by only notifying actual changes in the poem text.
@@ -288,14 +287,14 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
         // This resulted in an invalidation of the options menu, causing problems when entering
         // search text.
         val oldPoemText = poemFile.value
-        val newPoemText = mPoemPrefs.savedPoem
+        val newPoemText = mPoemPrefs.getSavedPoem()
         Log.v(TAG, "old: $oldPoemText, new: $newPoemText")
         if ((oldPoemText == null && newPoemText == null)
                 || (oldPoemText != null && oldPoemText == newPoemText)
                 || (newPoemText != null && newPoemText == oldPoemText)) {
             Log.v(TAG, "Ignoring uninteresting poem file change")
         } else {
-            poemFile.value = mPoemPrefs.savedPoem
+            poemFile.value = mPoemPrefs.getSavedPoem()
         }
     }
 

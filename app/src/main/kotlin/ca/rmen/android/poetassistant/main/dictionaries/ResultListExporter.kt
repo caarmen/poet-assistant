@@ -17,16 +17,19 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.rt
+package ca.rmen.android.poetassistant.main.dictionaries
 
-data class ThesaurusEntry(val word: String, val entries: List<ThesaurusEntryDetails>) {
-    enum class WordType {
-        ADJ,
-        ADV,
-        NOUN,
-        VERB,
-        UNKNOWN
-    }
+/**
+ * Exports the data displayed in a {@link ResultListFragment} to text format.
+ * @param <T> must be a List of {@link RTEntryViewModel} or a List of {@link ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry.DictionaryEntryDetails}.
+ */
+interface ResultListExporter<in T> {
 
-    data class ThesaurusEntryDetails(val wordType: WordType, @JvmField val synonyms: List<String>, @JvmField val antonyms: List<String>)
+    /**
+     * @param word the word the user looked up
+     * @param filter an optional filter that the user applied to the search
+     * @param entries the matching entries for the user's word and optional filter
+     * @return a String representation of the entries.
+     */
+    fun export(word: String, filter: String?, entries: T) : String
 }

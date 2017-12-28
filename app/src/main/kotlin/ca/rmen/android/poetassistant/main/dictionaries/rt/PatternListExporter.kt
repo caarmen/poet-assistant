@@ -19,14 +19,15 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.rt
 
-data class ThesaurusEntry(val word: String, val entries: List<ThesaurusEntryDetails>) {
-    enum class WordType {
-        ADJ,
-        ADV,
-        NOUN,
-        VERB,
-        UNKNOWN
-    }
+import android.content.Context
+import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListExporter
 
-    data class ThesaurusEntryDetails(val wordType: WordType, @JvmField val synonyms: List<String>, @JvmField val antonyms: List<String>)
+class PatternListExporter(private val context: Context) : ResultListExporter<List<RTEntryViewModel>> {
+    override fun export(word: String, filter: String?, entries: List<RTEntryViewModel>): String {
+        val title = context.getString(R.string.share_patterns_title)
+        val builder = StringBuilder(title)
+        entries.forEach { builder.append(context.getString(R.string.share_rt_entry, it.text)) }
+        return builder.toString()
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2017 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -16,17 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
+package ca.rmen.android.poetassistant
 
-package ca.rmen.android.poetassistant.main.dictionaries.rt
+import android.app.Application
+import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import com.squareup.leakcanary.LeakCanary
 
-data class ThesaurusEntry(val word: String, val entries: List<ThesaurusEntryDetails>) {
-    enum class WordType {
-        ADJ,
-        ADV,
-        NOUN,
-        VERB,
-        UNKNOWN
+open class PoetAssistantApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        setupLeakCanary()
+        Theme.setThemeFromSettings(SettingsPrefs.get(this))
     }
 
-    data class ThesaurusEntryDetails(val wordType: WordType, @JvmField val synonyms: List<String>, @JvmField val antonyms: List<String>)
+    open protected fun setupLeakCanary() {
+        if (!LeakCanary.isInAnalyzerProcess(this)) {
+            LeakCanary.install(this)
+        }
+    }
 }

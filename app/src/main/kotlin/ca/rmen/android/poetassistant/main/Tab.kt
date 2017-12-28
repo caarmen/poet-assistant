@@ -17,16 +17,22 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.rt
+package ca.rmen.android.poetassistant.main
 
-data class ThesaurusEntry(val word: String, val entries: List<ThesaurusEntryDetails>) {
-    enum class WordType {
-        ADJ,
-        ADV,
-        NOUN,
-        VERB,
-        UNKNOWN
+enum class Tab {
+    RHYMER, THESAURUS, DICTIONARY, READER, FAVORITES, PATTERN, WOTD;
+
+    companion object {
+        fun parse(value: String) : Tab? {
+
+            if (FAVORITES.name.equals(value, true)) return FAVORITES
+            if (WOTD.name.equals(value, true)) return WOTD
+            if (PATTERN.name.equals(value, true)) return PATTERN
+            if (RHYMER.name.equals(value, true)) return RHYMER
+            if (THESAURUS.name.equals(value, true)) return THESAURUS
+            if (DICTIONARY.name.equals(value, true)) return DICTIONARY
+            if (READER.name.equals(value, true)) return READER
+            return null
+        }
     }
-
-    data class ThesaurusEntryDetails(val wordType: WordType, @JvmField val synonyms: List<String>, @JvmField val antonyms: List<String>)
 }

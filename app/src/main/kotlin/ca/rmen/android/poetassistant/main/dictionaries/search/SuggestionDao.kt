@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2017 Carmen Alvarez
+ * Copyright (c) 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,16 +17,21 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.rt
+package ca.rmen.android.poetassistant.main.dictionaries.search
 
-data class ThesaurusEntry(val word: String, val entries: List<ThesaurusEntryDetails>) {
-    enum class WordType {
-        ADJ,
-        ADV,
-        NOUN,
-        VERB,
-        UNKNOWN
-    }
+import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Insert
+import android.arch.persistence.room.OnConflictStrategy
+import android.arch.persistence.room.Query
 
-    data class ThesaurusEntryDetails(val wordType: WordType, @JvmField val synonyms: List<String>, @JvmField val antonyms: List<String>)
+@Dao
+interface SuggestionDao {
+    @Query("SELECT * FROM SUGGESTION")
+    fun getSuggestions(): Array<Suggestion>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertAll(vararg suggestions: Suggestion)
+
+    @Query("DELETE FROM SUGGESTION")
+    fun deleteAll()
 }

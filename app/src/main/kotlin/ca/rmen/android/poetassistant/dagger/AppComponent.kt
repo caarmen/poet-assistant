@@ -19,10 +19,12 @@
 
 package ca.rmen.android.poetassistant.dagger
 
+import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.PoemAudioExport
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderViewModel
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListViewModel
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLiveData
@@ -36,12 +38,10 @@ import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsCursor
 import ca.rmen.android.poetassistant.main.reader.ReaderViewModel
 import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsChangeListener
+import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.settings.SettingsViewModel
 import ca.rmen.android.poetassistant.settings.VoicePreference
-import ca.rmen.android.poetassistant.wotd.WotdBootReceiver
-import ca.rmen.android.poetassistant.wotd.WotdBroadcastReceiver
 import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
-import ca.rmen.android.poetassistant.wotd.WotdJobService
 import ca.rmen.android.poetassistant.wotd.WotdLiveData
 import dagger.Component
 import dagger.Subcomponent
@@ -54,8 +54,14 @@ interface AppComponent {
     fun getSettingsComponent(): AppComponent.SettingsComponent
     fun getWotdComponent(): AppComponent.WotdComponent
 
+    interface BaseComponent {
+        fun getDictionary() : Dictionary
+        fun getSuggestions(): Suggestions
+        fun getFavorites(): Favorites
+        fun getSettingsPrefs(): SettingsPrefs
+    }
     @Subcomponent
-    interface MainScreenComponent {
+    interface MainScreenComponent :BaseComponent {
         fun inject(mainActivity: MainActivity)
         fun inject(resultListViewModel: ResultListViewModel<RTEntryViewModel>)
         fun injectWotd(resultListViewModel: ResultListViewModel<WotdEntryViewModel>)
@@ -71,11 +77,10 @@ interface AppComponent {
         fun inject(favoritesLiveData: FavoritesLiveData)
         fun inject(suggestionsCursor: SuggestionsCursor)
         fun inject(search: Search)
-        fun getSuggestions(): Suggestions
     }
 
     @Subcomponent
-    interface SettingsComponent {
+    interface SettingsComponent : BaseComponent {
         fun inject(settingsViewModel: SettingsViewModel)
         fun inject(settingsChangeListener: SettingsChangeListener)
         fun inject(generalPreferenceFragment: SettingsActivity.GeneralPreferenceFragment)
@@ -83,10 +88,7 @@ interface AppComponent {
     }
 
     @Subcomponent
-    interface WotdComponent {
-        fun inject(wotdBroadcastReceiver: WotdBroadcastReceiver)
-        fun inject(wotdJobService: WotdJobService)
-        fun inject(wotdBootReceiver: WotdBootReceiver)
+    interface WotdComponent : BaseComponent {
         fun inject(wotdLiveData: WotdLiveData)
         fun inject(wotdEntryViewModel: WotdEntryViewModel)
     }

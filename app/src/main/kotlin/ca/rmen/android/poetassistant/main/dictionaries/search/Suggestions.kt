@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2017 Carmen Alvarez
+ * Copyright (c) 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,16 +17,18 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.rt
+package ca.rmen.android.poetassistant.main.dictionaries.search
 
-data class ThesaurusEntry(val word: String, val entries: List<ThesaurusEntryDetails>) {
-    enum class WordType {
-        ADJ,
-        ADV,
-        NOUN,
-        VERB,
-        UNKNOWN
-    }
+import android.support.annotation.WorkerThread
 
-    data class ThesaurusEntryDetails(val wordType: WordType, @JvmField val synonyms: List<String>, @JvmField val antonyms: List<String>)
+class Suggestions(private val suggestionDao: SuggestionDao) {
+
+    @WorkerThread
+    fun getSuggestions(): List<String> = suggestionDao.getSuggestions().map(Suggestion::getWord)
+
+    @WorkerThread
+    fun addSuggestion(suggestion: String) = suggestionDao.insertAll(Suggestion(suggestion))
+
+    @WorkerThread
+    fun clear() = suggestionDao.deleteAll()
 }
