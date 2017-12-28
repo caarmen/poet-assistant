@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016 - 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,22 +17,22 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.main
 
-import android.support.annotation.Nullable;
-
-public enum Tab {
+enum class Tab {
     RHYMER, THESAURUS, DICTIONARY, READER, FAVORITES, PATTERN, WOTD;
 
-    @Nullable
-    public static Tab parse(String value) {
-        if (FAVORITES.name().equalsIgnoreCase(value)) return FAVORITES;
-        if (WOTD.name().equalsIgnoreCase(value)) return WOTD;
-        if (PATTERN.name().equalsIgnoreCase(value)) return PATTERN;
-        if (RHYMER.name().equalsIgnoreCase(value)) return RHYMER;
-        if (THESAURUS.name().equalsIgnoreCase(value)) return THESAURUS;
-        if (DICTIONARY.name().equalsIgnoreCase(value)) return DICTIONARY;
-        if (READER.name().equalsIgnoreCase(value)) return READER;
-        return null;
+    companion object {
+        fun parse(value: String) : Tab? {
+
+            if (FAVORITES.name.equals(value, true)) return FAVORITES
+            if (WOTD.name.equals(value, true)) return WOTD
+            if (PATTERN.name.equals(value, true)) return PATTERN
+            if (RHYMER.name.equals(value, true)) return RHYMER
+            if (THESAURUS.name.equals(value, true)) return THESAURUS
+            if (DICTIONARY.name.equals(value, true)) return DICTIONARY
+            if (READER.name.equals(value, true)) return READER
+            return null
+        }
     }
 }

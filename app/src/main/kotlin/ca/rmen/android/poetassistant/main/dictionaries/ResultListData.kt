@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016 - 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,24 +17,6 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries;
+package ca.rmen.android.poetassistant.main.dictionaries
 
-import java.util.List;
-
-public class ResultListData<T> {
-    final String matchedWord;
-    public final List<T> data;
-
-    public ResultListData(String matchedWord, List<T> data) {
-        this.matchedWord = matchedWord;
-        this.data = data;
-    }
-
-    @Override
-    public String toString() {
-        return "ResultListData{" +
-                "matchedWord='" + matchedWord + '\'' +
-                ", data=" + data +
-                '}';
-    }
-}
+data class ResultListData<out T>(val matchedWord: String, val data: List<T>?)

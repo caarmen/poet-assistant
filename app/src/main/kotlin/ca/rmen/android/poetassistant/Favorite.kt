@@ -17,27 +17,20 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant;
+package ca.rmen.android.poetassistant
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Index;
-import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
+import android.arch.persistence.room.ColumnInfo
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.Index
+import android.arch.persistence.room.PrimaryKey
+import android.support.annotation.NonNull
 
-@Entity(tableName = "FAVORITE", indices = {@Index(value = {"WORD"}, unique = true)})
-public class Favorite {
-
+@Entity(tableName = "FAVORITE", indices = [Index(value = "WORD", unique = true)])
+class Favorite(word: String) {
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "WORD")
-    private final String mWord;
+    private val mWord: String = word
 
-    Favorite(@NonNull String word) {
-        mWord = word;
-    }
-
-    public String getWord() {
-        return mWord;
-    }
+    fun getWord() = mWord
 }

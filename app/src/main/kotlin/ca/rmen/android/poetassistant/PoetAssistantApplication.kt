@@ -16,11 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
+package ca.rmen.android.poetassistant
 
-package ca.rmen.android.poetassistant;
+import android.app.Application
+import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import com.squareup.leakcanary.LeakCanary
 
-public class Constants {
-    public static final String TAG = "PoetAssistant/";
-    public static final String DEEP_LINK_QUERY =  "query";
-    public static final int MAX_RESULTS = 500;
+open class PoetAssistantApplication : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        setupLeakCanary()
+        Theme.setThemeFromSettings(SettingsPrefs.get(this))
+    }
+
+    open protected fun setupLeakCanary() {
+        if (!LeakCanary.isInAnalyzerProcess(this)) {
+            LeakCanary.install(this)
+        }
+    }
 }

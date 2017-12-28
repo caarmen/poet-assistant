@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2016 - 2017Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -16,25 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ca.rmen.android.poetassistant;
 
-import android.app.Application;
+package ca.rmen.android.poetassistant.main.dictionaries.rt
 
-import com.squareup.leakcanary.LeakCanary;
+import ca.rmen.android.poetassistant.main.Tab
 
-import ca.rmen.android.poetassistant.settings.SettingsPrefs;
-
-public class PoetAssistantApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        setupLeakCanary();
-        Theme.INSTANCE.setThemeFromSettings(SettingsPrefs.get(this));
-    }
-
-    void setupLeakCanary() {
-        if (!LeakCanary.isInAnalyzerProcess(this)) {
-            LeakCanary.install(this);
-        }
-    }
+interface OnWordClickListener {
+    fun onWordClick(word: String, tab: Tab)
 }

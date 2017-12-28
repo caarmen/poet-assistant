@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,10 +17,12 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.rt;
+package ca.rmen.android.poetassistant
 
-import ca.rmen.android.poetassistant.main.Tab;
-
-public interface OnWordClickListener {
-    void onWordClick(String word, Tab tab);
+class Constants {
+    companion object {
+        const val TAG = "PoetAssistant/"
+        const val DEEP_LINK_QUERY = "query"
+        const val MAX_RESULTS = 500
+    }
 }
