@@ -19,6 +19,7 @@
 
 package ca.rmen.android.poetassistant.dagger
 
+import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.PoemAudioExport
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderViewModel
@@ -72,6 +73,7 @@ interface AppComponent {
         fun inject(suggestionsCursor: SuggestionsCursor)
         fun inject(search: Search)
         fun getSuggestions(): Suggestions
+        fun getFavorites(): Favorites
     }
 
     @Subcomponent
