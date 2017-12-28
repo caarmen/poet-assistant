@@ -55,8 +55,13 @@ interface AppComponent {
     fun getSettingsComponent(): AppComponent.SettingsComponent
     fun getWotdComponent(): AppComponent.WotdComponent
 
+    interface BaseComponent {
+        fun getDictionary() : Dictionary
+        fun getSuggestions(): Suggestions
+        fun getFavorites(): Favorites
+    }
     @Subcomponent
-    interface MainScreenComponent {
+    interface MainScreenComponent :BaseComponent {
         fun inject(mainActivity: MainActivity)
         fun inject(resultListViewModel: ResultListViewModel<RTEntryViewModel>)
         fun injectWotd(resultListViewModel: ResultListViewModel<WotdEntryViewModel>)
@@ -72,12 +77,10 @@ interface AppComponent {
         fun inject(favoritesLiveData: FavoritesLiveData)
         fun inject(suggestionsCursor: SuggestionsCursor)
         fun inject(search: Search)
-        fun getSuggestions(): Suggestions
-        fun getFavorites(): Favorites
     }
 
     @Subcomponent
-    interface SettingsComponent {
+    interface SettingsComponent : BaseComponent {
         fun inject(settingsViewModel: SettingsViewModel)
         fun inject(settingsChangeListener: SettingsChangeListener)
         fun inject(generalPreferenceFragment: SettingsActivity.GeneralPreferenceFragment)
@@ -85,12 +88,11 @@ interface AppComponent {
     }
 
     @Subcomponent
-    interface WotdComponent {
+    interface WotdComponent : BaseComponent {
         fun inject(wotdBroadcastReceiver: WotdBroadcastReceiver)
         fun inject(wotdBootReceiver: WotdBootReceiver)
         fun inject(wotdLiveData: WotdLiveData)
         fun inject(wotdEntryViewModel: WotdEntryViewModel)
-        fun getDictionary() : Dictionary
     }
 
 }
