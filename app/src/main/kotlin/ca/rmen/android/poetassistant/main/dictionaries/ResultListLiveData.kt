@@ -17,41 +17,28 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries;
+package ca.rmen.android.poetassistant.main.dictionaries
 
-import android.arch.lifecycle.LiveData;
-import android.content.Context;
+import android.arch.lifecycle.LiveData
+import android.content.Context
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+abstract class ResultListLiveData<T> protected constructor(protected val context: Context) : LiveData<T>() {
+    private var mIsLoading = false
 
-public abstract class ResultListLiveData<T> extends LiveData<T> {
-
-    private final Context mContext;
-    private boolean mIsLoading = false;
-
-    protected ResultListLiveData(Context context) {
-        mContext = context.getApplicationContext();
-    }
-
-    protected Context getContext() {
-        return mContext;
-    }
-
-    protected abstract T loadInBackground();
-
-    @Override
-    protected void onActive() {
-        if (getValue() == null && !mIsLoading) {
-            mIsLoading = true;
+    protected abstract fun loadInBackground(): T
+    override fun onActive() {
+        if (value == null && !mIsLoading) {
+            mIsLoading = true
             Single.fromCallable(this::loadInBackground)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(data -> {
-                        setValue(data);
-                        mIsLoading = false;
-                    });
+                    .subscribe({ data ->
+                        value = data
+                        mIsLoading = false
+                    })
         }
     }
 }
