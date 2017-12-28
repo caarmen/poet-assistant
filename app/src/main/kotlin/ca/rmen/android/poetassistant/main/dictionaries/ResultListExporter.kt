@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016 - 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,18 +17,13 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries;
-
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel;
+package ca.rmen.android.poetassistant.main.dictionaries
 
 /**
  * Exports the data displayed in a {@link ResultListFragment} to text format.
  * @param <T> must be a List of {@link RTEntryViewModel} or a List of {@link ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry.DictionaryEntryDetails}.
  */
-public interface ResultListExporter<T> {
+interface ResultListExporter<T> {
 
     /**
      * @param word the word the user looked up
@@ -36,5 +31,5 @@ public interface ResultListExporter<T> {
      * @param entries the matching entries for the user's word and optional filter
      * @return a String representation of the entries.
      */
-    String export(@NonNull String word, @Nullable String filter, @NonNull T entries);
+    fun export(word: String, filter: String?, entries: T) : String
 }
