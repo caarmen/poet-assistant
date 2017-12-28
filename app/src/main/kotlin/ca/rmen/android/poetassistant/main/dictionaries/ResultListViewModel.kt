@@ -87,7 +87,7 @@ class ResultListViewModel<T> constructor(application: Application, private val t
 
     fun share(query: String, filter: String?) {
         mAdapter?.let {
-            Share.share(getApplication(), tab, query, filter, it.all)
+            Share.share(getApplication(), tab, query, filter, it.getAll())
         }
     }
 
