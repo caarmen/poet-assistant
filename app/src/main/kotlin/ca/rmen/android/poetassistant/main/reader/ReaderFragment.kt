@@ -245,7 +245,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
     }
 
     private val mPoemFileCallback = Observer<PoemFile> { _ ->
-        Log.v(TAG, "invalidateOptionsMenu")
+        Log.v(TAG, "poemFileCallback: invalidateOptionsMenu")
         activity?.invalidateOptionsMenu()
     }
 
