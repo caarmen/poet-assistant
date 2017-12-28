@@ -24,6 +24,7 @@ import ca.rmen.android.poetassistant.PoemAudioExport
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderViewModel
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListViewModel
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLiveData
@@ -42,7 +43,6 @@ import ca.rmen.android.poetassistant.settings.VoicePreference
 import ca.rmen.android.poetassistant.wotd.WotdBootReceiver
 import ca.rmen.android.poetassistant.wotd.WotdBroadcastReceiver
 import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
-import ca.rmen.android.poetassistant.wotd.WotdJobService
 import ca.rmen.android.poetassistant.wotd.WotdLiveData
 import dagger.Component
 import dagger.Subcomponent
@@ -87,10 +87,10 @@ interface AppComponent {
     @Subcomponent
     interface WotdComponent {
         fun inject(wotdBroadcastReceiver: WotdBroadcastReceiver)
-        fun inject(wotdJobService: WotdJobService)
         fun inject(wotdBootReceiver: WotdBootReceiver)
         fun inject(wotdLiveData: WotdLiveData)
         fun inject(wotdEntryViewModel: WotdEntryViewModel)
+        fun getDictionary() : Dictionary
     }
 
 }
