@@ -54,7 +54,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
     private val mTtsPrefsListener = TtsPreferenceListener()
 
 
-    fun getTtsLiveData(): LiveData<TtsState?> = mTtsLiveData
+    fun getTtsLiveData(): LiveData<TtsState> = mTtsLiveData
 
     init {
         PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(mTtsPrefsListener)
