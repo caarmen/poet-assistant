@@ -81,6 +81,7 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
     data class PlayButtonState(val isEnabled: Boolean, @DrawableRes val iconId: Int)
 
 
+    private val mPrefsListener : PrefsListener
     val poem = ObservableField<String>("")
     val playButtonDrawable = ObservableInt(R.drawable.ic_play_disabled)
     val playButtonEnabled = ObservableBoolean()
@@ -103,6 +104,8 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
         DaggerHelper.getMainScreenComponent(application).inject(this)
         mPoemPrefs = PoemPrefs(application)
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
+        mPrefsListener = PrefsListener()
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(mPrefsListener)
         poemFile.value = mPoemPrefs.getSavedPoem()
         playButtonStateLiveData.addSource(mTts.getTtsLiveData(),
                 { ttsState -> playButtonStateLiveData.value = toPlayButtonState(ttsState, poem.get()) })
@@ -278,23 +281,25 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private val mPrefsListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        Log.v(TAG, "onSharedPreferenceChanged: key=$key")
-        // Prevent the search EditText from disappearing while the user is typing,
-        // by only notifying actual changes in the poem text.
-        // When starting a new instrumentation test after completing another instrumentation
-        // test, we get a shared prefs change with a null value before and after for the shared poem.
-        // This resulted in an invalidation of the options menu, causing problems when entering
-        // search text.
-        val oldPoemText = poemFile.value
-        val newPoemText = mPoemPrefs.getSavedPoem()
-        Log.v(TAG, "old: $oldPoemText, new: $newPoemText")
-        if ((oldPoemText == null && newPoemText == null)
-                || (oldPoemText != null && oldPoemText == newPoemText)
-                || (newPoemText != null && newPoemText == oldPoemText)) {
-            Log.v(TAG, "Ignoring uninteresting poem file change")
-        } else {
-            poemFile.value = mPoemPrefs.getSavedPoem()
+    private inner class PrefsListener : SharedPreferences.OnSharedPreferenceChangeListener {
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+            Log.v(TAG, "onSharedPreferenceChanged: key=$key")
+            // Prevent the search EditText from disappearing while the user is typing,
+            // by only notifying actual changes in the poem text.
+            // When starting a new instrumentation test after completing another instrumentation
+            // test, we get a shared prefs change with a null value before and after for the shared poem.
+            // This resulted in an invalidation of the options menu, causing problems when entering
+            // search text.
+            val oldPoemText = poemFile.value
+            val newPoemText = mPoemPrefs.getSavedPoem()
+            Log.v(TAG, "old: $oldPoemText, new: $newPoemText")
+            if ((oldPoemText == null && newPoemText == null)
+                    || (oldPoemText != null && oldPoemText == newPoemText)
+                    || (newPoemText != null && newPoemText == oldPoemText)) {
+                Log.v(TAG, "Ignoring uninteresting poem file change")
+            } else {
+                poemFile.value = mPoemPrefs.getSavedPoem()
+            }
         }
     }
 
