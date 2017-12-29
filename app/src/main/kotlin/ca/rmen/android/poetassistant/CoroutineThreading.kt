@@ -19,17 +19,32 @@
 
 package ca.rmen.android.poetassistant
 
-class JunitThreading : Threading {
+import android.util.Log
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
+import kotlin.coroutines.experimental.CoroutineContext
+
+open class CoroutineThreading(private val background: CoroutineContext, private val foreground: CoroutineContext) : Threading {
+
+    companion object {
+        private val TAG = Constants.TAG + CoroutineThreading::class.java.simpleName
+    }
+
     override fun executeForeground(body: () -> Unit) {
-        body.invoke()
+        launch(foreground) { body.invoke() }
     }
 
     override fun <T> execute(backgroundTask: () -> T, foregroundTask: ((T) -> Unit)?, errorTask: ((Throwable) -> Unit)?) {
-        try {
-            val result = backgroundTask.invoke()
-            foregroundTask?.invoke(result)
-        } catch (t: Throwable) {
-            errorTask?.invoke(t)
+        launch(foreground) {
+            val task = async(background) { backgroundTask.invoke() }
+            try {
+                val result = task.await()
+                foregroundTask?.invoke(result)
+
+            } catch (t: Throwable) {
+                Log.v(TAG, "Error running background task", t)
+                errorTask?.invoke(t)
+            }
         }
     }
 }

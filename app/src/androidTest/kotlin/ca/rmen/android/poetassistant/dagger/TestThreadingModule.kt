@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,19 +17,18 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant
+package ca.rmen.android.poetassistant.dagger;
 
-class JunitThreading : Threading {
-    override fun executeForeground(body: () -> Unit) {
-        body.invoke()
-    }
+import ca.rmen.android.poetassistant.InstrumentationThreading
+import ca.rmen.android.poetassistant.Threading
+import dagger.Module
+import dagger.Provides
+import javax.inject.Singleton
 
-    override fun <T> execute(backgroundTask: () -> T, foregroundTask: ((T) -> Unit)?, errorTask: ((Throwable) -> Unit)?) {
-        try {
-            val result = backgroundTask.invoke()
-            foregroundTask?.invoke(result)
-        } catch (t: Throwable) {
-            errorTask?.invoke(t)
-        }
-    }
+@Module
+class TestThreadingModule {
+
+    @Provides
+    @Singleton
+    fun providesThreading() : Threading =  InstrumentationThreading()
 }

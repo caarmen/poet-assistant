@@ -27,7 +27,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import dagger.Component;
 
 @Singleton
-@Component(modules = {AppModule.class, TestDbModule.class})
+@Component(modules = {AppModule.class, TestDbModule.class, TestThreadingModule.class})
 public interface TestAppComponent extends AppComponent {
     Tts getTts();
     UserDb getUserDb();

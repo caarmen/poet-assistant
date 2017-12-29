@@ -25,6 +25,7 @@ buildscript {
     ext.espresso_version = '3.0.1'
     ext.gradle_plugin_version = '3.0.1'
     ext.kotlin_version = '1.2.10'
+    ext.kotlin_coroutines_version = '0.21'
     ext.leak_canary_version = '1.5.4'
     ext.prefs_version = '1.2.2'
     ext.support_lib_version = '27.0.2'
