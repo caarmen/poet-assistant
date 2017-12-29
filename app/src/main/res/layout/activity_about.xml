@@ -133,13 +133,8 @@
 
                 <TextView
                     style="@style/AboutActivitySubItem"
-                    android:id="@+id/tv_rx_java_license"
-                    android:text="@string/about_license_rx_java"/>
-
-                <TextView
-                    style="@style/AboutActivitySubItem"
-                    android:id="@+id/tv_rx_android_license"
-                    android:text="@string/about_license_rx_android"/>
+                    android:id="@+id/tv_kotlin_license"
+                    android:text="@string/about_license_kotlin"/>
 
                 <TextView
                     style="@style/AboutActivitySubItem"

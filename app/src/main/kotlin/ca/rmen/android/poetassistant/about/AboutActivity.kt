@@ -95,8 +95,7 @@ class AboutActivity : AppCompatActivity() {
         hackSetIcon(mBinding.tvGoogleNgramDatasetLicense, R.drawable.ic_bullet)
         hackSetIcon(mBinding.tvSupportLibLicense, R.drawable.ic_bullet)
         hackSetIcon(mBinding.tvDaggerLicense, R.drawable.ic_bullet)
-        hackSetIcon(mBinding.tvRxJavaLicense, R.drawable.ic_bullet)
-        hackSetIcon(mBinding.tvRxAndroidLicense, R.drawable.ic_bullet)
+        hackSetIcon(mBinding.tvKotlinLicense, R.drawable.ic_bullet)
         hackSetIcon(mBinding.tvPrefsLicense, R.drawable.ic_bullet)
         hackSetIcon(mBinding.tvStemmerLicense, R.drawable.ic_bullet)
     }

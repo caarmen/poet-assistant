@@ -82,8 +82,7 @@
     <string name="about_license_google_ngram_dataset">Google Ngram Dataset License</string>
     <string name="about_license_support_lib">Android Support Library and Architecture Components License (Apache2): https://android.googlesource.com/platform/frameworks/support/+/master/LICENSE.txt</string>
     <string name="about_license_dagger">Dagger License (Apache2): https://github.com/google/dagger/blob/master/LICENSE.txt</string>
-    <string name="about_license_rx_java">RxJava License (Apache2): https://github.com/ReactiveX/RxJava/blob/2.x/LICENSE</string>
-    <string name="about_license_rx_android">RxAndroid License (Apache2): https://github.com/ReactiveX/RxAndroid/blob/2.x/LICENSE</string>
+    <string name="about_license_kotlin">Kotlin License (Apache2): https://github.com/JetBrains/kotlin/blob/master/license/LICENSE.txt</string>
     <string name="about_license_prefs">Android Prefs License (Apache2): https://github.com/BoD/android-prefs/blob/master/LICENSE</string>
     <string name="about_porter_stemming_algorithm">Porter stemming algorithm: http://tartarus.org/martin/PorterStemmer/</string>
     <string name="license_title">Licensing Information</string>

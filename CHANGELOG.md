@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+1.26.0  *(2017-12-29)*
+--------------------
+* Maintenance release:
+  - Complete rewrite of the app in Kotlin.
+  - Replace RxJava schedulers with Kotlin coroutines.
+
 1.25.1  *(2017-11-13)*
 --------------------
 * Attempt to fix a crash related to the search view hint.
