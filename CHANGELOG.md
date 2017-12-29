@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.26.1  *(2017-12-29)*
+--------------------
+* Issue #133: Stop support for Ice Cream Sandwich (4.0.x).
+
 1.26.0  *(2017-12-29)*
 --------------------
 * Maintenance release:
