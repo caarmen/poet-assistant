@@ -28,10 +28,8 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.ActivityLicenseBinding
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -62,10 +60,9 @@ class LicenseActivity : AppCompatActivity() {
         val title = intent.getStringExtra(EXTRA_TITLE)
         val licenseFile = intent.getStringExtra(EXTRA_LICENSE_TEXT_ASSET_FILE)
         mBinding.tvTitle.text = title
-        Single.fromCallable({ readFile(licenseFile) })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ licenseText -> mBinding.tvLicenseText.text = licenseText })
+        val threading = DaggerHelper.getMainScreenComponent(this).getThreading()
+        threading.execute({ readFile(licenseFile) },
+                { mBinding.tvLicenseText.text = it })
     }
 
     @WorkerThread

@@ -36,9 +36,6 @@ import android.util.Log
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.Share
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.io.File
 import javax.inject.Inject
 
@@ -67,11 +64,9 @@ class PoemAudioExport(val context: Context) {
             mTts.getTtsLiveData().observeForever(mTtsObserver)
             notifyPoemAudioInProgress()
             val textToRead = text.substring(0, Math.min(text.length, TextToSpeech.getMaxSpeechInputLength()))
-            Completable.fromRunnable({ deleteExistingAudioFile(audioFile) })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ speakToFile(textToSpeech, textToRead, audioFile) })
-
+            val threading = DaggerHelper.getMainScreenComponent(context).getThreading()
+            threading.execute({ deleteExistingAudioFile(audioFile) },
+                    { speakToFile(textToSpeech, textToRead, audioFile) })
         }
     }
 

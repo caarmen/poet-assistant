@@ -19,17 +19,16 @@
 
 package ca.rmen.android.poetassistant.dagger;
 
-import javax.inject.Singleton;
+import ca.rmen.android.poetassistant.InstrumentationThreading
+import ca.rmen.android.poetassistant.Threading
+import dagger.Module
+import dagger.Provides
+import javax.inject.Singleton
 
-import ca.rmen.android.poetassistant.Tts;
-import ca.rmen.android.poetassistant.UserDb;
-import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
-import dagger.Component;
+@Module
+class TestThreadingModule {
 
-@Singleton
-@Component(modules = {AppModule.class, TestDbModule.class, TestThreadingModule.class})
-public interface TestAppComponent extends AppComponent {
-    Tts getTts();
-    UserDb getUserDb();
-    EmbeddedDb getEmbeddedDb();
+    @Provides
+    @Singleton
+    fun providesThreading(): Threading = InstrumentationThreading()
 }

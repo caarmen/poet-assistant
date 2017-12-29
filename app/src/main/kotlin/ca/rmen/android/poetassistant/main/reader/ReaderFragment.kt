@@ -101,7 +101,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
                 AppBarLayoutHelper.forceExpandAppBarLayout(activity)
             }
         }
-        DebounceTextWatcher.observe(mBinding.tvText).subscribe({ _ -> mViewModel.updatePoemText() })
+        DebounceTextWatcher.debounce(mBinding.tvText, { mViewModel.updatePoemText() })
         TextPopupMenu.addSelectionPopupMenu(mBinding.tvText, activity as OnWordClickListener)
         mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver)
         return mBinding.root

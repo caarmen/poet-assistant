@@ -32,10 +32,8 @@ import android.text.TextUtils
 import android.util.Log
 import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 
-class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs) {
+class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs, private val threading: Threading) {
     companion object {
         private var TAG = Constants.TAG + Tts::class.java.simpleName
         private const val PAUSE_DURATION_MS = 500L
@@ -137,7 +135,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
             it.setOnUtteranceCompletedListener(null)
             it.shutdown()
             mTtsStatus = TextToSpeech.ERROR
-            AndroidSchedulers.mainThread().scheduleDirect { mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null) }
+            threading.executeForeground { mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null) }
             mTextToSpeech = null
         }
     }
@@ -158,16 +156,15 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
                     it.voice = it.defaultVoice
                     Log.v(TAG, "Using default voice ${it.defaultVoice}")
                 } else {
-                    Observable.fromIterable(it.voices)
+                    textToSpeech.voice = it.voices
                             .filter({ voice ->
                                 // The SDK check is here because lint currently ignores @TargetApi in nested lambdas
                                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && voiceId == voice.name
                             })
                             // If the user changed the tts engine in the system settings, we may not find
                             // the previous voice they selected.
-                            .first(it.defaultVoice)
-                            .doOnSuccess { voice -> Log.v(TAG, "using selected voice $voice") }
-                            .subscribe({ voice -> it.voice = voice })
+                            .elementAtOrElse(0, { _-> it.defaultVoice })
+                    Log.v(TAG, "Using voice ${textToSpeech.voice}")
                 }
             } catch (t: Throwable) {
                 // This happens if I choose "SoundAbout TTS" as the preferred engine.
@@ -190,10 +187,15 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
             if (status == TextToSpeech.SUCCESS) {
                 setVoiceSpeedFromSettings()
                 setVoicePitchFromSettings()
-                AndroidSchedulers.mainThread().scheduleDirect { mTtsLiveData.value = TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.INITIALIZED, null) }
-                AndroidSchedulers.mainThread().scheduleDirect { mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.INITIALIZED, null) }
+                threading.executeForeground {
+                    mTtsLiveData.value = TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.INITIALIZED, null)
+                    mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.INITIALIZED, null)
+
+                }
             } else {
-                AndroidSchedulers.mainThread().scheduleDirect { mTtsLiveData.value = TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null) }
+                threading.executeForeground {
+                    mTtsLiveData.value = TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null)
+                }
             }
         }
     }
@@ -212,7 +214,9 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
     private inner class UtteranceListener : UtteranceProgressListener() {
         override fun onStart(utteranceId: String) {
-            AndroidSchedulers.mainThread().scheduleDirect { mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.SPEAKING, utteranceId) }
+            threading.executeForeground {
+                mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.SPEAKING, utteranceId)
+            }
         }
 
         override fun onDone(utteranceId: String) = onUtteranceCompleted(utteranceId)
@@ -231,14 +235,14 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
         }
 
         private fun onUtteranceCompleted(utteranceId: String) {
-            AndroidSchedulers.mainThread().scheduleDirect {
+            threading.executeForeground {
                 mTtsLiveData.value = TtsState(TtsState.TtsStatus.SPEAKING, TtsState.TtsStatus.UTTERANCE_COMPLETE, utteranceId)
                 mTtsLiveData.value = TtsState(TtsState.TtsStatus.UTTERANCE_COMPLETE, TtsState.TtsStatus.INITIALIZED, null)
             }
         }
 
         private fun onUtteranceError(utteranceId: String) {
-            AndroidSchedulers.mainThread().scheduleDirect {
+            threading.executeForeground {
                 mTtsLiveData.value = TtsState(TtsState.TtsStatus.SPEAKING, TtsState.TtsStatus.UTTERANCE_ERROR, utteranceId)
                 mTtsLiveData.value = TtsState(TtsState.TtsStatus.UTTERANCE_ERROR, TtsState.TtsStatus.INITIALIZED, utteranceId)
             }

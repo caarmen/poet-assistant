@@ -30,15 +30,13 @@ import android.support.v7.widget.SearchView
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.PagerAdapter
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
-import ca.rmen.android.poetassistant.widget.ViewShownCompletable
-import io.reactivex.Maybe
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import ca.rmen.android.poetassistant.widget.ViewShownScheduler
 import java.util.Locale
 import javax.inject.Inject
 
@@ -60,6 +58,7 @@ class Search constructor(private val searchableActivity: Activity, private val v
     private val mPagerAdapter: PagerAdapter
     @Inject
     lateinit var mDictionary: Dictionary
+    @Inject lateinit var mThreading: Threading
 
     init {
         DaggerHelper.getMainScreenComponent(searchableActivity.application).inject(this)
@@ -81,10 +80,9 @@ class Search constructor(private val searchableActivity: Activity, private val v
     fun search(word: String, tab: Tab) {
         Log.d(TAG, "search in $tab for $ word")
         viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false)
-        ViewShownCompletable.create(viewPager)
-                .subscribe({
-                    (mPagerAdapter.getFragment(viewPager, tab) as ResultListFragment<*>?)?.query(word.trim().toLowerCase(Locale.US))
-                })
+        ViewShownScheduler.runWhenShown(viewPager, {
+            (mPagerAdapter.getFragment(viewPager, tab) as ResultListFragment<*>?)?.query(word.trim().toLowerCase(Locale.US))
+        })
     }
 
     /**
@@ -95,16 +93,15 @@ class Search constructor(private val searchableActivity: Activity, private val v
         val wordTrimmed = word.trim().toLowerCase(Locale.US)
 
         selectTabForSearch(wordTrimmed)
-        ViewShownCompletable.create(viewPager)
-                .subscribe({
-                    if (Patterns.isPattern(wordTrimmed)) {
-                        (mPagerAdapter.getFragment(viewPager, Tab.PATTERN) as ResultListFragment<*>?)?.query(wordTrimmed)
-                    } else {
-                        (mPagerAdapter.getFragment(viewPager, Tab.RHYMER) as ResultListFragment<*>?)?.query(wordTrimmed)
-                        (mPagerAdapter.getFragment(viewPager, Tab.THESAURUS) as ResultListFragment<*>?)?.query(wordTrimmed)
-                        (mPagerAdapter.getFragment(viewPager, Tab.DICTIONARY) as ResultListFragment<*>?)?.query(wordTrimmed)
-                    }
-                })
+        ViewShownScheduler.runWhenShown(viewPager, {
+            if (Patterns.isPattern(wordTrimmed)) {
+                (mPagerAdapter.getFragment(viewPager, Tab.PATTERN) as ResultListFragment<*>?)?.query(wordTrimmed)
+            } else {
+                (mPagerAdapter.getFragment(viewPager, Tab.RHYMER) as ResultListFragment<*>?)?.query(wordTrimmed)
+                (mPagerAdapter.getFragment(viewPager, Tab.THESAURUS) as ResultListFragment<*>?)?.query(wordTrimmed)
+                (mPagerAdapter.getFragment(viewPager, Tab.DICTIONARY) as ResultListFragment<*>?)?.query(wordTrimmed)
+            }
+        })
     }
 
     /**
@@ -141,16 +138,15 @@ class Search constructor(private val searchableActivity: Activity, private val v
 
     fun lookupRandom() {
         Log.d(TAG, "lookupRandom")
-        Maybe.fromCallable({
-            mDictionary.getRandomEntry()
-        })
-                .map({ entry -> entry.word })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ word ->
-                    search(word)
-                    viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false)
-                })
+        mThreading.execute(
+                { mDictionary.getRandomEntry() },
+                { entry ->
+                    entry?.let {
+                        search(entry.word)
+                        viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false)
+                    }
+                }
+        )
     }
 
     /**
@@ -158,7 +154,7 @@ class Search constructor(private val searchableActivity: Activity, private val v
      */
     @MainThread
     fun addSuggestions(suggestion: String) {
-        Schedulers.io().scheduleDirect({
+        mThreading.execute({
             val contentValues = ContentValues(1)
             contentValues.put(SearchManager.QUERY, suggestion)
             searchableActivity.contentResolver.insert(SuggestionsProvider.CONTENT_URI, contentValues)

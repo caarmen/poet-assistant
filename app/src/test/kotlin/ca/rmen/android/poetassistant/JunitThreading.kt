@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,19 +17,22 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger;
+package ca.rmen.android.poetassistant
 
-import javax.inject.Singleton;
+/**
+ * Run background and foreground tasks directly in the same thread, blocking.
+ */
+class JunitThreading : Threading {
+    override fun executeForeground(body: () -> Unit) {
+        body.invoke()
+    }
 
-import ca.rmen.android.poetassistant.Tts;
-import ca.rmen.android.poetassistant.UserDb;
-import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
-import dagger.Component;
-
-@Singleton
-@Component(modules = {AppModule.class, TestDbModule.class, TestThreadingModule.class})
-public interface TestAppComponent extends AppComponent {
-    Tts getTts();
-    UserDb getUserDb();
-    EmbeddedDb getEmbeddedDb();
+    override fun <T> execute(backgroundTask: () -> T, foregroundTask: ((T) -> Unit)?, errorTask: ((Throwable) -> Unit)?) {
+        try {
+            val result = backgroundTask.invoke()
+            foregroundTask?.invoke(result)
+        } catch (t: Throwable) {
+            errorTask?.invoke(t)
+        }
+    }
 }

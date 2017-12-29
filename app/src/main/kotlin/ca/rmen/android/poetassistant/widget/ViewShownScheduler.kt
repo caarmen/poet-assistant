@@ -22,29 +22,24 @@ package ca.rmen.android.poetassistant.widget
 import android.os.Build
 import android.view.View
 import android.view.ViewTreeObserver
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
 
-object ViewShownCompletable {
+object ViewShownScheduler {
 
     // Issue #19: In a specific scenario, the fragments may not be "ready" yet (onCreateView() may not have been called).
     // Wait until the ViewPager is laid out before invoking anything on the fragments.
     // (We assume that the fragments are "ready" once the ViewPager is laid out.)
-    fun create(view: View): Completable {
-        return Completable.create({ completableEmitter ->
-            if (view.isShown) {
-                completableEmitter.onComplete()
-            } else {
-                val onGlobalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
-                    override fun onGlobalLayout() {
-                        removeOnGlobalLayoutListener(view, this)
-                        view.post(completableEmitter::onComplete)
-                    }
+    fun runWhenShown(view: View, block: ()->Unit) {
+        if(view.isShown) {
+            view.post(block)
+        } else {
+            val onGlobalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    removeOnGlobalLayoutListener(view, this)
+                    view.post(block)
                 }
-                view.viewTreeObserver.addOnGlobalLayoutListener(onGlobalLayoutListener)
-                completableEmitter.setCancellable({ removeOnGlobalLayoutListener(view, onGlobalLayoutListener) })
             }
-        }).observeOn(AndroidSchedulers.mainThread())
+            view.viewTreeObserver.addOnGlobalLayoutListener(onGlobalLayoutListener)
+        }
     }
 
     private fun removeOnGlobalLayoutListener(view: View, listener: ViewTreeObserver.OnGlobalLayoutListener) {

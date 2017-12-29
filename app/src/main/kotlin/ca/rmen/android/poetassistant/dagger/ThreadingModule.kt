@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,19 +17,19 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger;
+package ca.rmen.android.poetassistant.dagger
 
-import javax.inject.Singleton;
+import ca.rmen.android.poetassistant.CoroutineThreading
+import ca.rmen.android.poetassistant.Threading
+import dagger.Module
+import dagger.Provides
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.android.UI
+import javax.inject.Singleton
 
-import ca.rmen.android.poetassistant.Tts;
-import ca.rmen.android.poetassistant.UserDb;
-import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
-import dagger.Component;
-
-@Singleton
-@Component(modules = {AppModule.class, TestDbModule.class, TestThreadingModule.class})
-public interface TestAppComponent extends AppComponent {
-    Tts getTts();
-    UserDb getUserDb();
-    EmbeddedDb getEmbeddedDb();
+@Module
+class ThreadingModule {
+    @Provides
+    @Singleton
+    fun providesThreading() : Threading = CoroutineThreading(CommonPool, UI)
 }

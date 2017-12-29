@@ -44,6 +44,7 @@ import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.about.AboutActivity
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding
@@ -58,9 +59,6 @@ import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.widget.CABEditText
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener, CABEditText.ImeListener {
@@ -77,6 +75,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
     @Inject lateinit var mThesaurus: Thesaurus
     @Inject lateinit var mDictionary: Dictionary
     @Inject lateinit var mFavorites: Favorites
+    @Inject lateinit var mThreading: Threading
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: savedInstanceState = $savedInstanceState")
@@ -113,10 +112,8 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
 
         mSearch = Search(this, mBinding.viewPager)
         // Load our dictionaries when the activity starts, so that the first search can already be fast.
-        Single.fromCallable(this::loadDatabase)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onDatabaseLoadResult)
+        mThreading.execute({ loadDatabase() },
+                { onDatabaseLoadResult(it) })
         volumeControlStream = AudioManager.STREAM_MUSIC
     }
 

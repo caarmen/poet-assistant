@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,19 +17,20 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger;
+package ca.rmen.android.poetassistant
 
-import javax.inject.Singleton;
+interface Threading {
 
-import ca.rmen.android.poetassistant.Tts;
-import ca.rmen.android.poetassistant.UserDb;
-import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
-import dagger.Component;
+    /**
+     * Run the given task on the ui thread
+     */
+    fun executeForeground(body: () -> Unit)
 
-@Singleton
-@Component(modules = {AppModule.class, TestDbModule.class, TestThreadingModule.class})
-public interface TestAppComponent extends AppComponent {
-    Tts getTts();
-    UserDb getUserDb();
-    EmbeddedDb getEmbeddedDb();
+    /**
+     * Run the given background task on a background thread. If a foreground task is specified, it will be
+     * called on the UI thread with the successful result of the background task. If the background
+     * task throws a Throwable and the error task is specified, the error task will be called with the
+     * throwable, on the UI thread.
+     */
+    fun <T> execute(backgroundTask: () -> T, foregroundTask: ((T) -> Unit)? = null, errorTask: ((Throwable) -> Unit)? = null)
 }

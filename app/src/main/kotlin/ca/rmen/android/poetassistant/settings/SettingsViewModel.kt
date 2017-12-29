@@ -29,13 +29,11 @@ import android.os.Build
 import android.preference.PreferenceManager
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider
 import ca.rmen.android.poetassistant.main.reader.PoemFile
-import io.reactivex.Completable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
@@ -45,6 +43,9 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     @Inject
     lateinit var mTts: Tts
+
+    @Inject
+    lateinit var mThreading: Threading
 
     val snackbarText = MutableLiveData<String>()
     private val mListener: SettingsChangeListener = SettingsChangeListener(application)
@@ -74,27 +75,21 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     fun exportFavorites(uri: Uri) {
         val fileDisplayName = PoemFile.readDisplayName(getApplication(), uri)
-        Completable.fromAction({ mFavorites.exportFavorites(getApplication(), uri) })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_success, fileDisplayName) },
-                        { _ -> snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_error, fileDisplayName) })
+        mThreading.execute({ mFavorites.exportFavorites(getApplication(), uri) },
+                { snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_success, fileDisplayName) },
+                { snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_error, fileDisplayName) })
     }
 
     fun importFavorites(uri: Uri) {
         val fileDisplayName = PoemFile.readDisplayName(getApplication(), uri)
-        Completable.fromAction({ mFavorites.importFavorites(getApplication(), uri) })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ snackbarText.value = getApplication<Application>().getString(R.string.import_favorites_success, fileDisplayName) },
-                        { _ -> snackbarText.value = getApplication<Application>().getString(R.string.import_favorites_error, fileDisplayName) })
+        mThreading.execute({ mFavorites.importFavorites(getApplication(), uri) },
+                { snackbarText.value = getApplication<Application>().getString(R.string.import_favorites_success, fileDisplayName) },
+                { snackbarText.value = getApplication<Application>().getString(R.string.import_favorites_error, fileDisplayName) })
     }
 
     fun clearSearchHistory() {
-        Completable.fromRunnable({ getApplication<Application>().contentResolver.delete(SuggestionsProvider.CONTENT_URI, null, null) })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ snackbarText.value = getApplication<Application>().getString(R.string.search_history_cleared) })
+        mThreading.execute({ getApplication<Application>().contentResolver.delete(SuggestionsProvider.CONTENT_URI, null, null) },
+                { snackbarText.value = getApplication<Application>().getString(R.string.search_history_cleared) })
     }
 
     override fun onCleared() {

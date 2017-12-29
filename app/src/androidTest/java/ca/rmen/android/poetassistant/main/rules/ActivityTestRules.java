@@ -29,15 +29,16 @@ import android.support.test.espresso.IdlingResource;
 import java.io.File;
 import java.util.Collection;
 
+import ca.rmen.android.poetassistant.InstrumentationThreading;
 import ca.rmen.android.poetassistant.UserDb;
 import ca.rmen.android.poetassistant.dagger.AppModule;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.dagger.DaggerTestAppComponent;
 import ca.rmen.android.poetassistant.dagger.TestAppComponent;
 import ca.rmen.android.poetassistant.dagger.TestDbModule;
+import ca.rmen.android.poetassistant.dagger.TestThreadingModule;
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter;
-import io.reactivex.plugins.RxJavaPlugins;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -54,15 +55,13 @@ final class ActivityTestRules {
         TestAppComponent testAppComponent = DaggerTestAppComponent.builder()
                 .appModule(new AppModule(application))
                 .testDbModule(new TestDbModule(application))
+                .testThreadingModule(new TestThreadingModule())
                 .build();
         DaggerHelper.INSTANCE.setAppComponent(testAppComponent);
+        InstrumentationThreading threading = (InstrumentationThreading) testAppComponent.getMainScreenComponent().getThreading();
+        IdlingRegistry.getInstance().register(threading.getCountingIdlingResource());
         cleanup(targetContext);
         ProcessTextRouter.INSTANCE.setEnabled(targetContext, true);
-        RxJavaPlugins.setIoSchedulerHandler(scheduler -> {
-            IdlingScheduler idlingScheduler = new IdlingScheduler(scheduler);
-            IdlingRegistry.getInstance().register(new RxSchedulerIdlingResource(idlingScheduler));
-            return idlingScheduler;
-        });
     }
 
     static void afterActivityFinished(Context targetContext) {

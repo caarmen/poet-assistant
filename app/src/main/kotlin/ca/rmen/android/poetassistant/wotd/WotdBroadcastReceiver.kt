@@ -25,7 +25,6 @@ import android.content.Intent
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
-import io.reactivex.schedulers.Schedulers
 
 class WotdBroadcastReceiver : BroadcastReceiver() {
     companion object {
@@ -35,6 +34,7 @@ class WotdBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.v(TAG, "onReceive: intent=$intent")
         val dictionary = DaggerHelper.getWotdComponent(context).getDictionary()
-        Schedulers.io().scheduleDirect({ Wotd.notifyWotd(context, dictionary) })
+        val threading = DaggerHelper.getWotdComponent(context).getThreading()
+        threading.execute({Wotd.notifyWotd(context, dictionary)})
     }
 }

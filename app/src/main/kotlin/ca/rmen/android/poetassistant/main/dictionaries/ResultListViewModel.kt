@@ -92,6 +92,7 @@ class ResultListViewModel<T> constructor(application: Application, private val t
     }
 
     private fun updateDataAvailable() {
+        Log.v(TAG, "updateDataAvailable")
         mAdapter?.let {
             isDataAvailable.set(it.itemCount > 0)
             isDataAvailable.notifyChange()
@@ -99,7 +100,7 @@ class ResultListViewModel<T> constructor(application: Application, private val t
     }
 
     fun setData(loadedData: ResultListData<T>?) {
-        Log.v(TAG, "$tab: setData $loadedData")
+        Log.v(TAG, "$tab: setData adapter=$mAdapter, data=$loadedData")
         mAdapter?.let {
             it.clear()
             if (loadedData != null) it.addAll(loadedData.data)

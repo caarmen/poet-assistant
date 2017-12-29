@@ -24,8 +24,11 @@ import android.util.Log
 import android.webkit.WebView
 import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.Constants
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.plugins.RxJavaPlugins
+import ca.rmen.android.poetassistant.dagger.AppModule
+import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.dagger.DaggerJunitAppComponent
+import ca.rmen.android.poetassistant.dagger.DbModule
+import ca.rmen.android.poetassistant.dagger.JunitThreadingModule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -36,6 +39,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
+import org.robolectric.RuntimeEnvironment.application
 import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 import java.io.File
@@ -56,7 +60,12 @@ class TestPoemFile {
 
     @Before
     fun setup() {
-        RxJavaPlugins.setIoSchedulerHandler({ _ -> AndroidSchedulers.mainThread() })
+        val testAppComponent = DaggerJunitAppComponent.builder()
+                .appModule(AppModule(application))
+                .dbModule(DbModule(application))
+                .junitThreadingModule(JunitThreadingModule())
+                .build()
+        DaggerHelper.setAppComponent(testAppComponent);
         mPoemFile = File(RuntimeEnvironment.application.filesDir, "test-poem.txt")
         if (mPoemFile.exists()) {
             assertTrue(mPoemFile.delete())

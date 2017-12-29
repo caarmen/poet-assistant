@@ -34,9 +34,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import java.io.BufferedWriter
 import java.io.IOException
 import java.io.OutputStreamWriter
@@ -49,12 +47,13 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
 
         fun open(context: Context, uri: Uri, callback: PoemFileCallback) {
             Log.d(TAG, "open(uri=$uri, callback=$callback")
-            Single.fromCallable({ readPoemFile(context, uri) })
-                    .doOnError({ throwable -> Log.w(TAG, "Couldn't open file", throwable) })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ poemFile -> callback.onPoemLoaded(poemFile) },
-                            { _ -> callback.onPoemLoaded(null) })
+            val threading = DaggerHelper.getMainScreenComponent(context).getThreading()
+            threading.execute({ readPoemFile(context, uri) },
+                    { poemFile -> callback.onPoemLoaded(poemFile) },
+                    { throwable ->
+                        Log.w(TAG, "Couldn't open file", throwable)
+                        callback.onPoemLoaded(null)
+                    })
         }
 
         @WorkerThread
@@ -67,12 +66,14 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
 
         fun save(context: Context, uri: Uri?, text: String, callback: PoemFileCallback) {
             Log.d(TAG, "save: uri=$uri, text=$text, callback=$callback")
-            Single.fromCallable { savePoemFile(context, uri, text) }
-                    .doOnError({ throwable -> Log.v(TAG, "Couldn't save file", throwable) })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ poemFile -> callback.onPoemSaved(poemFile) },
-                            { _ -> callback.onPoemSaved(null) })
+            val threading = DaggerHelper.getMainScreenComponent(context).getThreading()
+            threading.execute(
+                    { savePoemFile(context, uri, text) },
+                    { poemFile -> callback.onPoemSaved(poemFile) },
+                    { throwable ->
+                        Log.v(TAG, "Couldn't save file", throwable)
+                        callback.onPoemSaved(null)
+                    })
         }
 
         @WorkerThread

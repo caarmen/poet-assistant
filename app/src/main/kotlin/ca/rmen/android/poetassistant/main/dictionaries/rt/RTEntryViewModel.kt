@@ -50,4 +50,9 @@ class RTEntryViewModel(context: Context, val type: Type, val text: String, @Colo
             }
         }))
     }
+
+    override fun toString(): String {
+        return "RTEntryViewModel(text='$text')"
+    }
+
 }

@@ -19,17 +19,9 @@
 
 package ca.rmen.android.poetassistant.dagger;
 
-import javax.inject.Singleton;
-
-import ca.rmen.android.poetassistant.Tts;
-import ca.rmen.android.poetassistant.UserDb;
-import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
-import dagger.Component;
+import dagger.Component
+import javax.inject.Singleton
 
 @Singleton
-@Component(modules = {AppModule.class, TestDbModule.class, TestThreadingModule.class})
-public interface TestAppComponent extends AppComponent {
-    Tts getTts();
-    UserDb getUserDb();
-    EmbeddedDb getEmbeddedDb();
-}
+@Component(modules = [AppModule::class, DbModule::class, JunitThreadingModule::class])
+interface JunitAppComponent : AppComponent
