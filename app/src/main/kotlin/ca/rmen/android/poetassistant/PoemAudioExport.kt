@@ -65,9 +65,8 @@ class PoemAudioExport(val context: Context) {
             notifyPoemAudioInProgress()
             val textToRead = text.substring(0, Math.min(text.length, TextToSpeech.getMaxSpeechInputLength()))
             val threading = DaggerHelper.getMainScreenComponent(context).getThreading()
-            threading.execute(
-                    {deleteExistingAudioFile(audioFile)},
-                    {speakToFile(textToSpeech, textToRead, audioFile)})
+            threading.execute({ deleteExistingAudioFile(audioFile) },
+                    { speakToFile(textToSpeech, textToRead, audioFile) })
         }
     }
 

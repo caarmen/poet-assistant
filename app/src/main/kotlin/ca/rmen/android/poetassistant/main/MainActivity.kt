@@ -112,9 +112,8 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
 
         mSearch = Search(this, mBinding.viewPager)
         // Load our dictionaries when the activity starts, so that the first search can already be fast.
-        mThreading.execute(
-                {loadDatabase()},
-                {onDatabaseLoadResult(it)})
+        mThreading.execute({ loadDatabase() },
+                { onDatabaseLoadResult(it) })
         volumeControlStream = AudioManager.STREAM_MUSIC
     }
 

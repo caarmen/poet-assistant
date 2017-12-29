@@ -19,8 +19,6 @@
 
 package ca.rmen.android.poetassistant
 
-import android.os.Handler
-import android.os.Looper
 import android.support.test.espresso.idling.CountingIdlingResource
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
@@ -36,11 +34,9 @@ class InstrumentationThreading : CoroutineThreading(CommonPool, UI) {
     }
 
     private val mCountingIdlingResource: CountingIdlingResource
-    private val mHandler: Handler
 
     init {
         mCountingIdlingResource = CountingIdlingResource(TAG + System.currentTimeMillis(), true)
-        mHandler = Handler(Looper.getMainLooper())
     }
 
     fun getCountingIdlingResource() = mCountingIdlingResource

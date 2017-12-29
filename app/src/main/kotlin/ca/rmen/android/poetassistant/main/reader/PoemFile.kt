@@ -48,11 +48,10 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
         fun open(context: Context, uri: Uri, callback: PoemFileCallback) {
             Log.d(TAG, "open(uri=$uri, callback=$callback")
             val threading = DaggerHelper.getMainScreenComponent(context).getThreading()
-            threading.execute(
-                    {readPoemFile(context, uri)},
-                    {poemFile -> callback.onPoemLoaded(poemFile)},
-                    {throwable ->
-                        Log.w(TAG, "Couldn't open file", throwable )
+            threading.execute({ readPoemFile(context, uri) },
+                    { poemFile -> callback.onPoemLoaded(poemFile) },
+                    { throwable ->
+                        Log.w(TAG, "Couldn't open file", throwable)
                         callback.onPoemLoaded(null)
                     })
         }
@@ -69,9 +68,9 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
             Log.d(TAG, "save: uri=$uri, text=$text, callback=$callback")
             val threading = DaggerHelper.getMainScreenComponent(context).getThreading()
             threading.execute(
-                    {savePoemFile(context, uri, text)},
-                    {poemFile -> callback.onPoemSaved(poemFile)},
-                    {throwable ->
+                    { savePoemFile(context, uri, text) },
+                    { poemFile -> callback.onPoemSaved(poemFile) },
+                    { throwable ->
                         Log.v(TAG, "Couldn't save file", throwable)
                         callback.onPoemSaved(null)
                     })

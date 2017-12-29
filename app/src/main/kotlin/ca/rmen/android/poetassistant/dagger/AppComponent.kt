@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.dagger
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.PoemAudioExport
 import ca.rmen.android.poetassistant.Threading
-import ca.rmen.android.poetassistant.about.LicenseActivity
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderViewModel
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListViewModel
@@ -80,8 +79,6 @@ interface AppComponent {
         fun inject(favoritesLiveData: FavoritesLiveData)
         fun inject(suggestionsCursor: SuggestionsCursor)
         fun inject(search: Search)
-
-        fun inject(licenseActivity: LicenseActivity)
     }
 
     @Subcomponent

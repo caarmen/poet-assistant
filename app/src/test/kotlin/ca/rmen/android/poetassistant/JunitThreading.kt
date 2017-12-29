@@ -19,6 +19,9 @@
 
 package ca.rmen.android.poetassistant
 
+/**
+ * Run background and foreground tasks directly in the same thread, blocking.
+ */
 class JunitThreading : Threading {
     override fun executeForeground(body: () -> Unit) {
         body.invoke()

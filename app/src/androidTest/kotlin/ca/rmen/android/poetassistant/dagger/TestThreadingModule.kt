@@ -30,5 +30,5 @@ class TestThreadingModule {
 
     @Provides
     @Singleton
-    fun providesThreading() : Threading =  InstrumentationThreading()
+    fun providesThreading(): Threading = InstrumentationThreading()
 }

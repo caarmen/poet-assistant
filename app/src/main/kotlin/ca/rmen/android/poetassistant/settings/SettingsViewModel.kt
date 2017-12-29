@@ -75,39 +75,21 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     fun exportFavorites(uri: Uri) {
         val fileDisplayName = PoemFile.readDisplayName(getApplication(), uri)
-        mThreading.execute(
-                { mFavorites.exportFavorites(getApplication(), uri) },
-                {
-                    snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_success, fileDisplayName)
-                },
-                {
-                    snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_error, fileDisplayName)
-                }
-        )
+        mThreading.execute({ mFavorites.exportFavorites(getApplication(), uri) },
+                { snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_success, fileDisplayName) },
+                { snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_error, fileDisplayName) })
     }
 
     fun importFavorites(uri: Uri) {
         val fileDisplayName = PoemFile.readDisplayName(getApplication(), uri)
-        mThreading.execute(
-                { mFavorites.importFavorites(getApplication(), uri) },
-                {
-                    snackbarText.value = getApplication<Application>().getString(R.string.import_favorites_success, fileDisplayName)
-                },
-                {
-                    snackbarText.value = getApplication<Application>().getString(R.string.import_favorites_error, fileDisplayName)
-                }
-        )
+        mThreading.execute({ mFavorites.importFavorites(getApplication(), uri) },
+                { snackbarText.value = getApplication<Application>().getString(R.string.import_favorites_success, fileDisplayName) },
+                { snackbarText.value = getApplication<Application>().getString(R.string.import_favorites_error, fileDisplayName) })
     }
 
     fun clearSearchHistory() {
-        mThreading.execute(
-                {
-                    getApplication<Application>().contentResolver.delete(SuggestionsProvider.CONTENT_URI, null, null)
-                },
-                {
-                    snackbarText.value = getApplication<Application>().getString(R.string.search_history_cleared)
-                }
-        )
+        mThreading.execute({ getApplication<Application>().contentResolver.delete(SuggestionsProvider.CONTENT_URI, null, null) },
+                { snackbarText.value = getApplication<Application>().getString(R.string.search_history_cleared) })
     }
 
     override fun onCleared() {
