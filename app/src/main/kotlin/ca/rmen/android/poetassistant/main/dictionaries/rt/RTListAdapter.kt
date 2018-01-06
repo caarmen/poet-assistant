@@ -52,7 +52,7 @@ class RTListAdapter(activity: Activity) : ResultListAdapter<RTEntryViewModel>() 
                 layoutId,
                 parent,
                 false)
-        return ResultListAdapter.ResultListEntryViewHolder(binding)
+        return ResultListAdapter.ResultListEntryViewHolder(parent, binding)
     }
 
     override fun onBindViewHolder(holder: ResultListEntryViewHolder, position: Int) {
@@ -66,6 +66,7 @@ class RTListAdapter(activity: Activity) : ResultListAdapter<RTEntryViewModel>() 
                 wordBinding.entryIconClickListener = mEntryIconClickListener
                 TextPopupMenu.addPopupMenu(
                         if (viewModel.showButtons) TextPopupMenu.Style.SYSTEM else TextPopupMenu.Style.FULL,
+                        holder.parentView,
                         wordBinding.text1,
                         mWordClickedListener
                 )

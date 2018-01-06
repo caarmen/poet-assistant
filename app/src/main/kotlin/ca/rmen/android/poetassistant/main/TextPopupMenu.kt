@@ -61,10 +61,10 @@ object TextPopupMenu {
      * @param textView tapping on it will bring up the popup menu
      * @param listener this listener will be notified when the user selects one of the popup menu items
      */
-    fun addPopupMenu(style: Style, textView: TextView, listener: OnWordClickListener) {
+    fun addPopupMenu(style: Style, snackbarView: View, textView: TextView, listener: OnWordClickListener) {
         textView.setOnClickListener({ _ ->
             val text = textView.text.toString()
-            val popupMenu = createPopupMenu(textView, text, listener)
+            val popupMenu = createPopupMenu(snackbarView, textView, text, listener)
             when (style) {
                 Style.SYSTEM -> {
                     addSystemMenuItems(textView.context, popupMenu.menuInflater, popupMenu.menu, text)
@@ -87,7 +87,7 @@ object TextPopupMenu {
      * @param textView if the text view has selected text, tapping on it will bring up the popup menu
      * @param listener this listener will be notified when the user selects one of the popup menu items
      */
-    fun addSelectionPopupMenu(textView: TextView, listener: OnWordClickListener) {
+    fun addSelectionPopupMenu(snackbarView: View, textView: TextView, listener: OnWordClickListener) {
         if (!SettingsPrefs.get(textView.context).isSelectionLookupEnabled) {
             return
         }
@@ -119,7 +119,7 @@ object TextPopupMenu {
             }
 
             override fun onActionItemClicked(mode: ActionMode?, item: MenuItem): Boolean {
-                return handleItemClicked(item.itemId, textView, getSelectedWord(textView), listener)
+                return handleItemClicked(item.itemId, snackbarView, textView, getSelectedWord(textView), listener)
             }
 
             override fun onDestroyActionMode(mode: ActionMode?) {
@@ -129,7 +129,7 @@ object TextPopupMenu {
         }
     }
 
-    private fun handleItemClicked(itemId: Int, view: View, selectedWord: String?, listener: OnWordClickListener): Boolean {
+    private fun handleItemClicked(itemId: Int, snackbarView: View, view: View, selectedWord: String?, listener: OnWordClickListener): Boolean {
         if (TextUtils.isEmpty(selectedWord)) {
             return false
         }
@@ -142,7 +142,7 @@ object TextPopupMenu {
                 if (clipboard != null) {
                     val clip = ClipData.newPlainText(selectedWord, selectedWord)
                     clipboard.primaryClip = clip
-                    Snackbar.make(view, R.string.snackbar_copied_text, Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(snackbarView, R.string.snackbar_copied_text, Snackbar.LENGTH_SHORT).show()
                 }
             }
             R.id.action_share -> Share.share(view.context, selectedWord!!)
@@ -151,10 +151,10 @@ object TextPopupMenu {
         return true
     }
 
-    private fun createPopupMenu(view: View, selectedWord: String, listener: OnWordClickListener): PopupMenu {
+    private fun createPopupMenu(snackbarView: View, view: View, selectedWord: String, listener: OnWordClickListener): PopupMenu {
         val popupMenu = PopupMenu(view.context, view)
         popupMenu.setOnMenuItemClickListener({ item ->
-            handleItemClicked(item.itemId, view, selectedWord, listener)
+            handleItemClicked(item.itemId, snackbarView, view, selectedWord, listener)
             false
         })
         return popupMenu
@@ -216,5 +216,4 @@ object TextPopupMenu {
         }
         return null
     }
-
 }
