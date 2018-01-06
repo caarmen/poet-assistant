@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.26.2  *(2018-01-06)*
+--------------------
+* Issue #134: Fix crash when copying word to clipboard
+* Issue #136: Fix crash when searching then rotating.
+
 1.26.1  *(2017-12-29)*
 --------------------
 * Issue #133: Stop support for Ice Cream Sandwich (4.0.x).
