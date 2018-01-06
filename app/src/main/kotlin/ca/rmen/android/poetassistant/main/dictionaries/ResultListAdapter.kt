@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.main.dictionaries
 
 import android.databinding.ViewDataBinding
 import android.support.v7.widget.RecyclerView
+import android.view.View
 
 abstract class ResultListAdapter<T> : RecyclerView.Adapter<ResultListAdapter.ResultListEntryViewHolder>() {
 
@@ -42,5 +43,5 @@ abstract class ResultListAdapter<T> : RecyclerView.Adapter<ResultListAdapter.Res
 
     override fun getItemCount(): Int = mData.size
 
-    class ResultListEntryViewHolder(val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root)
+    class ResultListEntryViewHolder(val parentView: View, val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root)
 }

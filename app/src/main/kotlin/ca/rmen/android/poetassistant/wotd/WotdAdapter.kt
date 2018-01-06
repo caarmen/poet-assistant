@@ -36,7 +36,7 @@ class WotdAdapter(activity: Activity) : ResultListAdapter<WotdEntryViewModel>() 
     private val mEntryIconClickListener = EntryIconClickListener()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultListEntryViewHolder {
-        return ResultListEntryViewHolder(DataBindingUtil.inflate<ListItemWotdBinding>(
+        return ResultListEntryViewHolder(parent, DataBindingUtil.inflate<ListItemWotdBinding>(
                 LayoutInflater.from(parent.context),
                 R.layout.list_item_wotd,
                 parent,
@@ -50,6 +50,7 @@ class WotdAdapter(activity: Activity) : ResultListAdapter<WotdEntryViewModel>() 
         binding.entryIconClickListener = mEntryIconClickListener
         TextPopupMenu.addPopupMenu(
                 if (viewModel.showButtons) TextPopupMenu.Style.SYSTEM else TextPopupMenu.Style.FULL,
+                holder.parentView,
                 binding.text1,
                 mWordClickedListener)
         binding.executePendingBindings()

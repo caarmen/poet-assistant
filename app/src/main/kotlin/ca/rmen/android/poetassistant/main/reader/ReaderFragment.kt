@@ -102,7 +102,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
             }
         }
         DebounceTextWatcher.debounce(mBinding.tvText, { mViewModel.updatePoemText() })
-        TextPopupMenu.addSelectionPopupMenu(mBinding.tvText, activity as OnWordClickListener)
+        TextPopupMenu.addSelectionPopupMenu(mBinding.root, mBinding.tvText, activity as OnWordClickListener)
         mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver)
         return mBinding.root
     }

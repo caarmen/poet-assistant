@@ -35,13 +35,13 @@ class DictionaryListAdapter(private val listener: OnWordClickListener) : ResultL
                 R.layout.list_item_dictionary_entry,
                 parent,
                 false)
-        return ResultListAdapter.ResultListEntryViewHolder(binding)
+        return ResultListAdapter.ResultListEntryViewHolder(parent, binding)
     }
 
     override fun onBindViewHolder(holder: ResultListEntryViewHolder, position: Int) {
         val entry = getItem(position)
         val binding = holder.binding as ListItemDictionaryEntryBinding
-        TextPopupMenu.addSelectionPopupMenu(binding.definition, listener)
+        TextPopupMenu.addSelectionPopupMenu(holder.parentView, binding.definition, listener)
         binding.entry = entry
         binding.executePendingBindings()
     }
