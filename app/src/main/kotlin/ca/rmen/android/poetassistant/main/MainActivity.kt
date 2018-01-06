@@ -192,7 +192,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
         if (Constants.DEEP_LINK_QUERY == uri.host) {
             mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false)
             mSearch.search(word)
-        } else {
+        } else if (uri.host != null) {
             val tab = Tab.parse(uri.host)
             if (tab != null) mSearch.search(word, tab)
         }
