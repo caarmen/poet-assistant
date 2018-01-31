@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+1.26.3  *(2018-01-31)*
+--------------------
+* Maintenance release: update build environment:
+  - android-arch: 1.0.0 -> 1.1.0
+  - kotlin: 1.2.10 -> 1.2.21
+  - kotlin coroutines: 0.21 -> 0.22.1
+
 1.26.2  *(2018-01-06)*
 --------------------
 * Issue #134: Fix crash when copying word to clipboard
