@@ -47,8 +47,8 @@ android {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 112602
-        versionName "1.26.2"
+        versionCode 112603
+        versionName "1.26.3"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
@@ -184,16 +184,16 @@ dependencies {
     implementation "org.jraf:prefs:$prefs_version"
     implementation "com.google.dagger:dagger:$dagger_version"
     implementation "android.arch.lifecycle:extensions:$arch_version"
-    implementation "android.arch.persistence.room:runtime:$arch_version"
+    implementation "android.arch.persistence.room:runtime:$room_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
 
-    kapt "android.arch.persistence.room:compiler:$arch_version"
+    kapt "android.arch.persistence.room:compiler:$room_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     kapt "org.jraf:prefs-compiler:$prefs_version"
 
-    androidTestImplementation "android.arch.persistence.room:testing:$arch_version"
+    androidTestImplementation "android.arch.persistence.room:testing:$room_version"
     kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
 
     testImplementation 'junit:junit:4.12'
