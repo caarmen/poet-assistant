@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Carmen Alvarez
+ * Copyright (c) 2018 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -141,16 +141,23 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
         if (TextUtils.isEmpty(text)) {
             poem.get()?.let {mTts.speak(it)}
         } else {
-            var startPosition = Selection.getSelectionStart(text)
-            var endPosition = Selection.getSelectionEnd(text)
-            Log.d(TAG, "selection $startPosition - $endPosition")
-            if (startPosition == -1) startPosition = 0
-            if (endPosition == -1) endPosition = 0
-            if (startPosition == text.length) startPosition = 0
-            if (startPosition == endPosition) endPosition = text.length
-            Log.d(TAG, "now selection $startPosition - $endPosition")
-            mTts.speak(text.toString().substring(startPosition, endPosition))
+            mTts.speak(getTextToSpeak(text))
         }
+    }
+
+    fun getTextToSpeak(text: CharSequence) : String {
+        var startPosition = Selection.getSelectionStart(text)
+        var endPosition = Selection.getSelectionEnd(text)
+        Log.d(TAG, "selection $startPosition - $endPosition")
+        if (startPosition == -1) startPosition = 0
+        if (endPosition == -1) endPosition = 0
+        if (startPosition == text.length) startPosition = 0
+        // empty selection in the middle: select from the start position to the end of the text
+        if (startPosition == endPosition || text.substring(startPosition, endPosition).trim().isEmpty()) endPosition = text.length
+        Log.d(TAG, "now selection $startPosition - $endPosition")
+        val result = text.toString().substring(startPosition, endPosition)
+        if (TextUtils.isEmpty(result.trim())) return text.toString()
+        return result
     }
 
     fun speakToFile() {
