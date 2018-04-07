@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Carmen Alvarez
+ * Copyright (c) 2018 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
