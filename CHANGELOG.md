@@ -1,6 +1,19 @@
 Change Log
 ==========
 
+1.26.4  *(2018-04-07)*
+--------------------
+* Update build environment.
+  - jacoco: 0.8.0 -> 0.8.1
+  - robolectric: 3.6.1 -> 3.8
+  - arch components: 1.1.0 -> 1.1.1
+  - dagger: 2.14.1 -> 2.15
+  - agp: 3.0.1 -> 3.1.0
+  - kotlin: 1.2.21 -> 1.2.31
+  - coroutines: 0.22.1 -> 0.22.5
+  - support lib: 27.0.2 -> 27.1.1
+* Fix at least one case of issue 140, where the player only read empty text.
+
 1.26.3  *(2018-01-31)*
 --------------------
 * Maintenance release: update build environment:
