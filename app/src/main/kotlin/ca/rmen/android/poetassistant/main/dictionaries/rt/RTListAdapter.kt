@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2016-2018 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -78,7 +78,7 @@ class RTListAdapter(activity: Activity) : ResultListAdapter<RTEntryViewModel>() 
     inner class EntryIconClickListener {
         private fun getWord(v: View): String {
             val binding = DataBindingUtil.getBinding<ListItemWordBinding>(v.parent as View)
-            return binding.text1.text.toString()
+            return binding?.text1?.text.toString()
         }
 
         fun onRhymerIconClicked(v: View) {

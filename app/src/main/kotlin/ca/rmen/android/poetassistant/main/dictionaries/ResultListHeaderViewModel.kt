@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Carmen Alvarez
+ * Copyright (c) 2018 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -61,16 +61,18 @@ class ResultListHeaderViewModel(application: Application) : AndroidViewModel(app
         // When the user taps on the star icon, update the favorite in the DB
         isFavorite.addOnPropertyChangedCallback(BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
             override fun onChanged() {
-                mFavorites.saveFavorite(query.get(), isFavorite.get())
+                query.get()?.let {
+                    mFavorites.saveFavorite(it, isFavorite.get())
+                }
             }
         }))
     }
 
-    fun speak() = mTts.speak(query.get())
+    fun speak() = query.get()?.let {mTts.speak(it)}
 
     fun clearFilter() = filter.set(null)
 
-    fun webSearch() = WebSearch.search(getApplication(), query.get())
+    fun webSearch() = query.get()?.let {WebSearch.search(getApplication(), it)}
 
     fun clearFavorites() {
         mFavorites.clear()

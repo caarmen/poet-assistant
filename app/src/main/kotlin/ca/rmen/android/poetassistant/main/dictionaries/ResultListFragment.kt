@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2016-2018 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -121,7 +121,9 @@ class ResultListFragment<out T> : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_share) {
-            mViewModel.share(mHeaderViewModel.query.get(), mHeaderViewModel.filter.get())
+            mHeaderViewModel.query.get()?.let {
+                mViewModel.share(it, mHeaderViewModel.filter.get())
+            }
         }
         return super.onOptionsItemSelected(item)
     }

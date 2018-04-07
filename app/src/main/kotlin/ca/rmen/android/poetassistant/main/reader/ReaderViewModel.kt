@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Carmen Alvarez
+ * Copyright (c) 2017-2018 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -139,7 +139,7 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
      */
     private fun speakSelectedText(text: CharSequence) {
         if (TextUtils.isEmpty(text)) {
-            mTts.speak(poem.get())
+            poem.get()?.let {mTts.speak(it)}
         } else {
             var startPosition = Selection.getSelectionStart(text)
             var endPosition = Selection.getSelectionEnd(text)
@@ -154,8 +154,10 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun speakToFile() {
-        mTts.speakToFile(poem.get())
-        snackbarText.value = SnackbarText(R.string.share_poem_audio_snackbar)
+        poem.get()?.let {
+            mTts.speakToFile(it)
+            snackbarText.value = SnackbarText(R.string.share_poem_audio_snackbar)
+        }
     }
 
     // end TTS
@@ -163,7 +165,7 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
     // Begin saving/Opening files
     fun updatePoemText() {
         Log.d(TAG, "Update poem text")
-        mPoemPrefs.updatePoemText(poem.get())
+        poem.get()?.let { mPoemPrefs.updatePoemText(it)}
     }
 
     fun setSavedPoem(savedPoem: PoemFile) {
@@ -177,7 +179,7 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
         return if (poemFile != null) {
             poemFile.name
         } else {
-            PoemFile.generateFileName(poem.get())
+            poem.get()?.let {PoemFile.generateFileName(it)}
         }
     }
 
@@ -189,12 +191,16 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
     fun save(context: Context) {
         val savedPoem = mPoemPrefs.getSavedPoem()
         if (savedPoem != null) {
-            PoemFile.save(context, savedPoem.uri, poem.get(), mPoemFileCallback)
+            poem.get()?.let {
+                PoemFile.save(context, savedPoem.uri, it, mPoemFileCallback)
+            }
         }
     }
 
     fun saveAs(context: Context, uri: Uri) {
-        PoemFile.save(context, uri, poem.get(), mPoemFileCallback)
+        poem.get()?.let {
+            PoemFile.save(context, uri, it, mPoemFileCallback)
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -237,14 +243,14 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun sharePoem() {
-        Share.share(getApplication(), poem.get())
+        poem.get()?.let { Share.share(getApplication(), it)}
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     fun print(context: Context) {
         val poemFileValue = poemFile.value
         if (poemFileValue == null) {
-            PoemFile.print(context, PoemFile(null, PoemFile.generateFileName(poem.get()), poem.get()), mPoemFileCallback)
+            poem.get()?.let {PoemFile.print(context, PoemFile(null, PoemFile.generateFileName(it), poem.get()), mPoemFileCallback)}
         } else {
             PoemFile.print(context, poemFileValue, mPoemFileCallback)
         }

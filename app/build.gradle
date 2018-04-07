@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2016-2018 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -35,7 +35,9 @@ android {
     dataBinding {
         enabled = true
     }
-
+    jacoco {
+        version "0.8.1"
+    }
     lintOptions {
         abortOnError true
         textReport true
@@ -135,7 +137,7 @@ android {
 }
 
 jacoco {
-    toolVersion '0.8.0'
+    toolVersion '0.8.1'
 }
 android.applicationVariants.all { variant ->
     variant.mergeAssets.doLast {
@@ -197,7 +199,7 @@ dependencies {
     kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
 
     testImplementation 'junit:junit:4.12'
-    testImplementation "org.robolectric:robolectric:3.6.1"
+    testImplementation "org.robolectric:robolectric:3.8"
     kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
 
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leak_canary_version"

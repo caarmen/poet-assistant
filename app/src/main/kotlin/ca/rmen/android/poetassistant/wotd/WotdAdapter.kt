@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2016-2018 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -59,7 +59,7 @@ class WotdAdapter(activity: Activity) : ResultListAdapter<WotdEntryViewModel>() 
     inner class EntryIconClickListener {
         private fun getWord(v: View): String {
             val binding = DataBindingUtil.getBinding<ListItemWotdBinding>(v.parent as View)
-            return binding.text1.text.toString()
+            return binding?.text1?.text.toString()
         }
 
         fun onRhymerIconClicked(v: View) {
