@@ -20,16 +20,16 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.arch_version = '1.1.0'
+    ext.arch_version = '1.1.1'
     ext.room_version = '1.0.0'
-    ext.dagger_version = '2.14.1'
+    ext.dagger_version = '2.15'
     ext.espresso_version = '3.0.1'
-    ext.gradle_plugin_version = '3.0.1'
-    ext.kotlin_version = '1.2.21'
-    ext.kotlin_coroutines_version = '0.22.1'
+    ext.gradle_plugin_version = '3.1.0'
+    ext.kotlin_version = '1.2.31'
+    ext.kotlin_coroutines_version = '0.22.5'
     ext.leak_canary_version = '1.5.4'
     ext.prefs_version = '1.2.2'
-    ext.support_lib_version = '27.0.2'
+    ext.support_lib_version = '27.1.1'
     repositories {
         google()
         jcenter()
@@ -39,7 +39,7 @@ buildscript {
 
         classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
         configurations.classpath.exclude group: 'com.android.tools.external.lombok'
-        classpath 'org.jacoco:org.jacoco.core:0.8.0'
+        classpath 'org.jacoco:org.jacoco.core:0.8.1'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
