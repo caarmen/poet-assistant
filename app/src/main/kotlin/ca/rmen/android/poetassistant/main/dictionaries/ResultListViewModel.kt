@@ -102,8 +102,8 @@ class ResultListViewModel<T> constructor(application: Application, private val t
     fun setData(loadedData: ResultListData<T>?) {
         Log.v(TAG, "$tab: setData adapter=$mAdapter, data=$loadedData")
         mAdapter?.let {
-            it.clear()
-            if (loadedData != null) it.addAll(loadedData.data)
+            if (loadedData != null) it.submitList(loadedData.data)
+            else it.submitList(emptyList())
         }
         val hasQuery = loadedData != null && !TextUtils.isEmpty(loadedData.matchedWord)
         if (!hasQuery) {
