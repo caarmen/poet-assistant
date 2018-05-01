@@ -91,14 +91,6 @@ class ResultListViewModel<T> constructor(application: Application, private val t
         }
     }
 
-    private fun updateDataAvailable() {
-        Log.v(TAG, "updateDataAvailable")
-        mAdapter?.let {
-            isDataAvailable.set(it.itemCount > 0)
-            isDataAvailable.notifyChange()
-        }
-    }
-
     fun setData(loadedData: ResultListData<T>?) {
         Log.v(TAG, "$tab: setData adapter=$mAdapter, data=$loadedData")
         mAdapter?.let {
@@ -117,7 +109,8 @@ class ResultListViewModel<T> constructor(application: Application, private val t
         if (loadedData != null) {
             usedQueryWord.value = loadedData.matchedWord
         }
-        updateDataAvailable()
+        isDataAvailable.set(loadedData?.data?.isNotEmpty()!!)
+        isDataAvailable.notifyChange()
     }
 
     // If we have an empty list because the user didn't enter any search term,
