@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+1.26.5  *(2018-05-01)*
+--------------------
+* Update build environment.
+  - agp: 3.1.0 -> 3.1.2
+  - kotlin: 1.2.31 -> 1.2.40
+  - constraint layout: 1.0.2 -> 1.1.0
+  - test runner: 1.0.2-alpha1 -> 1.0.2
+  - espresso: 3.0.1 -> 3.0.2
+* Use ListAdapter instead of RecyclerView.Adapter
+
 1.26.4  *(2018-04-07)*
 --------------------
 * Update build environment.
