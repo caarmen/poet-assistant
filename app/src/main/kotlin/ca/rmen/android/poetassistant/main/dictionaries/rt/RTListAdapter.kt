@@ -33,7 +33,7 @@ import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.TextPopupMenu
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
 
-class RTListAdapter(activity: Activity) : ResultListAdapter<RTEntryViewModel>() {
+open class RTListAdapter(val tab: Tab, activity: Activity) : ResultListAdapter<RTEntryViewModel>() {
     private val mWordClickedListener: OnWordClickListener = activity as OnWordClickListener
     private val mEntryIconClickListener = EntryIconClickListener()
 

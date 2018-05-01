@@ -36,6 +36,7 @@ import ca.rmen.android.poetassistant.dagger.DaggerHelper;
 import ca.rmen.android.poetassistant.dagger.DaggerTestAppComponent;
 import ca.rmen.android.poetassistant.dagger.TestAppComponent;
 import ca.rmen.android.poetassistant.dagger.TestDbModule;
+import ca.rmen.android.poetassistant.dagger.TestResultListModule;
 import ca.rmen.android.poetassistant.dagger.TestThreadingModule;
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter;
@@ -55,6 +56,7 @@ final class ActivityTestRules {
         TestAppComponent testAppComponent = DaggerTestAppComponent.builder()
                 .appModule(new AppModule(application))
                 .testDbModule(new TestDbModule(application))
+                .testResultListModule(new TestResultListModule())
                 .testThreadingModule(new TestThreadingModule())
                 .build();
         DaggerHelper.INSTANCE.setAppComponent(testAppComponent);
