@@ -180,7 +180,7 @@ dependencies {
     implementation "com.android.support:design:$support_lib_version"
     implementation "com.android.support:preference-v7:$support_lib_version"
     implementation "com.android.support:preference-v14:$support_lib_version"
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'ca.rmen:rhymer:1.2.0'
     implementation 'ca.rmen:porter-stemmer:1.0.0'
     implementation "org.jraf:prefs:$prefs_version"
@@ -209,8 +209,8 @@ dependencies {
 
     androidTestImplementation group: 'org.easytesting', name: 'fest-reflect', version: '1.4.1'
 
-    androidTestImplementation 'com.android.support.test:runner:1.0.2-alpha1'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2-alpha1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_version", {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
