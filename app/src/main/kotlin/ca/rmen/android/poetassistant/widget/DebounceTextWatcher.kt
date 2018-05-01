@@ -19,26 +19,28 @@
 
 package ca.rmen.android.poetassistant.widget
 
-import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.TextView
+import ca.rmen.android.poetassistant.Threading
+import ca.rmen.android.poetassistant.dagger.DaggerHelper
 
 object DebounceTextWatcher {
+
     fun debounce(textView: TextView, body: () -> Unit) {
-        val handler = Handler()
+        var cancelable : Threading.Cancelable? = null
+        val threading = DaggerHelper.getMainScreenComponent(textView.context).getThreading()
         textView.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                handler.removeCallbacksAndMessages(null)
-                handler.postDelayed(body, 5000)
+                cancelable?.cancel()
+                cancelable = threading.executeForeground(500, body)
             }
 
             override fun afterTextChanged(p0: Editable?) {
             }
-
         })
     }
 }
