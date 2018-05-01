@@ -169,6 +169,8 @@ public class PoemTest {
         onView(withId(R.id.reader_word_count)).check(matches(not(isDisplayed())));
         String poemText = "Here is some text";
         typePoem(poemText);
+        // Need to wait for the debounce to finish
+        SystemClock.sleep(1000);
         onView(withId(R.id.reader_word_count))
                 .check(matches(isDisplayed()))
                 .check(matches(withText(WordCounter.INSTANCE.getWordCountText(mActivityTestRule.getActivity(), poemText))))

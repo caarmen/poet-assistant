@@ -42,8 +42,17 @@ class InstrumentationThreading : CoroutineThreading(CommonPool, UI) {
     fun getCountingIdlingResource() = mCountingIdlingResource
 
     override fun executeForeground(delayMs: Long, body: () -> Unit) : Threading.Cancelable {
-        mCountingIdlingResource.increment()
-        return super.executeForeground(delayMs, decorateForegroundTask(body))
+        // We don't count the idling resource if there's a delay. This is to avoid making tests
+        // block until the word count of a poem text is calculated. This blocking can slow down
+        // tests significantly.
+        // Tests that need to test the word count behavior will need to add a sleep to wait
+        // for the word count to be available.
+        return if (delayMs == 0L) {
+            mCountingIdlingResource.increment()
+            super.executeForeground(delayMs, decorateForegroundTask(body))
+        } else {
+            super.executeForeground(delayMs, body)
+        }
     }
 
     override fun <T> execute(backgroundTask: () -> T, foregroundTask: ((T) -> Unit)?, errorTask: ((Throwable) -> Unit)?) {
