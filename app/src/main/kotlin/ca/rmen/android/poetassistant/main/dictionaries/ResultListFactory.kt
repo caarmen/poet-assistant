@@ -36,21 +36,17 @@ import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListAdapter
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLiveData
-import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLiveData
-import ca.rmen.android.poetassistant.wotd.WotdAdapter
 import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
 import ca.rmen.android.poetassistant.wotd.WotdListExporter
 import ca.rmen.android.poetassistant.wotd.WotdLiveData
@@ -75,11 +71,8 @@ object ResultListFactory {
     }
 
     fun createAdapter(activity: Activity, tab: Tab): ResultListAdapter<out Any> {
-        return when (tab) {
-            Tab.PATTERN, Tab.FAVORITES, Tab.RHYMER, Tab.THESAURUS -> RTListAdapter(activity)
-            Tab.WOTD -> WotdAdapter(activity)
-            else -> DictionaryListAdapter(activity as OnWordClickListener)
-        }
+        return DaggerHelper.getMainScreenComponent(activity)
+                .getResultListAdapterFactory().createAdapter(activity, tab)
     }
 
     fun createViewModel(tab: Tab, fragment: Fragment): ResultListViewModel<*>? {

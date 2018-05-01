@@ -31,7 +31,7 @@ import ca.rmen.android.poetassistant.main.TextPopupMenu
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 
-class WotdAdapter(activity: Activity) : ResultListAdapter<WotdEntryViewModel>() {
+open class WotdAdapter(activity: Activity) : ResultListAdapter<WotdEntryViewModel>() {
     private val mWordClickedListener: OnWordClickListener = activity as OnWordClickListener
     private val mEntryIconClickListener = EntryIconClickListener()
 

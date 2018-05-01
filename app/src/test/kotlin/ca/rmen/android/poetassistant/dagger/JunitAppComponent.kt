@@ -23,5 +23,5 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppModule::class, DbModule::class, JunitThreadingModule::class])
+@Component(modules = [AppModule::class, DbModule::class, ResultListModule::class, JunitThreadingModule::class])
 interface JunitAppComponent : AppComponent

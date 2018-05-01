@@ -23,6 +23,7 @@ import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.PoemAudioExport
 import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.main.MainActivity
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapterFactory
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderViewModel
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListViewModel
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
@@ -49,7 +50,7 @@ import dagger.Subcomponent
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [(AppModule::class), (DbModule::class), (ThreadingModule::class)])
+@Component(modules = [(AppModule::class), (DbModule::class), (ResultListModule::class), (ThreadingModule::class)])
 interface AppComponent {
     fun getMainScreenComponent(): AppComponent.MainScreenComponent
     fun getSettingsComponent(): AppComponent.SettingsComponent
@@ -61,7 +62,9 @@ interface AppComponent {
         fun getFavorites(): Favorites
         fun getSettingsPrefs(): SettingsPrefs
         fun getThreading(): Threading
+        fun getResultListAdapterFactory() : ResultListAdapterFactory
     }
+
     @Subcomponent
     interface MainScreenComponent :BaseComponent {
         fun inject(mainActivity: MainActivity)

@@ -28,7 +28,7 @@ import ca.rmen.android.poetassistant.main.TextPopupMenu
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 
-class DictionaryListAdapter(private val listener: OnWordClickListener) : ResultListAdapter<DictionaryEntry.DictionaryEntryDetails>() {
+open class DictionaryListAdapter(private val listener: OnWordClickListener) : ResultListAdapter<DictionaryEntry.DictionaryEntryDetails>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultListEntryViewHolder {
         val binding = DataBindingUtil.inflate<ListItemDictionaryEntryBinding>(
                 LayoutInflater.from(parent.context),

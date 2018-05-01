@@ -20,28 +20,33 @@
 package ca.rmen.android.poetassistant.main.dictionaries
 
 import android.databinding.ViewDataBinding
+import android.support.v7.recyclerview.extensions.ListAdapter
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.View
 
-abstract class ResultListAdapter<T> : RecyclerView.Adapter<ResultListAdapter.ResultListEntryViewHolder>() {
+abstract class ResultListAdapter<T> : ListAdapter<T, ResultListAdapter.ResultListEntryViewHolder>(DiffUtilItemCallback<T>()) {
 
-    private val mData = ArrayList<T>()
-
-    fun clear() {
-        mData.clear()
-        notifyDataSetChanged()
+    fun getAll(): List<T> {
+        val result = mutableListOf<T>()
+        for (i in 0 until itemCount) {
+            result.add(getItem(i))
+        }
+        return result
     }
-
-    fun addAll(data: List<T>?) {
-        if (data != null) mData.addAll(data)
-        notifyDataSetChanged()
-    }
-
-    fun getAll() = mData
-
-    protected fun getItem(position: Int): T = mData[position]
-
-    override fun getItemCount(): Int = mData.size
 
     class ResultListEntryViewHolder(val parentView: View, val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root)
+
+    class DiffUtilItemCallback<U> : DiffUtil.ItemCallback<U>() {
+        override fun areItemsTheSame(
+                oldItem: U, newItem: U): Boolean {
+            // Normally this would check for ids, but we don't have ids in these lists.
+            return oldItem == newItem
+        }
+
+        override fun areContentsTheSame(
+                oldItem: U, newItem: U): Boolean {
+            return oldItem == newItem
+        }
+    }
 }
