@@ -181,6 +181,7 @@ public class PoemTest {
         checkTitleStripOrTab(mActivityTestRule.getActivity(), R.string.tab_reader);
 
         clearPoem();
+        SystemClock.sleep(1000);
         onView(withId(R.id.reader_word_count)).check(matches(not(isDisplayed())));
     }
 
