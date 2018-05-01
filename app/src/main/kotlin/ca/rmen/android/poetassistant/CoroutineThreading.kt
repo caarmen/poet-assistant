@@ -20,8 +20,12 @@
 package ca.rmen.android.poetassistant
 
 import android.util.Log
+import kotlinx.coroutines.experimental.CancellationException
+import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.experimental.CoroutineContext
 
 open class CoroutineThreading(private val background: CoroutineContext, private val foreground: CoroutineContext) : Threading {
@@ -30,8 +34,16 @@ open class CoroutineThreading(private val background: CoroutineContext, private 
         private val TAG = Constants.TAG + CoroutineThreading::class.java.simpleName
     }
 
-    override fun executeForeground(body: () -> Unit) {
-        launch(foreground) { body.invoke() }
+    override fun executeForeground(delayMs: Long, body: () -> Unit): Threading.Cancelable {
+        val job = launch(foreground) {
+            try {
+                if (delayMs > 0) delay(delayMs, TimeUnit.MILLISECONDS)
+                body.invoke()
+            } catch (e: CancellationException) {
+                Log.v(TAG, "Task cancelled")
+            }
+        }
+        return CancelableJob(job)
     }
 
     override fun <T> execute(backgroundTask: () -> T, foregroundTask: ((T) -> Unit)?, errorTask: ((Throwable) -> Unit)?) {
@@ -45,6 +57,12 @@ open class CoroutineThreading(private val background: CoroutineContext, private 
                 Log.v(TAG, "Error running background task", t)
                 errorTask?.invoke(t)
             }
+        }
+    }
+
+    private class CancelableJob(val job: Job) : Threading.Cancelable {
+        override fun cancel() {
+            job.cancel()
         }
     }
 }

@@ -41,9 +41,9 @@ class InstrumentationThreading : CoroutineThreading(CommonPool, UI) {
 
     fun getCountingIdlingResource() = mCountingIdlingResource
 
-    override fun executeForeground(body: () -> Unit) {
+    override fun executeForeground(delayMs: Long, body: () -> Unit) : Threading.Cancelable {
         mCountingIdlingResource.increment()
-        super.executeForeground(decorateForegroundTask(body))
+        return super.executeForeground(delayMs, decorateForegroundTask(body))
     }
 
     override fun <T> execute(backgroundTask: () -> T, foregroundTask: ((T) -> Unit)?, errorTask: ((Throwable) -> Unit)?) {
