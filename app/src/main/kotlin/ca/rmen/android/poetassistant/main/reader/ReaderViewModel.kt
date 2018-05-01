@@ -44,7 +44,6 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
-import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 import ca.rmen.android.poetassistant.databinding.LiveDataMapping
 import ca.rmen.android.poetassistant.main.dictionaries.Share
 import javax.inject.Inject
@@ -111,12 +110,10 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
                 { ttsState -> playButtonStateLiveData.value = toPlayButtonState(ttsState, poem.get()) })
         playButtonStateLiveData.addSource(LiveDataMapping.fromObservableField(poem),
                 { poemText -> playButtonStateLiveData.value = toPlayButtonState(mTts.getTtsState(), poemText) })
-        poem.addOnPropertyChangedCallback(BindingCallbackAdapter(callback = object : BindingCallbackAdapter.Callback {
-            override fun onChanged() {
-                wordCountText.set(WordCounter.getWordCountText(application, poem.get()))
-            }
+    }
 
-        }))
+    fun updateWordCount() {
+        wordCountText.set(WordCounter.getWordCountText(getApplication(), poem.get()))
     }
 
     // begin TTS

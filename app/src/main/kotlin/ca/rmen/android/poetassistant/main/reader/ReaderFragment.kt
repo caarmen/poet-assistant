@@ -26,7 +26,6 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.support.annotation.IdRes
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -40,7 +39,9 @@ import android.view.View
 import android.view.ViewGroup
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.compat.HtmlCompat
+import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.TextPopupMenu
@@ -71,14 +72,14 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
     }
 
     private lateinit var mViewModel: ReaderViewModel
-    private lateinit var mHandler: Handler
+    private lateinit var mThreading : Threading
     private lateinit var mBinding: FragmentReaderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.v(TAG, "onCreate: savedInstanceState = $savedInstanceState")
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        mHandler = Handler()
+        mThreading = DaggerHelper.getMainScreenComponent(requireContext()).getThreading()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -101,7 +102,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
                 AppBarLayoutHelper.forceExpandAppBarLayout(activity)
             }
         }
-        DebounceTextWatcher.debounce(mBinding.tvText, { mViewModel.updatePoemText() })
+        DebounceTextWatcher.debounce(mBinding.tvText, { mViewModel.updateWordCount() })
         TextPopupMenu.addSelectionPopupMenu(mBinding.root, mBinding.tvText, activity as OnWordClickListener)
         mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver)
         return mBinding.root
@@ -257,7 +258,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
         // will show a "stop" button instead of a "play" button.  We workaround this by updating
         // the button again after a brief moment, hoping that isSpeaking() will correctly
         // return false, allowing us to display a "play" button.
-        mHandler.postDelayed(this::updatePlayButton, 5000)
+        mThreading.executeForeground(5000, this::updatePlayButton)
     }
 
     inner class ButtonListener {
