@@ -187,7 +187,7 @@ dependencies {
     implementation "com.google.dagger:dagger:$dagger_version"
     implementation "android.arch.lifecycle:extensions:$arch_version"
     implementation "android.arch.persistence.room:runtime:$room_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
 
