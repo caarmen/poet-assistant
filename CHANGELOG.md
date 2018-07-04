@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+1.26.6  *(2018-07-04)*
+--------------------
+* Update build environment.
+* Issue #148: Add adaptive launcher icon.
+
 1.26.5  *(2018-05-01)*
 --------------------
 * Update build environment.
