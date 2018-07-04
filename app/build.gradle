@@ -25,7 +25,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    buildToolsVersion "28.0.1"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -49,8 +49,8 @@ android {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 112605
-        versionName "1.26.5"
+        versionCode 112606
+        versionName "1.26.6"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
@@ -169,8 +169,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.2'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.3'
     }
 }
 
@@ -180,14 +180,14 @@ dependencies {
     implementation "com.android.support:design:$support_lib_version"
     implementation "com.android.support:preference-v7:$support_lib_version"
     implementation "com.android.support:preference-v14:$support_lib_version"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     implementation 'ca.rmen:rhymer:1.2.0'
     implementation 'ca.rmen:porter-stemmer:1.0.0'
     implementation "org.jraf:prefs:$prefs_version"
     implementation "com.google.dagger:dagger:$dagger_version"
     implementation "android.arch.lifecycle:extensions:$arch_version"
     implementation "android.arch.persistence.room:runtime:$room_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
 
