@@ -28,6 +28,4 @@
     <color name="row_background_color_odd">@android:color/transparent</color>
     <color name="divider">#1f000000</color>
     <color name="ic_launcher_background">#FFFFFF</color>
-    <color name="tab_default">#b3ffffff</color>
-    <color name="tab_selected">#ffffff</color>
 </resources>

@@ -4,6 +4,7 @@ Change Log
 1.26.7  *(2018-11-10)*
 --------------------
 * Added icons to the settings screen.
+* Fix crash on older devices due to workaround for tab icons.
 
 1.26.7  *(2018-11-10)*
 --------------------
