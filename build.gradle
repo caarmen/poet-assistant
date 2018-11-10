@@ -22,14 +22,14 @@
 buildscript {
     ext.arch_version = '1.1.1'
     ext.room_version = '1.1.1'
-    ext.dagger_version = '2.16'
+    ext.dagger_version = '2.19'
     ext.espresso_version = '3.0.2'
-    ext.gradle_plugin_version = '3.1.3'
-    ext.kotlin_version = '1.2.51'
-    ext.kotlin_coroutines_version = '0.23.4'
-    ext.leak_canary_version = '1.5.4'
+    ext.gradle_plugin_version = '3.2.1'
+    ext.kotlin_version = '1.3.0'
+    ext.kotlin_coroutines_version = '1.0.1'
+    ext.leak_canary_version = '1.6.2'
     ext.prefs_version = '1.2.2'
-    ext.support_lib_version = '27.1.1'
+    ext.support_lib_version = '28.0.0'
     repositories {
         google()
         jcenter()
@@ -39,7 +39,7 @@ buildscript {
 
         classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
         configurations.classpath.exclude group: 'com.android.tools.external.lombok'
-        classpath 'org.jacoco:org.jacoco.core:0.8.1'
+        classpath 'org.jacoco:org.jacoco.core:0.8.2'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
