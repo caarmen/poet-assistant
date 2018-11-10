@@ -55,8 +55,8 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment
-import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.settings.SettingsActivity
+import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.widget.CABEditText
 import javax.inject.Inject
 
@@ -272,7 +272,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
                 val tab = mBinding.tabs.getTabAt(i)
                 if (tab != null) {
                     if (icon != null) {
-                        tab.icon = icon
+                        tab.setIcon(icon)
                     }
                     if (!resources.getBoolean(R.bool.tab_text)) {
                         tab.text = null
