@@ -23,7 +23,7 @@ import ca.rmen.android.poetassistant.CoroutineThreading
 import ca.rmen.android.poetassistant.Threading
 import dagger.Module
 import dagger.Provides
-import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module

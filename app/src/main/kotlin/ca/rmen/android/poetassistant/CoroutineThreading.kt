@@ -20,13 +20,13 @@
 package ca.rmen.android.poetassistant
 
 import android.util.Log
-import kotlinx.coroutines.experimental.CancellationException
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 open class CoroutineThreading(private val background: CoroutineContext, private val foreground: CoroutineContext) : Threading {
 
