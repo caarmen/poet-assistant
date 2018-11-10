@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2018 Carmen Alvarez
+  ~ Copyright (c) 2016 Carmen Alvarez
   ~
   ~ This file is part of Poet Assistant.
   ~
@@ -17,7 +16,13 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/ic_tab_rhymer_selected" android:state_selected="true" />
-    <item android:drawable="@drawable/ic_tab_rhymer_default" />
-</selector>
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24.0"
+    android:viewportHeight="24.0">
+    <path
+        android:fillColor="@color/tab_default"
+        android:pathData="M8,5v14l11,-7z" />
+</vector>

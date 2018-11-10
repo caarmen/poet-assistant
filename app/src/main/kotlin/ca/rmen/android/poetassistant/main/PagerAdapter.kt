@@ -21,10 +21,9 @@ package ca.rmen.android.poetassistant.main
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.graphics.drawable.VectorDrawableCompat
+import android.support.annotation.DrawableRes
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
@@ -99,10 +98,11 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
         return ResultListFactory.getTabName(mContext, tab).toUpperCase(Locale.getDefault())
     }
 
-    fun getIcon(position: Int): Drawable? {
+    @DrawableRes
+    fun getIcon(position: Int): Int? {
         if (!mContext.resources.getBoolean(R.bool.tab_icons)) return null
         val tab = getTabForPosition(position)
-        val drawableResourceId = when (tab) {
+        return when (tab) {
             Tab.PATTERN -> R.drawable.ic_tab_pattern
             Tab.FAVORITES -> R.drawable.ic_tab_star
             Tab.WOTD -> R.drawable.ic_tab_wotd
@@ -111,7 +111,6 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
             Tab.DICTIONARY -> R.drawable.ic_tab_dictionary
             else -> R.drawable.ic_tab_reader
         }
-        return VectorDrawableCompat.create(mContext.resources, drawableResourceId, null)
     }
 
     override fun saveState(): Parcelable? {
