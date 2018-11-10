@@ -50,9 +50,11 @@ class SuggestionsProvider : ContentProvider() {
         return true
     }
 
-    override fun query(uri: Uri, projection: Array<out String>?, sel: String?, selArgs: Array<out String>?, sortOrder: String?): Cursor {
-        val filter = if (!TextUtils.equals(uri.lastPathSegment, SearchManager.SUGGEST_URI_PATH_QUERY)) uri.lastPathSegment else null
-        return SuggestionsCursor(context, filter)
+    override fun query(uri: Uri, projection: Array<out String>?, sel: String?, selArgs: Array<out String>?, sortOrder: String?): Cursor? {
+        return context?.let {
+            val filter = if (!TextUtils.equals(uri.lastPathSegment, SearchManager.SUGGEST_URI_PATH_QUERY)) uri.lastPathSegment else null
+            SuggestionsCursor(it, filter)
+        }
     }
 
     override fun getType(uri: Uri): String {

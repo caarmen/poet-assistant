@@ -171,10 +171,12 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
         super.onActivityResult(requestCode, resultCode, data)
         val context = activity
         if (context != null) {
-            if (requestCode == ACTION_FILE_OPEN && resultCode == Activity.RESULT_OK && data != null) {
-                mViewModel.open(context, data.data)
-            } else if (requestCode == ACTION_FILE_SAVE_AS && resultCode == Activity.RESULT_OK && data != null) {
-                mViewModel.saveAs(context, data.data)
+            data?.data?.let { uri ->
+                if (requestCode == ACTION_FILE_OPEN && resultCode == Activity.RESULT_OK) {
+                    mViewModel.open(context, uri)
+                } else if (requestCode == ACTION_FILE_SAVE_AS && resultCode == Activity.RESULT_OK) {
+                    mViewModel.saveAs(context, uri)
+                }
             }
         }
     }

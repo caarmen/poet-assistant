@@ -194,7 +194,7 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
 
     fun save(context: Context) {
         val savedPoem = mPoemPrefs.getSavedPoem()
-        if (savedPoem != null) {
+        if (savedPoem?.uri != null) {
             poem.get()?.let {
                 PoemFile.save(context, savedPoem.uri, it, mPoemFileCallback)
             }

@@ -83,15 +83,15 @@ class FilterDialogFragment : DialogFragment() {
                         .setPositiveButton(android.R.string.ok, positiveListener)
                         .setNegativeButton(android.R.string.cancel, null)
                         .create()
-                binding.edit.setOnFocusChangeListener({_, hasFocus ->
-                    if (dialog.window != null) {
+                binding.edit.setOnFocusChangeListener { _, hasFocus ->
+                    dialog.window?.let { window ->
                         if (hasFocus) {
-                            dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+                            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
                         } else {
-                            dialog.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+                            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
                         }
                     }
-                })
+                }
                 return dialog
             }
         }

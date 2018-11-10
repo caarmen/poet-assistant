@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
 
         // If the app was launched with a query for the a particular tab, focus on that tab.
         if (intent.data?.host != null) {
-            val tab = Tab.parse(intent.data.host) ?: Tab.DICTIONARY
+            val tab = Tab.parse(intent.data!!.host!!) ?: Tab.DICTIONARY
             mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false)
         } else if (Intent.ACTION_SEND == intent.action) {
             mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
                     if (!TextUtils.isEmpty(userQuery)) query = userQuery.toString()
                 }
                 if (TextUtils.isEmpty(query)) return
-                mSearch.addSuggestions(query)
+                mSearch.addSuggestions(query!!)
                 mSearch.search(query)
             }
         // We got here from a deep link
@@ -191,10 +191,10 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
         val word = uri.lastPathSegment
         if (Constants.DEEP_LINK_QUERY == uri.host) {
             mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false)
-            mSearch.search(word)
-        } else if (uri.host != null) {
-            val tab = Tab.parse(uri.host)
-            if (tab != null) mSearch.search(word, tab)
+            word?.let { mSearch.search(it)}
+        } else if (uri.host != null && word != null) {
+            val tab = Tab.parse(uri.host!!)
+            tab?.let {mSearch.search(word, it)}
         }
     }
 

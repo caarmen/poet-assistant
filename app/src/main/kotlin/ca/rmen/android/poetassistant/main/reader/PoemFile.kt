@@ -64,7 +64,7 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
             return PoemFile(uri, displayName, text)
         }
 
-        fun save(context: Context, uri: Uri?, text: String, callback: PoemFileCallback) {
+        fun save(context: Context, uri: Uri, text: String, callback: PoemFileCallback) {
             Log.d(TAG, "save: uri=$uri, text=$text, callback=$callback")
             val threading = DaggerHelper.getMainScreenComponent(context).getThreading()
             threading.execute(
@@ -77,7 +77,7 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
         }
 
         @WorkerThread
-        private fun savePoemFile(context: Context, uri: Uri?, text: String): PoemFile {
+        private fun savePoemFile(context: Context, uri: Uri, text: String): PoemFile {
             val outputStream = context.contentResolver.openOutputStream(uri, "w") ?: throw IOException("Couldn't open OutputStream to uri " + uri)
             val writer = BufferedWriter(OutputStreamWriter(outputStream))
             writer.use {
@@ -110,7 +110,7 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
                     val printAttributes = PrintAttributes.Builder().build()
                     val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager?
                     if (printManager != null) {
-                        val printJob = printManager.print(title, printDocumentAdapter, printAttributes)
+                        val printJob = printManager.print(title!!, printDocumentAdapter, printAttributes)
                         callback.onPrintJobCreated(poemFile, printJob)
                     }
                 }
@@ -157,10 +157,12 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
          * Generate a suggested filename based on the first few words of the poem text.
          */
         fun readDisplayName(context: Context, uri: Uri?): String? {
-            val cursor = context.contentResolver.query(uri, null, null, null, null)
-            cursor?.use {
-                if (cursor.moveToFirst()) {
-                    return cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+            uri?.let {displayNameUri ->
+                val cursor = context.contentResolver.query(displayNameUri, null, null, null, null)
+                cursor?.use {
+                    if (cursor.moveToFirst()) {
+                        return cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                    }
                 }
             }
             return null

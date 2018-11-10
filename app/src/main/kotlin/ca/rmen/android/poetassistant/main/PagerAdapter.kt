@@ -167,7 +167,7 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
         Log.v(TAG, "Constructor: intent = $intent")
         val initialQuery = intent.data
         if (initialQuery?.host != null) {
-            val tab = Tab.parse(initialQuery.host)
+            val tab = Tab.parse(initialQuery.host!!)
             when {
                 tab == Tab.PATTERN -> mInitialPatternQuery = initialQuery.lastPathSegment
                 tab == Tab.RHYMER -> mInitialRhymeQuery = initialQuery.lastPathSegment

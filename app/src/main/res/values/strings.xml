@@ -230,7 +230,7 @@
     <string name="tts_error"><![CDATA[No voices found! &#128552;]]></string>
     <string name="tts_error_open_system_settings">Voice settings</string>
     <string name="tts_error_open_app_settings">Settings</string>
-    <string name="reader_word_char_count">%s, %s</string>
+    <string name="reader_word_char_count">%1$s, %2$s</string>
 
     <plurals name="reader_word_count">
         <item quantity="one">%s word</item>

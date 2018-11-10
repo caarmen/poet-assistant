@@ -80,7 +80,8 @@ class Settings {
             val pitchPrefKeyV1 = "PREF_VOICE_PITCH"
             // V1: we had speed as an enum (string) value.
             if (prefs.contains(speedPrefKeyV1)) {
-                val deprecatedSpeedPrefValue = prefs.getString(speedPrefKeyV1, "1.0").toFloat()
+                val deprecatedSpeedPrevValueStr = prefs.getString(speedPrefKeyV1, "1.0")
+                val deprecatedSpeedPrefValue = deprecatedSpeedPrevValueStr?.toFloat() ?: 1.0f
                 val newSpeedPrefValue = (deprecatedSpeedPrefValue * 100).toInt()
                 prefs.edit().putInt(PREF_VOICE_SPEED, newSpeedPrefValue).remove(speedPrefKeyV1).apply()
             }

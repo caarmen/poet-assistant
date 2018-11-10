@@ -62,7 +62,7 @@ object TextPopupMenu {
      * @param listener this listener will be notified when the user selects one of the popup menu items
      */
     fun addPopupMenu(style: Style, snackbarView: View, textView: TextView, listener: OnWordClickListener) {
-        textView.setOnClickListener({ _ ->
+        textView.setOnClickListener { _ ->
             val text = textView.text.toString()
             val popupMenu = createPopupMenu(snackbarView, textView, text, listener)
             when (style) {
@@ -77,7 +77,7 @@ object TextPopupMenu {
                 }
             }
             popupMenu.show()
-        })
+        }
     }
 
     /**
@@ -111,7 +111,7 @@ object TextPopupMenu {
                     if (intent != null
                             && Intent.ACTION_PROCESS_TEXT == intent.action
                             && intent.component != null
-                            && textView.context.applicationInfo.packageName == intent.component.packageName) {
+                            && textView.context.applicationInfo.packageName == intent.component?.packageName) {
                         menuItem.isVisible = false
                     }
                 }
