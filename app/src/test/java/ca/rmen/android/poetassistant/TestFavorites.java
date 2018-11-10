@@ -21,12 +21,10 @@ package ca.rmen.android.poetassistant;
 
 import android.arch.persistence.room.Room;
 import android.net.Uri;
-import android.os.Environment;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowEnvironment;
 
 import java.io.BufferedWriter;
@@ -46,7 +44,7 @@ import static org.robolectric.Shadows.shadowOf;
 public class TestFavorites {
     @Test
     public void importTest() throws IOException {
-        UserDb db =  Room.databaseBuilder(RuntimeEnvironment.application,
+        UserDb db =  Room.databaseBuilder(Environment.getApplication(),
                 UserDb.class, "userdata.db")
                 .allowMainThreadQueries()
                 .addMigrations(UserDb.MIGRATION_1_2).build();
@@ -55,16 +53,16 @@ public class TestFavorites {
         Set<String> favoriteWords = favorites.getFavorites();
         assertEquals(0, favoriteWords.size());
         Uri uri = createFavoritesFile();
-        shadowOf(RuntimeEnvironment.application.getContentResolver()).registerInputStream(uri, openInputStream(uri));
-        favorites.importFavorites(RuntimeEnvironment.application, uri);
+        shadowOf(Environment.getApplication().getContentResolver()).registerInputStream(uri, openInputStream(uri));
+        favorites.importFavorites(Environment.getApplication(), uri);
         favoriteWords = favorites.getFavorites();
         assertEquals(2, favoriteWords.size());
         db.close();
     }
 
     private Uri createFavoritesFile() throws IOException {
-        ShadowEnvironment.setExternalStorageState(Environment.MEDIA_MOUNTED);
-        File file = new File(RuntimeEnvironment.application.getExternalFilesDir(null), "my-favorite-words.txt");
+        ShadowEnvironment.setExternalStorageState(android.os.Environment.MEDIA_MOUNTED);
+        File file = new File(Environment.getApplication().getExternalFilesDir(null), "my-favorite-words.txt");
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
         writer.write("hello");
         writer.newLine();

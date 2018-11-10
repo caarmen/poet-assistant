@@ -37,8 +37,8 @@ import ca.rmen.android.poetassistant.Favorite
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.VectorCompat
+import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.Tab
-import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import javax.inject.Inject
 
@@ -49,7 +49,7 @@ class ResultListViewModel<T> constructor(application: Application, private val t
 
     val isDataAvailable = ObservableBoolean()
     val emptyText = ObservableField<CharSequence>()
-    val layout = MutableLiveData<Settings.Layout>()
+    val layout = MutableLiveData<ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout>()
     val showHeader = MutableLiveData<Boolean>()
     val usedQueryWord = MutableLiveData<String>()
     private var mAdapter: ResultListAdapter<T>? = null
@@ -68,10 +68,10 @@ class ResultListViewModel<T> constructor(application: Application, private val t
         mPrefsListener = PrefsListener()
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mPrefsListener)
         favoritesLiveData = mFavorites.getFavoritesLiveData()
-        resultListDataLiveData = Transformations.switchMap(mQueryParams, { queryParams ->
+        resultListDataLiveData = Transformations.switchMap(mQueryParams) { queryParams ->
             @Suppress("UNCHECKED_CAST")
             ResultListFactory.createLiveData(tab, application, queryParams.word, queryParams.filter) as LiveData<ResultListData<T>>
-        })
+        }
     }
 
     fun setQueryParams(queryParams: QueryParams) {
@@ -136,8 +136,8 @@ class ResultListViewModel<T> constructor(application: Application, private val t
 
     private inner class PrefsListener : SharedPreferences.OnSharedPreferenceChangeListener {
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-            if (Settings.PREF_LAYOUT == key) {
-                layout.value = Settings.getLayout(SettingsPrefs.get(getApplication()))
+            if (SettingsPrefs.PREF_LAYOUT == key) {
+                layout.value = SettingsPrefs.getLayout(DaggerHelper.getMainScreenComponent(getApplication()).getSettingsPrefs())
             }
         }
 

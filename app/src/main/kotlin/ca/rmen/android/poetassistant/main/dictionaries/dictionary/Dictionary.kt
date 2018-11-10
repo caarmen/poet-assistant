@@ -80,7 +80,7 @@ class Dictionary @Inject constructor(private val embeddedDb: EmbeddedDb) {
         val limit = Constants.MAX_RESULTS.toString()
         embeddedDb.query(true, "dictionary", projection, selection, selectionArgs, orderBy, limit)?.use { cursor ->
             if (cursor.count > 0) {
-                val result = Array(cursor.count, { _ -> "" })
+                val result = Array(cursor.count) { _ -> "" }
                 while (cursor.moveToNext()) {
                     result[cursor.position] = cursor.getString(0)
                 }
@@ -96,12 +96,12 @@ class Dictionary @Inject constructor(private val embeddedDb: EmbeddedDb) {
     fun findWordsWithPrefix(prefix: String): Array<String> {
         val projection = arrayOf("word")
         val selection = "has_definition=1 AND word LIKE ?"
-        val selectionArgs = arrayOf(prefix + "%")
+        val selectionArgs = arrayOf("$prefix%")
         val orderBy = "word"
         embeddedDb.query(true, "word_variants", projection, selection, selectionArgs,
                 orderBy, MAX_PREFIX_MATCHES.toString())?.use { cursor ->
             if (cursor.count > 0) {
-                val result = Array(cursor.count, { _ -> "" })
+                val result = Array(cursor.count) { _ -> "" }
                 while (cursor.moveToNext()) {
                     result[cursor.position] = cursor.getString(0)
                 }

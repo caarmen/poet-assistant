@@ -36,9 +36,9 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.dictionaries.Share
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
-import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.widget.HackFor23381
 import ca.rmen.android.poetassistant.widget.PopupMenuHelper
 
@@ -62,7 +62,7 @@ object TextPopupMenu {
      * @param listener this listener will be notified when the user selects one of the popup menu items
      */
     fun addPopupMenu(style: Style, snackbarView: View, textView: TextView, listener: OnWordClickListener) {
-        textView.setOnClickListener({ _ ->
+        textView.setOnClickListener { _ ->
             val text = textView.text.toString()
             val popupMenu = createPopupMenu(snackbarView, textView, text, listener)
             when (style) {
@@ -77,7 +77,7 @@ object TextPopupMenu {
                 }
             }
             popupMenu.show()
-        })
+        }
     }
 
     /**
@@ -88,7 +88,8 @@ object TextPopupMenu {
      * @param listener this listener will be notified when the user selects one of the popup menu items
      */
     fun addSelectionPopupMenu(snackbarView: View, textView: TextView, listener: OnWordClickListener) {
-        if (!SettingsPrefs.get(textView.context).isSelectionLookupEnabled) {
+        val settingsPrefs = DaggerHelper.getMainScreenComponent(textView.context).getSettingsPrefs()
+        if (!settingsPrefs.isSelectionLookupEnabled) {
             return
         }
         textView.customSelectionActionModeCallback = object : ActionMode.Callback {
@@ -111,7 +112,7 @@ object TextPopupMenu {
                     if (intent != null
                             && Intent.ACTION_PROCESS_TEXT == intent.action
                             && intent.component != null
-                            && textView.context.applicationInfo.packageName == intent.component.packageName) {
+                            && textView.context.applicationInfo.packageName == intent.component?.packageName) {
                         menuItem.isVisible = false
                     }
                 }
@@ -153,10 +154,10 @@ object TextPopupMenu {
 
     private fun createPopupMenu(snackbarView: View, view: View, selectedWord: String, listener: OnWordClickListener): PopupMenu {
         val popupMenu = PopupMenu(view.context, view)
-        popupMenu.setOnMenuItemClickListener({ item ->
+        popupMenu.setOnMenuItemClickListener { item ->
             handleItemClicked(item.itemId, snackbarView, view, selectedWord, listener)
             false
-        })
+        }
         return popupMenu
     }
 
@@ -168,8 +169,8 @@ object TextPopupMenu {
         menuInflater.inflate(R.menu.menu_word_other, menu)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getSupportedActivities(context, text)
-                    .filter({ resolveInfo -> context.applicationInfo.packageName != resolveInfo.activityInfo.packageName })
-                    .forEach({ resolveInfo ->
+                    .filter { resolveInfo -> context.applicationInfo.packageName != resolveInfo.activityInfo.packageName }
+                    .forEach { resolveInfo ->
                         menu.add(
                                 R.id.group_system_popup_menu_items, Menu.NONE,
                                 Menu.NONE,
@@ -177,7 +178,7 @@ object TextPopupMenu {
                                 .setIcon(resolveInfo.loadIcon(context.packageManager))
                                 .setIntent(createProcessTextIntentForResolveInfo(resolveInfo, text))
                                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
-                    })
+                    }
         }
     }
 

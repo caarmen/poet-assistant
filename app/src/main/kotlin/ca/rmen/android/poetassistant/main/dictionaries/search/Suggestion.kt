@@ -25,7 +25,7 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import android.support.annotation.NonNull
 
-@Entity(tableName = "SUGGESTION", indices = [Index(value = "WORD", unique = true)])
+@Entity(tableName = "SUGGESTION", indices = [Index(value = ["WORD"], unique = true)])
 class Suggestion(word: String) {
 
     @PrimaryKey

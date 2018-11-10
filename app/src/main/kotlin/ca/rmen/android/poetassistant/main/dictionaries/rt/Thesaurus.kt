@@ -108,7 +108,7 @@ class Thesaurus @Inject constructor(private val embeddedDb: EmbeddedDb) {
         val projection = arrayOf("word", "word_type")
         var selection = String.format(Locale.US, "(%s = ? OR %S LIKE ? OR %S LIKE ? OR %S LIKE ?) ",
                 relationType.columnName, relationType.columnName, relationType.columnName, relationType.columnName)
-        val selectionArgs = Array(4 + excludeRelatedWords.size, {_ -> ""} )
+        val selectionArgs = Array(4 + excludeRelatedWords.size) { _ -> ""}
         var i = 0
         selectionArgs[i++] = word // only relatedWord
         selectionArgs[i++] = String.format(Locale.US, "%s,%%", word) // first relatedWord
@@ -143,13 +143,14 @@ class Thesaurus @Inject constructor(private val embeddedDb: EmbeddedDb) {
      * @return a list of one {@link ThesaurusEntry.ThesaurusEntryDetails} per word type.
      */
     private fun merge(entries: List<ThesaurusEntry.ThesaurusEntryDetails>): List<ThesaurusEntry.ThesaurusEntryDetails> {
-        return entries.groupBy({ thesaurusEntryDetails -> thesaurusEntryDetails.wordType })
-                .map({ group ->
-                    group.value.reduce({ acc, thesaurusEntryDetails ->
+        return entries.asSequence().groupBy { thesaurusEntryDetails -> thesaurusEntryDetails.wordType }
+                .map { group ->
+                    group.value.reduce { acc, thesaurusEntryDetails ->
                         ThesaurusEntry.ThesaurusEntryDetails(acc.wordType,
                                 union(acc.synonyms, thesaurusEntryDetails.synonyms),
                                 union(acc.antonyms, thesaurusEntryDetails.antonyms))
-                    })})
+                    }
+                }.toList()
     }
 
     private fun union(first: List<String>, second: List<String>): List<String> {
@@ -164,7 +165,7 @@ class Thesaurus @Inject constructor(private val embeddedDb: EmbeddedDb) {
      */
     fun getFlatSynonyms(word: String, includeReverseLookup: Boolean): Collection<String> {
         val entries = lookup(word, EnumSet.of(RelationType.SYNONYM), includeReverseLookup).entries
-        return merge(entries).flatMap({ thesaurusEntryDetails -> thesaurusEntryDetails.synonyms })
+        return merge(entries).flatMap { thesaurusEntryDetails -> thesaurusEntryDetails.synonyms }
     }
 
     private fun split(string: String): List<String> {

@@ -27,6 +27,7 @@
         android:orientation="vertical">
 
         <EditText
+            android:importantForAutofill="no"
             android:id="@+id/edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,6 +36,7 @@
             android:layout_marginRight="24dp"
             android:layout_marginStart="24dp"
             android:inputType="text"
-            tools:text="happy" />
+            tools:text="happy"
+            tools:targetApi="o"/>
     </LinearLayout>
 </layout>

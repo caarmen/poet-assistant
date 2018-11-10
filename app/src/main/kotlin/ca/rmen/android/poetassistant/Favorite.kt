@@ -25,7 +25,7 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import android.support.annotation.NonNull
 
-@Entity(tableName = "FAVORITE", indices = [Index(value = "WORD", unique = true)])
+@Entity(tableName = "FAVORITE", indices = [Index(value = ["WORD"], unique = true)])
 class Favorite(word: String) {
     @PrimaryKey
     @NonNull

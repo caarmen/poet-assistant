@@ -24,7 +24,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabaseCorruptException
 import android.database.sqlite.SQLiteException
-import android.os.Build
 import android.support.annotation.VisibleForTesting
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
@@ -182,11 +181,7 @@ class EmbeddedDb(val context: Context) {
                 val dbFile = getDbFileName(DB_VERSION)
                 val dbPath = File(context.getDir("databases", Context.MODE_PRIVATE), dbFile)
                 try {
-                    var flags = SQLiteDatabase.OPEN_READONLY
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                        // http://stackoverflow.com/questions/2528489/no-such-table-android-metadata-whats-the-problem
-                        flags = flags or SQLiteDatabase.NO_LOCALIZED_COLLATORS
-                    }
+                    val flags = SQLiteDatabase.OPEN_READONLY
                     mDb = SQLiteDatabase.openDatabase(dbPath.absolutePath, null, flags)
                 } catch (e: SQLiteException) {
                     Log.w(TAG, "Could not open database $DB_NAME:$DB_VERSION: ${e.message}", e)
@@ -223,8 +218,8 @@ class EmbeddedDb(val context: Context) {
                 deleteDb(DB_VERSION)
             } finally {
                 try {
-                    if (input != null) input.close()
-                    if (output != null) output.close()
+                    input?.close()
+                    output?.close()
                 } catch (e: IOException) {
                     Log.e(TAG, "Couldn't close stream", e)
                 }
@@ -237,8 +232,8 @@ class EmbeddedDb(val context: Context) {
         // (rhymes, thesaurus, dictionary) was 2.
         val maxVersion = 2
         for (i in 0..maxVersion) {
-            val dbFileName: String = if (i == 1) name + ".db"
-            else name + i + ".db"
+            val dbFileName: String = if (i == 1) "$name.db"
+            else "$name$i.db"
             val dbPath = getDbFile(dbFileName)
             if (dbPath.exists()) {
                 val deleted = dbPath.delete()
@@ -249,8 +244,8 @@ class EmbeddedDb(val context: Context) {
     }
 
     private fun getDbFileName(version: Int): String {
-        if (version == 1) return DB_NAME + ".db"
-        return DB_NAME + version + ".db"
+        if (version == 1) return "$DB_NAME.db"
+        return "$DB_NAME$version.db"
     }
 
     private fun deleteDb(version: Int) {

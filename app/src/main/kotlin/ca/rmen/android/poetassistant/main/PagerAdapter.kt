@@ -21,16 +21,12 @@ package ca.rmen.android.poetassistant.main
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Parcelable
 import android.support.annotation.DrawableRes
-import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.content.ContextCompat
-import android.support.v4.graphics.drawable.DrawableCompat
 import android.util.Log
 import android.view.ViewGroup
 import ca.rmen.android.poetassistant.Constants
@@ -102,26 +98,19 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
         return ResultListFactory.getTabName(mContext, tab).toUpperCase(Locale.getDefault())
     }
 
-    fun getIcon(position: Int): Drawable? {
+    @DrawableRes
+    fun getIcon(position: Int): Int? {
         if (!mContext.resources.getBoolean(R.bool.tab_icons)) return null
         val tab = getTabForPosition(position)
-        val iconRes = when (tab) {
-            Tab.PATTERN -> R.drawable.ic_pattern
-            Tab.FAVORITES -> R.drawable.ic_star_activated_vector
-            Tab.WOTD -> R.drawable.ic_wotd
-            Tab.RHYMER -> R.drawable.ic_rhymer
-            Tab.THESAURUS -> R.drawable.ic_thesaurus
-            Tab.DICTIONARY -> R.drawable.ic_dictionary
-            else -> R.drawable.ic_play_enabled
+        return when (tab) {
+            Tab.PATTERN -> R.drawable.ic_tab_pattern
+            Tab.FAVORITES -> R.drawable.ic_tab_star
+            Tab.WOTD -> R.drawable.ic_tab_wotd
+            Tab.RHYMER -> R.drawable.ic_tab_rhymer
+            Tab.THESAURUS -> R.drawable.ic_tab_thesaurus
+            Tab.DICTIONARY -> R.drawable.ic_tab_dictionary
+            else -> R.drawable.ic_tab_reader
         }
-        return getTintedIcon(iconRes)
-    }
-
-    private fun getTintedIcon(@DrawableRes drawableRes: Int): Drawable? {
-        val drawable = VectorDrawableCompat.create(mContext.resources, drawableRes, null) ?: return null
-        val mutateDrawable = drawable.mutate()
-        DrawableCompat.setTintList(mutateDrawable, ContextCompat.getColorStateList(mContext, R.color.tab_icon))
-        return mutateDrawable
     }
 
     override fun saveState(): Parcelable? {
@@ -167,7 +156,7 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
         Log.v(TAG, "Constructor: intent = $intent")
         val initialQuery = intent.data
         if (initialQuery?.host != null) {
-            val tab = Tab.parse(initialQuery.host)
+            val tab = Tab.parse(initialQuery.host!!)
             when {
                 tab == Tab.PATTERN -> mInitialPatternQuery = initialQuery.lastPathSegment
                 tab == Tab.RHYMER -> mInitialRhymeQuery = initialQuery.lastPathSegment

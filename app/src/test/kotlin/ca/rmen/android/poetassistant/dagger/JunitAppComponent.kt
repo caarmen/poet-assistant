@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger;
+package ca.rmen.android.poetassistant.dagger
 
 import dagger.Component
 import javax.inject.Singleton

@@ -36,7 +36,6 @@ import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.Share
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
-import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import java.util.Calendar
 import java.util.Locale
@@ -50,7 +49,7 @@ object Wotd {
 
     const val NOTIFICATION_FREQUENCY_MS = (24 * 60 * 60 * 1000).toLong()
 
-    fun setWotdEnabled(context : Context, dictionary : Dictionary, enabled : Boolean) {
+    fun setWotdEnabled(context: Context, dictionary: Dictionary, enabled: Boolean) {
         Log.v(TAG, "setWotdEnabled $enabled")
         if (enabled) enableWotd(context, dictionary)
         else disableWotd(context)
@@ -61,7 +60,7 @@ object Wotd {
      * to do the wotd, we'll schedule the task.
      */
 
-    fun reschedule(context : Context, settingsPrefs : SettingsPrefs) {
+    fun reschedule(context: Context, settingsPrefs: SettingsPrefs) {
         Log.d(TAG, "reschedule")
         if (settingsPrefs.isWotdEnabled) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -72,7 +71,7 @@ object Wotd {
         }
     }
 
-    private fun enableWotd(context : Context, dictionary : Dictionary) {
+    private fun enableWotd(context: Context, dictionary: Dictionary) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             WotdJob.schedule(context)
         } else {
@@ -82,7 +81,7 @@ object Wotd {
         threading.execute({ notifyWotd(context, dictionary) })
     }
 
-    private fun disableWotd(context : Context) {
+    private fun disableWotd(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             WotdJob.cancel(context)
         } else {
@@ -90,7 +89,7 @@ object Wotd {
         }
     }
 
-    fun getTodayUTC() : Calendar {
+    fun getTodayUTC(): Calendar {
         val now = Calendar.getInstance()
         now.timeZone = TimeZone.getTimeZone("UTC")
         now[Calendar.HOUR_OF_DAY] = 0
@@ -100,7 +99,7 @@ object Wotd {
         return now
     }
 
-    fun notifyWotd(context : Context, dictionary : Dictionary) {
+    fun notifyWotd(context: Context, dictionary: Dictionary) {
         Log.v(TAG, "notifyWotd")
         val entry = dictionary.getRandomEntry(getTodayUTC().timeInMillis) ?: return
         val title = context.getString(R.string.wotd_notification_title, entry.word)
@@ -124,26 +123,28 @@ object Wotd {
                         context.getString(R.string.share),
                         getShareIntent(context, entry))
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            builder.priority = Settings.NotificationPriority.valueOf(SettingsPrefs.get(context).wotdNotificationPriority.toUpperCase(Locale.US)).priority
+            builder.priority = SettingsPrefs.NotificationPriority.valueOf(
+                    DaggerHelper.getMainScreenComponent(context).getSettingsPrefs()
+                            .wotdNotificationPriority.toUpperCase(Locale.US)).priority
         }
         val notification = builder.build()
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
         notificationManager?.notify(TAG.hashCode(), notification)
     }
 
-    private fun buildWotdNotificationContent(context : Context, entry : DictionaryEntry) : CharSequence {
+    private fun buildWotdNotificationContent(context: Context, entry: DictionaryEntry): CharSequence {
         val builder = StringBuilder(entry.word)
         entry.details.forEach { builder.append(context.getString(R.string.wotd_notification_definition, it.partOfSpeech, it.definition)) }
         return HtmlCompat.fromHtml(builder.toString())
     }
 
-    private fun buildWotdShareContent(context : Context, entry : DictionaryEntry) : CharSequence {
+    private fun buildWotdShareContent(context: Context, entry: DictionaryEntry): CharSequence {
         val builder = StringBuilder(context.getString(R.string.share_dictionary_title, entry.word))
         entry.details.forEach { builder.append(context.getString(R.string.share_dictionary_entry, it.partOfSpeech, it.definition)) }
         return builder.toString()
     }
 
-    private fun getShareIntent(context : Context, entry : DictionaryEntry) : PendingIntent {
+    private fun getShareIntent(context: Context, entry: DictionaryEntry): PendingIntent {
         val intent = Intent(Intent.ACTION_SEND)
         intent.putExtra(Intent.EXTRA_TEXT, buildWotdShareContent(context, entry))
         intent.type = "text/plain"

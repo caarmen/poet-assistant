@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger;
+package ca.rmen.android.poetassistant.dagger
 
 import ca.rmen.android.poetassistant.InstrumentationThreading
 import ca.rmen.android.poetassistant.Threading

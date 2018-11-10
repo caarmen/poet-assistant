@@ -72,7 +72,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
     }
 
     private lateinit var mViewModel: ReaderViewModel
-    private lateinit var mThreading : Threading
+    private lateinit var mThreading: Threading
     private lateinit var mBinding: FragmentReaderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,7 +102,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
                 AppBarLayoutHelper.forceExpandAppBarLayout(activity)
             }
         }
-        DebounceTextWatcher.debounce(mBinding.tvText, { mViewModel.updateWordCount() })
+        DebounceTextWatcher.debounce(mBinding.tvText) { mViewModel.updateWordCount() }
         TextPopupMenu.addSelectionPopupMenu(mBinding.root, mBinding.tvText, activity as OnWordClickListener)
         mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver)
         return mBinding.root
@@ -171,10 +171,12 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
         super.onActivityResult(requestCode, resultCode, data)
         val context = activity
         if (context != null) {
-            if (requestCode == ACTION_FILE_OPEN && resultCode == Activity.RESULT_OK && data != null) {
-                mViewModel.open(context, data.data)
-            } else if (requestCode == ACTION_FILE_SAVE_AS && resultCode == Activity.RESULT_OK && data != null) {
-                mViewModel.saveAs(context, data.data)
+            data?.data?.let { uri ->
+                if (requestCode == ACTION_FILE_OPEN && resultCode == Activity.RESULT_OK) {
+                    mViewModel.open(context, uri)
+                } else if (requestCode == ACTION_FILE_SAVE_AS && resultCode == Activity.RESULT_OK) {
+                    mViewModel.saveAs(context, uri)
+                }
             }
         }
     }
@@ -236,9 +238,9 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
                 val snackBar = Snackbar.make(root, HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG)
                 val intent = Intent("com.android.settings.TTS_SETTINGS")
                 if (intent.resolveActivity(root.context.packageManager) != null) {
-                    snackBar.setAction(R.string.tts_error_open_system_settings, { _ -> startActivity(intent) })
+                    snackBar.setAction(R.string.tts_error_open_system_settings) { _ -> startActivity(intent) }
                 } else {
-                    snackBar.setAction(R.string.tts_error_open_app_settings, { _ -> startActivity(Intent(context, SettingsActivity::class.java)) })
+                    snackBar.setAction(R.string.tts_error_open_app_settings) { _ -> startActivity(Intent(context, SettingsActivity::class.java)) }
                 }
                 snackBar.show()
             }
@@ -263,7 +265,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
 
     inner class ButtonListener {
         fun onPlayButtonClicked() {
-            mViewModel.play(mBinding.tvText.text)
+            mBinding.tvText.text?.let { mViewModel.play(it) }
         }
 
         fun onWordCountClicked() {

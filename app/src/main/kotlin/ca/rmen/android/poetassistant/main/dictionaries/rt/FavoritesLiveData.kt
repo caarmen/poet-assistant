@@ -28,7 +28,6 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
-import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import java.util.TreeSet
 import javax.inject.Inject
@@ -52,8 +51,8 @@ class FavoritesLiveData(context: Context) : ResultListLiveData<ResultListData<RT
         if (favorites.isEmpty()) return emptyResult()
 
         val sortedFavorites = TreeSet<String>(favorites)
-        val layout = Settings.getLayout(mPrefs)
-        sortedFavorites.forEachIndexed({ i, favorite ->
+        val layout = SettingsPrefs.getLayout(mPrefs)
+        sortedFavorites.forEachIndexed { i, favorite ->
             /*@ColorRes*/
             val color = if (i % 2 == 0) R.color.row_background_color_even else R.color.row_background_color_odd
             data.add(RTEntryViewModel(
@@ -62,9 +61,9 @@ class FavoritesLiveData(context: Context) : ResultListLiveData<ResultListData<RT
                     favorite,
                     ContextCompat.getColor(context, color),
                     true,
-                    layout == Settings.Layout.EFFICIENT
+                    layout == SettingsPrefs.Layout.EFFICIENT
             ))
-        })
+        }
         return ResultListData(context.getString(R.string.favorites_list_header), data)
     }
 

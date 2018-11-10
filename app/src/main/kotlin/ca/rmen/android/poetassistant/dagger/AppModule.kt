@@ -29,7 +29,6 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions
-import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.Module
 import dagger.Provides
@@ -60,8 +59,8 @@ class AppModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesSettingsPrefs(): SettingsPrefs {
-        Settings.migrateSettings(application)
-        return SettingsPrefs.get(application)
+        SettingsPrefs.migrateSettings(application)
+        return SettingsPrefs(application)
     }
 
     @Provides

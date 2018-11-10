@@ -26,7 +26,9 @@ object WordCounter {
     // The following will each be considered as one word: good-hearted, don't, variable_name
     private const val NON_SPLITTING_PUNCTUATION = "-'’_"
 
+    @Suppress("Annotator")
     private val REGEX_STRIP by lazy { Regex("[$NON_SPLITTING_PUNCTUATION]") }
+    @Suppress("Annotator")
     private val REGEX_SPLIT by lazy { Regex("[^$NON_SPLITTING_PUNCTUATION\\p{L}0-9]") }
 
     fun countWords(text: String?): Int {
@@ -34,7 +36,7 @@ object WordCounter {
         val tokens = text!!
                 .replace(REGEX_STRIP, "")
                 .split(REGEX_SPLIT)
-                .filterNot({ TextUtils.isEmpty(it) })
+                .filterNot { TextUtils.isEmpty(it) }
         return tokens.size
     }
 

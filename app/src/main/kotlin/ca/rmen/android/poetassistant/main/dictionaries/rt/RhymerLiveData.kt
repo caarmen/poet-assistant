@@ -29,7 +29,6 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
-import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.rhymer.RhymeResult
 import java.util.TreeSet
@@ -91,12 +90,12 @@ class RhymerLiveData(context: Context, val query: String, val filter: String?) :
 
         var rhymeResults = mRhymer.getRhymingWords(query, Constants.MAX_RESULTS) ?: return emptyResult()
         if (!TextUtils.isEmpty(filter)) {
-            val synonyms = mThesaurus.getFlatSynonyms(filter!!, mPrefs.isIsThesaurusReverseLookupEnabled)
+            val synonyms = mThesaurus.getFlatSynonyms(filter!!, mPrefs.isThesaurusReverseLookupEnabled)
             if (synonyms.isEmpty()) return emptyResult()
             rhymeResults = filter(rhymeResults, synonyms)
         }
 
-        val layout = Settings.getLayout(mPrefs)
+        val layout = SettingsPrefs.getLayout(mPrefs)
         val favorites = mFavorites.getFavorites()
         if (favorites.isNotEmpty()) {
             addResultSection(favorites, data, R.string.rhyme_section_favorites, getMatchingFavorites(rhymeResults, favorites), layout)
@@ -121,10 +120,10 @@ class RhymerLiveData(context: Context, val query: String, val filter: String?) :
     private fun getMatchingFavorites(rhymeResults: List<RhymeResult>, favorites: Set<String>): Array<String> {
         val matchingFavorites = TreeSet<String>()
         rhymeResults.forEach { rhymeResult ->
-            matchingFavorites.addAll(rhymeResult.strictRhymes.filter({ rhyme -> favorites.contains(rhyme) }))
-            matchingFavorites.addAll(rhymeResult.oneSyllableRhymes.filter({ rhyme -> favorites.contains(rhyme) }))
-            matchingFavorites.addAll(rhymeResult.twoSyllableRhymes.filter({ rhyme -> favorites.contains(rhyme) }))
-            matchingFavorites.addAll(rhymeResult.threeSyllableRhymes.filter({ rhyme -> favorites.contains(rhyme) }))
+            matchingFavorites.addAll(rhymeResult.strictRhymes.filter { rhyme -> favorites.contains(rhyme) })
+            matchingFavorites.addAll(rhymeResult.oneSyllableRhymes.filter { rhyme -> favorites.contains(rhyme) })
+            matchingFavorites.addAll(rhymeResult.twoSyllableRhymes.filter { rhyme -> favorites.contains(rhyme) })
+            matchingFavorites.addAll(rhymeResult.threeSyllableRhymes.filter { rhyme -> favorites.contains(rhyme) })
         }
         return matchingFavorites.toTypedArray()
     }
@@ -133,7 +132,7 @@ class RhymerLiveData(context: Context, val query: String, val filter: String?) :
         return ResultListData(query, emptyList())
     }
 
-    private fun addResultSection(favorites: Set<String>, results: MutableList<RTEntryViewModel>, sectionHeadingResId: Int, rhymes: Array<String>, layout: Settings.Layout) {
+    private fun addResultSection(favorites: Set<String>, results: MutableList<RTEntryViewModel>, sectionHeadingResId: Int, rhymes: Array<String>, layout: ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout) {
         if (rhymes.isNotEmpty()) {
             val wordsWithDefinitions = if (mPrefs.isAllRhymesEnabled) mRhymer.getWordsWithDefinitions(rhymes) else null
             results.add(RTEntryViewModel(context, RTEntryViewModel.Type.SUBHEADING, context.getString(sectionHeadingResId)))
@@ -147,7 +146,7 @@ class RhymerLiveData(context: Context, val query: String, val filter: String?) :
                         ContextCompat.getColor(context, color),
                         favorites.contains(rhyme),
                         hasDefinition,
-                        layout == Settings.Layout.EFFICIENT))
+                        layout == SettingsPrefs.Layout.EFFICIENT))
             }
             if (results.size >= Constants.MAX_RESULTS) {
                 results.add(RTEntryViewModel(

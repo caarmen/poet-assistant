@@ -19,17 +19,17 @@
 package ca.rmen.android.poetassistant
 
 import android.app.Application
-import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import com.squareup.leakcanary.LeakCanary
 
 open class PoetAssistantApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         setupLeakCanary()
-        Theme.setThemeFromSettings(SettingsPrefs.get(this))
+        Theme.setThemeFromSettings(DaggerHelper.getMainScreenComponent(this).getSettingsPrefs())
     }
 
-    open protected fun setupLeakCanary() {
+    protected open fun setupLeakCanary() {
         if (!LeakCanary.isInAnalyzerProcess(this)) {
             LeakCanary.install(this)
         }

@@ -40,7 +40,7 @@ class Favorites (private val threading: Threading, private val favoriteDao: Favo
     }
 
     fun getIsFavoriteLiveData(word: String): LiveData<Boolean> {
-        return Transformations.map(favoriteDao.getCountLiveData(word), { count -> count > 0 })
+        return Transformations.map(favoriteDao.getCountLiveData(word)) { count -> count > 0 }
     }
 
     fun getFavoritesLiveData(): LiveData<List<Favorite>> = favoriteDao.getFavoritesLiveData()

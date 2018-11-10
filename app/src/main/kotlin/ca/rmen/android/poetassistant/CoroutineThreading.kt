@@ -20,13 +20,13 @@
 package ca.rmen.android.poetassistant
 
 import android.util.Log
-import kotlinx.coroutines.experimental.CancellationException
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
-import java.util.concurrent.TimeUnit
-import kotlin.coroutines.experimental.CoroutineContext
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
 open class CoroutineThreading(private val background: CoroutineContext, private val foreground: CoroutineContext) : Threading {
 
@@ -35,9 +35,9 @@ open class CoroutineThreading(private val background: CoroutineContext, private 
     }
 
     override fun executeForeground(delayMs: Long, body: () -> Unit): Threading.Cancelable {
-        val job = launch(foreground) {
+        val job = GlobalScope.launch(foreground) {
             try {
-                if (delayMs > 0) delay(delayMs, TimeUnit.MILLISECONDS)
+                if (delayMs > 0) delay(delayMs)
                 body.invoke()
             } catch (e: CancellationException) {
                 Log.v(TAG, "Task cancelled")
@@ -47,7 +47,7 @@ open class CoroutineThreading(private val background: CoroutineContext, private 
     }
 
     override fun <T> execute(backgroundTask: () -> T, foregroundTask: ((T) -> Unit)?, errorTask: ((Throwable) -> Unit)?) {
-        launch(foreground) {
+        GlobalScope.launch(foreground) {
             val task = async(background) { backgroundTask.invoke() }
             try {
                 val result = task.await()

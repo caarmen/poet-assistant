@@ -35,6 +35,6 @@ object RTUtils {
      */
     fun filter(words : List<String>?, filter: Collection<String>) : List<String> {
         if (words == null) return Collections.emptyList()
-        return words.filter({word -> filter.contains(word)})
+        return words.filter(filter::contains)
     }
 }

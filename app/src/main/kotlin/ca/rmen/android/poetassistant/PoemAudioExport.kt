@@ -92,7 +92,7 @@ class PoemAudioExport(val context: Context) {
 
     private fun speakToFile4(textToSpeech: TextToSpeech, text: String, audioFile: File) {
         val params = HashMap<String, String>()
-        params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, TEMP_AUDIO_FILE)
+        params[TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID] = TEMP_AUDIO_FILE
         @Suppress("DEPRECATION")
         textToSpeech.synthesizeToFile(text, params, audioFile.absolutePath)
     }

@@ -64,9 +64,9 @@ class SuggestionsCursor(context: Context, private val filter: String?) : MatrixC
                     R.drawable.ic_search_history
                 }
         val suggestions = mSuggestions.getSuggestions()
-        suggestions.filter({ TextUtils.isEmpty(filter) || it.contains(filter!!) })
+        suggestions.asSequence().filter { TextUtils.isEmpty(filter) || it.contains(filter!!) }
                 .distinct()
-                .sorted()
+                .sorted().toList()
                 .forEach { addSuggestion(it, iconId) }
 
     }

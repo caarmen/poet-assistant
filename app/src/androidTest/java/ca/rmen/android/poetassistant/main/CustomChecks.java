@@ -59,6 +59,7 @@ import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 class CustomChecks {
     private CustomChecks() {
@@ -104,14 +105,14 @@ class CustomChecks {
         if (patterns.length > 0) {
             emptyView.check(matches(not(isDisplayed())));
             onView(recyclerViewMatch).check(matches(withChildCount(patterns.length)));
-        } else {
-            emptyView.check(matches(isDisplayed()));
             for (int i = 0; i < patterns.length; i++) {
                 onView(allOf(withId(R.id.text1), withText(patterns[i]),
                         childAtPosition(childAtPosition(recyclerViewMatch, i), 1),
                         isDisplayed()))
                         .check(matches(withText(patterns[i])));
             }
+        } else {
+            emptyView.check(matches(isDisplayed()));
         }
     }
 
@@ -176,7 +177,7 @@ class CustomChecks {
             }
         }
         if (suggestions.length == 0) {
-            assertTrue("Found search suggestions but didn't expect to", false);
+            fail("Found search suggestions but didn't expect to");
         }
     }
 

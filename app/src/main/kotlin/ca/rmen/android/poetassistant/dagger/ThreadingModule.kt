@@ -23,13 +23,12 @@ import ca.rmen.android.poetassistant.CoroutineThreading
 import ca.rmen.android.poetassistant.Threading
 import dagger.Module
 import dagger.Provides
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
 class ThreadingModule {
     @Provides
     @Singleton
-    fun providesThreading() : Threading = CoroutineThreading(CommonPool, UI)
+    fun providesThreading() : Threading = CoroutineThreading(Dispatchers.Default, Dispatchers.Main)
 }

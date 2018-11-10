@@ -63,10 +63,10 @@ class VoicePreferenceDialogFragment : PreferenceDialogFragmentCompat() {
         super.onPrepareDialogBuilder(builder)
         // We don't persist the entry labels in onSaveInstanceState().  We ask
         // the Preference for them every time we want to display the dialog.
-        builder.setSingleChoiceItems(getVoicePreference().entries, mSelectedIndex, { dialog, which ->
+        builder.setSingleChoiceItems(getVoicePreference().entries, mSelectedIndex) { dialog, which ->
             mSelectedIndex = which
             dialog.dismiss()
-        })
+        }
         builder.setPositiveButton(null, null)
     }
 

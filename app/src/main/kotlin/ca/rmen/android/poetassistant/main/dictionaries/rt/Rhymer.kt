@@ -123,7 +123,7 @@ class Rhymer @Inject constructor(private val embeddedDb: EmbeddedDb, private val
             selectionColumn = String.format(Locale.US, "replace(%s, 'AO', 'AA')", selectionColumn)
             inputSyllables = inputSyllables.replace("AO", "AA")
         }
-        var selection = selectionColumn + " = ? "
+        var selection = "$selectionColumn = ? "
         if (!prefs.isAllRhymesEnabled) {
             selection += "AND has_definition=1"
         }
