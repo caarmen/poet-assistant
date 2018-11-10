@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.26.7  *(2018-11-10)*
+--------------------
+* Update build environment.
+
 1.26.6  *(2018-07-04)*
 --------------------
 * Update build environment.
