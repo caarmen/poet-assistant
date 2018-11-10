@@ -31,11 +31,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
-import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.shadows.ShadowPackageManager;
 
+import ca.rmen.android.poetassistant.Environment;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.settings.Settings;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
@@ -53,10 +52,11 @@ public class SettingsActivityTest {
         ActivityController<SettingsActivity> activityController = Robolectric.buildActivity(SettingsActivity.class);
         SettingsActivity settingsActivity = activityController.create().start().resume().visible().get();
         PreferenceFragmentCompat settingsFragment = (PreferenceFragmentCompat) settingsActivity.getSupportFragmentManager().findFragmentById(R.id.settings_fragment);
+        assertNotNull(settingsFragment);
         PreferenceCategory preferenceCategory = (PreferenceCategory) settingsFragment.findPreference(SettingsActivity.GeneralPreferenceFragment.PREF_CATEGORY_VOICE);
         Preference preference = preferenceCategory.findPreference(Settings.PREF_SYSTEM_TTS_SETTINGS);
         preference.performClick();
-        Intent nextIntent =  ShadowApplication.getInstance().getNextStartedActivity();
+        Intent nextIntent =  shadowOf(Environment.getApplication()).getNextStartedActivity();
         assertNotNull(nextIntent);
         assertEquals(SYSTEM_TTS_SETTINGS_INTENT, nextIntent.getAction());
         activityController.pause().stop().destroy();
@@ -64,7 +64,7 @@ public class SettingsActivityTest {
 
     // https://stackoverflow.com/questions/21638455/add-resolve-info-to-robolectric-package-manager
     private void mockSystemSettingsApp() {
-        ShadowPackageManager packageManager = shadowOf(RuntimeEnvironment.application.getPackageManager());
+        ShadowPackageManager packageManager = shadowOf(Environment.getApplication().getPackageManager());
         Intent intent = new Intent(SYSTEM_TTS_SETTINGS_INTENT);
 
         ResolveInfo info = new ResolveInfo();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2018 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,17 +17,14 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger
+package ca.rmen.android.poetassistant
 
-import ca.rmen.android.poetassistant.JunitThreading
-import ca.rmen.android.poetassistant.Threading
-import dagger.Module
-import dagger.Provides
-import javax.inject.Singleton
+import android.app.Application
+import org.robolectric.RuntimeEnvironment
 
-@Module
-class JunitThreadingModule {
-    @Provides
-    @Singleton
-    fun providesThreading() : Threading = JunitThreading()
+object Environment {
+    @JvmStatic
+    fun getApplication() : Application {
+        return RuntimeEnvironment.application
+    }
 }

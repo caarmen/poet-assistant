@@ -199,7 +199,7 @@ dependencies {
     kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
 
     testImplementation 'junit:junit:4.12'
-    testImplementation "org.robolectric:robolectric:3.8"
+    testImplementation "org.robolectric:robolectric:4.0.2"
     kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
 
     testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leak_canary_version"

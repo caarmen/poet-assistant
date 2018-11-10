@@ -36,8 +36,7 @@ public class ThesaurusLiveDataTest {
 
     @Test
     public void testHogwashSynonymsWhichRhymeWithCot() {
-        Set<String> rhymes = new HashSet<>();
-        rhymes.addAll(Arrays.asList(
+        Set<String> rhymes = new HashSet<>(Arrays.asList(
                 "allot", "baht", "blot", "clot", "dot", "hot", "jot", "khat", "knot", "lat", "lot", "lott", "lotte", "montserrat", "mott", "motte", "not", "plot", "polyglot", "pot", "rot", "sadat", "scot", "scott", "shot", "slot", "spot", "squat", "swat", "tot", "trot", "watt", "yacht"
         ));
         List<ThesaurusEntry.ThesaurusEntryDetails> thesaurusEntryDetails = Collections.singletonList(
@@ -56,8 +55,7 @@ public class ThesaurusLiveDataTest {
 
     @Test
     public void testPlayerSynonymsWhichRhymeWithDormer() {
-        Set<String> rhymes = new HashSet<>();
-        rhymes.addAll(Arrays.asList(
+        Set<String> rhymes = new HashSet<>(Arrays.asList(
                 "former", "informer", "outperformer", "performer", "reformer", "transformer", "warmer"
         ));
         List<ThesaurusEntry.ThesaurusEntryDetails> thesaurusEntryDetails = Arrays.asList(
@@ -76,8 +74,7 @@ public class ThesaurusLiveDataTest {
 
     @Test
     public void testLaughAntonymsWhichRhymeWithDry() {
-        Set<String> rhymes = new HashSet<>();
-        rhymes.addAll(Arrays.asList(
+        Set<String> rhymes = new HashSet<>(Arrays.asList(
                 "buy", "bye", "cai", "chi", "comply", "cry", "csi", "dai", "decry", "defy"
         ));
         List<ThesaurusEntry.ThesaurusEntryDetails> thesaurusEntryDetails = Arrays.asList(

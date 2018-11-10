@@ -22,8 +22,8 @@ package ca.rmen.android.poetassistant.main.reader
 import android.net.Uri
 import android.util.Log
 import android.webkit.WebView
-import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.Constants
+import ca.rmen.android.poetassistant.Environment
 import ca.rmen.android.poetassistant.dagger.AppModule
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.dagger.DaggerJunitAppComponent
@@ -38,10 +38,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.RuntimeEnvironment
-import org.robolectric.RuntimeEnvironment.application
 import org.robolectric.Shadows
-import org.robolectric.annotation.Config
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -60,12 +57,12 @@ class TestPoemFile {
     @Before
     fun setup() {
         val testAppComponent = DaggerJunitAppComponent.builder()
-                .appModule(AppModule(application))
-                .dbModule(DbModule(application))
+                .appModule(AppModule(Environment.getApplication()))
+                .dbModule(DbModule(Environment.getApplication()))
                 .junitThreadingModule(JunitThreadingModule())
                 .build()
-        DaggerHelper.setAppComponent(testAppComponent);
-        mPoemFile = File(RuntimeEnvironment.application.filesDir, "test-poem.txt")
+        DaggerHelper.setAppComponent(testAppComponent)
+        mPoemFile = File(Environment.getApplication().filesDir, "test-poem.txt")
         if (mPoemFile.exists()) {
             assertTrue(mPoemFile.delete())
             assertFalse(mPoemFile.exists())
@@ -97,7 +94,7 @@ class TestPoemFile {
     fun testSave() {
         val text = "Roses are red\n"
         val callback = CountDownPoemFileCallback()
-        PoemFile.save(RuntimeEnvironment.application, mPoemUri, text, callback)
+        PoemFile.save(Environment.getApplication(), mPoemUri, text, callback)
         callback.await()
         assertTrue(mPoemFile.exists())
         val poemFile = callback.poemFile
@@ -112,7 +109,7 @@ class TestPoemFile {
         val text = "Violets are blue\n"
         val callback = CountDownPoemFileCallback()
         val uri = Uri.parse("file:///invalid/folder/poem.txt")
-        PoemFile.save(RuntimeEnvironment.application, uri, text, callback)
+        PoemFile.save(Environment.getApplication(), uri, text, callback)
         callback.await()
         assertTrue(callback.wasCalled())
         assertNull(callback.poemFile)
@@ -121,12 +118,12 @@ class TestPoemFile {
     @Test
     fun testOpenNoFile() {
         val callback = CountDownPoemFileCallback()
-        Shadows.shadowOf(RuntimeEnvironment.application.contentResolver).registerInputStream(mPoemUri, object : InputStream() {
+        Shadows.shadowOf(Environment.getApplication().contentResolver).registerInputStream(mPoemUri, object : InputStream() {
             override fun read() : Int {
                 throw IOException("nothing here")
             }
         })
-        PoemFile.open(RuntimeEnvironment.application, mPoemUri, callback)
+        PoemFile.open(Environment.getApplication(), mPoemUri, callback)
         callback.await()
         assertTrue(callback.wasCalled())
         assertNull(callback.poemFile)
@@ -140,8 +137,8 @@ class TestPoemFile {
         os.close()
 
         val callback = CountDownPoemFileCallback()
-        Shadows.shadowOf(RuntimeEnvironment.application.contentResolver).registerInputStream(mPoemUri, FileInputStream(mPoemFile))
-        PoemFile.open(RuntimeEnvironment.application, mPoemUri, callback)
+        Shadows.shadowOf(Environment.getApplication().contentResolver).registerInputStream(mPoemUri, FileInputStream(mPoemFile))
+        PoemFile.open(Environment.getApplication(), mPoemUri, callback)
         callback.await()
         val poemFile = callback.poemFile
         assertNotNull(poemFile)
@@ -158,9 +155,9 @@ class TestPoemFile {
         var poemFile = PoemFile(null, title, text)
 
         // We need to shadow the webview from tests, otherwise onPageFinished() is never called
-        val webView = WebView(RuntimeEnvironment.application)
+        val webView = WebView(Environment.getApplication())
         val shadowWebView = Shadows.shadowOf(webView)
-        PoemFile.print(RuntimeEnvironment.application, webView, poemFile, callback)
+        PoemFile.print(Environment.getApplication(), webView, poemFile, callback)
         shadowWebView.webViewClient.onPageFinished(webView, "http://example.com")
 
         callback.await()
