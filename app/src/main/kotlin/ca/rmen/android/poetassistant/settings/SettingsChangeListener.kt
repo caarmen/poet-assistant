@@ -37,7 +37,7 @@ class SettingsChangeListener(private val context: Context) : SharedPreferences.O
         private val TAG = Constants.TAG + SettingsChangeListener::class.java.simpleName
     }
 
-    @Inject lateinit var mSettingsPrefs: SettingsPrefs
+    private val mSettingsPrefs = SettingsPrefs.get(context.applicationContext)
     @Inject lateinit var mDictionary: Dictionary
 
     init {

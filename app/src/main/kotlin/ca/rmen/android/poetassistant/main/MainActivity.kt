@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
     private lateinit var mSearch: Search
     private lateinit var mBinding: ActivityMainBinding
     private lateinit var mPagerAdapter: PagerAdapter
-    @Inject lateinit var mPrefs: SettingsPrefs
+    private val mPrefs = SettingsPrefs.get(applicationContext)
     @Inject lateinit var mRhymer: Rhymer
     @Inject lateinit var mThesaurus: Thesaurus
     @Inject lateinit var mDictionary: Dictionary

@@ -40,7 +40,6 @@ import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsCursor
 import ca.rmen.android.poetassistant.main.reader.ReaderViewModel
 import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsChangeListener
-import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.settings.SettingsViewModel
 import ca.rmen.android.poetassistant.settings.VoicePreference
 import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
@@ -60,7 +59,6 @@ interface AppComponent {
         fun getDictionary() : Dictionary
         fun getSuggestions(): Suggestions
         fun getFavorites(): Favorites
-        fun getSettingsPrefs(): SettingsPrefs
         fun getThreading(): Threading
         fun getResultListAdapterFactory() : ResultListAdapterFactory
     }

@@ -38,7 +38,7 @@ class FavoritesLiveData(context: Context) : ResultListLiveData<ResultListData<RT
         private val TAG = Constants.TAG + FavoritesLiveData::class.java.simpleName
     }
 
-    @Inject lateinit var mPrefs: SettingsPrefs
+    private val mPrefs = SettingsPrefs.get(context.applicationContext)
     @Inject lateinit var mFavorites: Favorites
 
     init {

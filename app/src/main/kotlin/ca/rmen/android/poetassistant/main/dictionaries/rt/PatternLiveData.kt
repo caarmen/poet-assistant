@@ -41,7 +41,7 @@ class PatternLiveData constructor(context: Context, private val query: String) :
     }
 
     @Inject lateinit var mDictionary: Dictionary
-    @Inject lateinit var mPrefs: SettingsPrefs
+    private val mPrefs = SettingsPrefs.get(context.applicationContext)
     @Inject lateinit var mFavorites: Favorites
 
     init {

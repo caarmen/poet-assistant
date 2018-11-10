@@ -29,8 +29,6 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions
-import ca.rmen.android.poetassistant.settings.Settings
-import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -39,7 +37,7 @@ import javax.inject.Singleton
 class AppModule(private val application: Application) {
     @Provides
     @Singleton
-    fun providesTts(settingsPrefs: SettingsPrefs, threading: Threading): Tts = Tts(application, settingsPrefs, threading)
+    fun providesTts(threading: Threading): Tts = Tts(application, threading)
 
     @Provides
     @Singleton
@@ -47,7 +45,7 @@ class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesRhymer(embeddedDb: EmbeddedDb, settingsPrefs: SettingsPrefs) = Rhymer(embeddedDb, settingsPrefs)
+    fun providesRhymer(embeddedDb: EmbeddedDb) = Rhymer(embeddedDb, application)
 
     @Provides
     @Singleton
@@ -56,13 +54,6 @@ class AppModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesDictionary(embeddedDb: EmbeddedDb) = Dictionary(embeddedDb)
-
-    @Provides
-    @Singleton
-    fun providesSettingsPrefs(): SettingsPrefs {
-        Settings.migrateSettings(application)
-        return SettingsPrefs.get(application)
-    }
 
     @Provides
     @Singleton

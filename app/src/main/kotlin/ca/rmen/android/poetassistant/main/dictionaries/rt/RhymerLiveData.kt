@@ -66,8 +66,7 @@ class RhymerLiveData(context: Context, val query: String, val filter: String?) :
         }
     }
 
-    @Inject
-    lateinit var mPrefs: SettingsPrefs
+    private val mPrefs = SettingsPrefs.get(context.applicationContext)
 
     @Inject
     lateinit var mRhymer: Rhymer

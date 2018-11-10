@@ -67,8 +67,7 @@ class ThesaurusLiveData constructor(context: Context, private val query: String,
     lateinit var mRhymer: Rhymer
     @Inject
     lateinit var mThesaurus: Thesaurus
-    @Inject
-    lateinit var mPrefs: SettingsPrefs
+    val mPrefs = SettingsPrefs.get(context.applicationContext)
     @Inject
     lateinit var mFavorites: Favorites
 

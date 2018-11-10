@@ -33,7 +33,7 @@ import android.util.Log
 import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 
-class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs, private val threading: Threading) {
+class Tts(private val context: Context, private val threading: Threading) {
     companion object {
         private var TAG = Constants.TAG + Tts::class.java.simpleName
         private const val PAUSE_DURATION_MS = 500L
@@ -42,6 +42,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
     }
 
+    private val settingsPrefs = SettingsPrefs.get(context.applicationContext)
     private var mTextToSpeech: TextToSpeech? = null
     private var mTtsStatus = TextToSpeech.ERROR
 

@@ -24,7 +24,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.settings.SettingsPrefs
 
 class WotdBootReceiver : BroadcastReceiver() {
     companion object {
@@ -34,7 +34,7 @@ class WotdBootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.v(TAG, "onReceive: intent=$intent")
         if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
-            val settingsPrefs = DaggerHelper.getWotdComponent(context).getSettingsPrefs()
+            val settingsPrefs = SettingsPrefs.get(context.applicationContext)
             Wotd.reschedule(context, settingsPrefs)
         }
     }

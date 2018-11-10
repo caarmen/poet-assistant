@@ -43,7 +43,7 @@ class WotdLiveData(context: Context) : ResultListLiveData<ResultListData<WotdEnt
     }
 
     @Inject lateinit var mDictionary: Dictionary
-    @Inject lateinit var mPrefs: SettingsPrefs
+    private val mPrefs = SettingsPrefs.get(context.applicationContext)
     @Inject lateinit var mFavorites: Favorites
 
     init {

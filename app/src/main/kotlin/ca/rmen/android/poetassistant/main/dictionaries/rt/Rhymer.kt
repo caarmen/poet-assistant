@@ -19,6 +19,7 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.rt
 
+import android.app.Application
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
@@ -29,7 +30,8 @@ import java.util.SortedSet
 import java.util.TreeSet
 import javax.inject.Inject
 
-class Rhymer @Inject constructor(private val embeddedDb: EmbeddedDb, private val prefs: SettingsPrefs) : ca.rmen.rhymer.Rhymer() {
+class Rhymer @Inject constructor(private val embeddedDb: EmbeddedDb, application: Application) : ca.rmen.rhymer.Rhymer() {
+    private val prefs = SettingsPrefs.get(application)
     companion object {
         private val TAG = Constants.TAG + Rhymer::class.java.simpleName
     }
