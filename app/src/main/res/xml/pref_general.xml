@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2016-2017 Carmen Alvarez
+  ~ Copyright (c) 2016-2018 Carmen Alvarez
   ~
   ~ This file is part of Poet Assistant.
   ~
@@ -17,7 +17,7 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
         android:key="PREF_CATEGORY_VOICE"
@@ -26,39 +26,41 @@
         <!--suppress AndroidElementNotAllowed -->
         <ca.rmen.android.poetassistant.settings.VoicePreference
             android:defaultValue="VOICE_SYSTEM"
+            android:icon="@drawable/ic_settings_voice"
             android:key="PREF_VOICE"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:summary="@string/pref_voice_summary"
-            android:title="@string/pref_voice_title" />
+            android:title="@string/pref_voice_title"/>
 
         <!--suppress AndroidElementNotAllowed -->
         <SeekBarPreference
-            android:layout="@layout/preference_seekbar_fix"
-            android:max="200"
             android:defaultValue="100"
             android:key="PREF_VOICE_SPEED_V3"
-            android:title="@string/pref_voice_speed_title" />
+            android:layout="@layout/preference_seekbar_fix"
+            android:max="200"
+            android:title="@string/pref_voice_speed_title"/>
 
         <!--suppress AndroidElementNotAllowed -->
         <SeekBarPreference
-            android:layout="@layout/preference_seekbar_fix"
-            android:max="200"
             android:defaultValue="100"
             android:key="PREF_VOICE_PITCH_V3"
-            android:title="@string/pref_voice_pitch_title" />
+            android:layout="@layout/preference_seekbar_fix"
+            android:max="200"
+            android:title="@string/pref_voice_pitch_title"/>
 
         <Preference
-            android:title="@string/pref_voice_preview_title"
+            android:icon="@drawable/ic_settings_preview"
             android:key="PREF_VOICE_PREVIEW"
             android:summary="@string/pref_voice_preview_summary"
-            android:widgetLayout="@layout/pref_voice_preview" />
+            android:title="@string/pref_voice_preview_title"/>
 
         <Preference
+            android:icon="@drawable/ic_settings_system_settings"
             android:key="PREF_SYSTEM_TTS_SETTINGS"
             android:summary="@string/pref_system_tts_settings_description"
             android:title="@string/pref_system_tts_settings_title">
-            <intent android:action="com.android.settings.TTS_SETTINGS" />
+            <intent android:action="com.android.settings.TTS_SETTINGS"/>
         </Preference>
     </PreferenceCategory>
     <PreferenceCategory
@@ -71,21 +73,21 @@
             android:defaultValue="false"
             android:key="PREF_ALL_RHYMES_ENABLED"
             android:summary="@string/all_rhymes_setting_description"
-            android:title="@string/all_rhymes_setting_title" />
+            android:title="@string/all_rhymes_setting_title"/>
 
         <!--suppress AndroidElementNotAllowed -->
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="PREF_MATCH_AO_AA_ENABLED"
             android:summary="@string/match_ao_aa_setting_description"
-            android:title="@string/match_ao_aa_setting_title" />
+            android:title="@string/match_ao_aa_setting_title"/>
 
         <!--suppress AndroidElementNotAllowed -->
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="PREF_MATCH_AOR_AO_ENABLED"
             android:summary="@string/match_aor_ao_setting_description"
-            android:title="@string/match_aor_ao_setting_title" />
+            android:title="@string/match_aor_ao_setting_title"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:key="PREF_CATEGORY_THESAURUS"
@@ -95,7 +97,7 @@
             android:defaultValue="false"
             android:key="PREF_THESAURUS_REVERSE_LOOKUP_ENABLED"
             android:summary="@string/thesaurus_reverse_lookup_setting_description"
-            android:title="@string/thesaurus_reverse_lookup_setting_title" />
+            android:title="@string/thesaurus_reverse_lookup_setting_title"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:key="PREF_CATEGORY_UI"
@@ -105,11 +107,12 @@
             android:defaultValue="Light"
             android:entries="@array/pref_theme_titles"
             android:entryValues="@array/pref_theme_values"
+            android:icon="@drawable/ic_settings_theme"
             android:key="PREF_THEME"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:summary="@string/pref_theme_summary"
-            android:title="@string/pref_theme_title" />
+            android:title="@string/pref_theme_title"/>
 
         <ListPreference
             android:defaultValue="Efficient"
@@ -119,14 +122,14 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:summary="@string/pref_layout_summary"
-            android:title="@string/pref_layout_title" />
+            android:title="@string/pref_layout_title"/>
 
         <!--suppress AndroidElementNotAllowed -->
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="PREF_SELECTION_LOOKUP"
             android:summary="@string/pref_selection_lookup_summary"
-            android:title="@string/pref_selection_lookup_title" />
+            android:title="@string/pref_selection_lookup_title"/>
 
     </PreferenceCategory>
     <PreferenceCategory
@@ -135,29 +138,34 @@
         <!--suppress AndroidElementNotAllowed -->
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
+            android:icon="@drawable/ic_settings_wotd"
             android:key="PREF_WOTD_ENABLED"
             android:summary="@string/wotd_setting_description"
-            android:title="@string/wotd_setting_title" />
+            android:title="@string/wotd_setting_title"/>
         <ListPreference
             android:defaultValue="default"
             android:dependency="PREF_WOTD_ENABLED"
             android:dialogTitle="@string/wotd_setting_system_notification_priority_title"
             android:entries="@array/wotd_setting_system_notification_priority_labels"
             android:entryValues="@array/wotd_setting_system_notification_priority_values"
+            android:icon="@drawable/ic_settings_notification_priority"
             android:key="PREF_WOTD_NOTIFICATION_PRIORITY"
             android:summary="@string/wotd_setting_system_notification_priority_summary"
-            android:title="@string/wotd_setting_system_notification_priority_title" />
+            android:title="@string/wotd_setting_system_notification_priority_title"/>
     </PreferenceCategory>
     <PreferenceCategory
-            android:key="PREF_CATEGORY_USER_DATA"
-            android:title="@string/pref_category_user_data">
+        android:key="PREF_CATEGORY_USER_DATA"
+        android:title="@string/pref_category_user_data">
         <Preference
+            android:icon="@drawable/ic_settings_export_favorites"
             android:key="PREF_EXPORT_FAVORITES"
             android:title="@string/action_export_favorites"/>
         <Preference
+            android:icon="@drawable/ic_settings_import_favorites"
             android:key="PREF_IMPORT_FAVORITES"
             android:title="@string/action_import_favorites"/>
         <Preference
+            android:icon="@drawable/ic_settings_clear_search_history"
             android:key="PREF_CLEAR_SEARCH_HISTORY"
             android:title="@string/action_clear_search_history"/>
     </PreferenceCategory>
