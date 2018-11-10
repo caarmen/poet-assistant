@@ -72,7 +72,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
     }
 
     private lateinit var mViewModel: ReaderViewModel
-    private lateinit var mThreading : Threading
+    private lateinit var mThreading: Threading
     private lateinit var mBinding: FragmentReaderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -263,7 +263,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
 
     inner class ButtonListener {
         fun onPlayButtonClicked() {
-            mViewModel.play(mBinding.tvText.text)
+            mBinding.tvText.text?.let { mViewModel.play(it) }
         }
 
         fun onWordCountClicked() {

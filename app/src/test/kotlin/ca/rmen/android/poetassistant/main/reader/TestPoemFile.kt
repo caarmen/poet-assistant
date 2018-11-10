@@ -49,7 +49,6 @@ import java.io.IOException
 import java.io.InputStream
 
 @RunWith(RobolectricTestRunner::class)
-@Config(constants = BuildConfig::class)
 class TestPoemFile {
     companion object {
         private val TAG = Constants.TAG + TestPoemFile::class.java.simpleName

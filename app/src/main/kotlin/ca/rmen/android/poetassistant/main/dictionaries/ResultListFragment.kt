@@ -161,7 +161,8 @@ class ResultListFragment<out T> : Fragment() {
         Log.v(TAG, "$mTab: enableAutoHideIfNeeded")
         if (mTab != null && mBinding.recyclerView.adapter != null) {
             val lastVisibleItemPosition = (mBinding.recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
-            val itemCount = mBinding.recyclerView.adapter.itemCount
+            @Suppress("UNCHECKED_CAST")
+            val itemCount = (mBinding.recyclerView.adapter as ResultListAdapter<T>).itemCount
             Log.v(TAG, "$mTab: enableAutoHideIfNeeded: last visibleItem $lastVisibleItemPosition, item count $itemCount")
             if (itemCount > 0 && lastVisibleItemPosition < itemCount - 1) {
                 AppBarLayoutHelper.enableAutoHide(activity)
