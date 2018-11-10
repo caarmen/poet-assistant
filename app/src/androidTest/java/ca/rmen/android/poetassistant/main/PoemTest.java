@@ -186,6 +186,7 @@ public class PoemTest {
     }
 
     private void assertPopupVisible(String label) {
+        onView(allOf(withId(R.id.tv_text), isDisplayed())).perform(click());
         onView(allOf(withId(R.id.tv_text), hasFocus())).perform(longTap(1, 0));
         getPopupView(label).check(matches(isDisplayed()));
         pressBack();

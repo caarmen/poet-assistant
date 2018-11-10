@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+1.27.0  *(2018-11-10)*
+--------------------
+* Drop support for KitKat and JellyBean. The minSdkVersion is now 21 (Lollipop).
+* Added icons to the settings screen.
+
+1.26.8  *(2018-11-10)*
+--------------------
+* Identical to 1.26.6. This is a rollback a bad 1.26.7 build which was pushed to beta.
+
 1.26.7  *(2018-11-10)*
 --------------------
 * Update build environment.
