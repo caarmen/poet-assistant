@@ -30,7 +30,6 @@ import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
-import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import java.util.Calendar
 import java.util.Random
@@ -61,7 +60,7 @@ class WotdLiveData(context: Context) : ResultListLiveData<ResultListData<WotdEnt
             val calendar = Wotd.getTodayUTC()
             val calendarDisplay = Wotd.getTodayUTC()
             calendarDisplay.timeZone = TimeZone.getDefault()
-            val layout = Settings.getLayout(mPrefs)
+            val layout = SettingsPrefs.getLayout(mPrefs)
             for (i in 0 until 100) {
                 val random = Random()
                 random.setSeed(calendar.timeInMillis)
@@ -78,7 +77,7 @@ class WotdLiveData(context: Context) : ResultListLiveData<ResultListData<WotdEnt
                             date,
                             ContextCompat.getColor(context, color),
                             favorites.contains(word),
-                            layout == Settings.Layout.EFFICIENT))
+                            layout == SettingsPrefs.Layout.EFFICIENT))
                 }
                 calendar.add(Calendar.DAY_OF_YEAR, -1)
                 calendarDisplay.add(Calendar.DAY_OF_YEAR, -1)

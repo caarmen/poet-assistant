@@ -36,7 +36,7 @@ import org.robolectric.shadows.ShadowPackageManager;
 
 import ca.rmen.android.poetassistant.Environment;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.settings.Settings;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 
 import static org.junit.Assert.assertEquals;
@@ -54,7 +54,7 @@ public class SettingsActivityTest {
         PreferenceFragmentCompat settingsFragment = (PreferenceFragmentCompat) settingsActivity.getSupportFragmentManager().findFragmentById(R.id.settings_fragment);
         assertNotNull(settingsFragment);
         PreferenceCategory preferenceCategory = (PreferenceCategory) settingsFragment.findPreference(SettingsActivity.GeneralPreferenceFragment.PREF_CATEGORY_VOICE);
-        Preference preference = preferenceCategory.findPreference(Settings.PREF_SYSTEM_TTS_SETTINGS);
+        Preference preference = preferenceCategory.findPreference(SettingsPrefs.PREF_SYSTEM_TTS_SETTINGS);
         preference.performClick();
         Intent nextIntent =  shadowOf(Environment.getApplication()).getNextStartedActivity();
         assertNotNull(nextIntent);

@@ -31,7 +31,6 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.search.Patterns
-import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import javax.inject.Inject
 
@@ -63,7 +62,7 @@ class PatternLiveData constructor(context: Context, private val query: String) :
             matches.sortWith(MatchComparator(favorites))
         }
 
-        val layout = Settings.getLayout(mPrefs)
+        val layout = SettingsPrefs.getLayout(mPrefs)
         matches.forEachIndexed { i, match ->
             /*@ColorRes*/
             val color = if (i % 2 == 0) R.color.row_background_color_even else R.color.row_background_color_odd
@@ -73,7 +72,7 @@ class PatternLiveData constructor(context: Context, private val query: String) :
                     match,
                     ContextCompat.getColor(context, color),
                     favorites.contains(match),
-                    layout == Settings.Layout.EFFICIENT))
+                    layout == SettingsPrefs.Layout.EFFICIENT))
         }
 
         if (matches.size == Constants.MAX_RESULTS) {

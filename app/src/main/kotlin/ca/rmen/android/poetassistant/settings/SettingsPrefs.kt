@@ -19,19 +19,17 @@
 
 package ca.rmen.android.poetassistant.settings
 
+import android.app.Application
 import android.content.Context
 import android.preference.PreferenceManager
 import android.support.v4.app.NotificationCompat
 import ca.rmen.android.poetassistant.main.Tab
-import org.jraf.android.prefs.DefaultBoolean
-import org.jraf.android.prefs.DefaultInt
-import org.jraf.android.prefs.DefaultString
-import org.jraf.android.prefs.Name
-import org.jraf.android.prefs.Prefs
 import java.util.Locale
 
-@Prefs
-class Settings {
+class SettingsPrefs(application: Application) {
+
+    private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
+
     enum class NotificationPriority(val priority: Int) {
         MAX(NotificationCompat.PRIORITY_MAX),
         HIGH(NotificationCompat.PRIORITY_HIGH),
@@ -96,8 +94,8 @@ class Settings {
             }
         }
 
-        fun getLayout(prefs: SettingsPrefs): Settings.Layout {
-            return Settings.Layout.valueOf(prefs.layout.toUpperCase(Locale.US))
+        fun getLayout(prefs: SettingsPrefs): ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout {
+            return SettingsPrefs.Layout.valueOf(prefs.layout.toUpperCase(Locale.US))
         }
 
         fun getTab(prefs: SettingsPrefs): Tab? {
@@ -106,63 +104,108 @@ class Settings {
     }
 
 
-    @Name(PREF_VOICE)
-    @DefaultString(VOICE_SYSTEM)
-    var voice: String = VOICE_SYSTEM
+    var voice: String
+        get() {
+            return sharedPreferences.getString(PREF_VOICE, VOICE_SYSTEM) ?: VOICE_SYSTEM
+        }
+        set(newValue) {
+            sharedPreferences.edit().putString(PREF_VOICE, newValue).apply()
+        }
 
-    @Suppress("unused", "PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-    @Name(PREF_VOICE_SPEED)
-    @DefaultInt(VOICE_SPEED_NORMAL)
-    var voiceSpeed: Integer = VOICE_SPEED_NORMAL as Integer
+    var voiceSpeed: Int
+        get() {
+            return sharedPreferences.getInt(PREF_VOICE_SPEED, VOICE_SPEED_NORMAL)
+        }
+        set(newValue) {
+            sharedPreferences.edit().putInt(PREF_VOICE_SPEED, newValue).apply()
+        }
+    var voicePitch: Int
+        get() {
+            return sharedPreferences.getInt(PREF_VOICE_PITCH, VOICE_PITCH_NORMAL)
+        }
+        set(newValue) {
+            sharedPreferences.edit().putInt(PREF_VOICE_PITCH, newValue).apply()
+        }
 
-    @Suppress("unused", "PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-    @Name(PREF_VOICE_PITCH)
-    @DefaultInt(VOICE_PITCH_NORMAL)
-    var voicePitch: Integer = VOICE_PITCH_NORMAL as Integer
+    var theme: String
+        get() {
+            return sharedPreferences.getString(PREF_THEME, THEME_LIGHT) ?: THEME_LIGHT
+        }
+        set(newValue) {
+            sharedPreferences.edit().putString(PREF_THEME, newValue).apply()
+        }
+    var layout: String
+        get() {
+            return sharedPreferences.getString(PREF_LAYOUT, PREF_DEFAULT_LAYOUT)
+                    ?: PREF_DEFAULT_LAYOUT
+        }
+        set(newValue) {
+            sharedPreferences.edit().putString(PREF_LAYOUT, newValue).apply()
+        }
 
-    @Name(PREF_THEME)
-    var theme: String = THEME_LIGHT
+    var isSelectionLookupEnabled: Boolean
+        get () {
+            return sharedPreferences.getBoolean(PREF_SELECTION_LOOKUP, true)
+        }
+        set(newValue) {
+            sharedPreferences.edit().putBoolean(PREF_SELECTION_LOOKUP, newValue).apply()
+        }
 
-    @Name(PREF_LAYOUT)
-    @DefaultString(PREF_DEFAULT_LAYOUT)
-    var layout: String = PREF_DEFAULT_LAYOUT
+    var isWotdEnabled: Boolean
+        get () {
+            return sharedPreferences.getBoolean(PREF_WOTD_ENABLED, true)
+        }
+        set(newValue) {
+            sharedPreferences.edit().putBoolean(PREF_WOTD_ENABLED, newValue).apply()
+        }
 
-    @Suppress("unused")
-    @Name(PREF_SELECTION_LOOKUP)
-    @DefaultBoolean(true)
-    var selectionLookupEnabled: Boolean? = true
+    var wotdNotificationPriority: String
+        get() {
+            return sharedPreferences.getString(PREF_WOTD_NOTIFICATION_PRIORITY, PREF_WOTD_NOTIFICATION_PRIORITY_DEFAULT)
+                    ?: PREF_WOTD_NOTIFICATION_PRIORITY_DEFAULT
+        }
+        set(newValue) {
+            sharedPreferences.edit().putString(PREF_WOTD_NOTIFICATION_PRIORITY, newValue).apply()
+        }
 
-    @Suppress("unused")
-    @Name(PREF_WOTD_ENABLED)
-    @DefaultBoolean(true)
-    var isWotdEnabled: Boolean? = true
+    var isAllRhymesEnabled: Boolean
+        get () {
+            return sharedPreferences.getBoolean(PREF_ALL_RHYMES_ENABLED, false)
+        }
+        set(newValue) {
+            sharedPreferences.edit().putBoolean(PREF_ALL_RHYMES_ENABLED, newValue).apply()
+        }
 
-    @Suppress("unused")
-    @Name(PREF_WOTD_NOTIFICATION_PRIORITY)
-    @DefaultString(PREF_WOTD_NOTIFICATION_PRIORITY_DEFAULT)
-    var wotdNotificationPriority: String = PREF_WOTD_NOTIFICATION_PRIORITY_DEFAULT
+    var isAOAAMatchEnabled: Boolean
+        get () {
+            return sharedPreferences.getBoolean(PREF_MATCH_AO_AA_ENABLED, false)
+        }
+        set(newValue) {
+            sharedPreferences.edit().putBoolean(PREF_MATCH_AO_AA_ENABLED, newValue).apply()
+        }
 
-    @Suppress("unused")
-    @Name(PREF_ALL_RHYMES_ENABLED)
-    @DefaultBoolean(false)
-    var isAllRhymesEnabled: Boolean? = false
+    var isAORAOMatchEnabled: Boolean
+        get () {
+            return sharedPreferences.getBoolean(PREF_MATCH_AOR_AO_ENABLED, false)
+        }
+        set(newValue) {
+            sharedPreferences.edit().putBoolean(PREF_MATCH_AOR_AO_ENABLED, newValue).apply()
+        }
 
-    @Suppress("unused")
-    @Name(PREF_MATCH_AO_AA_ENABLED)
-    @DefaultBoolean(false)
-    var isAOAAMatchEnabled: Boolean? = false
+    var isThesaurusReverseLookupEnabled: Boolean
+        get () {
+            return sharedPreferences.getBoolean(PREF_THESAURUS_REVERSE_LOOKUP_ENABLED, false)
+        }
+        set(newValue) {
+            sharedPreferences.edit().putBoolean(PREF_THESAURUS_REVERSE_LOOKUP_ENABLED, newValue).apply()
+        }
 
-    @Suppress("unused")
-    @Name(PREF_MATCH_AOR_AO_ENABLED)
-    @DefaultBoolean(false)
-    var isAORAOMatchEnabled: Boolean? = false
-
-    @Name(PREF_THESAURUS_REVERSE_LOOKUP_ENABLED)
-    @Suppress("unused")
-    @DefaultBoolean(false)
-    var isThesaurusReverseLookupEnabled: Boolean? = false
-
-    @Name(PREF_TAB)
-    @DefaultString(PREF_TAB_DEFAULT)
-    var tab: String = PREF_TAB_DEFAULT
+    var tab: String
+        get() {
+            return sharedPreferences.getString(PREF_TAB, PREF_TAB_DEFAULT)
+                    ?: PREF_TAB_DEFAULT
+        }
+        set(newValue) {
+            sharedPreferences.edit().putString(PREF_TAB, newValue).apply()
+        }
 }

@@ -63,7 +63,7 @@ class Voices constructor(private val context: Context) {
                 .sortedWith(VoiceComparator())
                 .map({ voice -> TtsVoice(voice.name, parseVoiceName(voice)) })
                 .toMutableList()
-        result.add(0, TtsVoice(Settings.VOICE_SYSTEM, context.getString(R.string.pref_voice_default)))
+        result.add(0, TtsVoice(SettingsPrefs.VOICE_SYSTEM, context.getString(R.string.pref_voice_default)))
         return result
     }
 

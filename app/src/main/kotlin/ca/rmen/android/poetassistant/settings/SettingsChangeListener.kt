@@ -48,14 +48,14 @@ class SettingsChangeListener(private val context: Context) : SharedPreferences.O
         Log.v(TAG, "onSharedPreferenceChanged: key = $key")
         when (key) {
         // When the theme changes, restart the activity
-            Settings.PREF_THEME -> {
+            SettingsPrefs.PREF_THEME -> {
                 Theme.setThemeFromSettings(mSettingsPrefs)
                 restartSettingsActivity()
             }
-            Settings.PREF_WOTD_ENABLED, Settings.PREF_WOTD_NOTIFICATION_PRIORITY -> {
+            SettingsPrefs.PREF_WOTD_ENABLED, SettingsPrefs.PREF_WOTD_NOTIFICATION_PRIORITY -> {
                 Wotd.setWotdEnabled(context, mDictionary, mSettingsPrefs.isWotdEnabled)
             }
-            Settings.PREF_SELECTION_LOOKUP -> {
+            SettingsPrefs.PREF_SELECTION_LOOKUP -> {
                 ProcessTextRouter.setEnabled(context, mSettingsPrefs.isSelectionLookupEnabled)
                 restartSettingsActivity()
             }

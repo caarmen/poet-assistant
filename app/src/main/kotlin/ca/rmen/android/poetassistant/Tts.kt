@@ -30,7 +30,6 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.text.TextUtils
 import android.util.Log
-import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 
 class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs, private val threading: Threading) {
@@ -152,7 +151,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
     private fun useVoice(textToSpeech: TextToSpeech?, voiceId: String?) {
         textToSpeech?.let {
             try {
-                if (voiceId == null || Settings.VOICE_SYSTEM == voiceId) {
+                if (voiceId == null || SettingsPrefs.VOICE_SYSTEM == voiceId) {
                     it.voice = it.defaultVoice
                     Log.v(TAG, "Using default voice ${it.defaultVoice}")
                 } else {
@@ -204,9 +203,9 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
             if (isReady()) {
                 when (key) {
-                    Settings.PREF_VOICE_SPEED -> setVoiceSpeedFromSettings()
-                    Settings.PREF_VOICE_PITCH -> setVoicePitchFromSettings()
-                    Settings.PREF_VOICE -> useVoiceFromSettings()
+                    SettingsPrefs.PREF_VOICE_SPEED -> setVoiceSpeedFromSettings()
+                    SettingsPrefs.PREF_VOICE_PITCH -> setVoicePitchFromSettings()
+                    SettingsPrefs.PREF_VOICE -> useVoiceFromSettings()
                 }
             }
         }

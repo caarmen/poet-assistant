@@ -31,7 +31,6 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
-import ca.rmen.android.poetassistant.settings.Settings
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import java.util.Locale
 import javax.inject.Inject
@@ -81,7 +80,7 @@ class ThesaurusLiveData constructor(context: Context, private val query: String,
 
         val data = ArrayList<RTEntryViewModel>()
         if (TextUtils.isEmpty(query)) return emptyResult()
-        val result = mThesaurus.lookup(query, mPrefs.isIsThesaurusReverseLookupEnabled)
+        val result = mThesaurus.lookup(query, mPrefs.isThesaurusReverseLookupEnabled)
         var entries = result.entries
         if (entries.isEmpty()) return emptyResult()
 
@@ -90,7 +89,7 @@ class ThesaurusLiveData constructor(context: Context, private val query: String,
             entries = filter(entries, rhymes)
         }
 
-        val layout = Settings.getLayout(mPrefs)
+        val layout = SettingsPrefs.getLayout(mPrefs)
         val favorites = mFavorites.getFavorites()
         entries.forEach {
             data.add(RTEntryViewModel(context, RTEntryViewModel.Type.HEADING, it.wordType.name.toLowerCase(Locale.US)))
@@ -104,7 +103,7 @@ class ThesaurusLiveData constructor(context: Context, private val query: String,
         return ResultListData(query, emptyList())
     }
 
-    private fun addResultSection(favorites: Set<String>, results: MutableList<RTEntryViewModel>, @StringRes sectionHeadingResId: Int, words: List<String>, layout: Settings.Layout) {
+    private fun addResultSection(favorites: Set<String>, results: MutableList<RTEntryViewModel>, @StringRes sectionHeadingResId: Int, words: List<String>, layout: ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout) {
         if (words.isNotEmpty()) {
             results.add(RTEntryViewModel(context, RTEntryViewModel.Type.SUBHEADING, context.getString(sectionHeadingResId)))
             words.forEachIndexed { i, word ->
@@ -116,7 +115,7 @@ class ThesaurusLiveData constructor(context: Context, private val query: String,
                         word,
                         ContextCompat.getColor(context, color),
                         favorites.contains(word),
-                        layout == Settings.Layout.EFFICIENT
+                        layout == SettingsPrefs.Layout.EFFICIENT
                 ))
             }
         }

@@ -104,17 +104,17 @@ class SettingsActivity : AppCompatActivity() {
 
                 })
                 // Hide the voice preference if we can't load any voices
-                val voicePreference = findPreference(Settings.PREF_VOICE) as VoicePreference
+                val voicePreference = findPreference(SettingsPrefs.PREF_VOICE) as VoicePreference
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     voicePreference.loadVoices()
                 }
                 if (voicePreference.entries == null || voicePreference.entries.size < 2) {
                     removePreference(PREF_CATEGORY_VOICE, voicePreference)
                 }
-                setOnPreferenceClickListener(Settings.PREF_VOICE_PREVIEW, Runnable { mViewModel.playTtsPreview() })
+                setOnPreferenceClickListener(SettingsPrefs.PREF_VOICE_PREVIEW, Runnable { mViewModel.playTtsPreview() })
 
                 // Hide the system tts settings if no system app can handle it
-                val systemTtsSettings = findPreference(Settings.PREF_SYSTEM_TTS_SETTINGS)
+                val systemTtsSettings = findPreference(SettingsPrefs.PREF_SYSTEM_TTS_SETTINGS)
                 val intent = systemTtsSettings.intent
                 if (intent.resolveActivity(it.packageManager) == null) {
                     removePreference(PREF_CATEGORY_VOICE, systemTtsSettings)
@@ -124,7 +124,7 @@ class SettingsActivity : AppCompatActivity() {
 
                 // Android O users can change the priority in the system settings.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    removePreferences(PREF_CATEGORY_NOTIFICATIONS, Settings.PREF_WOTD_NOTIFICATION_PRIORITY)
+                    removePreferences(PREF_CATEGORY_NOTIFICATIONS, SettingsPrefs.PREF_WOTD_NOTIFICATION_PRIORITY)
                 }
 
                 // Importing/exporting files is only available from KitKat.
@@ -169,7 +169,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         override fun onDisplayPreferenceDialog(preference: Preference) {
-            if (Settings.PREF_VOICE == preference.key) {
+            if (SettingsPrefs.PREF_VOICE == preference.key) {
                 if (fragmentManager?.findFragmentByTag(DIALOG_TAG) != null) {
                     return
                 }

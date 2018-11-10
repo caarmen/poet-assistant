@@ -40,7 +40,7 @@ import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.Tab
-import ca.rmen.android.poetassistant.settings.Settings
+import ca.rmen.android.poetassistant.settings.SettingsPrefs
 
 class ResultListFragment<out T> : Fragment() {
     companion object {
@@ -203,7 +203,7 @@ class ResultListFragment<out T> : Fragment() {
 
     private val mShowHeaderChanged = Observer<Boolean> { showHeader -> mHeaderViewModel.showHeader.set(showHeader == true) }
 
-    private val mLayoutSettingChanged = Observer<Settings.Layout> { _ -> reload() }
+    private val mLayoutSettingChanged = Observer<SettingsPrefs.Layout> { _ -> reload() }
 
     private val mFavoritesObserver = Observer<List<Favorite>> { _ -> reload() }
 

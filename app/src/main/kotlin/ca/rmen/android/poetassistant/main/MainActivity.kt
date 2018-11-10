@@ -55,9 +55,8 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment
-import ca.rmen.android.poetassistant.settings.Settings
-import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.widget.CABEditText
 import javax.inject.Inject
 
@@ -96,7 +95,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
         mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener)
 
         mBinding.tabs.setupWithViewPager(mBinding.viewPager)
-        val savedTab = Settings.getTab(mPrefs)
+        val savedTab = SettingsPrefs.getTab(mPrefs)
         if (savedTab != null && savedTab.ordinal < mPagerAdapter.count) {
             mBinding.viewPager.currentItem = savedTab.ordinal
         }
