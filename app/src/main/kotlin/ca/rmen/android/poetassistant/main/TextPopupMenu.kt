@@ -88,8 +88,8 @@ object TextPopupMenu {
      * @param listener this listener will be notified when the user selects one of the popup menu items
      */
     fun addSelectionPopupMenu(snackbarView: View, textView: TextView, listener: OnWordClickListener) {
-        val settinsgPrefs = DaggerHelper.getMainScreenComponent(textView.context).getSettingsPrefs()
-        if (!settinsgPrefs.isSelectionLookupEnabled) {
+        val settingsPrefs = DaggerHelper.getMainScreenComponent(textView.context).getSettingsPrefs()
+        if (!settingsPrefs.isSelectionLookupEnabled) {
             return
         }
         textView.customSelectionActionModeCallback = object : ActionMode.Callback {
@@ -154,10 +154,10 @@ object TextPopupMenu {
 
     private fun createPopupMenu(snackbarView: View, view: View, selectedWord: String, listener: OnWordClickListener): PopupMenu {
         val popupMenu = PopupMenu(view.context, view)
-        popupMenu.setOnMenuItemClickListener({ item ->
+        popupMenu.setOnMenuItemClickListener { item ->
             handleItemClicked(item.itemId, snackbarView, view, selectedWord, listener)
             false
-        })
+        }
         return popupMenu
     }
 

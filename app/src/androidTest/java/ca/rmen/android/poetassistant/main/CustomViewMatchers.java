@@ -78,7 +78,9 @@ final class CustomViewMatchers {
 
             @Override
             public boolean matchesSafely(RecyclerView recyclerView) {
-                return recyclerView.getAdapter().getItemCount() == count;
+                RecyclerView.Adapter adapter = recyclerView.getAdapter();
+                if (adapter == null) return false;
+                return adapter.getItemCount() == count;
             }
         };
     }

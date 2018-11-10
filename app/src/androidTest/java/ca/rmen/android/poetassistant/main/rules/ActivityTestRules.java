@@ -33,7 +33,6 @@ import ca.rmen.android.poetassistant.InstrumentationThreading;
 import ca.rmen.android.poetassistant.UserDb;
 import ca.rmen.android.poetassistant.dagger.AppModule;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
-import ca.rmen.android.poetassistant.dagger.DaggerTestAppComponent;
 import ca.rmen.android.poetassistant.dagger.TestAppComponent;
 import ca.rmen.android.poetassistant.dagger.TestDbModule;
 import ca.rmen.android.poetassistant.dagger.TestResultListModule;

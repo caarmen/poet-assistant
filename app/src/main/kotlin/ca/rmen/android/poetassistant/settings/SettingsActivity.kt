@@ -195,10 +195,10 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         private fun setOnPreferenceClickListener(preference: Preference, runnable: Runnable) {
-            preference.setOnPreferenceClickListener({ _ ->
+            preference.setOnPreferenceClickListener { _ ->
                 runnable.run()
                 false
-            })
+            }
         }
 
         private val mSnackbarCallback = Observer<String> { snackbarText ->

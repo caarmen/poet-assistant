@@ -61,8 +61,8 @@ class VoicePreference : ListPreference {
         val tts = mTts.getTextToSpeech()
         if (tts != null) {
             val voices = Voices(context).getVoices(tts)
-            entryValues = voices.map({ voice -> voice.id}).toTypedArray()
-            entries = voices.map({voice ->voice.name}).toTypedArray()
+            entryValues = voices.map(TtsVoice::id).toTypedArray()
+            entries = voices.map { voice ->voice.name}.toTypedArray()
         }
     }
 }

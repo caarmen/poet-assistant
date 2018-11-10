@@ -52,7 +52,7 @@ class FavoritesLiveData(context: Context) : ResultListLiveData<ResultListData<RT
 
         val sortedFavorites = TreeSet<String>(favorites)
         val layout = SettingsPrefs.getLayout(mPrefs)
-        sortedFavorites.forEachIndexed({ i, favorite ->
+        sortedFavorites.forEachIndexed { i, favorite ->
             /*@ColorRes*/
             val color = if (i % 2 == 0) R.color.row_background_color_even else R.color.row_background_color_odd
             data.add(RTEntryViewModel(
@@ -63,7 +63,7 @@ class FavoritesLiveData(context: Context) : ResultListLiveData<ResultListData<RT
                     true,
                     layout == SettingsPrefs.Layout.EFFICIENT
             ))
-        })
+        }
         return ResultListData(context.getString(R.string.favorites_list_header), data)
     }
 

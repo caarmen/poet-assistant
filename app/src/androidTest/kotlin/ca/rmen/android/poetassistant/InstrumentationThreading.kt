@@ -20,14 +20,13 @@
 package ca.rmen.android.poetassistant
 
 import android.support.test.espresso.idling.CountingIdlingResource
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.Dispatchers
 
 /**
  * Keeps track of all the background and foreground tasks we've submitted, so that tests
  * can pause while we wait for tasks to complete.
  */
-class InstrumentationThreading : CoroutineThreading(CommonPool, UI) {
+class InstrumentationThreading : CoroutineThreading(Dispatchers.Default, Dispatchers.Main) {
 
     companion object {
         private val TAG = Constants.TAG + InstrumentationThreading::class.java.simpleName

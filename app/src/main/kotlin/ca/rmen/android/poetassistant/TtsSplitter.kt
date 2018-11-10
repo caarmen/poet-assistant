@@ -71,7 +71,7 @@ object TtsSplitter {
                 // This optimization allows us to minimize the number of tokens we'll return, and to rely
                 // on the sentence pausing of the TTS engine when less than 3 dots separate two sentences.
                 else /* prevToken != null && prevToken != "" */ {
-                    textToken = prevToken + "." + token
+                    textToken = "$prevToken.$token"
                     tokens[tokens.size - 1] = textToken
                 }
                 prevToken = textToken

@@ -102,7 +102,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
                 AppBarLayoutHelper.forceExpandAppBarLayout(activity)
             }
         }
-        DebounceTextWatcher.debounce(mBinding.tvText, { mViewModel.updateWordCount() })
+        DebounceTextWatcher.debounce(mBinding.tvText) { mViewModel.updateWordCount() }
         TextPopupMenu.addSelectionPopupMenu(mBinding.root, mBinding.tvText, activity as OnWordClickListener)
         mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver)
         return mBinding.root
@@ -238,9 +238,9 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
                 val snackBar = Snackbar.make(root, HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG)
                 val intent = Intent("com.android.settings.TTS_SETTINGS")
                 if (intent.resolveActivity(root.context.packageManager) != null) {
-                    snackBar.setAction(R.string.tts_error_open_system_settings, { _ -> startActivity(intent) })
+                    snackBar.setAction(R.string.tts_error_open_system_settings) { _ -> startActivity(intent) }
                 } else {
-                    snackBar.setAction(R.string.tts_error_open_app_settings, { _ -> startActivity(Intent(context, SettingsActivity::class.java)) })
+                    snackBar.setAction(R.string.tts_error_open_app_settings) { _ -> startActivity(Intent(context, SettingsActivity::class.java)) }
                 }
                 snackBar.show()
             }

@@ -106,10 +106,10 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
         mPrefsListener = PrefsListener()
         mSharedPreferences.registerOnSharedPreferenceChangeListener(mPrefsListener)
         poemFile.value = mPoemPrefs.getSavedPoem()
-        playButtonStateLiveData.addSource(mTts.getTtsLiveData(),
-                { ttsState -> playButtonStateLiveData.value = toPlayButtonState(ttsState, poem.get()) })
-        playButtonStateLiveData.addSource(LiveDataMapping.fromObservableField(poem),
-                { poemText -> playButtonStateLiveData.value = toPlayButtonState(mTts.getTtsState(), poemText) })
+        playButtonStateLiveData.addSource(mTts.getTtsLiveData()
+        ) { ttsState -> playButtonStateLiveData.value = toPlayButtonState(ttsState, poem.get()) }
+        playButtonStateLiveData.addSource(LiveDataMapping.fromObservableField(poem)
+        ) { poemText -> playButtonStateLiveData.value = toPlayButtonState(mTts.getTtsState(), poemText) }
     }
 
     fun updateWordCount() {

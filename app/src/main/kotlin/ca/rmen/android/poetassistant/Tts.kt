@@ -94,7 +94,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
     @Suppress("DEPRECATION")
     private fun speak4(text: List<String>) {
         val map = HashMap<String, String>()
-        map.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, TAG)
+        map[TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID] = TAG
         text.forEach {
             if (TextUtils.isEmpty(it)) {
                 mTextToSpeech?.playSilence(PAUSE_DURATION_MS, TextToSpeech.QUEUE_ADD, map)
@@ -156,13 +156,14 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
                     Log.v(TAG, "Using default voice ${it.defaultVoice}")
                 } else {
                     textToSpeech.voice = it.voices
-                            .filter({ voice ->
+                            .asSequence()
+                            .filter { voice ->
                                 // The SDK check is here because lint currently ignores @TargetApi in nested lambdas
                                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && voiceId == voice.name
-                            })
+                            }
                             // If the user changed the tts engine in the system settings, we may not find
                             // the previous voice they selected.
-                            .elementAtOrElse(0, { _-> it.defaultVoice })
+                            .elementAtOrElse(0) { _-> it.defaultVoice }
                     Log.v(TAG, "Using voice ${textToSpeech.voice}")
                 }
             } catch (t: Throwable) {
@@ -170,7 +171,6 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
                 // That implementation throws a NullPointerException.
                 Log.w(TAG, "Couldn't load the tts voices: ${t.message}", t)
             }
-            return Unit
         }
     }
 

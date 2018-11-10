@@ -78,7 +78,7 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
 
         @WorkerThread
         private fun savePoemFile(context: Context, uri: Uri, text: String): PoemFile {
-            val outputStream = context.contentResolver.openOutputStream(uri, "w") ?: throw IOException("Couldn't open OutputStream to uri " + uri)
+            val outputStream = context.contentResolver.openOutputStream(uri, "w") ?: throw IOException("Couldn't open OutputStream to uri $uri")
             val writer = BufferedWriter(OutputStreamWriter(outputStream))
             writer.use {
                 writer.write(text)
@@ -147,7 +147,7 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
             textStart = textStart.replace(Regex("-$"), "")
             // If there's nothing left, give up.
             if (textStart.isEmpty()) return null
-            if (textStart.length <= minLength) return textStart + ".txt"
+            if (textStart.length <= minLength) return "$textStart.txt"
             lastWordBegin = Math.min(lastWordBegin, textStart.length)
             textStart = textStart.substring(0, lastWordBegin) + ".txt"
             return textStart

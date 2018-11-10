@@ -120,10 +120,10 @@ class RhymerLiveData(context: Context, val query: String, val filter: String?) :
     private fun getMatchingFavorites(rhymeResults: List<RhymeResult>, favorites: Set<String>): Array<String> {
         val matchingFavorites = TreeSet<String>()
         rhymeResults.forEach { rhymeResult ->
-            matchingFavorites.addAll(rhymeResult.strictRhymes.filter({ rhyme -> favorites.contains(rhyme) }))
-            matchingFavorites.addAll(rhymeResult.oneSyllableRhymes.filter({ rhyme -> favorites.contains(rhyme) }))
-            matchingFavorites.addAll(rhymeResult.twoSyllableRhymes.filter({ rhyme -> favorites.contains(rhyme) }))
-            matchingFavorites.addAll(rhymeResult.threeSyllableRhymes.filter({ rhyme -> favorites.contains(rhyme) }))
+            matchingFavorites.addAll(rhymeResult.strictRhymes.filter { rhyme -> favorites.contains(rhyme) })
+            matchingFavorites.addAll(rhymeResult.oneSyllableRhymes.filter { rhyme -> favorites.contains(rhyme) })
+            matchingFavorites.addAll(rhymeResult.twoSyllableRhymes.filter { rhyme -> favorites.contains(rhyme) })
+            matchingFavorites.addAll(rhymeResult.threeSyllableRhymes.filter { rhyme -> favorites.contains(rhyme) })
         }
         return matchingFavorites.toTypedArray()
     }

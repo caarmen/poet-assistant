@@ -48,7 +48,7 @@ public class DbMigrationTest {
 
     public DbMigrationTest() {
         helper = new MigrationTestHelper(InstrumentationRegistry.getInstrumentation(),
-                UserDb.class.getCanonicalName(),
+                UserDb.class.getName(),
                 new FrameworkSQLiteOpenHelperFactory());
     }
 
