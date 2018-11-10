@@ -119,7 +119,7 @@ class TestUiUtils {
 
     static void scrollToPreference(@StringRes int prefTitleRes) {
         // Scroll to the preference in case it's not visible
-        onView(withId(R.id.list))
+        onView(withId(android.R.id.list))
                 .perform(scrollTo(hasDescendant(withText(prefTitleRes))));
     }
 
