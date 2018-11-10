@@ -143,7 +143,7 @@ android.applicationVariants.all { variant ->
     variant.mergeAssets.doLast {
         copy {
             from project.rootDir
-            into "${project.buildDir}/intermediates/assets/${variant.buildType.name}"
+            into "${project.buildDir}/intermediates/merged_assets/${variant.buildType.name}/merge${variant.buildType.name.capitalize()}Assets/out/"
             include 'LICENSE.txt'
             include 'LICENSE-rhyming-dictionary.txt'
             include 'LICENSE-thesaurus-wordnet.txt'

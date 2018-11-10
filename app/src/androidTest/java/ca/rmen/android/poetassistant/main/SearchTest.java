@@ -135,7 +135,7 @@ public class SearchTest {
         search("hello");
         starQueryWord();
         search("he*o");
-        checkPatterns(mActivityTestRule.getActivity(), "he*o", "hello", "head honcho", "hector hugo munro",
+        checkPatterns(mActivityTestRule.getActivity(), "he*o", "hello", "head honcho", "hector hugh munro",
                 "herero", "hereto", "hermosillo", "hero");
         onView(allOf(withId(R.id.btn_star_result), hasSibling(withText("hello")), isDisplayed())).check(matches(isChecked()));
     }

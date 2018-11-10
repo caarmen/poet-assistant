@@ -137,7 +137,7 @@ public class RandomWordTest {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             onView(prioritySettingMatcher).check(doesNotExist());
         } else {
-            onView(withId(android.R.id.list))
+            onView(withId(R.id.recycler_view))
                     .perform(scrollTo(hasDescendant(prioritySettingMatcher)));
             onView(prioritySettingMatcher).check(matches(isDisplayed()));
         }
