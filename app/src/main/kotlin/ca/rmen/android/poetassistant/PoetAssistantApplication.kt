@@ -29,7 +29,7 @@ open class PoetAssistantApplication : Application() {
         Theme.setThemeFromSettings(DaggerHelper.getMainScreenComponent(this).getSettingsPrefs())
     }
 
-    open protected fun setupLeakCanary() {
+    protected open fun setupLeakCanary() {
         if (!LeakCanary.isInAnalyzerProcess(this)) {
             LeakCanary.install(this)
         }
