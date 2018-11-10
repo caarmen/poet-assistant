@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.26.8  *(2018-11-10)*
+--------------------
+* Identical to 1.26.6. This is a rollback a bad 1.26.7 build which was pushed to beta.
+
 1.26.6  *(2018-07-04)*
 --------------------
 * Update build environment.
