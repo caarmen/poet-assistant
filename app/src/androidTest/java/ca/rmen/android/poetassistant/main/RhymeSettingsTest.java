@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
+import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
 import static android.support.test.espresso.Espresso.pressBack;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
@@ -39,6 +40,9 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class RhymeSettingsTest {
+    @Rule
+    public RetryTestRule retry = new RetryTestRule();
+
 
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);

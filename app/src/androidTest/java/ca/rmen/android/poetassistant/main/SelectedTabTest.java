@@ -35,6 +35,7 @@ import org.junit.runners.MethodSorters;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
+import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkFirstDefinition;
@@ -47,6 +48,9 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(AndroidJUnit4.class)
 public class SelectedTabTest {
+
+    @Rule
+    public RetryTestRule retry = new RetryTestRule();
 
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, false);

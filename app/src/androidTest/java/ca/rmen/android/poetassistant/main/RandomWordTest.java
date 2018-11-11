@@ -37,6 +37,7 @@ import java.util.Calendar;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
+import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
@@ -71,6 +72,9 @@ import static org.junit.Assert.assertNotNull;
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class RandomWordTest {
+    @Rule
+    public RetryTestRule retry = new RetryTestRule();
+
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 

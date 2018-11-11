@@ -31,6 +31,7 @@ import org.junit.runner.RunWith;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
+import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
@@ -45,8 +46,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkPatterns;
-import static ca.rmen.android.poetassistant.main.CustomChecks.checkSingleRootView;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkSearchSuggestions;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkSingleRootView;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withAdapterItemCount;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearSearchHistory;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clickDialogPositiveButton;
@@ -60,6 +61,9 @@ import static org.hamcrest.Matchers.allOf;
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class SearchTest {
+    @Rule
+    public RetryTestRule retry = new RetryTestRule();
+
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 

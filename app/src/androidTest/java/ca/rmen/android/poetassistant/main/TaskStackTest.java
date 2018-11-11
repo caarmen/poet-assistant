@@ -38,6 +38,7 @@ import org.junit.runners.MethodSorters;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.ActivityStageIdlingResource;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
+import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -59,6 +60,9 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(AndroidJUnit4.class)
 public class TaskStackTest {
+
+    @Rule
+    public RetryTestRule retry = new RetryTestRule();
 
     @Rule
     public PoetAssistantActivityTestRule<SettingsActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(SettingsActivity.class, false);
