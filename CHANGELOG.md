@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.27.1  *(2018-11-11)*
+--------------------
+* Correct margins in the settings screen.
+
 1.27.0  *(2018-11-10)*
 --------------------
 * Drop support for KitKat and JellyBean. The minSdkVersion is now 21 (Lollipop).

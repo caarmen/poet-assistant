@@ -136,7 +136,7 @@
     </string-array>
     <string name="wotd_setting_system_notification_priority_title">Notification priority</string>
     <string name="wotd_setting_system_notification_priority_summary">%s</string>
-    <string name="all_rhymes_setting_title">Show rhymes without definitions</string>
+    <string name="all_rhymes_setting_title">Rhymes without definitions</string>
     <string name="all_rhymes_setting_description">Display all rhymes, even if words have no definitions (search may be slower)</string>
     <string name="match_ao_aa_setting_title">AO /ɔ/ matches AA /ɑ/</string>
     <string name="match_ao_aa_setting_description">AO /ɔ/: "off".\nAA /ɑ/: "father".</string>
