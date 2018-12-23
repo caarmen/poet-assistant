@@ -46,11 +46,8 @@
             android:checked="@={viewModel.isFavorite}"
             android:clickable="true"
             android:id="@+id/btn_star_result"
-            android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
-            android:paddingLeft="4dp"
             android:paddingStart="4dp"
-            android:paddingRight="8dp"
             android:paddingEnd="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -75,7 +72,7 @@
              Android Studio
              http://stackoverflow.com/questions/35624562/code-analysis-error-unexpected-namespace-prefix-after-upgrading-android-suppor
         -->
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btn_rhymer"
             android:layout_width="@dimen/list_rtd_icon_size"
             android:layout_height="@dimen/list_rtd_icon_size"
@@ -91,7 +88,7 @@
             app:srcCompat="@drawable/ic_rhymer"
             android:focusable="true"/>
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btn_thesaurus"
             android:layout_width="@dimen/list_rtd_icon_size"
             android:layout_height="@dimen/list_rtd_icon_size"
@@ -107,12 +104,11 @@
             android:visibility="@{viewModel.showButtons? View.VISIBLE:View.GONE}"
             app:srcCompat="@drawable/ic_thesaurus" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/btn_dictionary"
             android:layout_width="@dimen/list_rtd_icon_size"
             android:layout_height="@dimen/list_rtd_icon_size"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:background="?selectableItemBackgroundBorderless"
             android:clickable="@{viewModel.hasDefinition}"
             android:paddingLeft="@dimen/list_rtd_icon_padding"

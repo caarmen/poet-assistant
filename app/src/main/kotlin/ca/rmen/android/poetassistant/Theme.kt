@@ -19,7 +19,7 @@
 
 package ca.rmen.android.poetassistant
 
-import android.support.v7.app.AppCompatDelegate
+import androidx.appcompat.app.AppCompatDelegate
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 
 object Theme {

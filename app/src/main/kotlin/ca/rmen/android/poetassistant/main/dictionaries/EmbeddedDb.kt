@@ -19,13 +19,14 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabaseCorruptException
 import android.database.sqlite.SQLiteException
-import android.support.annotation.VisibleForTesting
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import ca.rmen.android.poetassistant.Constants
 import java.io.File
 import java.io.FileOutputStream
@@ -122,6 +123,7 @@ class EmbeddedDb(val context: Context) {
         return mDb
     }
 
+    @SuppressLint("Recycle") // The caller must close the Cursor
     fun query(table: String, projection: Array<String>, selection: String, selectionArgs: Array<String>): Cursor? {
         val db = getDb() ?: return null
         return try {
@@ -133,6 +135,7 @@ class EmbeddedDb(val context: Context) {
         }
     }
 
+    @SuppressLint("Recycle") // The caller must close the Cursor
     fun query(distinct: Boolean, table: String, projection: Array<String>, selection: String, selectionArgs: Array<String>,
               orderBy: String?,
               limit: String?): Cursor? {

@@ -20,7 +20,7 @@
 package ca.rmen.android.poetassistant.dagger
 
 import android.app.Application
-import android.arch.persistence.room.Room
+import androidx.room.Room
 import ca.rmen.android.poetassistant.UserDb
 import dagger.Module
 import dagger.Provides

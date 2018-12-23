@@ -24,9 +24,9 @@ import android.app.SearchManager
 import android.content.ComponentName
 import android.content.ContentValues
 import android.content.Context
-import android.support.annotation.MainThread
-import android.support.v4.view.ViewPager
-import android.support.v7.widget.SearchView
+import androidx.annotation.MainThread
+import androidx.viewpager.widget.ViewPager
+import androidx.appcompat.widget.SearchView
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R

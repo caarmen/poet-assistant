@@ -26,8 +26,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Build
-import android.support.design.widget.Snackbar
-import android.support.v7.widget.PopupMenu
+import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.widget.PopupMenu
 import android.text.TextUtils
 import android.view.ActionMode
 import android.view.Menu

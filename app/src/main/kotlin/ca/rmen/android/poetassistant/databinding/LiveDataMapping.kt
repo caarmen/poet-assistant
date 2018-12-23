@@ -19,9 +19,9 @@
 
 package ca.rmen.android.poetassistant.databinding
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.databinding.ObservableField
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.databinding.ObservableField
 
 object LiveDataMapping {
     fun fromObservableField(observableField: ObservableField<String>): LiveData<String> {

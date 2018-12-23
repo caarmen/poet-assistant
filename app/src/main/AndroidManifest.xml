@@ -147,11 +147,6 @@
                 <action android:name="action_wotd" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".wotd.WotdBootReceiver" android:enabled="@bool/wotd_boot_receiver_enabled">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
 
         <provider
             android:exported="false"
@@ -159,7 +154,7 @@
             android:authorities="${applicationId}.SuggestionsProvider"/>
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
             android:grantUriPermissions="true"
             android:exported="false">

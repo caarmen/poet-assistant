@@ -54,7 +54,6 @@
                 style="?android:attr/textAppearanceLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:freezesText="true"
@@ -74,7 +73,6 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_toEndOf="@id/tv_list_header"
-                android:layout_toRightOf="@id/tv_list_header"
                 android:background="?selectableItemBackgroundBorderless"
                 android:button="@drawable/ic_star"
                 android:checked="@={viewModel.isFavorite}"
@@ -91,12 +89,11 @@
                  http://stackoverflow.com/questions/35624562/code-analysis-error-unexpected-namespace-prefix-after-upgrading-android-suppor
             -->
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btn_help"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_centerVertical="true"
                 android:background="?selectableItemBackgroundBorderless"
@@ -109,13 +106,12 @@
                 tools:visibility="visible"
                 android:focusable="true"/>
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btn_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/btn_help"
                 android:layout_toStartOf="@id/btn_help"
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
@@ -127,14 +123,13 @@
                 tools:visibility="visible"
                 android:focusable="true"/>
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btn_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/btn_web_search"
-                android:layout_toStartOf="@id/btn_web_search"
+                android:layout_toStartOf="@+id/btn_web_search"
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/filter_hint"
@@ -145,29 +140,12 @@
                 tools:visibility="visible"
                 android:focusable="true"/>
 
-            <android.support.v7.widget.AppCompatImageButton
-                android:id="@+id/btn_play"
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btn_web_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/btn_delete"
-                android:layout_toStartOf="@id/btn_delete"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="@string/tts_play"
-                android:onClick="@{() -> viewModel.speak()}"
-                android:padding="8dp"
-                app:srcCompat="@drawable/ic_play_circle"
-                android:focusable="true"/>
-
-            <android.support.v7.widget.AppCompatImageButton
-                android:id="@id/btn_web_search"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignWithParentIfMissing="true"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/btn_play"
                 android:layout_toStartOf="@id/btn_play"
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
@@ -175,6 +153,21 @@
                 android:onClick="@{() -> viewModel.webSearch()}"
                 android:padding="8dp"
                 app:srcCompat="@drawable/ic_web_search"
+                android:focusable="true"/>
+
+            <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/btn_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignWithParentIfMissing="true"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/btn_delete"
+                android:background="?selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:contentDescription="@string/tts_play"
+                android:onClick="@{() -> viewModel.speak()}"
+                android:padding="8dp"
+                app:srcCompat="@drawable/ic_play_circle"
                 android:focusable="true"/>
 
 
@@ -206,14 +199,13 @@
                 android:layout_height="24dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
                 android:freezesText="true"
                 android:gravity="center_vertical"
                 android:textColor="#37474f"
                 android:text="@={viewModel.filter}"
                 tools:text="yesterday" />
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/btn_clear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

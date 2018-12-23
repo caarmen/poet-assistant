@@ -19,13 +19,13 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Context
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.LinearLayoutManager
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -33,6 +33,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.recyclerview.widget.RecyclerView
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorite
 import ca.rmen.android.poetassistant.R
@@ -67,7 +68,7 @@ class ResultListFragment<out T> : Fragment() {
         mTab?.let {
             Log.v(TAG, "$mTab onCreateView")
             mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false)
-            mBinding.recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+            mBinding.recyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
             mBinding.recyclerView.setHasFixedSize(true)
             @Suppress("UNCHECKED_CAST")
             mViewModel = ResultListFactory.createViewModel(it, this) as ResultListViewModel<T>

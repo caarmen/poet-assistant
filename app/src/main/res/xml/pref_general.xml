@@ -69,21 +69,21 @@
 
 
         <!--suppress AndroidElementNotAllowed -->
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="PREF_ALL_RHYMES_ENABLED"
             android:summary="@string/all_rhymes_setting_description"
             android:title="@string/all_rhymes_setting_title"/>
 
         <!--suppress AndroidElementNotAllowed -->
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="PREF_MATCH_AO_AA_ENABLED"
             android:summary="@string/match_ao_aa_setting_description"
             android:title="@string/match_ao_aa_setting_title"/>
 
         <!--suppress AndroidElementNotAllowed -->
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="PREF_MATCH_AOR_AO_ENABLED"
             android:summary="@string/match_aor_ao_setting_description"
@@ -93,7 +93,7 @@
         android:key="PREF_CATEGORY_THESAURUS"
         android:title="@string/pref_category_thesaurus">
         <!--suppress AndroidElementNotAllowed -->
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="PREF_THESAURUS_REVERSE_LOOKUP_ENABLED"
             android:summary="@string/thesaurus_reverse_lookup_setting_description"
@@ -125,7 +125,7 @@
             android:title="@string/pref_layout_title"/>
 
         <!--suppress AndroidElementNotAllowed -->
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="PREF_SELECTION_LOOKUP"
             android:summary="@string/pref_selection_lookup_summary"
@@ -136,7 +136,7 @@
         android:key="PREF_CATEGORY_NOTIFICATIONS"
         android:title="@string/pref_category_notifications">
         <!--suppress AndroidElementNotAllowed -->
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:icon="@drawable/ic_settings_wotd"
             android:key="PREF_WOTD_ENABLED"

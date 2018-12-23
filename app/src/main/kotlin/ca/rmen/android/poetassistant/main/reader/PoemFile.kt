@@ -26,8 +26,8 @@ import android.os.Build
 import android.print.PrintAttributes
 import android.print.PrintManager
 import android.provider.OpenableColumns
-import android.support.annotation.VisibleForTesting
-import android.support.annotation.WorkerThread
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.WorkerThread
 import android.text.TextUtils
 import android.util.Log
 import android.webkit.WebView

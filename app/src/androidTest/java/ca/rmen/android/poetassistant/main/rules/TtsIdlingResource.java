@@ -21,7 +21,7 @@ package ca.rmen.android.poetassistant.main.rules;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
-import android.support.test.espresso.IdlingResource;
+import androidx.test.espresso.IdlingResource;
 
 import ca.rmen.android.poetassistant.Constants;
 

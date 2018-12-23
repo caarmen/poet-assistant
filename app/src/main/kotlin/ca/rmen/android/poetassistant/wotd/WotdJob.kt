@@ -36,16 +36,6 @@ import ca.rmen.android.poetassistant.Constants
 object WotdJob {
     private val TAG = Constants.TAG + WotdJob::class.java.simpleName
 
-    fun reschedule(context: Context) {
-        Log.d(TAG, "reschedule $context")
-        val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler?
-        if (jobScheduler != null) {
-            val jobs = jobScheduler.allPendingJobs
-            Log.v(TAG, "PendingJobs : $jobs")
-            if (jobs.isEmpty()) schedule(context)
-        }
-    }
-
     fun schedule(context: Context) {
         Log.d(TAG, "schedule $context")
         val jobInfo = JobInfo.Builder(TAG.hashCode(), ComponentName(context, WotdJobService::class.java))

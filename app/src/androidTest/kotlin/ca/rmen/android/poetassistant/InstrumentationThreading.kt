@@ -19,7 +19,7 @@
 
 package ca.rmen.android.poetassistant
 
-import android.support.test.espresso.idling.CountingIdlingResource
+import androidx.test.espresso.idling.CountingIdlingResource
 import kotlinx.coroutines.Dispatchers
 
 /**

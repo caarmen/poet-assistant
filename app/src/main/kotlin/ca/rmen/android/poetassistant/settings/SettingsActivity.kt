@@ -20,21 +20,20 @@
 package ca.rmen.android.poetassistant.settings
 
 import android.app.Activity
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.databinding.DataBindingUtil
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.VisibleForTesting
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceCategory
-import android.support.v7.preference.PreferenceFragmentCompat
 import android.text.TextUtils
 import android.util.Log
+import androidx.annotation.VisibleForTesting
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.preference.Preference
+import androidx.preference.PreferenceCategory
+import androidx.preference.PreferenceFragmentCompat
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
@@ -42,6 +41,7 @@ import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.ActivitySettingsBinding
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
 
 class SettingsActivity : AppCompatActivity() {
@@ -65,7 +65,6 @@ class SettingsActivity : AppCompatActivity() {
             @VisibleForTesting
             const val PREF_CATEGORY_VOICE = "PREF_CATEGORY_VOICE"
             private const val PREF_CATEGORY_NOTIFICATIONS = "PREF_CATEGORY_NOTIFICATIONS"
-            private const val PREF_CATEGORY_USER_DATA = "PREF_CATEGORY_USER_DATA"
             private const val PREF_EXPORT_FAVORITES = "PREF_EXPORT_FAVORITES"
             private const val PREF_IMPORT_FAVORITES = "PREF_IMPORT_FAVORITES"
             private const val PREF_CLEAR_SEARCH_HISTORY = "PREF_CLEAR_SEARCH_HISTORY"
@@ -127,14 +126,8 @@ class SettingsActivity : AppCompatActivity() {
                     removePreferences(PREF_CATEGORY_NOTIFICATIONS, SettingsPrefs.PREF_WOTD_NOTIFICATION_PRIORITY)
                 }
 
-                // Importing/exporting files is only available from KitKat.
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                    removePreferences(PREF_CATEGORY_USER_DATA, PREF_EXPORT_FAVORITES, PREF_IMPORT_FAVORITES)
-                } else {
-                    setOnPreferenceClickListener(PREF_EXPORT_FAVORITES, Runnable { startActivityForResult(mViewModel.getExportFavoritesIntent(), ACTION_EXPORT_FAVORITES) })
-                    setOnPreferenceClickListener(PREF_IMPORT_FAVORITES, Runnable { startActivityForResult(mViewModel.getImportFavoritesIntent(), ACTION_IMPORT_FAVORITES) })
-                }
-
+                setOnPreferenceClickListener(PREF_EXPORT_FAVORITES, Runnable { startActivityForResult(mViewModel.getExportFavoritesIntent(), ACTION_EXPORT_FAVORITES) })
+                setOnPreferenceClickListener(PREF_IMPORT_FAVORITES, Runnable { startActivityForResult(mViewModel.getImportFavoritesIntent(), ACTION_IMPORT_FAVORITES) })
             }
         }
 

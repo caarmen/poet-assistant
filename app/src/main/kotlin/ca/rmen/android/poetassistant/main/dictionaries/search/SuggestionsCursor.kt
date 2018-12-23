@@ -22,10 +22,9 @@ package ca.rmen.android.poetassistant.main.dictionaries.search
 import android.app.SearchManager
 import android.content.Context
 import android.database.MatrixCursor
-import android.os.Build
 import android.provider.BaseColumns
-import android.support.annotation.DrawableRes
 import android.text.TextUtils
+import androidx.annotation.DrawableRes
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
@@ -57,12 +56,7 @@ class SuggestionsCursor(context: Context, private val filter: String?) : MatrixC
     private fun loadHistory() {
         // https://code.google.com/p/android/issues/detail?id=226686
         /*@DrawableRes*/
-        val iconId =
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                    R.drawable.ic_search_history_deprecated
-                } else {
-                    R.drawable.ic_search_history
-                }
+        val iconId = R.drawable.ic_search_history
         val suggestions = mSuggestions.getSuggestions()
         suggestions.asSequence().filter { TextUtils.isEmpty(filter) || it.contains(filter!!) }
                 .distinct()
@@ -76,12 +70,7 @@ class SuggestionsCursor(context: Context, private val filter: String?) : MatrixC
             val similarSoundingWords = mDictionary.findWordsWithPrefix(filter!!.trim().toLowerCase(Locale.getDefault()))
             // https://code.google.com/p/android/issues/detail?id=226686
             /*@DrawableRes*/
-            val iconId =
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                        R.drawable.ic_action_search_deprecated
-                    } else {
-                        R.drawable.ic_action_search
-                    }
+            val iconId = R.drawable.ic_action_search
             similarSoundingWords.forEach { addSuggestion(it, iconId) }
         }
     }

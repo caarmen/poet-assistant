@@ -25,8 +25,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.support.v4.app.NotificationCompat
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.NotificationChannel
 import ca.rmen.android.poetassistant.R
@@ -53,22 +53,6 @@ object Wotd {
         Log.v(TAG, "setWotdEnabled $enabled")
         if (enabled) enableWotd(context, dictionary)
         else disableWotd(context)
-    }
-
-    /**
-     * If we have the wotd setting enabled, but no task has been scheduled
-     * to do the wotd, we'll schedule the task.
-     */
-
-    fun reschedule(context: Context, settingsPrefs: SettingsPrefs) {
-        Log.d(TAG, "reschedule")
-        if (settingsPrefs.isWotdEnabled) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                WotdJob.reschedule(context)
-            } else {
-                WotdAlarm.reschedule(context)
-            }
-        }
     }
 
     private fun enableWotd(context: Context, dictionary: Dictionary) {

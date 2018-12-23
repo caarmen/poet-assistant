@@ -20,7 +20,7 @@
 package ca.rmen.android.poetassistant.wotd
 
 import android.content.Context
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.text.format.DateUtils
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants

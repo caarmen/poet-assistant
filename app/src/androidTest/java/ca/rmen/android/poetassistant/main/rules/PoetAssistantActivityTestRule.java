@@ -19,9 +19,9 @@
 package ca.rmen.android.poetassistant.main.rules;
 
 import android.app.Activity;
-import android.support.test.rule.ActivityTestRule;
+import androidx.test.rule.ActivityTestRule;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
 public class PoetAssistantActivityTestRule<T extends Activity> extends ActivityTestRule<T> {
 

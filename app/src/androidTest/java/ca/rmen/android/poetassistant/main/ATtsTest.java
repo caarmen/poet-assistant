@@ -21,16 +21,7 @@ package ca.rmen.android.poetassistant.main;
 
 
 import android.annotation.TargetApi;
-import android.arch.lifecycle.Observer;
 import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.test.espresso.action.GeneralClickAction;
-import android.support.test.espresso.action.GeneralLocation;
-import android.support.test.espresso.action.Press;
-import android.support.test.espresso.action.Tap;
-import android.support.test.filters.LargeTest;
-import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -38,6 +29,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.lifecycle.Observer;
+import androidx.test.espresso.action.GeneralClickAction;
+import androidx.test.espresso.action.GeneralLocation;
+import androidx.test.espresso.action.Press;
+import androidx.test.espresso.action.Tap;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.TtsState;
@@ -46,14 +46,14 @@ import ca.rmen.android.poetassistant.dagger.TestAppComponent;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.pressBack;
-import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
-import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withParent;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
+import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withParent;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static ca.rmen.android.poetassistant.main.CustomViewActions.clickLastChild;
 import static ca.rmen.android.poetassistant.main.CustomViewActions.scrollToEnd;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem;
@@ -153,7 +153,10 @@ public class ATtsTest {
     }
     private long timePoem(String poem) {
         TtsObserver receiver = new TtsObserver();
-        getTts().getTtsLiveData().observeForever(receiver);
+        getInstrumentation().runOnMainSync(() -> {
+            getTts().getTtsLiveData().removeObserver(receiver);
+            getTts().getTtsLiveData().observeForever(receiver);
+        });
         typePoem(poem);
         long before = System.currentTimeMillis();
         speakPoem();
@@ -164,7 +167,7 @@ public class ATtsTest {
 
     private long timeTtsPreview() {
         TtsObserver receiver = new TtsObserver();
-        getTts().getTtsLiveData().observeForever(receiver);
+        getInstrumentation().runOnMainSync(() -> getTts().getTtsLiveData().observeForever(receiver));
         long before = System.currentTimeMillis();
         clickPreference(R.string.pref_voice_preview_title);
         long defaultSpeechTime = receiver.timeUtteranceCompleted - before;

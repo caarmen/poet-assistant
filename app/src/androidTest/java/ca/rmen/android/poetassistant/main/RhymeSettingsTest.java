@@ -20,8 +20,8 @@
 package ca.rmen.android.poetassistant.main;
 
 
-import android.support.test.filters.LargeTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,7 +31,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
-import static android.support.test.espresso.Espresso.pressBack;
+import static androidx.test.espresso.Espresso.pressBack;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;

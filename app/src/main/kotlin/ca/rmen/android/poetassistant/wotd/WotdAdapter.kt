@@ -20,7 +20,7 @@
 package ca.rmen.android.poetassistant.wotd
 
 import android.app.Activity
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

@@ -23,8 +23,8 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.test.espresso.IdlingRegistry;
-import android.support.test.espresso.IdlingResource;
+import androidx.test.espresso.IdlingRegistry;
+import androidx.test.espresso.IdlingResource;
 
 import java.io.File;
 import java.util.Collection;

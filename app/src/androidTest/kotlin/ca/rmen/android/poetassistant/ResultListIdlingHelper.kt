@@ -21,8 +21,8 @@ package ca.rmen.android.poetassistant
 
 import android.os.Handler
 import android.os.Looper
-import android.support.test.espresso.idling.CountingIdlingResource
-import android.support.v7.widget.RecyclerView
+import androidx.test.espresso.idling.CountingIdlingResource
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
 

@@ -21,7 +21,7 @@ package ca.rmen.android.poetassistant.dagger
 
 import android.app.Application
 import android.content.Context
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 
 object DaggerHelper {
     private var sAppComponent: AppComponent? = null

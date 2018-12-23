@@ -20,13 +20,7 @@
 package ca.rmen.android.poetassistant.main;
 
 
-import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.db.framework.FrameworkSQLiteOpenHelperFactory;
-import android.arch.persistence.room.testing.MigrationTestHelper;
 import android.database.Cursor;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.filters.LargeTest;
-import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,8 +28,14 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
+import androidx.room.testing.MigrationTestHelper;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
 import ca.rmen.android.poetassistant.UserDb;
 
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -47,7 +47,7 @@ public class DbMigrationTest {
     public MigrationTestHelper helper;
 
     public DbMigrationTest() {
-        helper = new MigrationTestHelper(InstrumentationRegistry.getInstrumentation(),
+        helper = new MigrationTestHelper(getInstrumentation(),
                 UserDb.class.getName(),
                 new FrameworkSQLiteOpenHelperFactory());
     }
