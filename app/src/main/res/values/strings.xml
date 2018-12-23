@@ -66,7 +66,7 @@
     <string name="filter_hint">Filter results</string>
     <string name="help">Help</string>
     <string name="tts_play">Play</string>
-    <string name="tts_hint">Paste your poem here and press the play icon to listen to it.</string>
+    <string name="tts_hint">Compose your beautiful poetry here and press the play icon to listen to it</string>
     <string name="about_title">About %s</string>
     <string name="about_app_version">%1$s v%2$s</string>
     <string name="about_copyright">Copyright © 2016–2017 Carmen Alvarez\nc@rmen.ca\nhttp://rmen.ca</string>
