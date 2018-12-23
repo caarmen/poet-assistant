@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+1.28.0  *(2018-12-23)*
+--------------------
+* Update to androidx
+* Remove deprecated code and resources which were relevant only for KitKat and older
+* Rename the "Reader" tab to "Composer" and change the icon to a pencil icon
+
 1.27.1  *(2018-11-11)*
 --------------------
 * Correct margins in the settings screen.

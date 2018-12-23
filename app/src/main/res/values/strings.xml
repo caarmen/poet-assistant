@@ -26,7 +26,7 @@
     <string name="tab_rhymer">Rhymer</string>
     <string name="tab_thesaurus">Thesaurus</string>
     <string name="tab_dictionary">Dictionary</string>
-    <string name="tab_reader">Reader</string>
+    <string name="tab_reader">Composer</string>
 
     <string name="action_clear">Clear</string>
     <string name="action_search">Search</string>
