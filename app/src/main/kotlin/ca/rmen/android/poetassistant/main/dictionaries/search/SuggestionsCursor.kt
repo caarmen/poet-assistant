@@ -24,7 +24,7 @@ import android.content.Context
 import android.database.MatrixCursor
 import android.os.Build
 import android.provider.BaseColumns
-import android.support.annotation.DrawableRes
+import androidx.annotation.DrawableRes
 import android.text.TextUtils
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.dagger.DaggerHelper

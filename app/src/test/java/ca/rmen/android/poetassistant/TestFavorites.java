@@ -19,7 +19,7 @@
 
 package ca.rmen.android.poetassistant;
 
-import android.arch.persistence.room.Room;
+import androidx.room.Room;
 import android.net.Uri;
 
 import org.junit.Test;

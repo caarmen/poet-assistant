@@ -19,8 +19,8 @@
 
 package ca.rmen.android.poetassistant.databinding
 
-import android.databinding.BindingAdapter
-import android.support.annotation.DrawableRes
+import androidx.databinding.BindingAdapter
+import androidx.annotation.DrawableRes
 import android.widget.ImageView
 
 object DataBindingAdapters {

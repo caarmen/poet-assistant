@@ -20,10 +20,10 @@
 package ca.rmen.android.poetassistant.main;
 
 
-import android.support.test.espresso.NoMatchingViewException;
-import android.support.test.espresso.PerformException;
-import android.support.test.filters.LargeTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.PerformException;
+import androidx.test.filters.LargeTest;
+import androidx.test.runner.AndroidJUnit4;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,7 +33,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
-import static android.support.test.espresso.Espresso.pressBack;
+import static androidx.test.espresso.Espresso.pressBack;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhyme;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkSynonym;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.addFilter;

@@ -20,8 +20,8 @@
 package ca.rmen.android.poetassistant.wotd
 
 import android.app.Activity
-import android.support.test.espresso.IdlingRegistry
-import android.support.test.espresso.idling.CountingIdlingResource
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.idling.CountingIdlingResource
 import ca.rmen.android.poetassistant.ResultListIdlingHelper
 
 class InstrumentationWotdAdapter(activity: Activity)

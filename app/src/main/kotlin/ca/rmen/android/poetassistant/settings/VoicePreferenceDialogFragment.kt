@@ -20,9 +20,9 @@
 package ca.rmen.android.poetassistant.settings
 
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.preference.ListPreference
-import android.support.v7.preference.PreferenceDialogFragmentCompat
+import androidx.appcompat.app.AlertDialog
+import androidx.preference.ListPreference
+import androidx.preference.PreferenceDialogFragmentCompat
 
 /**
  * We use a custom dialog fragment because the app v7 preference dialog fragment

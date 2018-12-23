@@ -19,12 +19,12 @@
 
 package ca.rmen.android.poetassistant
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Transformations
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import android.content.Context
 import android.net.Uri
-import android.support.annotation.MainThread
-import android.support.annotation.WorkerThread
+import androidx.annotation.MainThread
+import androidx.annotation.WorkerThread
 import android.text.TextUtils
 import android.util.Log
 import java.io.BufferedReader

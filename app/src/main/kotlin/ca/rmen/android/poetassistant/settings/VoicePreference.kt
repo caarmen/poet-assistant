@@ -22,7 +22,7 @@ package ca.rmen.android.poetassistant.settings
 import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
-import android.support.v7.preference.ListPreference
+import androidx.preference.ListPreference
 import android.util.AttributeSet
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.dagger.DaggerHelper

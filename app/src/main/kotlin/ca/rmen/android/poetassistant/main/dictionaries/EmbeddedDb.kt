@@ -24,7 +24,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteDatabaseCorruptException
 import android.database.sqlite.SQLiteException
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import java.io.File

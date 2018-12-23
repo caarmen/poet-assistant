@@ -19,9 +19,9 @@
 package ca.rmen.android.poetassistant.main.rules;
 
 import android.app.Activity;
-import android.support.test.espresso.intent.rule.IntentsTestRule;
+import androidx.test.espresso.intent.rule.IntentsTestRule;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.InstrumentationRegistry.getInstrumentation;
 
 public class PoetAssistantIntentsTestRule<T extends Activity> extends IntentsTestRule<T> {
 

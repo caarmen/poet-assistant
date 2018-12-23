@@ -21,8 +21,8 @@ package ca.rmen.android.poetassistant.compat
 
 import android.content.Context
 import android.os.Build
-import android.support.annotation.DrawableRes
-import android.support.graphics.drawable.VectorDrawableCompat
+import androidx.annotation.DrawableRes
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import android.text.style.ImageSpan
 import android.widget.TextView
 
@@ -48,7 +48,7 @@ object VectorCompat {
                                    @DrawableRes top: Int,
                                    @DrawableRes end: Int,
                                    @DrawableRes bottom: Int) {
-        android.support.v4.widget.TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
+        androidx.core.widget.TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 textView,
                 createVectorDrawable(context, start),
                 createVectorDrawable(context, top),

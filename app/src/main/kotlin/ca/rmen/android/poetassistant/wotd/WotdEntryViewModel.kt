@@ -20,8 +20,8 @@
 package ca.rmen.android.poetassistant.wotd
 
 import android.content.Context
-import android.databinding.ObservableBoolean
-import android.support.annotation.ColorInt
+import androidx.databinding.ObservableBoolean
+import androidx.annotation.ColorInt
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 

@@ -91,7 +91,7 @@
                  http://stackoverflow.com/questions/35624562/code-analysis-error-unexpected-namespace-prefix-after-upgrading-android-suppor
             -->
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btn_help"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -109,7 +109,7 @@
                 tools:visibility="visible"
                 android:focusable="true"/>
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btn_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
                 tools:visibility="visible"
                 android:focusable="true"/>
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btn_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -145,7 +145,7 @@
                 tools:visibility="visible"
                 android:focusable="true"/>
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btn_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -161,7 +161,7 @@
                 app:srcCompat="@drawable/ic_play_circle"
                 android:focusable="true"/>
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@id/btn_web_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -213,7 +213,7 @@
                 android:text="@={viewModel.filter}"
                 tools:text="yesterday" />
 
-            <android.support.v7.widget.AppCompatImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/btn_clear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
