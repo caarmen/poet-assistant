@@ -60,6 +60,7 @@ public class RetryTestRule implements TestRule {
             }
 
             Log.e(TAG, String.format(Locale.US, "%s: giving up after %d failures", mDescription.getDisplayName(), mRetryCount));
+            assert testError != null;
             throw testError;
         }
     }

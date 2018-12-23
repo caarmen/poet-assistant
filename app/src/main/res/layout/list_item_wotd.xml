@@ -48,15 +48,12 @@
             android:id="@+id/btn_star_result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:background="?selectableItemBackgroundBorderless"
             android:button="@drawable/ic_star"
             android:checked="@={viewModel.isFavorite}"
             android:clickable="true"
             android:paddingEnd="8dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="8dp"
             android:paddingStart="4dp"
             android:focusable="true"/>
 
@@ -132,7 +129,6 @@
             android:layout_width="@dimen/list_rtd_icon_size"
             android:layout_height="@dimen/list_rtd_icon_size"
             android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
             android:background="?selectableItemBackgroundBorderless"
             android:contentDescription="@string/tab_dictionary"
             android:onClick="@{entryIconClickListener::onDictionaryIconClicked}"

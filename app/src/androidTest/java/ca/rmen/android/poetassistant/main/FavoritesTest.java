@@ -25,7 +25,7 @@ import android.content.Context;
 import android.os.Build;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.filters.LargeTest;
-import androidx.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.runner.lifecycle.Stage;
 
 import org.junit.Rule;
@@ -41,7 +41,7 @@ import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 
-import static androidx.test.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.hasSibling;

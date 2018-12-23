@@ -19,7 +19,6 @@
 
 package ca.rmen.android.poetassistant.widget
 
-import android.os.Build
 import android.view.View
 import android.view.ViewTreeObserver
 
@@ -28,8 +27,8 @@ object ViewShownScheduler {
     // Issue #19: In a specific scenario, the fragments may not be "ready" yet (onCreateView() may not have been called).
     // Wait until the ViewPager is laid out before invoking anything on the fragments.
     // (We assume that the fragments are "ready" once the ViewPager is laid out.)
-    fun runWhenShown(view: View, block: ()->Unit) {
-        if(view.isShown) {
+    fun runWhenShown(view: View, block: () -> Unit) {
+        if (view.isShown) {
             view.post(block)
         } else {
             val onGlobalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -43,11 +42,6 @@ object ViewShownScheduler {
     }
 
     private fun removeOnGlobalLayoutListener(view: View, listener: ViewTreeObserver.OnGlobalLayoutListener) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
-        } else {
-            @Suppress("DEPRECATION")
-            view.viewTreeObserver.removeGlobalOnLayoutListener(listener)
-        }
+        view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
     }
 }
