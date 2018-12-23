@@ -23,9 +23,9 @@ package ca.rmen.android.poetassistant.main;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.SystemClock;
-import android.support.annotation.StringRes;
-import android.support.test.filters.LargeTest;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.annotation.StringRes;
+import androidx.test.filters.LargeTest;
+import androidx.test.runner.AndroidJUnit4;
 
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -37,7 +37,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.InstrumentationRegistry.getInstrumentation;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkFirstDefinition;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;

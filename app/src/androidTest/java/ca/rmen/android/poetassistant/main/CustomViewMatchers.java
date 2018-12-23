@@ -19,8 +19,8 @@
 
 package ca.rmen.android.poetassistant.main;
 
-import android.support.test.espresso.matcher.BoundedMatcher;
-import android.support.v7.widget.RecyclerView;
+import androidx.test.espresso.matcher.BoundedMatcher;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;

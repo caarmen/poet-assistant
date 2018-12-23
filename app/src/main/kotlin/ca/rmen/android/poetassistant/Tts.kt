@@ -20,8 +20,8 @@
 package ca.rmen.android.poetassistant
 
 import android.annotation.TargetApi
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build

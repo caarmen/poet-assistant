@@ -21,10 +21,10 @@ package ca.rmen.android.poetassistant.about
 
 import android.content.Context
 import android.content.Intent
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.annotation.WorkerThread
-import android.support.v7.app.AppCompatActivity
+import androidx.annotation.WorkerThread
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R

@@ -20,9 +20,9 @@
 package ca.rmen.android.poetassistant.main.rules;
 
 import android.app.Activity;
-import android.support.test.espresso.IdlingResource;
-import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
-import android.support.test.runner.lifecycle.Stage;
+import androidx.test.espresso.IdlingResource;
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
+import androidx.test.runner.lifecycle.Stage;
 import android.util.Log;
 
 import java.util.Collection;

@@ -23,7 +23,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.createChooser
 import android.os.Build
-import android.support.annotation.DrawableRes
+import androidx.annotation.DrawableRes
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R

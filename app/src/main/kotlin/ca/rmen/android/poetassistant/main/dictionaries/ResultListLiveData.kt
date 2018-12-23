@@ -19,7 +19,7 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 import android.content.Context
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 

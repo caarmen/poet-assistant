@@ -19,7 +19,7 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.dictionary
 
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import ca.rmen.android.poetassistant.R

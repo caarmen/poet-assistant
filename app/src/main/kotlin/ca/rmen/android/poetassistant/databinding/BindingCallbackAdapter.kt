@@ -1,6 +1,6 @@
 package ca.rmen.android.poetassistant.databinding
 
-import android.databinding.Observable
+import androidx.databinding.Observable
 
 // http://tech.vg.no/2016/10/16/two-way-data-binding-without-rxjava/
 class BindingCallbackAdapter(private val callback: Callback) : Observable.OnPropertyChangedCallback() {

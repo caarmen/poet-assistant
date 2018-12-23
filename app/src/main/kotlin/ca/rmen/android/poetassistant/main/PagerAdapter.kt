@@ -23,10 +23,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.annotation.DrawableRes
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.annotation.DrawableRes
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import android.util.Log
 import android.view.ViewGroup
 import ca.rmen.android.poetassistant.Constants
@@ -88,7 +88,7 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
         if (obj is ReaderFragment) {
             return getPositionForTab(Tab.READER)
         }
-        return android.support.v4.view.PagerAdapter.POSITION_NONE
+        return androidx.viewpager.widget.PagerAdapter.POSITION_NONE
     }
 
     override fun getCount(): Int = if (mExtraTab != null) 6 else 5

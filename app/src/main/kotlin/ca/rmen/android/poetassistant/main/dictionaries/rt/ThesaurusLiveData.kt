@@ -20,9 +20,9 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt
 
 import android.content.Context
-import android.support.annotation.StringRes
-import android.support.annotation.VisibleForTesting
-import android.support.v4.content.ContextCompat
+import androidx.annotation.StringRes
+import androidx.annotation.VisibleForTesting
+import androidx.core.content.ContextCompat
 import android.text.TextUtils
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants

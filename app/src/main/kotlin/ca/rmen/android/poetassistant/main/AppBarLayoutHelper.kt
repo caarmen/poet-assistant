@@ -20,7 +20,7 @@
 package ca.rmen.android.poetassistant.main
 
 import android.app.Activity
-import android.support.design.widget.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout
 import android.util.Log
 import android.view.View
 import ca.rmen.android.poetassistant.Constants

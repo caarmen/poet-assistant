@@ -19,7 +19,7 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.search
 
-import android.support.annotation.WorkerThread
+import androidx.annotation.WorkerThread
 
 class Suggestions(private val suggestionDao: SuggestionDao) {
 
