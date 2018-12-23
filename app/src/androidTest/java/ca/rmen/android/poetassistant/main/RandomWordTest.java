@@ -25,7 +25,7 @@ import android.content.Context;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
 import androidx.test.filters.LargeTest;
-import androidx.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import android.view.View;
 
 import org.hamcrest.Matcher;
@@ -39,7 +39,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
-import static androidx.test.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;

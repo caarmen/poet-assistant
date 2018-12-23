@@ -40,7 +40,7 @@ class TestReaderViewModel {
 
     @After
     fun tearDown() {
-        // Would like to clear the viewmodel, but onCleared() is protected.
+        // Would like to clear the viewModel, but onCleared() is protected.
     }
 
     @Test

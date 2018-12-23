@@ -23,7 +23,7 @@ package ca.rmen.android.poetassistant.main;
 import android.content.Context;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.filters.LargeTest;
-import androidx.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,7 +33,7 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
-import static androidx.test.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.clearText;
 import static androidx.test.espresso.action.ViewActions.click;

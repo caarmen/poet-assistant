@@ -28,7 +28,7 @@ import ca.rmen.android.poetassistant.dagger.DaggerHelper
 
 class WotdBroadcastReceiver : BroadcastReceiver() {
     companion object {
-        private val TAG = Constants.TAG + WotdBootReceiver::class.java.simpleName
+        private val TAG = Constants.TAG + WotdBroadcastReceiver::class.java.simpleName
     }
 
     override fun onReceive(context: Context, intent: Intent) {

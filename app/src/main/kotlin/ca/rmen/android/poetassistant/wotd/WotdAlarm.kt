@@ -35,14 +35,6 @@ object WotdAlarm {
     private val TAG = Constants.TAG + WotdAlarm::class.java.simpleName
     private const val ACTION_WOTD = "action_wotd"
 
-    fun reschedule(context : Context) {
-        Log.d(TAG, "reschedule $context")
-        val intent = Intent(ACTION_WOTD)
-        val existingPendingIntent = PendingIntent.getBroadcast(context, TAG.hashCode(), intent, PendingIntent.FLAG_NO_CREATE)
-        Log.v(TAG, "Existing pending intent: $existingPendingIntent")
-        if (existingPendingIntent == null) schedule(context)
-    }
-
     fun schedule(context : Context) {
         Log.d(TAG, "schedule $context")
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager?

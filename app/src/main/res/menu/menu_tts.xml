@@ -21,8 +21,38 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".main.MainActivity">
+    <item android:id="@+id/action_file"
+        android:title="@string/file"
+        app:showAsAction="never">
+        <menu>
+            <item
+                android:id="@+id/action_new"
+                android:title="@string/file_new"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_open"
+                android:title="@string/file_open"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_save"
+                android:title="@string/file_save"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_save_as"
+                android:title="@string/file_save_as"
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/action_print"
+                android:title="@string/file_print"
+                app:showAsAction="never" />
+        </menu>
+    </item>
     <item
-        android:id="@+id/action_new"
-        android:title="@string/file_clear"
+        android:id="@+id/action_share_poem_text"
+        android:title="@string/share_poem_text"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_share_poem_audio"
+        android:title="@string/share_poem_audio"
         app:showAsAction="never" />
 </menu>

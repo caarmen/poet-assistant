@@ -20,15 +20,8 @@
 package ca.rmen.android.poetassistant.main.reader
 
 import android.app.Activity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
-import androidx.databinding.DataBindingUtil
-import android.os.Build
 import android.os.Bundle
-import androidx.annotation.IdRes
-import com.google.android.material.snackbar.Snackbar
-import androidx.fragment.app.Fragment
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -37,6 +30,11 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Threading
@@ -51,6 +49,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.widget.CABEditText
 import ca.rmen.android.poetassistant.widget.DebounceTextWatcher
+import com.google.android.material.snackbar.Snackbar
 
 class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
     companion object {
@@ -112,7 +111,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
         super.onCreateOptionsMenu(menu, inflater)
         Log.d(TAG, "onCreateOptionsMenu: menu=$menu, inflater=$inflater")
         inflater.inflate(R.menu.menu_tts, menu)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) menu.findItem(R.id.action_share).isVisible = false
+        menu.findItem(R.id.action_share).isVisible = false
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -145,7 +144,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
             mViewModel.sharePoem()
         } else if (item.itemId == R.id.action_share_poem_audio) {
             mViewModel.speakToFile()
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        } else {
             val context = activity
             if (item.itemId == R.id.action_open) {
                 startActivityForResult(mViewModel.getOpenFileIntent(), ACTION_FILE_OPEN)

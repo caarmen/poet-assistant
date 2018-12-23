@@ -33,6 +33,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.recyclerview.widget.RecyclerView
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorite
 import ca.rmen.android.poetassistant.R
@@ -67,7 +68,7 @@ class ResultListFragment<out T> : Fragment() {
         mTab?.let {
             Log.v(TAG, "$mTab onCreateView")
             mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false)
-            mBinding.recyclerView.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+            mBinding.recyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
             mBinding.recyclerView.setHasFixedSize(true)
             @Suppress("UNCHECKED_CAST")
             mViewModel = ResultListFactory.createViewModel(it, this) as ResultListViewModel<T>

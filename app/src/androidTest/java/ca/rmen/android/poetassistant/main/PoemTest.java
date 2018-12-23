@@ -28,7 +28,7 @@ import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.PerformException;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.filters.LargeTest;
-import androidx.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.appcompat.widget.ActionBarContextView;
 
 import junit.framework.AssertionFailedError;

@@ -29,7 +29,7 @@ import android.view.KeyEvent;
 import ca.rmen.android.poetassistant.Constants;
 import ca.rmen.android.poetassistant.R;
 
-import static androidx.test.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.pressKey;

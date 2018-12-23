@@ -20,8 +20,6 @@
 package ca.rmen.android.poetassistant
 
 import android.annotation.TargetApi
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
@@ -30,6 +28,8 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.text.TextUtils
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 
 class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs, private val threading: Threading) {
@@ -117,10 +117,8 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
     fun speakToFile(text: String) {
         if (!isReady()) return
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            val poemAudioExport = PoemAudioExport(context)
-            poemAudioExport.speakToFile(mTextToSpeech!!, text)
-        }
+        val poemAudioExport = PoemAudioExport(context)
+        poemAudioExport.speakToFile(mTextToSpeech!!, text)
     }
 
     fun stop() {
