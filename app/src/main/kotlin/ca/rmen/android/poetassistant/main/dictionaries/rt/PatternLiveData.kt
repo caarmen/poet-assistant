@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt
 
 import android.content.Context
-import androidx.core.content.ContextCompat
 import android.text.TextUtils
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
@@ -39,9 +38,12 @@ class PatternLiveData constructor(context: Context, private val query: String) :
         private val TAG = Constants.TAG + PatternLiveData::class.java.simpleName
     }
 
-    @Inject lateinit var mDictionary: Dictionary
-    @Inject lateinit var mPrefs: SettingsPrefs
-    @Inject lateinit var mFavorites: Favorites
+    @Inject
+    lateinit var mDictionary: Dictionary
+    @Inject
+    lateinit var mPrefs: SettingsPrefs
+    @Inject
+    lateinit var mFavorites: Favorites
 
     init {
         DaggerHelper.getMainScreenComponent(context).inject(this)
@@ -63,14 +65,11 @@ class PatternLiveData constructor(context: Context, private val query: String) :
         }
 
         val layout = SettingsPrefs.getLayout(mPrefs)
-        matches.forEachIndexed { i, match ->
-            /*@ColorRes*/
-            val color = if (i % 2 == 0) R.color.row_background_color_even else R.color.row_background_color_odd
+        matches.forEach { match ->
             data.add(RTEntryViewModel(
                     context,
                     RTEntryViewModel.Type.WORD,
                     match,
-                    ContextCompat.getColor(context, color),
                     favorites.contains(match),
                     layout == SettingsPrefs.Layout.EFFICIENT))
         }

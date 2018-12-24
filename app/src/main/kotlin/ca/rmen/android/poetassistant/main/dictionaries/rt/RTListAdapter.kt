@@ -20,11 +20,13 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt
 
 import android.app.Activity
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.databinding.ListItemHeadingBinding
 import ca.rmen.android.poetassistant.databinding.ListItemSubheadingBinding
@@ -33,7 +35,7 @@ import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.TextPopupMenu
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
 
-open class RTListAdapter(val tab: Tab, activity: Activity) : ResultListAdapter<RTEntryViewModel>() {
+open class RTListAdapter(val tab: Tab, private val activity: Activity) : ResultListAdapter<RTEntryViewModel>() {
     private val mWordClickedListener: OnWordClickListener = activity as OnWordClickListener
     private val mEntryIconClickListener = EntryIconClickListener()
 
@@ -63,6 +65,7 @@ open class RTListAdapter(val tab: Tab, activity: Activity) : ResultListAdapter<R
             else -> {
                 val wordBinding = holder.binding as ListItemWordBinding
                 wordBinding.viewModel = viewModel
+                wordBinding.root.setBackgroundColor(getRowBackgroundColor(position))
                 wordBinding.entryIconClickListener = mEntryIconClickListener
                 TextPopupMenu.addPopupMenu(
                         if (viewModel.showButtons) TextPopupMenu.Style.SYSTEM else TextPopupMenu.Style.FULL,
@@ -73,6 +76,16 @@ open class RTListAdapter(val tab: Tab, activity: Activity) : ResultListAdapter<R
             }
         }
         holder.binding.executePendingBindings()
+    }
+
+    @ColorInt
+    private fun getRowBackgroundColor(rowIndex: Int): Int {
+        val colorRes = if (activity.resources.getBoolean(R.bool.enable_row_alternating_colors)) {
+            if (rowIndex % 2 == 0) R.color.row_background_color_even else R.color.row_background_color_odd
+        } else {
+            R.color.row_background_color
+        }
+        return ContextCompat.getColor(activity, colorRes)
     }
 
     inner class EntryIconClickListener {

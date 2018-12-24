@@ -39,7 +39,6 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/listPreferredItemHeight"
         android:layout_gravity="center_vertical"
-        android:background="@{viewModel.backgroundColor}"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 

@@ -19,13 +19,10 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries
 
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import android.text.Spannable
+import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -33,10 +30,16 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorite
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.compat.VectorCompat
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
@@ -55,7 +58,7 @@ class ResultListFragment<out T> : Fragment() {
     private lateinit var mViewModel: ResultListViewModel<T>
     private lateinit var mHeaderViewModel: ResultListHeaderViewModel
 
-    private var mTab: Tab? = null
+    private lateinit var mTab: Tab
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.v(TAG, "onCreate")
@@ -65,43 +68,38 @@ class ResultListFragment<out T> : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mTab = arguments?.getSerializable(EXTRA_TAB) as Tab
-        mTab?.let {
-            Log.v(TAG, "$mTab onCreateView")
-            mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false)
-            mBinding.recyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
-            mBinding.recyclerView.setHasFixedSize(true)
-            @Suppress("UNCHECKED_CAST")
-            mViewModel = ResultListFactory.createViewModel(it, this) as ResultListViewModel<T>
-            mBinding.viewModel = mViewModel
-            mViewModel.layout.observe(this, mLayoutSettingChanged)
-            mViewModel.showHeader.observe(this, mShowHeaderChanged)
-            mViewModel.usedQueryWord.observe(this, mUsedQueryWordChanged)
-            mViewModel.isDataAvailable.addOnPropertyChangedCallback(mDataAvailableChanged)
-            mHeaderViewModel = ViewModelProviders.of(this).get(ResultListHeaderViewModel::class.java)
-            mHeaderViewModel.filter.addOnPropertyChangedCallback(mFilterChanged)
-            var headerFragment = childFragmentManager.findFragmentById(R.id.result_list_header)
-            if (headerFragment == null) {
-                headerFragment = ResultListHeaderFragment.newInstance(it)
-                childFragmentManager.beginTransaction().replace(R.id.result_list_header, headerFragment).commit()
-            }
-            mViewModel.favoritesLiveData.observe(this, mFavoritesObserver)
-            mViewModel.resultListDataLiveData.observe(this, Observer { data -> mViewModel.setData(data) })
-            return mBinding.root
+        Log.v(TAG, "$mTab onCreateView")
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false)
+        mBinding.recyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
+        mBinding.recyclerView.setHasFixedSize(true)
+        @Suppress("UNCHECKED_CAST")
+        mViewModel = ResultListFactory.createViewModel(mTab, this) as ResultListViewModel<T>
+        mBinding.viewModel = mViewModel
+        mViewModel.layout.observe(this, mLayoutSettingChanged)
+        mViewModel.showHeader.observe(this, mShowHeaderChanged)
+        mViewModel.usedQueryWord.observe(this, mUsedQueryWordChanged)
+        mViewModel.emptyText.observe(this, mEmptyTextObserver)
+        mViewModel.isDataAvailable.addOnPropertyChangedCallback(mDataAvailableChanged)
+        mHeaderViewModel = ViewModelProviders.of(this).get(ResultListHeaderViewModel::class.java)
+        mHeaderViewModel.filter.addOnPropertyChangedCallback(mFilterChanged)
+        var headerFragment = childFragmentManager.findFragmentById(R.id.result_list_header)
+        if (headerFragment == null) {
+            headerFragment = ResultListHeaderFragment.newInstance(mTab)
+            childFragmentManager.beginTransaction().replace(R.id.result_list_header, headerFragment).commit()
         }
-        return super.onCreateView(inflater, container, savedInstanceState)
+        mViewModel.favoritesLiveData.observe(this, mFavoritesObserver)
+        mViewModel.resultListDataLiveData.observe(this, Observer { data -> mViewModel.setData(data) })
+        return mBinding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         Log.d(TAG, "$mTab: onActivityCreated: savedInstanceState=$savedInstanceState")
         activity?.let {
-            val tab = mTab
-            if (tab != null) {
-                @Suppress("UNCHECKED_CAST")
-                val adapter = ResultListFactory.createAdapter(it, tab) as ResultListAdapter<T>
-                mViewModel.setAdapter(adapter)
-                mBinding.recyclerView.adapter = adapter
-            }
+            @Suppress("UNCHECKED_CAST")
+            val adapter = ResultListFactory.createAdapter(it, mTab) as ResultListAdapter<T>
+            mViewModel.setAdapter(adapter)
+            mBinding.recyclerView.adapter = adapter
         }
     }
 
@@ -160,7 +158,7 @@ class ResultListFragment<out T> : Fragment() {
      */
     fun enableAutoHideIfNeeded() {
         Log.v(TAG, "$mTab: enableAutoHideIfNeeded")
-        if (mTab != null && mBinding.recyclerView.adapter != null) {
+        if (mBinding.recyclerView.adapter != null) {
             val lastVisibleItemPosition = (mBinding.recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
             @Suppress("UNCHECKED_CAST")
             val itemCount = (mBinding.recyclerView.adapter as ResultListAdapter<T>).itemCount
@@ -210,8 +208,33 @@ class ResultListFragment<out T> : Fragment() {
 
     private val mUsedQueryWordChanged = Observer<String> { usedQueryWord -> mHeaderViewModel.query.set(usedQueryWord) }
 
+    private val mEmptyTextObserver = Observer<EmptyText> { emptyText ->
+        mBinding.empty.text = when (emptyText) {
+            is EmptyTextNoQuery -> getNoQueryEmptyText()
+            is EmptyTextNoResults -> getNoResultsEmptyText(emptyText.query)
+            is EmptyTextHidden -> null
+        }
+    }
+
     private fun reload() {
         Log.v(TAG, "$mTab: reload: query=${mHeaderViewModel.query.get()}, filter=${mHeaderViewModel.filter.get()}")
         mViewModel.setQueryParams(ResultListViewModel.QueryParams(mHeaderViewModel.query.get(), mHeaderViewModel.filter.get()))
     }
+
+    // If we have an empty list because the user didn't enter any search term,
+    // we'll show a text to tell them to search.
+    private fun getNoQueryEmptyText(): CharSequence {
+        val emptySearch = getString(R.string.empty_list_without_query)
+        val imageSpan = VectorCompat.createVectorImageSpan(requireActivity(), R.drawable.ic_action_search_dark)
+        val ssb = SpannableStringBuilder(emptySearch)
+        val iconIndex = emptySearch.indexOf("%s")
+        ssb.setSpan(imageSpan, iconIndex, iconIndex + 2, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        return ssb
+    }
+
+    // If the user entered a query and there are no matches, show the normal "no results" text.
+    private fun getNoResultsEmptyText(query: String): CharSequence {
+        return ResultListFactory.getEmptyListText(requireContext(), mTab, query)
+    }
+
 }
