@@ -100,6 +100,7 @@ public class ScreenshotTest {
         swipeViewPagerLeft(1);
         takeScreenshot("favorites");
         openMenuItem(R.string.action_settings);
+        SystemClock.sleep(1000);
         takeScreenshot("settings");
     }
 

@@ -23,13 +23,14 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import androidx.test.espresso.IdlingRegistry;
-import androidx.test.espresso.IdlingResource;
 
 import java.io.File;
 import java.util.Collection;
 
+import androidx.test.espresso.IdlingRegistry;
+import androidx.test.espresso.IdlingResource;
 import ca.rmen.android.poetassistant.InstrumentationThreading;
+import ca.rmen.android.poetassistant.Theme;
 import ca.rmen.android.poetassistant.UserDb;
 import ca.rmen.android.poetassistant.dagger.AppModule;
 import ca.rmen.android.poetassistant.dagger.DaggerHelper;
@@ -40,6 +41,7 @@ import ca.rmen.android.poetassistant.dagger.TestResultListModule;
 import ca.rmen.android.poetassistant.dagger.TestThreadingModule;
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -90,6 +92,7 @@ final class ActivityTestRules {
         userDb.close();
         EmbeddedDb embeddedDb = testAppComponent.getEmbeddedDb();
         embeddedDb.close();
+        Theme.INSTANCE.setThemeFromSettings(new SettingsPrefs((Application) targetContext.getApplicationContext()));
     }
 
     private static void deleteFiles(File folder) {
