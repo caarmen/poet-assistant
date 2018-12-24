@@ -6,6 +6,7 @@ Change Log
 * Update to androidx
 * Remove deprecated code and resources which were relevant only for KitKat and older
 * Rename the "Reader" tab to "Composer" and change the icon to a pencil icon
+* Fix issues with the dark theme on newer devices (Oreo+)
 
 1.27.1  *(2018-11-11)*
 --------------------
