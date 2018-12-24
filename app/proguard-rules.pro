@@ -19,13 +19,6 @@
 -optimizations !code/allocation/variable
 -keepattributes Signature,*Annotation*
 
-# Support library:
-# http://stackoverflow.com/questions/25660793/android-searchview-does-not-work
--keep class android.support.v7.widget.SearchView {
-   public <init>(android.content.Context);
-   public <init>(android.content.Context, android.util.AttributeSet);
-}
-
 # streamsupport:
 -dontwarn java8.util.**
 -dontnote java8.util.**
