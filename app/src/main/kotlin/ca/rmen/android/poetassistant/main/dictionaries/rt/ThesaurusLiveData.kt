@@ -20,11 +20,10 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt
 
 import android.content.Context
-import androidx.annotation.StringRes
-import androidx.annotation.VisibleForTesting
-import androidx.core.content.ContextCompat
 import android.text.TextUtils
 import android.util.Log
+import androidx.annotation.StringRes
+import androidx.annotation.VisibleForTesting
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
@@ -106,14 +105,11 @@ class ThesaurusLiveData constructor(context: Context, private val query: String,
     private fun addResultSection(favorites: Set<String>, results: MutableList<RTEntryViewModel>, @StringRes sectionHeadingResId: Int, words: List<String>, layout: ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout) {
         if (words.isNotEmpty()) {
             results.add(RTEntryViewModel(context, RTEntryViewModel.Type.SUBHEADING, context.getString(sectionHeadingResId)))
-            words.forEachIndexed { i, word ->
-                /*@ColorRes */
-                val color = if (i % 2 == 0) R.color.row_background_color_even else R.color.row_background_color_odd
+            words.forEach { word ->
                 results.add(RTEntryViewModel(
                         context,
                         RTEntryViewModel.Type.WORD,
                         word,
-                        ContextCompat.getColor(context, color),
                         favorites.contains(word),
                         layout == SettingsPrefs.Layout.EFFICIENT
                 ))

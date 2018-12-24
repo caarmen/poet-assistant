@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.wotd
 
 import android.content.Context
-import androidx.core.content.ContextCompat
 import android.text.format.DateUtils
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
@@ -70,12 +69,9 @@ class WotdLiveData(context: Context) : ResultListLiveData<ResultListData<WotdEnt
                 val position = random.nextInt(cursor.count)
                 if (cursor.moveToPosition(position)) {
                     val word = cursor.getString(0)
-                    /*@ColorRes*/
-                    val color = if (i % 2 == 0) R.color.row_background_color_even else R.color.row_background_color_odd
                     data.add(WotdEntryViewModel(context,
                             word,
                             date,
-                            ContextCompat.getColor(context, color),
                             favorites.contains(word),
                             layout == SettingsPrefs.Layout.EFFICIENT))
                 }

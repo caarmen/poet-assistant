@@ -24,8 +24,10 @@
     <color name="dialog_accent">@color/primary</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#727272</color>
-    <color name="row_background_color_even">@android:color/transparent</color>
-    <color name="row_background_color_odd">@android:color/transparent</color>
+    <bool name="enable_row_alternating_colors">false</bool>
+    <color name="row_background_color">@android:color/transparent</color>
+    <color name="row_background_color_even">#ffffff</color>
+    <color name="row_background_color_odd">#f8f8f8</color>
     <color name="divider">#1f000000</color>
     <color name="ic_launcher_background">#FFFFFF</color>
     <color name="tab_default">#b3ffffff</color>

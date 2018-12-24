@@ -20,23 +20,18 @@
 package ca.rmen.android.poetassistant.main.dictionaries
 
 import android.app.Application
+import android.content.SharedPreferences
+import android.preference.PreferenceManager
+import android.text.TextUtils
+import android.util.Log
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import android.content.SharedPreferences
-import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
-import android.preference.PreferenceManager
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.TextUtils
-import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorite
 import ca.rmen.android.poetassistant.Favorites
-import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.compat.VectorCompat
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
@@ -48,7 +43,7 @@ class ResultListViewModel<T> constructor(application: Application, private val t
     }
 
     val isDataAvailable = ObservableBoolean()
-    val emptyText = ObservableField<CharSequence>()
+    val emptyText = MutableLiveData<EmptyText>()
     val layout = MutableLiveData<ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout>()
     val showHeader = MutableLiveData<Boolean>()
     val usedQueryWord = MutableLiveData<String>()
@@ -64,7 +59,7 @@ class ResultListViewModel<T> constructor(application: Application, private val t
 
     init {
         ResultListFactory.inject(application, tab, this)
-        emptyText.set(getNoQueryEmptyText())
+        emptyText.value = EmptyTextNoQuery
         mPrefsListener = PrefsListener()
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mPrefsListener)
         favoritesLiveData = mFavorites.getFavoritesLiveData()
@@ -99,11 +94,11 @@ class ResultListViewModel<T> constructor(application: Application, private val t
         }
         val hasQuery = loadedData != null && !TextUtils.isEmpty(loadedData.matchedWord)
         if (!hasQuery) {
-            emptyText.set(getNoQueryEmptyText())
+            emptyText.value = EmptyTextNoQuery
         } else if (loadedData!!.data != null) {
-            emptyText.set(getNoResultsEmptyText(loadedData.matchedWord))
+            emptyText.value = EmptyTextNoResults(loadedData.matchedWord)
         } else {
-            emptyText.set(null)
+            emptyText.value = EmptyTextHidden
         }
         showHeader.value = hasQuery
         if (loadedData != null) {
@@ -111,22 +106,6 @@ class ResultListViewModel<T> constructor(application: Application, private val t
         }
         isDataAvailable.set(loadedData?.data?.isNotEmpty()!!)
         isDataAvailable.notifyChange()
-    }
-
-    // If we have an empty list because the user didn't enter any search term,
-    // we'll show a text to tell them to search.
-    private fun getNoQueryEmptyText(): CharSequence {
-        val emptySearch = getApplication<Application>().getString(R.string.empty_list_without_query)
-        val imageSpan = VectorCompat.createVectorImageSpan(getApplication(), R.drawable.ic_action_search_dark)
-        val ssb = SpannableStringBuilder(emptySearch)
-        val iconIndex = emptySearch.indexOf("%s")
-        ssb.setSpan(imageSpan, iconIndex, iconIndex + 2, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-        return ssb
-    }
-
-    // If the user entered a query and there are no matches, show the normal "no results" text.
-    private fun getNoResultsEmptyText(query: String): CharSequence {
-        return ResultListFactory.getEmptyListText(getApplication(), tab, query)
     }
 
     override fun onCleared() {

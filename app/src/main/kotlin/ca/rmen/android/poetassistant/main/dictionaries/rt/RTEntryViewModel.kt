@@ -21,11 +21,10 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt
 
 import android.content.Context
 import androidx.databinding.ObservableBoolean
-import androidx.annotation.ColorInt
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 
-class RTEntryViewModel(context: Context, val type: Type, val text: String, @ColorInt val backgroundColor: Int,
+class RTEntryViewModel(context: Context, val type: Type, val text: String,
                        isFavoriteInitialValue: Boolean, val hasDefinition: Boolean, val showButtons: Boolean) {
     enum class Type {
         HEADING,
@@ -36,10 +35,10 @@ class RTEntryViewModel(context: Context, val type: Type, val text: String, @Colo
     val isFavorite = ObservableBoolean()
 
     constructor(context: Context, type: Type, text: String) :
-            this(context, type, text, 0, false, false)
+            this(context, type, text,  false, false)
 
-    constructor(context: Context, type: Type, text: String, @ColorInt backgroundColor: Int, isFavoriteInitialValue: Boolean, showButtons: Boolean) :
-            this(context, type, text, backgroundColor, isFavoriteInitialValue, true, showButtons)
+    constructor(context: Context, type: Type, text: String, isFavoriteInitialValue: Boolean, showButtons: Boolean) :
+            this(context, type, text, isFavoriteInitialValue, true, showButtons)
 
     init {
         val favorites = DaggerHelper.getMainScreenComponent(context).getFavorites()

@@ -18,6 +18,5 @@
   -->
 
 <resources>
-    <color name="row_background_color_even">#ffffff</color>
-    <color name="row_background_color_odd">#f8f8f8</color>
+    <bool name="enable_row_alternating_colors">true</bool>
 </resources>
