@@ -19,20 +19,20 @@
 
 package ca.rmen.android.poetassistant.compat
 
-import android.content.Context
+import android.app.Activity
 import android.os.Build
-import androidx.annotation.DrawableRes
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import android.text.style.ImageSpan
 import android.widget.TextView
+import androidx.annotation.DrawableRes
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 
 object VectorCompat {
-    fun createVectorImageSpan(context: Context, @DrawableRes resId: Int): ImageSpan {
+    fun createVectorImageSpan(activity: Activity, @DrawableRes resId: Int): ImageSpan {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return ImageSpan(context, resId)
+            return ImageSpan(activity, resId)
         }
 
-        val drawable = createVectorDrawable(context, resId)
+        val drawable = createVectorDrawable(activity, resId)
         drawable!!.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
         return ImageSpan(drawable)
     }
@@ -42,7 +42,7 @@ object VectorCompat {
      * drawableLeft, from xml.  Use this method to use a vector drawable as
      * a compound drawable of a TextView.
      */
-    fun setCompoundVectorDrawables(context: Context,
+    fun setCompoundVectorDrawables(activity: Activity,
                                    textView: TextView,
                                    @DrawableRes start: Int,
                                    @DrawableRes top: Int,
@@ -50,14 +50,14 @@ object VectorCompat {
                                    @DrawableRes bottom: Int) {
         androidx.core.widget.TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 textView,
-                createVectorDrawable(context, start),
-                createVectorDrawable(context, top),
-                createVectorDrawable(context, end),
-                createVectorDrawable(context, bottom))
+                createVectorDrawable(activity, start),
+                createVectorDrawable(activity, top),
+                createVectorDrawable(activity, end),
+                createVectorDrawable(activity, bottom))
     }
 
-    private fun createVectorDrawable(context: Context, @DrawableRes res: Int): VectorDrawableCompat? {
+    private fun createVectorDrawable(activity: Activity, @DrawableRes res: Int): VectorDrawableCompat? {
         if (res == 0) return null
-        return VectorDrawableCompat.create(context.resources, res, null)
+        return VectorDrawableCompat.create(activity.resources, res, null)
     }
 }

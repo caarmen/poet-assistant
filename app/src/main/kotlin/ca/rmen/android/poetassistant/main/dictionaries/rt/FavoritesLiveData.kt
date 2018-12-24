@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt
 
 import android.content.Context
-import androidx.core.content.ContextCompat
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorites
@@ -52,14 +51,12 @@ class FavoritesLiveData(context: Context) : ResultListLiveData<ResultListData<RT
 
         val sortedFavorites = TreeSet<String>(favorites)
         val layout = SettingsPrefs.getLayout(mPrefs)
-        sortedFavorites.forEachIndexed { i, favorite ->
+        sortedFavorites.forEach { favorite ->
             /*@ColorRes*/
-            val color = if (i % 2 == 0) R.color.row_background_color_even else R.color.row_background_color_odd
             data.add(RTEntryViewModel(
                     context,
                     RTEntryViewModel.Type.WORD,
                     favorite,
-                    ContextCompat.getColor(context, color),
                     true,
                     layout == SettingsPrefs.Layout.EFFICIENT
             ))

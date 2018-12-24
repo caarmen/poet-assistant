@@ -86,7 +86,6 @@ public class ScreenshotTest {
     private void takeSreenshots() {
         starWords("acquiesce", "askance", "benight", "deferential", "fractious", "implacable", "obfuscation", "peon", "possibleness");
         search("chance");
-        onIdle();
         takeScreenshot("rhymer");
         swipeViewPagerLeft(1);
         takeScreenshot("thesaurus");
@@ -95,7 +94,6 @@ public class ScreenshotTest {
         swipeViewPagerLeft(1);
         typePoem("Roses are red.\nViolets are blue.\nIf you are a poet,\nthis app is for you.");
         SystemClock.sleep(1000);
-        onIdle();
         takeScreenshot("composer");
         swipeViewPagerLeft(1);
         takeScreenshot("favorites");
@@ -106,12 +104,15 @@ public class ScreenshotTest {
     private void starWords(String... words) {
         for (String word : words) {
             search(word);
+            onIdle();
             starQueryWord();
         }
     }
 
     // https://stackoverflow.com/questions/38519568/how-to-take-screenshot-at-the-point-where-test-fail-in-espresso
     private void takeScreenshot(String filename) {
+        SystemClock.sleep(500); // :(
+        onIdle();
         ScreenCapture capture = androidx.test.runner.screenshot.Screenshot.capture();
         capture.setName(filename);
         capture.setFormat(Bitmap.CompressFormat.PNG);

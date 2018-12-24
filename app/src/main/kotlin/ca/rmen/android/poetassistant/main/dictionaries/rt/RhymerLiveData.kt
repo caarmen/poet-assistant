@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt
 
 import android.content.Context
-import androidx.core.content.ContextCompat
 import android.text.TextUtils
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
@@ -88,7 +87,8 @@ class RhymerLiveData(context: Context, val query: String, val filter: String?) :
         val data = ArrayList<RTEntryViewModel>()
         if (TextUtils.isEmpty(query)) return emptyResult()
 
-        var rhymeResults = mRhymer.getRhymingWords(query, Constants.MAX_RESULTS) ?: return emptyResult()
+        var rhymeResults = mRhymer.getRhymingWords(query, Constants.MAX_RESULTS)
+                ?: return emptyResult()
         if (!TextUtils.isEmpty(filter)) {
             val synonyms = mThesaurus.getFlatSynonyms(filter!!, mPrefs.isThesaurusReverseLookupEnabled)
             if (synonyms.isEmpty()) return emptyResult()
@@ -136,14 +136,12 @@ class RhymerLiveData(context: Context, val query: String, val filter: String?) :
         if (rhymes.isNotEmpty()) {
             val wordsWithDefinitions = if (mPrefs.isAllRhymesEnabled) mRhymer.getWordsWithDefinitions(rhymes) else null
             results.add(RTEntryViewModel(context, RTEntryViewModel.Type.SUBHEADING, context.getString(sectionHeadingResId)))
-            rhymes.forEachIndexed { i, rhyme ->
-                /*@ColorRes */val color = if (i % 2 == 0) R.color.row_background_color_even else R.color.row_background_color_odd
+            rhymes.forEach { rhyme ->
                 val hasDefinition = wordsWithDefinitions == null || wordsWithDefinitions.contains(rhyme)
                 results.add(RTEntryViewModel(
                         context,
                         RTEntryViewModel.Type.WORD,
                         rhyme,
-                        ContextCompat.getColor(context, color),
                         favorites.contains(rhyme),
                         hasDefinition,
                         layout == SettingsPrefs.Layout.EFFICIENT))
