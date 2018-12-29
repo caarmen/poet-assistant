@@ -147,17 +147,10 @@ class Thesaurus @Inject constructor(private val embeddedDb: EmbeddedDb) {
                 .map { group ->
                     group.value.reduce { acc, thesaurusEntryDetails ->
                         ThesaurusEntry.ThesaurusEntryDetails(acc.wordType,
-                                union(acc.synonyms, thesaurusEntryDetails.synonyms),
-                                union(acc.antonyms, thesaurusEntryDetails.antonyms))
+                                acc.synonyms.union(thesaurusEntryDetails.synonyms).toList(),
+                                acc.antonyms.union(thesaurusEntryDetails.antonyms).toList())
                     }
                 }.toList()
-    }
-
-    private fun union(first: List<String>, second: List<String>): List<String> {
-        val result = LinkedHashSet<String>()
-        result.addAll(first)
-        result.addAll(second)
-        return ArrayList(result)
     }
 
     /**
