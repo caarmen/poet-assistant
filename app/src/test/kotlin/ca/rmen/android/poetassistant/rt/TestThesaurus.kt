@@ -51,14 +51,14 @@ class TestThesaurus {
     }
 
     @Test
-    fun testReverseLookupDisabled() {
+    fun testReverseLookupDisabledMistake() {
         val thesaurusEntry = thesaurus.lookup("mistake", false)
         assertEquals(5, thesaurusEntry.entries.size)
         assertExpectedForwardThesaurusEntryForMistake(thesaurusEntry)
     }
 
     @Test
-    fun testReverseLookupEnabled() {
+    fun testReverseLookupEnabledMistake() {
         val thesaurusEntry = thesaurus.lookup("mistake", true)
         assertEquals(7, thesaurusEntry.entries.size)
         assertExpectedForwardThesaurusEntryForMistake(thesaurusEntry)
@@ -83,6 +83,32 @@ class TestThesaurus {
         assertTrue(thesaurusEntry.entries[index].antonyms.isEmpty())
     }
 
+    @Test
+    fun testReverseLookupDisabledNonattendance() {
+        val thesaurusEntry = thesaurus.lookup("nonattendance", false)
+        assertEquals(1, thesaurusEntry.entries.size)
+        assertExpectedForwardThesaurusEntryForNonattendance(thesaurusEntry)
+
+    }
+
+    @Test
+    fun testReverseLookupEnabledNonattendance() {
+        val thesaurusEntry = thesaurus.lookup("nonattendance", true)
+        assertEquals(3, thesaurusEntry.entries.size)
+        assertExpectedForwardThesaurusEntryForNonattendance(thesaurusEntry)
+        var index = 1
+        assertEquals(ThesaurusEntry.WordType.NOUN, thesaurusEntry.entries[index].wordType)
+        assertEquals(Arrays.asList( "absence", "hooky", "nonappearance", "truancy"),
+                thesaurusEntry.entries[index].synonyms)
+        assertTrue(thesaurusEntry.entries[index].antonyms.isEmpty())
+
+        index++
+        assertEquals(ThesaurusEntry.WordType.NOUN, thesaurusEntry.entries[index].wordType)
+        assertTrue(thesaurusEntry.entries[index].synonyms.isEmpty())
+        assertEquals(Arrays.asList( "attending"),
+                thesaurusEntry.entries[index].antonyms)
+
+    }
     private fun assertExpectedForwardThesaurusEntryForMistake(thesaurusEntry: ThesaurusEntry) {
         var index = 0
         assertEquals(ThesaurusEntry.WordType.NOUN, thesaurusEntry.entries[index].wordType)
@@ -109,6 +135,13 @@ class TestThesaurus {
         assertEquals(Arrays.asList("slip up", "err", "slip"), thesaurusEntry.entries[index].synonyms)
         assertTrue(thesaurusEntry.entries[index].antonyms.isEmpty())
 
+    }
+
+    private fun assertExpectedForwardThesaurusEntryForNonattendance(thesaurusEntry: ThesaurusEntry) {
+        val index = 0
+        assertEquals(ThesaurusEntry.WordType.NOUN, thesaurusEntry.entries[index].wordType)
+        assertEquals(Arrays.asList("group action"), thesaurusEntry.entries[index].synonyms)
+        assertEquals(Arrays.asList("attendance"), thesaurusEntry.entries[index].antonyms)
     }
 
 }
