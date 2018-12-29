@@ -33,6 +33,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLiveData
+import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search
 import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions
@@ -57,6 +58,7 @@ interface AppComponent {
     fun getWotdComponent(): AppComponent.WotdComponent
 
     interface BaseComponent {
+        fun getThesaurus() : Thesaurus
         fun getDictionary() : Dictionary
         fun getSuggestions(): Suggestions
         fun getFavorites(): Favorites

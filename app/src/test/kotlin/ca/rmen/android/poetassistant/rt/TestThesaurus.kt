@@ -1,0 +1,114 @@
+/*
+ * Copyright (c) 2016 - 2017 Carmen Alvarez
+ *
+ * This file is part of Poet Assistant.
+ *
+ * Poet Assistant is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Poet Assistant is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package ca.rmen.android.poetassistant.rt
+
+import ca.rmen.android.poetassistant.Environment
+import ca.rmen.android.poetassistant.dagger.AppModule
+import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.dagger.DaggerJunitAppComponent
+import ca.rmen.android.poetassistant.dagger.DbModule
+import ca.rmen.android.poetassistant.dagger.JunitThreadingModule
+import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
+import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusEntry
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import java.util.Arrays
+
+@RunWith(RobolectricTestRunner::class)
+class TestThesaurus {
+
+    private lateinit var thesaurus: Thesaurus
+    @Before
+    fun setup() {
+        val testAppComponent = DaggerJunitAppComponent.builder()
+                .appModule(AppModule(Environment.getApplication()))
+                .dbModule(DbModule(Environment.getApplication()))
+                .junitThreadingModule(JunitThreadingModule())
+                .build()
+        DaggerHelper.setAppComponent(testAppComponent)
+        thesaurus = DaggerHelper.getMainScreenComponent(Environment.getApplication()).getThesaurus()
+    }
+
+    @Test
+    fun testReverseLookupDisabled() {
+        val thesaurusEntry = thesaurus.lookup("mistake", false)
+        assertEquals(5, thesaurusEntry.entries.size)
+        assertExpectedForwardThesaurusEntryForMistake(thesaurusEntry)
+    }
+
+    @Test
+    fun testReverseLookupEnabled() {
+        val thesaurusEntry = thesaurus.lookup("mistake", true)
+        assertEquals(7, thesaurusEntry.entries.size)
+        assertExpectedForwardThesaurusEntryForMistake(thesaurusEntry)
+        var index = 5
+        assertEquals(ThesaurusEntry.WordType.NOUN, thesaurusEntry.entries[index].wordType)
+        assertEquals(Arrays.asList(
+                "balls-up", "ballup", "betise", "bloomer", "blooper", "blot", "blunder", "boner",
+                "boo-boo", "botch", "bungle", "cockup", "confusion", "corrigendum", "distortion",
+                "erratum", "flub", "folly", "foolishness", "foul-up", "fuckup", "imbecility",
+                "incursion", "lapse", "literal", "literal error", "mess-up", "miscalculation",
+                "miscue", "misestimation", "misprint", "misreckoning", "mix-up", "offside", "omission",
+                "oversight", "parapraxis", "pratfall", "renege", "revoke", "skip", "slip-up", "smear",
+                "smirch", "spot", "stain", "stupidity", "typo", "typographical error"),
+                thesaurusEntry.entries[index].synonyms)
+        assertTrue(thesaurusEntry.entries[index].antonyms.isEmpty())
+
+        index++
+        assertEquals(ThesaurusEntry.WordType.VERB, thesaurusEntry.entries[index].wordType)
+        assertEquals(Arrays.asList("confound", "confuse", "fall for", "misjudge", "misremember",
+                "stumble", "trip up"),
+                thesaurusEntry.entries[index].synonyms)
+        assertTrue(thesaurusEntry.entries[index].antonyms.isEmpty())
+    }
+
+    private fun assertExpectedForwardThesaurusEntryForMistake(thesaurusEntry: ThesaurusEntry) {
+        var index = 0
+        assertEquals(ThesaurusEntry.WordType.NOUN, thesaurusEntry.entries[index].wordType)
+        assertEquals(Arrays.asList("nonaccomplishment", "nonachievement", "error", "fault"), thesaurusEntry.entries[index].synonyms)
+        assertTrue(thesaurusEntry.entries[index].antonyms.isEmpty())
+
+        index++
+        assertEquals(ThesaurusEntry.WordType.NOUN, thesaurusEntry.entries[index].wordType)
+        assertEquals(Arrays.asList("misunderstanding", "misapprehension", "misconception"), thesaurusEntry.entries[index].synonyms)
+        assertTrue(thesaurusEntry.entries[index].antonyms.isEmpty())
+
+        index++
+        assertEquals(ThesaurusEntry.WordType.NOUN, thesaurusEntry.entries[index].wordType)
+        assertEquals(Arrays.asList("misstatement", "error"), thesaurusEntry.entries[index].synonyms)
+        assertTrue(thesaurusEntry.entries[index].antonyms.isEmpty())
+
+        index++
+        assertEquals(ThesaurusEntry.WordType.VERB, thesaurusEntry.entries[index].wordType)
+        assertEquals(Arrays.asList("misidentify", "identify"), thesaurusEntry.entries[index].synonyms)
+        assertTrue(thesaurusEntry.entries[index].antonyms.isEmpty())
+
+        index++
+        assertEquals(ThesaurusEntry.WordType.VERB, thesaurusEntry.entries[index].wordType)
+        assertEquals(Arrays.asList("slip up", "err", "slip"), thesaurusEntry.entries[index].synonyms)
+        assertTrue(thesaurusEntry.entries[index].antonyms.isEmpty())
+
+    }
+
+}
