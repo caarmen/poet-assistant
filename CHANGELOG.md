@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-1.28.1  *TBD*
+1.28.1  *(2019-02-03)*
 --------------------
 * Update build environment:
   - agp: 3.2.1 -> 3.3.0
@@ -11,6 +11,8 @@ Change Log
   - kotlin coroutines: 1.1.0 -> 1.1.1
   - dagger: 2.20 -> 2.21
   - leak-canary: 1.6.2 -> 1.6.3
+* Improve audio export: show the share intent directly (bypassing the notification) if the app is visible
+* Fix Android Studio code inspection issues
 
 1.28.0  *(2018-12-23)*
 --------------------
