@@ -208,9 +208,9 @@ class ResultListFragment<out T> : Fragment() {
 
     private val mShowHeaderChanged = Observer<Boolean> { showHeader -> mHeaderViewModel.showHeader.set(showHeader == true) }
 
-    private val mLayoutSettingChanged = Observer<SettingsPrefs.Layout> { _ -> reload() }
+    private val mLayoutSettingChanged = Observer<SettingsPrefs.Layout> { reload() }
 
-    private val mFavoritesObserver = Observer<List<Favorite>> { _ -> reload() }
+    private val mFavoritesObserver = Observer<List<Favorite>> { reload() }
 
     private val mUsedQueryWordChanged = Observer<String> { usedQueryWord -> mHeaderViewModel.query.set(usedQueryWord) }
 

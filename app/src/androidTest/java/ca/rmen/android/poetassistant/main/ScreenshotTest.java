@@ -73,7 +73,7 @@ public class ScreenshotTest {
 
     @Test
     public void takeLightScreenshotsTest() {
-        takeSreenshots();
+        takeScreenshots();
     }
 
     @Test
@@ -82,10 +82,10 @@ public class ScreenshotTest {
         clickPreference(R.string.pref_theme_title);
         onView(withText(R.string.pref_theme_value_dark)).perform(click());
         pressBack();
-        takeSreenshots();
+        takeScreenshots();
     }
 
-    private void takeSreenshots() {
+    private void takeScreenshots() {
         starWords("acquiesce", "askance", "benight", "deferential", "fractious", "implacable", "obfuscation", "peon", "possibleness");
         search("chance");
         takeScreenshot("rhymer");
