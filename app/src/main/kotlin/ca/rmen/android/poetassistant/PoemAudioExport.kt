@@ -22,17 +22,19 @@ package ca.rmen.android.poetassistant
 import android.annotation.TargetApi
 import android.app.NotificationManager
 import android.app.PendingIntent
-import androidx.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
-import android.util.Log
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ProcessLifecycleOwner
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.Share
@@ -127,20 +129,27 @@ class PoemAudioExport(val context: Context) {
     private fun notifyPoemAudioReady() {
         Log.v(TAG, "notifyPoemAudioReady")
         cancelNotifications()
-        (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?)?.let {
-            val shareIntent = getFileShareIntent()
-            if (shareIntent != null) {
-                it.notify(EXPORT_FINISH_NOTIFICATION_ID, NotificationCompat.Builder(context, NotificationChannel.createNotificationChannel(context))
-                        .setAutoCancel(true)
-                        .setContentIntent(shareIntent)
-                        .setContentTitle(context.getString(R.string.share_poem_audio_ready_notification_title))
-                        .setContentText(context.getString(R.string.share_poem_audio_ready_notification_message))
-                        .setSmallIcon(Share.getNotificationIcon())
-                        .addAction(
-                                Share.getShareIconId(),
-                                context.getString(R.string.share),
-                                shareIntent)
-                        .build())
+        val shareIntent = getFileShareIntent()
+        if (shareIntent != null) {
+            if (ProcessLifecycleOwner.get().lifecycle.currentState == Lifecycle.State.RESUMED) {
+                shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(shareIntent)
+            } else {
+                (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?)?.let {
+                    val pendingIntent =
+                            PendingIntent.getActivity(context, 0, shareIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    it.notify(EXPORT_FINISH_NOTIFICATION_ID, NotificationCompat.Builder(context, NotificationChannel.createNotificationChannel(context))
+                            .setAutoCancel(true)
+                            .setContentIntent(pendingIntent)
+                            .setContentTitle(context.getString(R.string.share_poem_audio_ready_notification_title))
+                            .setContentText(context.getString(R.string.share_poem_audio_ready_notification_message))
+                            .setSmallIcon(Share.getNotificationIcon())
+                            .addAction(
+                                    Share.getShareIconId(),
+                                    context.getString(R.string.share),
+                                    pendingIntent)
+                            .build())
+                }
             }
         }
     }
@@ -157,7 +166,7 @@ class PoemAudioExport(val context: Context) {
                         .build())
     }
 
-    private fun getFileShareIntent(): PendingIntent? {
+    private fun getFileShareIntent(): Intent? {
         val file = getAudioFile()
         return if (file != null) {
             // Bring up the chooser to share the file.
@@ -166,7 +175,7 @@ class PoemAudioExport(val context: Context) {
             val uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".fileprovider", file)
             sendIntent.putExtra(Intent.EXTRA_STREAM, uri)
             sendIntent.type = "audio/x-wav"
-            PendingIntent.getActivity(context, 0, sendIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            Intent.createChooser(sendIntent, context.getString(R.string.share_poem_audio))
         } else {
             null
         }
