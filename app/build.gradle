@@ -36,7 +36,7 @@ android {
         enabled = true
     }
     jacoco {
-        version "0.8.2"
+        version "0.8.3"
     }
     lintOptions {
         abortOnError true
@@ -49,8 +49,8 @@ android {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 112800
-        versionName "1.28.0"
+        versionCode 112801
+        versionName "1.28.1"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
@@ -137,7 +137,7 @@ android {
 }
 
 jacoco {
-    toolVersion '0.8.2'
+    toolVersion '0.8.3'
 }
 android.applicationVariants.all { variant ->
     variant.mergeAssets.doLast {
@@ -170,7 +170,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.4'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.5'
     }
 }
 
