@@ -108,7 +108,7 @@ class Thesaurus @Inject constructor(private val embeddedDb: EmbeddedDb) {
         val projection = arrayOf("word", "word_type")
         var selection = String.format(Locale.US, "(%s = ? OR %S LIKE ? OR %S LIKE ? OR %S LIKE ?) ",
                 relationType.columnName, relationType.columnName, relationType.columnName, relationType.columnName)
-        val selectionArgs = Array(4 + excludeRelatedWords.size) { _ -> ""}
+        val selectionArgs = Array(4 + excludeRelatedWords.size) { ""}
         var i = 0
         selectionArgs[i++] = word // only relatedWord
         selectionArgs[i++] = String.format(Locale.US, "%s,%%", word) // first relatedWord

@@ -22,9 +22,9 @@ package ca.rmen.android.poetassistant.main
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
-import androidx.appcompat.app.AlertDialog
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 
@@ -49,7 +49,7 @@ class WarningNoSpaceDialogFragment : DialogFragment() {
         Log.v(TAG, "onCreateDialog: savedInstanceState: $savedInstanceState")
         context?.let {
             val positiveListener = DialogInterface.OnClickListener { _, _ -> notifyListener() }
-            val dismissListener = DialogInterface.OnDismissListener { _ -> notifyListener() }
+            val dismissListener = DialogInterface.OnDismissListener { notifyListener() }
 
             val dialog = AlertDialog.Builder(it)
                     .setTitle(it.getString(R.string.warning_no_space_title))

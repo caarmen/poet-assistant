@@ -237,16 +237,16 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
                 val snackBar = Snackbar.make(root, HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG)
                 val intent = Intent("com.android.settings.TTS_SETTINGS")
                 if (intent.resolveActivity(root.context.packageManager) != null) {
-                    snackBar.setAction(R.string.tts_error_open_system_settings) { _ -> startActivity(intent) }
+                    snackBar.setAction(R.string.tts_error_open_system_settings) { startActivity(intent) }
                 } else {
-                    snackBar.setAction(R.string.tts_error_open_app_settings) { _ -> startActivity(Intent(context, SettingsActivity::class.java)) }
+                    snackBar.setAction(R.string.tts_error_open_app_settings) { startActivity(Intent(context, SettingsActivity::class.java)) }
                 }
                 snackBar.show()
             }
         }
     }
 
-    private val mPoemFileCallback = Observer<PoemFile> { _ ->
+    private val mPoemFileCallback = Observer<PoemFile> {
         Log.v(TAG, "poemFileCallback: invalidateOptionsMenu")
         activity?.invalidateOptionsMenu()
     }

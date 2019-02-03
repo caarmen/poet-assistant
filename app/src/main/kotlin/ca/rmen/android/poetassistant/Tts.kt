@@ -147,13 +147,13 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun useVoice(textToSpeech: TextToSpeech?, voiceId: String?) {
-        textToSpeech?.let {
+        if (textToSpeech != null) {
             try {
                 if (voiceId == null || SettingsPrefs.VOICE_SYSTEM == voiceId) {
-                    it.voice = it.defaultVoice
-                    Log.v(TAG, "Using default voice ${it.defaultVoice}")
+                    textToSpeech.voice = textToSpeech.defaultVoice
+                    Log.v(TAG, "Using default voice ${textToSpeech.defaultVoice}")
                 } else {
-                    textToSpeech.voice = it.voices
+                    textToSpeech.voice = textToSpeech.voices
                             .asSequence()
                             .filter { voice ->
                                 // The SDK check is here because lint currently ignores @TargetApi in nested lambdas
@@ -161,7 +161,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
                             }
                             // If the user changed the tts engine in the system settings, we may not find
                             // the previous voice they selected.
-                            .elementAtOrElse(0) { _-> it.defaultVoice }
+                            .elementAtOrElse(0) { textToSpeech.defaultVoice }
                     Log.v(TAG, "Using voice ${textToSpeech.voice}")
                 }
             } catch (t: Throwable) {

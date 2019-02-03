@@ -80,7 +80,7 @@ class Dictionary @Inject constructor(private val embeddedDb: EmbeddedDb) {
         val limit = Constants.MAX_RESULTS.toString()
         embeddedDb.query(true, "dictionary", projection, selection, selectionArgs, orderBy, limit)?.use { cursor ->
             if (cursor.count > 0) {
-                val result = Array(cursor.count) { _ -> "" }
+                val result = Array(cursor.count) { "" }
                 while (cursor.moveToNext()) {
                     result[cursor.position] = cursor.getString(0)
                 }
@@ -101,7 +101,7 @@ class Dictionary @Inject constructor(private val embeddedDb: EmbeddedDb) {
         embeddedDb.query(true, "word_variants", projection, selection, selectionArgs,
                 orderBy, MAX_PREFIX_MATCHES.toString())?.use { cursor ->
             if (cursor.count > 0) {
-                val result = Array(cursor.count) { _ -> "" }
+                val result = Array(cursor.count) { "" }
                 while (cursor.moveToNext()) {
                     result[cursor.position] = cursor.getString(0)
                 }

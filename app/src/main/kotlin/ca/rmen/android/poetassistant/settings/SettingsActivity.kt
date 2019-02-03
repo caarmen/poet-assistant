@@ -188,7 +188,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         private fun setOnPreferenceClickListener(preference: Preference, runnable: Runnable) {
-            preference.setOnPreferenceClickListener { _ ->
+            preference.setOnPreferenceClickListener {
                 runnable.run()
                 false
             }

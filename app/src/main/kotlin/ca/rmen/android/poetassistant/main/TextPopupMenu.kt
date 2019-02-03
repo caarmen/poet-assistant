@@ -62,7 +62,7 @@ object TextPopupMenu {
      * @param listener this listener will be notified when the user selects one of the popup menu items
      */
     fun addPopupMenu(style: Style, snackbarView: View, textView: TextView, listener: OnWordClickListener) {
-        textView.setOnClickListener { _ ->
+        textView.setOnClickListener {
             val text = textView.text.toString()
             val popupMenu = createPopupMenu(snackbarView, textView, text, listener)
             when (style) {
