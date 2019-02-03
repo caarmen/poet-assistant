@@ -1,6 +1,17 @@
 Change Log
 ==========
 
+1.28.1  *TBD*
+--------------------
+* Update build environment:
+  - agp: 3.2.1 -> 3.3.0
+  - jacoco: 0.8.2 -> 0.8.3
+  - dexcount: 0.8.4 -> 0.8.5
+  - kotlin: 1.3.11 -> 1.3.20
+  - kotlin coroutines: 1.1.0 -> 1.1.1
+  - dagger: 2.20 -> 2.21
+  - leak-canary: 1.6.2 -> 1.6.3
+
 1.28.0  *(2018-12-23)*
 --------------------
 * Update to androidx

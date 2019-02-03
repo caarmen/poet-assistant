@@ -25,6 +25,7 @@ import android.graphics.Bitmap;
 import android.os.SystemClock;
 
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,6 +57,7 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 
 @LargeTest
+@Ignore
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ScreenshotTest {
