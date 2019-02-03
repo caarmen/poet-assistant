@@ -23,13 +23,6 @@ package ca.rmen.android.poetassistant.main;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.SystemClock;
-import androidx.test.espresso.NoMatchingRootException;
-import androidx.test.espresso.NoMatchingViewException;
-import androidx.test.espresso.PerformException;
-import androidx.test.espresso.ViewInteraction;
-import androidx.test.filters.LargeTest;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.appcompat.widget.ActionBarContextView;
 
 import junit.framework.AssertionFailedError;
 
@@ -40,6 +33,14 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.util.Locale;
 
+import androidx.appcompat.widget.ActionBarContextView;
+import androidx.test.espresso.NoMatchingRootException;
+import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.PerformException;
+import androidx.test.espresso.ViewInteraction;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+import androidx.test.uiautomator.UiDevice;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.reader.WordCounter;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
@@ -59,6 +60,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static ca.rmen.android.poetassistant.main.CustomViewActions.longTap;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clickDialogPositiveButton;
@@ -103,6 +105,7 @@ public class PoemTest {
 
         // Try another one
 
+        UiDevice.getInstance(getInstrumentation()).pressBack();
         onView(allOf(withId(R.id.tv_text), isDisplayed())).perform(clearText());
         SystemClock.sleep(250);
         typeAndSpeakPoem("Will export some text which is a bit longer");
