@@ -1,6 +1,18 @@
 Change Log
 ==========
 
+1.29.1  *(2019-04-21)*
+--------------------
+* Update build environment:
+  - agp: 3.3.0 -> 3.4.0
+  - kotlin: 1.3.20 -> 1.3.30
+  - kotlin coroutines: 1.1.1 -> 1.2.0
+  - dagger: 2.21 -> 2.22.1
+  - robolectric: 4.1 -> 4.2.1
+  - ben manes: 0.20.0 -> 0.21.0
+  - dexcount: 0.8.5 -> 0.8.6
+* Fix issue #164: make autobackup work for settings and the user db
+
 1.29.0  *(2019-02-03)*
 --------------------
 * Update build environment:
