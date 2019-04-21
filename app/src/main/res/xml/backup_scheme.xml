@@ -20,5 +20,8 @@
 <full-backup-content>
     <include
         domain="sharedpref"
-        path="ca.rmen.poetassistant_preferences.xml" />
+        path="ca.rmen.android.poetassistant_preferences.xml" />
+    <include
+        domain="database"
+        path="userdata.db" />
 </full-backup-content>
