@@ -54,4 +54,29 @@ class RTEntryViewModel(context: Context, val type: Type, val text: String,
         return "RTEntryViewModel(text='$text')"
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as RTEntryViewModel
+
+        if (type != other.type) return false
+        if (text != other.text) return false
+        if (hasDefinition != other.hasDefinition) return false
+        if (showButtons != other.showButtons) return false
+        if (isFavorite != other.isFavorite) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = type.hashCode()
+        result = 31 * result + text.hashCode()
+        result = 31 * result + hasDefinition.hashCode()
+        result = 31 * result + showButtons.hashCode()
+        result = 31 * result + isFavorite.hashCode()
+        return result
+    }
+
+
 }

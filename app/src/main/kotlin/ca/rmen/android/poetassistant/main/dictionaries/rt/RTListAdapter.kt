@@ -35,7 +35,12 @@ import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.TextPopupMenu
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
 
-open class RTListAdapter(val tab: Tab, private val activity: Activity) : ResultListAdapter<RTEntryViewModel>() {
+open class RTListAdapter(val tab: Tab, private val activity: Activity) : ResultListAdapter<RTEntryViewModel>(ItemCallback()) {
+
+    class ItemCallback : DiffUtilItemCallback<RTEntryViewModel>() {
+        override fun areContentsTheSame(oldItem: RTEntryViewModel, newItem: RTEntryViewModel) = oldItem == newItem
+    }
+
     private val mWordClickedListener: OnWordClickListener = activity as OnWordClickListener
     private val mEntryIconClickListener = EntryIconClickListener()
 

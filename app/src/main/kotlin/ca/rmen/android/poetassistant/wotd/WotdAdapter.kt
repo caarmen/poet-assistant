@@ -20,10 +20,10 @@
 package ca.rmen.android.poetassistant.wotd
 
 import android.app.Activity
-import androidx.databinding.DataBindingUtil
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.databinding.ListItemWotdBinding
 import ca.rmen.android.poetassistant.main.Tab
@@ -31,7 +31,12 @@ import ca.rmen.android.poetassistant.main.TextPopupMenu
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 
-open class WotdAdapter(activity: Activity) : ResultListAdapter<WotdEntryViewModel>() {
+open class WotdAdapter(activity: Activity) : ResultListAdapter<WotdEntryViewModel>(ItemCallback()) {
+
+    class ItemCallback : DiffUtilItemCallback<WotdEntryViewModel>() {
+        override fun areContentsTheSame(oldItem: WotdEntryViewModel, newItem: WotdEntryViewModel) = oldItem == newItem
+    }
+
     private val mWordClickedListener: OnWordClickListener = activity as OnWordClickListener
     private val mEntryIconClickListener = EntryIconClickListener()
 

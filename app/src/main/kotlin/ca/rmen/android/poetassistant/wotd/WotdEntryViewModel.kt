@@ -36,4 +36,28 @@ class WotdEntryViewModel(context: Context, val text: String, val date: String, i
             }
         }))
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as WotdEntryViewModel
+
+        if (text != other.text) return false
+        if (date != other.date) return false
+        if (showButtons != other.showButtons) return false
+        if (isFavorite != other.isFavorite) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = text.hashCode()
+        result = 31 * result + date.hashCode()
+        result = 31 * result + showButtons.hashCode()
+        result = 31 * result + isFavorite.hashCode()
+        return result
+    }
+
+
 }

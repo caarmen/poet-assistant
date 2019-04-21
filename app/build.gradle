@@ -59,6 +59,7 @@ android {
         // used by Room, to test migrations
         sourceSets {
             main.java.srcDirs += "$projectDir/src/main/kotlin"
+            main.assets.srcDirs += "${project.buildDir}/generated/license_assets"
             androidTest.assets.srcDirs +=
                     files("$projectDir/src/androidTest/schemas".toString())
             test {
@@ -143,7 +144,7 @@ android.applicationVariants.all { variant ->
     variant.mergeAssets.doLast {
         copy {
             from project.rootDir
-            into "${project.buildDir}/intermediates/merged_assets/${variant.buildType.name}/merge${variant.buildType.name.capitalize()}Assets/out/"
+            into "${project.buildDir}/generated/license_assets/"
             include 'LICENSE.txt'
             include 'LICENSE-rhyming-dictionary.txt'
             include 'LICENSE-thesaurus-wordnet.txt'
@@ -169,8 +170,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.20.0'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.5'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0'
+        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6'
     }
 }
 
@@ -280,4 +281,8 @@ kapt {
         // Default is 100.
         option("-Xmaxerrs", 10000)
     }
+}
+
+android.packagingOptions {
+    pickFirst "META-INF/atomicfu.kotlin_module"
 }

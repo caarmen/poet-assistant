@@ -19,13 +19,14 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries
 
-import androidx.databinding.ViewDataBinding
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
+import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 
-abstract class ResultListAdapter<T> : ListAdapter<T, ResultListAdapter.ResultListEntryViewHolder>(DiffUtilItemCallback<T>()) {
+abstract class ResultListAdapter<T>(itemCallback: DiffUtilItemCallback<T>) :
+        ListAdapter<T, ResultListAdapter.ResultListEntryViewHolder>(itemCallback) {
 
     fun getAll(): List<T> {
         val result = mutableListOf<T>()
@@ -37,15 +38,10 @@ abstract class ResultListAdapter<T> : ListAdapter<T, ResultListAdapter.ResultLis
 
     class ResultListEntryViewHolder(val parentView: View, val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root)
 
-    class DiffUtilItemCallback<U> : DiffUtil.ItemCallback<U>() {
+    abstract class DiffUtilItemCallback<U> : DiffUtil.ItemCallback<U>() {
         override fun areItemsTheSame(
                 oldItem: U, newItem: U): Boolean {
             // Normally this would check for ids, but we don't have ids in these lists.
-            return oldItem == newItem
-        }
-
-        override fun areContentsTheSame(
-                oldItem: U, newItem: U): Boolean {
             return oldItem == newItem
         }
     }
