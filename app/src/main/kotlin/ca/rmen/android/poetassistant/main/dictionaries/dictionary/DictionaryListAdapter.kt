@@ -19,16 +19,22 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.dictionary
 
-import androidx.databinding.DataBindingUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.databinding.ListItemDictionaryEntryBinding
 import ca.rmen.android.poetassistant.main.TextPopupMenu
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 
-open class DictionaryListAdapter(private val listener: OnWordClickListener) : ResultListAdapter<DictionaryEntry.DictionaryEntryDetails>() {
+open class DictionaryListAdapter(private val listener: OnWordClickListener)
+    : ResultListAdapter<DictionaryEntry.DictionaryEntryDetails>(ItemCallback()) {
+    class ItemCallback: DiffUtilItemCallback<DictionaryEntry.DictionaryEntryDetails>() {
+        override fun areContentsTheSame(oldItem: DictionaryEntry.DictionaryEntryDetails,
+                                        newItem: DictionaryEntry.DictionaryEntryDetails) = oldItem == newItem
+
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultListEntryViewHolder {
         val binding = DataBindingUtil.inflate<ListItemDictionaryEntryBinding>(
                 LayoutInflater.from(parent.context),
