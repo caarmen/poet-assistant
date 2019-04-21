@@ -281,3 +281,7 @@ kapt {
         option("-Xmaxerrs", 10000)
     }
 }
+
+android.packagingOptions {
+    pickFirst "META-INF/atomicfu.kotlin_module"
+}
