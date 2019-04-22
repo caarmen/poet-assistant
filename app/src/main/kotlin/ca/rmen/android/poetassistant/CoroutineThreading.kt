@@ -47,15 +47,24 @@ open class CoroutineThreading(private val background: CoroutineContext, private 
     }
 
     override fun <T> execute(backgroundTask: () -> T, foregroundTask: ((T) -> Unit)?, errorTask: ((Throwable) -> Unit)?) {
+        val task = GlobalScope.async(background) {
+            backgroundTask()
+        }
         GlobalScope.launch(foreground) {
-            val task = async(background) { backgroundTask.invoke() }
-            try {
-                val result = task.await()
-                foregroundTask?.invoke(result)
 
-            } catch (t: Throwable) {
-                Log.v(TAG, "Error running background task", t)
-                errorTask?.invoke(t)
+            val result = try {
+                task.await()
+            } catch (bt: Throwable) {
+                Log.v(TAG, "Error running background task", bt)
+                errorTask?.invoke(bt)
+                return@launch
+            }
+
+            try {
+                foregroundTask?.invoke(result)
+            } catch (ft: Throwable) {
+                Log.v(TAG, "Error running foreground task", ft)
+                errorTask?.invoke(ft)
             }
         }
     }
