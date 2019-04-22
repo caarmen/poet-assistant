@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+1.29.2  *(2019-04-22)*
+--------------------
+* Catch `Throwable`s thrown by a background task.
+
 1.29.1  *(2019-04-21)*
 --------------------
 * Update build environment:
