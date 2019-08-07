@@ -23,21 +23,22 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ResolveInfo;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceCategory;
-import androidx.preference.PreferenceFragmentCompat;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowPackageManager;
 
+import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceFragmentCompat;
 import ca.rmen.android.poetassistant.Environment;
 import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -47,6 +48,7 @@ import static org.robolectric.Shadows.shadowOf;
 public class SettingsActivityTest {
     private static final String SYSTEM_TTS_SETTINGS_INTENT = "com.android.settings.TTS_SETTINGS";
     @Test
+    @Config(sdk=27)
     public void testSystemSettings() {
         mockSystemSettingsApp();
         ActivityController<SettingsActivity> activityController = Robolectric.buildActivity(SettingsActivity.class);
