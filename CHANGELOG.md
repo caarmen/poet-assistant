@@ -1,6 +1,23 @@
 Change Log
 ==========
 
+1.30.0  *(2019-08-07)*
+--------------------
+* Update build environment:
+  - gradle: 5.4 -> 5.5.1
+  - agp: 3.4.0 -> 3.4.2
+  - ben-manes: 0.21.0 -> 0.22.0
+  - kotlin: 1.3.30 -> 1.3.41
+  - kotlin coroutines: 1.2.0 +> 1.2.2
+  - room: 2.0.0 -> 2.1.0
+  - dqgger: 2.22.1 -> 2.24
+  - jacoco: 0.8.3 -> 0.8.4
+  - roboctric: 4.2.1 -> 4.3
+  - androidx test runner/rules: 1.1.1 -> 1.2.0
+  - androidx test core: 1.1.0 -> 1.2.0
+  - androidx junit: 1.1.0 -> 1.1.1
+  - espresso: 3.1.1 -> 3.2.0
+
 1.29.2  *(2019-04-22)*
 --------------------
 * Catch `Throwable`s thrown by a background task.
