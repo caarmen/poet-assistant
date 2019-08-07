@@ -36,7 +36,7 @@ android {
         enabled = true
     }
     jacoco {
-        version "0.8.3"
+        version "0.8.4"
     }
     lintOptions {
         abortOnError true
@@ -49,8 +49,8 @@ android {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 112902
-        versionName "1.29.2"
+        versionCode 113000
+        versionName "1.30.0"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
@@ -138,7 +138,7 @@ android {
 }
 
 jacoco {
-    toolVersion '0.8.3'
+    toolVersion '0.8.4'
 }
 android.applicationVariants.all { variant ->
     variant.mergeAssets.doLast {
@@ -170,7 +170,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.21.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.22.0'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6'
     }
 }
@@ -228,7 +228,7 @@ dependencies {
 dependencyUpdates.resolutionStrategy = {
     componentSelection { rules ->
         rules.all { ComponentSelection selection ->
-            boolean rejected = ['alpha', 'alpha-preview', 'beta', 'rc', 'cr', 'm'].any { qualifier ->
+            boolean rejected = ['alpha', 'alpha-preview', 'beta', 'rc', 'cr', 'm', 'eap'].any { qualifier ->
                 selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
             }
             if ("com.android.databinding" == selection.candidate.group) {
@@ -283,6 +283,3 @@ kapt {
     }
 }
 
-android.packagingOptions {
-    pickFirst "META-INF/atomicfu.kotlin_module"
-}
