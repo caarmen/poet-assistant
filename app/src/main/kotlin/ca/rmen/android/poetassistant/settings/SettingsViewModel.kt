@@ -26,7 +26,7 @@ import androidx.lifecycle.MutableLiveData
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Threading

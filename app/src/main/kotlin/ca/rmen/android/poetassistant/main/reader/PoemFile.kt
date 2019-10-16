@@ -26,12 +26,12 @@ import android.os.Build
 import android.print.PrintAttributes
 import android.print.PrintManager
 import android.provider.OpenableColumns
-import androidx.annotation.VisibleForTesting
-import androidx.annotation.WorkerThread
 import android.text.TextUtils
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.WorkerThread
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
@@ -110,7 +110,7 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
                     val printAttributes = PrintAttributes.Builder().build()
                     val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager?
                     if (printManager != null) {
-                        val printJob = printManager.print(title!!, printDocumentAdapter, printAttributes)
+                        val printJob = printManager.print(title, printDocumentAdapter, printAttributes)
                         callback.onPrintJobCreated(poemFile, printJob)
                     }
                 }

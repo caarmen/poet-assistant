@@ -152,6 +152,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
     }
 
     override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
         Log.d(TAG, "onNewIntent: intent=$intent")
         setIntent(intent)
         when (intent.action) {
@@ -163,7 +164,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
                 }
                 if (TextUtils.isEmpty(query)) {
                     val userQuery = intent.getCharSequenceExtra(SearchManager.USER_QUERY)
-                    if (!TextUtils.isEmpty(userQuery)) query = userQuery.toString()
+                    if (!userQuery.isNullOrEmpty()) query = userQuery.toString()
                 }
                 if (TextUtils.isEmpty(query)) return
                 mSearch.addSuggestions(query!!)

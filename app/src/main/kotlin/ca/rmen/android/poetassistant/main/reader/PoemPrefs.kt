@@ -21,7 +21,7 @@ package ca.rmen.android.poetassistant.main.reader
 
 import android.content.Context
 import android.net.Uri
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 

@@ -32,7 +32,7 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import android.net.Uri
 import android.os.Build
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.print.PrintJob
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

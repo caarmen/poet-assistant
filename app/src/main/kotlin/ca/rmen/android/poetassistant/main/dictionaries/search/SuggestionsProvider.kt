@@ -32,11 +32,11 @@ import ca.rmen.android.poetassistant.dagger.DaggerHelper
 
 class SuggestionsProvider : ContentProvider() {
     companion object {
+        private const val AUTHORITY = BuildConfig.APPLICATION_ID + ".SuggestionsProvider"
         val CONTENT_URI : Uri =  Uri.Builder()
                 .scheme(ContentResolver.SCHEME_CONTENT)
-                .authority(SuggestionsProvider.AUTHORITY)
+                .authority(AUTHORITY)
                 .build()
-        private const val AUTHORITY = BuildConfig.APPLICATION_ID + ".SuggestionsProvider"
         private const val URI_MATCH_SUGGEST = 1
     }
 
@@ -64,10 +64,12 @@ class SuggestionsProvider : ContentProvider() {
         throw IllegalArgumentException("Unknown Uri")
     }
 
-    override fun insert(uri: Uri, values: ContentValues): Uri? {
-        val suggestion = values.getAsString(SearchManager.QUERY)
-        context?.let {
-            DaggerHelper.getMainScreenComponent(it).getSuggestions().addSuggestion(suggestion)
+    override fun insert(uri: Uri, values: ContentValues?): Uri? {
+        val suggestion = values?.getAsString(SearchManager.QUERY)
+        if (suggestion != null) {
+            context?.let {
+                DaggerHelper.getMainScreenComponent(it).getSuggestions().addSuggestion(suggestion)
+            }
         }
         return null
     }
@@ -79,7 +81,7 @@ class SuggestionsProvider : ContentProvider() {
         return 0
     }
 
-    override fun update(p0: Uri?, p1: ContentValues?, p2: String?, p3: Array<out String>?): Int {
+    override fun update(p0: Uri, p1: ContentValues?, p2: String?, p3: Array<out String>?): Int {
         return 0
     }
 

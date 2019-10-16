@@ -103,7 +103,7 @@ class SettingsActivity : AppCompatActivity() {
 
                 })
                 // Hide the voice preference if we can't load any voices
-                val voicePreference = findPreference(SettingsPrefs.PREF_VOICE) as VoicePreference
+                val voicePreference = findPreference<Preference>(SettingsPrefs.PREF_VOICE) as VoicePreference
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     voicePreference.loadVoices()
                 }
@@ -113,7 +113,7 @@ class SettingsActivity : AppCompatActivity() {
                 setOnPreferenceClickListener(SettingsPrefs.PREF_VOICE_PREVIEW, Runnable { mViewModel.playTtsPreview() })
 
                 // Hide the system tts settings if no system app can handle it
-                val systemTtsSettings = findPreference(SettingsPrefs.PREF_SYSTEM_TTS_SETTINGS)
+                val systemTtsSettings = findPreference<Preference>(SettingsPrefs.PREF_SYSTEM_TTS_SETTINGS)!!
                 val intent = systemTtsSettings.intent
                 if (intent.resolveActivity(it.packageManager) == null) {
                     removePreference(PREF_CATEGORY_VOICE, systemTtsSettings)
@@ -168,23 +168,23 @@ class SettingsActivity : AppCompatActivity() {
                 }
                 val fragment = VoicePreferenceDialogFragment.newInstance(preference.key)
                 fragment.setTargetFragment(this, 0)
-                fragment.show(fragmentManager, DIALOG_TAG)
+                fragment.show(fragmentManager!!, DIALOG_TAG)
             } else {
                 super.onDisplayPreferenceDialog(preference)
             }
         }
 
         private fun removePreferences(categoryKey: String, vararg preferenceKeys: String) {
-            preferenceKeys.forEach { removePreference(categoryKey, findPreference(it)) }
+            preferenceKeys.forEach { removePreference(categoryKey, findPreference(it)!!) }
         }
 
         private fun removePreference(categoryKey: String, preference: Preference) {
-            val category = preferenceScreen.findPreference(categoryKey) as PreferenceCategory
+            val category = preferenceScreen.findPreference<Preference>(categoryKey)!! as PreferenceCategory
             category.removePreference(preference)
         }
 
         private fun setOnPreferenceClickListener(preferenceKey: String, runnable: Runnable) {
-            setOnPreferenceClickListener(findPreference(preferenceKey), runnable)
+            setOnPreferenceClickListener(findPreference<Preference>(preferenceKey)!!, runnable)
         }
 
         private fun setOnPreferenceClickListener(preference: Preference, runnable: Runnable) {

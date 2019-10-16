@@ -21,7 +21,7 @@ package ca.rmen.android.poetassistant.settings
 
 import android.app.Application
 import android.content.Context
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import androidx.core.app.NotificationCompat
 import ca.rmen.android.poetassistant.main.Tab
 import java.util.Locale

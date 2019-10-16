@@ -180,7 +180,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
         }
     }
 
-    fun setText(text: String) {
+    fun setText(text: String?) {
         Log.d(TAG, "setText: text=$text")
         mViewModel.setSavedPoem(PoemFile(null, null, text))
     }

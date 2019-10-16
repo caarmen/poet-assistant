@@ -21,7 +21,7 @@ package ca.rmen.android.poetassistant.main.dictionaries
 
 import android.app.Application
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import android.text.TextUtils
 import android.util.Log
 import androidx.databinding.ObservableBoolean

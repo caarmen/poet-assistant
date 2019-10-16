@@ -26,7 +26,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.text.TextUtils
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.main.Tab
@@ -39,7 +38,7 @@ object ProcessTextRouter {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (Intent.ACTION_PROCESS_TEXT == intent.action) {
                 val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)
-                if (!TextUtils.isEmpty(text)) {
+                if (!text.isNullOrEmpty()) {
                     val query = text.toString().trim().toLowerCase(Locale.US)
                     val uri = Uri.withAppendedPath(
                             Uri.parse("poetassistant://${tab.name.toLowerCase(Locale.US)}"),

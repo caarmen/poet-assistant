@@ -57,8 +57,6 @@ class Voices constructor(private val context: Context) {
                     && !voice.features.contains(TextToSpeech.Engine.KEY_FEATURE_NOT_INSTALLED)
                     && voice.name != null
                     && voice.locale != null
-                    && voice.locale.language != null
-                    && voice.locale.country != null
         }
                 .sortedWith(VoiceComparator())
                 .map { voice -> TtsVoice(voice.name, parseVoiceName(voice)) }
