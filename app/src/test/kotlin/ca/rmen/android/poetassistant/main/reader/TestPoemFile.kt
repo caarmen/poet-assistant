@@ -35,6 +35,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -148,6 +149,7 @@ class TestPoemFile {
     }
 
     @Test
+    @Ignore
     fun testPrint() {
         val callback = CountDownPoemFileCallback()
         val text = "This app is for you\n"
