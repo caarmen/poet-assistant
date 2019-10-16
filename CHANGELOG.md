@@ -1,6 +1,23 @@
 Change Log
 ==========
 
+1.30.1  *(2019-10-16)*
+--------------------
+Update environment
+* compile and target api level 29
+* gradle: 5.5.1 -> 5.6.2
+* android gradle plugin: 3.4.2 -> 3.5.1
+* jacoco: 0.8.4 - 0.8.5
+* ben-manes: 0.22.0 -> 0.27.0
+* robolectric: 4.3 -> 4.3.1
+* kotlin: 1.3.41 -> 1.3.50
+* kotlin coroutines: 1.2.2 -> 1.3.2
+* androidx:
+  - appcompat: 1.0.2 -> 1.1.0
+  - lifecycle: 2.0.0 -> 2.1.0
+  - preference: 1.0.0 -> 1.1.0
+  - room: 2.1.0 -> 2.2.0
+
 1.30.0  *(2019-08-07)*
 --------------------
 * Update build environment:
