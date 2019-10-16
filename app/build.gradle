@@ -36,7 +36,7 @@ android {
         enabled = true
     }
     jacoco {
-        version "0.8.5"
+        version "0.8.4"
     }
     lintOptions {
         abortOnError true
@@ -138,7 +138,7 @@ android {
 }
 
 jacoco {
-    toolVersion '0.8.5'
+    toolVersion '0.8.4'
 }
 android.applicationVariants.all { variant ->
     variant.mergeAssets.doLast {
