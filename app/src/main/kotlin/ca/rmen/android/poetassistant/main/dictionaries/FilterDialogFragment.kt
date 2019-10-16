@@ -21,14 +21,14 @@ package ca.rmen.android.poetassistant.main.dictionaries
 
 import android.app.Dialog
 import android.content.DialogInterface
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import androidx.fragment.app.DialogFragment
-import androidx.appcompat.app.AlertDialog
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.WindowManager
+import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.databinding.InputDialogEditTextBinding
@@ -98,7 +98,7 @@ class FilterDialogFragment : DialogFragment() {
         return super.onCreateDialog(savedInstanceState)
     }
 
-    override fun onDismiss(dialog: DialogInterface?) {
+    override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         AppBarLayoutHelper.forceExpandAppBarLayout(activity)
     }

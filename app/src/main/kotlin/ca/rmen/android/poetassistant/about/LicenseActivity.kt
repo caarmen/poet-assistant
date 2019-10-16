@@ -21,11 +21,11 @@ package ca.rmen.android.poetassistant.about
 
 import android.content.Context
 import android.content.Intent
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatActivity
-import android.util.Log
+import androidx.databinding.DataBindingUtil
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
@@ -58,7 +58,7 @@ class LicenseActivity : AppCompatActivity() {
         }
 
         val title = intent.getStringExtra(EXTRA_TITLE)
-        val licenseFile = intent.getStringExtra(EXTRA_LICENSE_TEXT_ASSET_FILE)
+        val licenseFile = intent.getStringExtra(EXTRA_LICENSE_TEXT_ASSET_FILE)!!
         mBinding.tvTitle.text = title
         val threading = DaggerHelper.getMainScreenComponent(this).getThreading()
         threading.execute({ readFile(licenseFile) },

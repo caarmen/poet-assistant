@@ -20,17 +20,17 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.gradle_plugin_version = '3.4.2'
-    ext.kotlin_version = '1.3.41'
-    ext.kotlin_coroutines_version = '1.2.2'
+    ext.gradle_plugin_version = '3.5.1'
+    ext.kotlin_version = '1.3.50'
+    ext.kotlin_coroutines_version = '1.3.2'
 
-    ext.appcompat_version = "1.0.2"
+    ext.appcompat_version = "1.1.0"
     ext.collection_version = "1.1.0"
     ext.constraintlayout_version = "1.1.3"
-    ext.lifecycle_version = "2.0.0"
+    ext.lifecycle_version = "2.1.0"
     ext.material_version = "1.0.0"
-    ext.preference_version = "1.0.0"
-    ext.room_version = "2.1.0"
+    ext.preference_version = "1.1.0"
+    ext.room_version = "2.2.0"
 
     ext.dagger_version = '2.24'
     ext.leak_canary_version = '1.6.3'
@@ -38,7 +38,7 @@ buildscript {
     ext.rhymer_version = "1.2.0"
 
     ext.junit_version = "4.12"
-    ext.robolectric_version = "4.3"
+    ext.robolectric_version = "4.3.1"
     ext.festreflect_version = "1.4.1"
     ext.androidx_test_runner_version = "1.2.0"
     ext.androidx_test_rules_version = "1.2.0"
@@ -55,7 +55,7 @@ buildscript {
 
         classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
         configurations.classpath.exclude group: 'com.android.tools.external.lombok'
-        classpath 'org.jacoco:org.jacoco.core:0.8.4'
+        classpath 'org.jacoco:org.jacoco.core:0.8.5'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"

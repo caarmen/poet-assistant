@@ -24,11 +24,10 @@ import ca.rmen.android.poetassistant.settings.SettingsPrefs
 
 object Theme {
     fun setThemeFromSettings(settingsPrefs: SettingsPrefs) {
-        val theme = settingsPrefs.theme
-        when (theme) {
+        when (settingsPrefs.theme) {
             SettingsPrefs.THEME_DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             SettingsPrefs.THEME_LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            SettingsPrefs.THEME_AUTO -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO)
+            SettingsPrefs.THEME_AUTO -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         }
     }
 }

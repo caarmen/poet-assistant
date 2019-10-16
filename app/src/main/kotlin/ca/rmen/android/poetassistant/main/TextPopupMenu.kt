@@ -26,8 +26,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.os.Build
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.widget.PopupMenu
 import android.text.TextUtils
 import android.view.ActionMode
 import android.view.Menu
@@ -35,12 +33,14 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.dictionaries.Share
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.widget.HackFor23381
 import ca.rmen.android.poetassistant.widget.PopupMenuHelper
+import com.google.android.material.snackbar.Snackbar
 
 object TextPopupMenu {
     enum class Style {
@@ -142,7 +142,7 @@ object TextPopupMenu {
                 val clipboard = view.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
                 if (clipboard != null) {
                     val clip = ClipData.newPlainText(selectedWord, selectedWord)
-                    clipboard.primaryClip = clip
+                    clipboard.setPrimaryClip(clip)
                     Snackbar.make(snackbarView, R.string.snackbar_copied_text, Snackbar.LENGTH_SHORT).show()
                 }
             }
