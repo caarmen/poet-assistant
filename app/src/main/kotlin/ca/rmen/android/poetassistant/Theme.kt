@@ -19,10 +19,12 @@
 
 package ca.rmen.android.poetassistant
 
+import androidx.annotation.MainThread
 import androidx.appcompat.app.AppCompatDelegate
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 
 object Theme {
+    @MainThread
     fun setThemeFromSettings(settingsPrefs: SettingsPrefs) {
         when (settingsPrefs.theme) {
             SettingsPrefs.THEME_DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

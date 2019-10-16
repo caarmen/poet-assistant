@@ -22,11 +22,11 @@ import android.app.Application;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import androidx.preference.PreferenceManager;
 
 import java.io.File;
 import java.util.Collection;
 
+import androidx.preference.PreferenceManager;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
 import ca.rmen.android.poetassistant.InstrumentationThreading;
@@ -43,6 +43,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb;
 import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static junit.framework.Assert.assertTrue;
 
 final class ActivityTestRules {
@@ -92,7 +93,9 @@ final class ActivityTestRules {
         userDb.close();
         EmbeddedDb embeddedDb = testAppComponent.getEmbeddedDb();
         embeddedDb.close();
-        Theme.INSTANCE.setThemeFromSettings(new SettingsPrefs((Application) targetContext.getApplicationContext()));
+        getInstrumentation().runOnMainSync(() -> {
+            Theme.INSTANCE.setThemeFromSettings(new SettingsPrefs((Application) targetContext.getApplicationContext()));
+        });
     }
 
     private static void deleteFiles(File folder) {
