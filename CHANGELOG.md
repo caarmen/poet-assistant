@@ -1,6 +1,33 @@
 Change Log
 ==========
 
+1.30.2  *(2020-10-28)*
+--------------------
+Update environment:
+* compile and target api level 30
+* gradle: 5.5.2 -> 6.7
+* android gradle plugin: 3.5.1 -> 4.1.0
+* jacoco: 0.8.4 - 0.8.6
+* ben-manes: 0.27.0 -> 0.33.0
+* kotlin: 1.3.50 -> 1.4.10
+* kotlin coroutines: 1.3.2 -> 1.4.0
+* androidx:
+  - appcompat: 1.1.0 -> 1.2.0
+  - constraint layout: 1.1.3 -> 2.0.3
+  - lifecycle: 2.1.0 -> 2.2.0
+  - preference: 1.1.0 -> 1.1.1
+  - room: 2.2.0 -> 2.2.5
+* material: 1.0.0 -> 1.2.1
+* dagger: 2.24 -> 2.29.1
+* leak canary: 1.6.3 -> 2.5
+* testing libraries:
+  - junit: 4.12 -> 4.13.1
+  - robolectric: 4.3.1 -> 4.4
+  - androidx junit: 1.1.1 -> 1.1.2
+  - espresso: 3.2.0 -> 3.3.0
+  - other androidx test libs: 1.2.0 -> 1.3.0
+* Remove dexcount
+
 1.30.1  *(2019-10-16)*
 --------------------
 Update environment

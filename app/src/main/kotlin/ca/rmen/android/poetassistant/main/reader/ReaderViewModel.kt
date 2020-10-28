@@ -292,7 +292,7 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private inner class PrefsListener : SharedPreferences.OnSharedPreferenceChangeListener {
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
             Log.v(TAG, "onSharedPreferenceChanged: key=$key")
             // Prevent the search EditText from disappearing while the user is typing,
             // by only notifying actual changes in the poem text.

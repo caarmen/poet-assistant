@@ -21,6 +21,11 @@
     package="ca.rmen.android.poetassistant">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
 
     <application
         android:name=".PoetAssistantApplication"

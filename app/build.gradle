@@ -19,24 +19,20 @@
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.github.ben-manes.versions'
-apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'jacoco'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 android {
-    compileSdkVersion 29
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 30
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    dataBinding {
-        enabled = true
-    }
+    buildFeatures.dataBinding = true
     jacoco {
-        version "0.8.4"
+        version "0.8.6"
     }
     lintOptions {
         abortOnError true
@@ -48,9 +44,9 @@ android {
     defaultConfig {
         applicationId "ca.rmen.android.poetassistant"
         minSdkVersion 21
-        targetSdkVersion 29
-        versionCode 113001
-        versionName "1.30.1"
+        targetSdkVersion 30
+        versionCode 113002
+        versionName "1.30.2"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
@@ -80,7 +76,9 @@ android {
 
     buildTypes {
         debug {
-            testCoverageEnabled = true
+            testCoverageEnabled = project.gradle.startParameter.taskNames.any {
+                it.contains("testDebugUnitTest") || it.contains("connectedDebugAndroidTest") || it.contains("jacocoTestReport")
+            }
             applicationIdSuffix = ".test"
             resValue "string", "search_provider_authority", android.defaultConfig.applicationId + applicationIdSuffix + ".SuggestionsProvider"
         }
@@ -138,10 +136,10 @@ android {
 }
 
 jacoco {
-    toolVersion '0.8.4'
+    toolVersion '0.8.6'
 }
 android.applicationVariants.all { variant ->
-    variant.mergeAssets.doLast {
+    variant.getMergeAssetsProvider().get().doLast {
         copy {
             from project.rootDir
             into "${project.buildDir}/generated/license_assets/"
@@ -170,8 +168,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.27.0'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.33.0'
     }
 }
 
@@ -205,9 +202,6 @@ dependencies {
     testImplementation "org.robolectric:robolectric:$robolectric_version"
     kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
 
-    testImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leak_canary_version"
-    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leak_canary_version"
-    androidTestImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leak_canary_version"
     debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_canary_version"
 
     androidTestImplementation group: "org.easytesting", name: "fest-reflect", version: "$festreflect_version"
@@ -225,7 +219,7 @@ dependencies {
 }
 
 // Only show real releases with the ben-manes plugin.
-dependencyUpdates.resolutionStrategy = {
+dependencyUpdates.resolutionStrategy {
     componentSelection { rules ->
         rules.all { ComponentSelection selection ->
             boolean rejected = ['alpha', 'alpha-preview', 'beta', 'rc', 'cr', 'm', 'eap'].any { qualifier ->
@@ -244,7 +238,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", "crea
     reports {
         html.enabled = true
     }
-    classDirectories = fileTree(
+    getClassDirectories().setFrom(fileTree(
             dir: "${buildDir}",
             includes: ["tmp/kotlin-classes/debug/ca/rmen/android/poetassistant/**/*.class",
                        "intermediates/javac/debug/compileDebugWithJavac/classes/ca/rmen/android/poetassistant/**/*.class"],
@@ -263,14 +257,14 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", "crea
                        // ignore generated code not in our package
                        "**/android/databinding/*.class",
                        "**/android/databinding/**/*.class",
-                       "**/com/android/**/*.class"])
-    sourceDirectories = files("${project.projectDir}/src/main/java", "${project.projectDir}/src/main/kotlin")
-    executionData = fileTree(
+                       "**/com/android/**/*.class"]))
+    getSourceDirectories().setFrom(files("${project.projectDir}/src/main/java", "${project.projectDir}/src/main/kotlin"))
+    getExecutionData().setFrom(fileTree(
             dir: "${buildDir}",
             includes: [
                     "jacoco/testDebugUnitTest.exec",
                     "outputs/code_coverage/debugAndroidTest/connected/*coverage.ec"
-            ])
+            ]))
 }
 
 // Necessary for Prefs to work (see https://kotlinlang.org/docs/reference/kapt.html)
