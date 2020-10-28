@@ -116,12 +116,12 @@ public class FavoritesTest {
 
     private void checkActivityHidden(String activityClassName) {
         // Wait for the activity to pause
-        Set<Stage> stages = EnumSet.of(Stage.PAUSED, Stage.STOPPED);
+        Set<Stage> stages = EnumSet.of(Stage.PAUSED, Stage.STOPPED, Stage.DESTROYED);
         ActivityStageIdlingResource waitForActivityPause =
                 new ActivityStageIdlingResource(activityClassName, stages);
         IdlingRegistry.getInstance().register(waitForActivityPause);
         getInstrumentation().runOnMainSync(() -> {
-            assertTrue("activity " + activityClassName + "not paused or stopped", ActivityStageIdlingResource.isActivityInStages(activityClassName, stages));
+            assertTrue("activity " + activityClassName + " not paused or stopped", ActivityStageIdlingResource.isActivityInStages(activityClassName, stages));
             IdlingRegistry.getInstance().unregister(waitForActivityPause);
         });
     }
