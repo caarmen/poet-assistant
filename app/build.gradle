@@ -225,7 +225,7 @@ dependencies {
 }
 
 // Only show real releases with the ben-manes plugin.
-dependencyUpdates.resolutionStrategy = {
+dependencyUpdates.resolutionStrategy {
     componentSelection { rules ->
         rules.all { ComponentSelection selection ->
             boolean rejected = ['alpha', 'alpha-preview', 'beta', 'rc', 'cr', 'm', 'eap'].any { qualifier ->
@@ -244,7 +244,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", "crea
     reports {
         html.enabled = true
     }
-    classDirectories = fileTree(
+    getClassDirectories().setFrom(fileTree(
             dir: "${buildDir}",
             includes: ["tmp/kotlin-classes/debug/ca/rmen/android/poetassistant/**/*.class",
                        "intermediates/javac/debug/compileDebugWithJavac/classes/ca/rmen/android/poetassistant/**/*.class"],
@@ -263,14 +263,14 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", "crea
                        // ignore generated code not in our package
                        "**/android/databinding/*.class",
                        "**/android/databinding/**/*.class",
-                       "**/com/android/**/*.class"])
-    sourceDirectories = files("${project.projectDir}/src/main/java", "${project.projectDir}/src/main/kotlin")
-    executionData = fileTree(
+                       "**/com/android/**/*.class"]))
+    getSourceDirectories().setFrom(files("${project.projectDir}/src/main/java", "${project.projectDir}/src/main/kotlin"))
+    getExecutionData().setFrom(fileTree(
             dir: "${buildDir}",
             includes: [
                     "jacoco/testDebugUnitTest.exec",
                     "outputs/code_coverage/debugAndroidTest/connected/*coverage.ec"
-            ])
+            ]))
 }
 
 // Necessary for Prefs to work (see https://kotlinlang.org/docs/reference/kapt.html)
