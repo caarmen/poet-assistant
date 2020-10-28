@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+1.30.3  *(2020-10-28)*
+--------------------
+* Android 11: Declare more `<queries>` elements in the manifest
+  - Be able to check if we can open TTS settings on the device (`TTS_SETTINGS`)
+  - Allow web search of words (`WEB_SEARCH`)
+  - Allow looking up words in other apps (`PROCESS_TEXT`)
+
 1.30.2  *(2020-10-28)*
 --------------------
 Update environment:
