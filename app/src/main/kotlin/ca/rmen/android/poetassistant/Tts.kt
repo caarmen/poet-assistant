@@ -198,7 +198,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
     }
 
     private inner class TtsPreferenceListener : SharedPreferences.OnSharedPreferenceChangeListener {
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
             if (isReady()) {
                 when (key) {
                     SettingsPrefs.PREF_VOICE_SPEED -> setVoiceSpeedFromSettings()

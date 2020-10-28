@@ -44,7 +44,7 @@ class SettingsChangeListener(private val context: Context) : SharedPreferences.O
         DaggerHelper.getSettingsComponent(context).inject(this)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         Log.v(TAG, "onSharedPreferenceChanged: key = $key")
         when (key) {
         // When the theme changes, restart the activity
