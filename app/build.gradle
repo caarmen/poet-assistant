@@ -76,7 +76,9 @@ android {
 
     buildTypes {
         debug {
-            testCoverageEnabled = true
+            testCoverageEnabled = project.gradle.startParameter.taskNames.any {
+                it.contains("testDebugUnitTest") || it.contains("connectedDebugAndroidTest") || it.contains("jacocoTestReport")
+            }
             applicationIdSuffix = ".test"
             resValue "string", "search_provider_authority", android.defaultConfig.applicationId + applicationIdSuffix + ".SuggestionsProvider"
         }
