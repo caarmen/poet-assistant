@@ -19,22 +19,18 @@
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.github.ben-manes.versions'
-apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'jacoco'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 29
-    buildToolsVersion "28.0.3"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    dataBinding {
-        enabled = true
-    }
+    buildFeatures.dataBinding = true
     jacoco {
         version "0.8.4"
     }
@@ -141,7 +137,7 @@ jacoco {
     toolVersion '0.8.4'
 }
 android.applicationVariants.all { variant ->
-    variant.mergeAssets.doLast {
+    variant.getMergeAssetsProvider().get().doLast {
         copy {
             from project.rootDir
             into "${project.buildDir}/generated/license_assets/"
@@ -171,7 +167,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.27.0'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.8.6'
     }
 }
 
