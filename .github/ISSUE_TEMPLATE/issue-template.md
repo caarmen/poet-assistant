@@ -4,6 +4,7 @@ about: Issue template
 title: ''
 labels: ''
 assignees: ''
+blank_issues_enabled: false
 
 ---
 
