@@ -30,7 +30,7 @@ buildscript {
     ext.lifecycle_version = "2.2.0"
     ext.material_version = "1.2.1"
     ext.preference_version = "1.1.1"
-    ext.room_version = "2.2.5"
+    ext.room_version = "2.4.3"
 
     ext.dagger_version = '2.44'
     ext.leak_canary_version = '2.9.1'
