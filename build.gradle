@@ -33,7 +33,7 @@ buildscript {
     ext.room_version = "2.2.5"
 
     ext.dagger_version = '2.29.1'
-    ext.leak_canary_version = '2.5'
+    ext.leak_canary_version = '2.9.1'
     ext.porterstemmer_version = "1.0.0"
     ext.rhymer_version = "1.2.0"
 
