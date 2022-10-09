@@ -21,8 +21,8 @@
 
 buildscript {
     ext.gradle_plugin_version = '4.1.0'
-    ext.kotlin_version = '1.4.10'
-    ext.kotlin_coroutines_version = '1.4.0'
+    ext.kotlin_version = '1.7.20'
+    ext.kotlin_coroutines_version = '1.6.4'
 
     ext.appcompat_version = "1.2.0"
     ext.collection_version = "1.1.0"
@@ -32,7 +32,7 @@ buildscript {
     ext.preference_version = "1.1.1"
     ext.room_version = "2.2.5"
 
-    ext.dagger_version = '2.29.1'
+    ext.dagger_version = '2.44'
     ext.leak_canary_version = '2.9.1'
     ext.porterstemmer_version = "1.0.0"
     ext.rhymer_version = "1.2.0"
