@@ -27,7 +27,7 @@ buildscript {
     ext.appcompat_version = "1.5.1"
     ext.collection_version = "1.2.0"
     ext.constraintlayout_version = "2.1.4"
-    ext.lifecycle_version = "2.2.0"
+    ext.lifecycle_version = "2.5.1"
     ext.material_version = "1.6.1"
     ext.preference_version = "1.1.1"
     ext.room_version = "2.4.3"
