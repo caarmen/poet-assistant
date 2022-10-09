@@ -223,7 +223,7 @@ dependencies {
 dependencyUpdates.resolutionStrategy {
     componentSelection { rules ->
         rules.all { ComponentSelection selection ->
-            boolean rejected = ['alpha', 'alpha-preview', 'beta', 'rc', 'cr', 'm', 'eap'].any { qualifier ->
+            boolean rejected = ['alpha', 'alpha-preview', 'beta', 'rc', 'cr', 'm', 'eap', 'dev'].any { qualifier ->
                 selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
             }
             if ("com.android.databinding" == selection.candidate.group) {
