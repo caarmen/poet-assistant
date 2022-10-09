@@ -19,21 +19,28 @@
 
 package ca.rmen.android.poetassistant.settings
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.AudioManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
@@ -74,7 +81,23 @@ class SettingsActivity : AppCompatActivity() {
         lateinit var mTts: Tts
 
         private var mRestartTtsOnResume = false
+        @Inject lateinit var mPrefs: SettingsPrefs
         private lateinit var mViewModel: SettingsViewModel
+
+        private val requestPermissionLauncher =
+            registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted: Boolean ->
+                mPrefs.isWotdEnabled = isGranted
+                if (!isGranted) {
+                    if (!shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                        val settingsIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        settingsIntent.data = Uri.fromParts("package", requireContext().packageName, null)
+                        startActivity(settingsIntent)
+                    }
+                }
+                findPreference<SwitchPreferenceCompat>(SettingsPrefs.PREF_WOTD_ENABLED)?.isChecked = isGranted
+            }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -124,6 +147,32 @@ class SettingsActivity : AppCompatActivity() {
                 // Android O users can change the priority in the system settings.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     removePreferences(PREF_CATEGORY_NOTIFICATIONS, SettingsPrefs.PREF_WOTD_NOTIFICATION_PRIORITY)
+                }
+
+                findPreference<SwitchPreferenceCompat>(SettingsPrefs.PREF_WOTD_ENABLED)?.setOnPreferenceClickListener { preference ->
+                    val wotdPref = preference as SwitchPreferenceCompat
+                    if (wotdPref.isChecked) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            when {
+                                ContextCompat.checkSelfPermission(
+                                    requireContext(),
+                                    Manifest.permission.POST_NOTIFICATIONS
+                                ) == PackageManager.PERMISSION_GRANTED -> {
+                                    mPrefs.isWotdEnabled = true
+                                }
+                                else -> {
+                                    preference.isChecked = false
+                                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                }
+                            }
+                        } else {
+                            mPrefs.isWotdEnabled = true
+                        }
+                    } else {
+                        mPrefs.isWotdEnabled = false
+                    }
+
+                    true
                 }
 
                 setOnPreferenceClickListener(PREF_EXPORT_FAVORITES, Runnable { startActivityForResult(mViewModel.getExportFavoritesIntent(), ACTION_EXPORT_FAVORITES) })
