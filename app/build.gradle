@@ -32,7 +32,7 @@ android {
 
     buildFeatures.dataBinding = true
     jacoco {
-        version "0.8.6"
+        version "0.8.8"
     }
     lintOptions {
         abortOnError true
@@ -138,7 +138,7 @@ android {
 }
 
 jacoco {
-    toolVersion '0.8.6'
+    toolVersion '0.8.8'
 }
 android.applicationVariants.all { variant ->
     variant.getMergeAssetsProvider().get().doLast {
