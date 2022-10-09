@@ -94,7 +94,7 @@ object Wotd {
                 .setAction(Intent.ACTION_VIEW)
                 .setData(uri)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         val builder = NotificationCompat.Builder(context, NotificationChannel.createNotificationChannel(context))
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
@@ -133,6 +133,6 @@ object Wotd {
         val intent = Intent(Intent.ACTION_SEND)
         intent.putExtra(Intent.EXTRA_TEXT, buildWotdShareContent(context, entry))
         intent.type = "text/plain"
-        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
     }
 }
