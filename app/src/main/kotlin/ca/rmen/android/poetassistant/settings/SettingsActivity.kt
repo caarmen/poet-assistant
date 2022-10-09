@@ -115,7 +115,7 @@ class SettingsActivity : AppCompatActivity() {
                 // Hide the system tts settings if no system app can handle it
                 val systemTtsSettings = findPreference<Preference>(SettingsPrefs.PREF_SYSTEM_TTS_SETTINGS)!!
                 val intent = systemTtsSettings.intent
-                if (intent.resolveActivity(it.packageManager) == null) {
+                if (intent?.resolveActivity(it.packageManager) == null) {
                     removePreference(PREF_CATEGORY_VOICE, systemTtsSettings)
                 } else {
                     setOnPreferenceClickListener(systemTtsSettings, Runnable { mRestartTtsOnResume = true })
