@@ -30,7 +30,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
@@ -80,7 +80,7 @@ class SettingsActivity : AppCompatActivity() {
             super.onCreate(savedInstanceState)
             context?.let {
                 DaggerHelper.getSettingsComponent(it).inject(this)
-                mViewModel = ViewModelProviders.of(this).get(SettingsViewModel::class.java)
+                mViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
                 mTts.getTtsLiveData().observe(this, mTtsObserver)
                 mViewModel.snackbarText.observe(this, mSnackbarCallback)
             }

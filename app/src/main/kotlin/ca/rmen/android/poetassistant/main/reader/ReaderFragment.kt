@@ -34,7 +34,7 @@ import androidx.annotation.IdRes
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Threading
@@ -91,7 +91,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
         Log.d(TAG, "onCreateView: inflater=$inflater, container=$container, savedInstanceState=$savedInstanceState")
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_reader, container, false)
         mBinding.buttonListener = ButtonListener()
-        mViewModel = ViewModelProviders.of(this).get(ReaderViewModel::class.java)
+        mViewModel = ViewModelProvider(this).get(ReaderViewModel::class.java)
         mBinding.viewModel = mViewModel
         mViewModel.snackbarText.observe(this, mSnackbarCallback)
         mViewModel.ttsError.observe(this, mTtsErrorCallback)

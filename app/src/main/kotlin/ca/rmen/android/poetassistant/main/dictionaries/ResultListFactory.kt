@@ -23,7 +23,6 @@ import android.app.Activity
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -78,7 +77,7 @@ object ResultListFactory {
     fun createViewModel(tab: Tab, fragment: Fragment): ResultListViewModel<*>? {
         return if (fragment.context != null) {
             val factory = createViewModelFactory(tab, fragment.context!!.applicationContext as Application)
-            ViewModelProviders.of(fragment, factory).get(ResultListViewModel::class.java)
+            ViewModelProvider(fragment, factory).get(ResultListViewModel::class.java)
         } else {
             null
         }

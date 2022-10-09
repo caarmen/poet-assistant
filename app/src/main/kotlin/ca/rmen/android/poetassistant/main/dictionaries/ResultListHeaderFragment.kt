@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main.dictionaries
 
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.databinding.DataBindingUtil
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
@@ -30,6 +29,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.TtsState
@@ -72,7 +72,7 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
         }
         mBinding.buttonListener = ButtonListener()
         parentFragment?.let {
-            mViewModel = ViewModelProviders.of(it).get(ResultListHeaderViewModel::class.java)
+            mViewModel = ViewModelProvider(it).get(ResultListHeaderViewModel::class.java)
             mBinding.viewModel = mViewModel
             mViewModel.snackbarText.observe(this, mSnackbarTextChanged)
             mViewModel.isFavoriteLiveData.observe(this, mFavoriteObserver)
