@@ -95,6 +95,7 @@ android {
                 jvmArgs '-noverify', '-ea'
                 jacoco {
                     includeNoLocationClasses = true
+                    jacoco.excludes = ['jdk.internal.*']
                 }
             }
             includeAndroidResources = true
