@@ -163,12 +163,12 @@ class SettingsActivity : AppCompatActivity() {
 
         override fun onDisplayPreferenceDialog(preference: Preference) {
             if (SettingsPrefs.PREF_VOICE == preference.key) {
-                if (fragmentManager?.findFragmentByTag(DIALOG_TAG) != null) {
+                if (parentFragmentManager.findFragmentByTag(DIALOG_TAG) != null) {
                     return
                 }
                 val fragment = VoicePreferenceDialogFragment.newInstance(preference.key)
                 fragment.setTargetFragment(this, 0)
-                fragment.show(fragmentManager!!, DIALOG_TAG)
+                fragment.show(parentFragmentManager, DIALOG_TAG)
             } else {
                 super.onDisplayPreferenceDialog(preference)
             }
