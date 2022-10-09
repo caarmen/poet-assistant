@@ -95,7 +95,7 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
 
     override fun getPageTitle(position: Int): CharSequence {
         val tab = getTabForPosition(position)
-        return ResultListFactory.getTabName(mContext, tab).toUpperCase(Locale.getDefault())
+        return ResultListFactory.getTabName(mContext, tab).uppercase(Locale.getDefault())
     }
 
     @DrawableRes

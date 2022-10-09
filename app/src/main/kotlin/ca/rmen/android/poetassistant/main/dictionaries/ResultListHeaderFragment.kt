@@ -83,7 +83,7 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
     }
 
     override fun onFilterSubmitted(input: String) {
-        mViewModel.filter.set(input.toLowerCase(Locale.getDefault()).trim())
+        mViewModel.filter.set(input.lowercase(Locale.getDefault()).trim())
     }
 
     override fun onOk(actionId: Int) {

@@ -78,7 +78,7 @@ class Favorites (private val threading: Threading, private val favoriteDao: Favo
         BufferedReader(InputStreamReader(inputStream)).use { reader ->
             reader.forEachLine { line ->
                 if (!TextUtils.isEmpty(line)) {
-                    val favorite = line.trim().toLowerCase(Locale.getDefault())
+                    val favorite = line.trim().lowercase(Locale.getDefault())
                     if (!TextUtils.isEmpty(favorite) && !favorites.contains(favorite)) {
                         favorites.add(favorite)
                         favoritesToAdd.add(Favorite(favorite))

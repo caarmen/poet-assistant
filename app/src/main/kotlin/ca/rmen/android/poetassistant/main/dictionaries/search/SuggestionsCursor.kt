@@ -67,7 +67,7 @@ class SuggestionsCursor(context: Context, private val filter: String?) : MatrixC
 
     private fun loadSimilarWords() {
         if (!TextUtils.isEmpty(filter)) {
-            val similarSoundingWords = mDictionary.findWordsWithPrefix(filter!!.trim().toLowerCase(Locale.getDefault()))
+            val similarSoundingWords = mDictionary.findWordsWithPrefix(filter!!.trim().lowercase(Locale.getDefault()))
             // https://code.google.com/p/android/issues/detail?id=226686
             /*@DrawableRes*/
             val iconId = R.drawable.ic_action_search

@@ -108,8 +108,9 @@ object Wotd {
                         getShareIntent(context, entry))
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             builder.priority = SettingsPrefs.NotificationPriority.valueOf(
-                    DaggerHelper.getMainScreenComponent(context).getSettingsPrefs()
-                            .wotdNotificationPriority.toUpperCase(Locale.US)).priority
+                DaggerHelper.getMainScreenComponent(context).getSettingsPrefs()
+                                        .wotdNotificationPriority.uppercase(Locale.US)
+            ).priority
         }
         val notification = builder.build()
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?

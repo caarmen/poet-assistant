@@ -39,9 +39,9 @@ object ProcessTextRouter {
             if (Intent.ACTION_PROCESS_TEXT == intent.action) {
                 val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)
                 if (!text.isNullOrEmpty()) {
-                    val query = text.toString().trim().toLowerCase(Locale.US)
+                    val query = text.toString().trim().lowercase(Locale.US)
                     val uri = Uri.withAppendedPath(
-                            Uri.parse("poetassistant://${tab.name.toLowerCase(Locale.US)}"),
+                            Uri.parse("poetassistant://${tab.name.lowercase(Locale.US)}"),
                             query)
                     val mainActivityIntent = Intent(Intent.ACTION_VIEW)
                     mainActivityIntent.data = uri
