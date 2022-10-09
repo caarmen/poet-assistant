@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class ResultListAdapter<T>(itemCallback: DiffUtilItemCallback<T>) :
+abstract class ResultListAdapter<T: Any>(itemCallback: DiffUtilItemCallback<T>) :
         ListAdapter<T, ResultListAdapter.ResultListEntryViewHolder>(itemCallback) {
 
     fun getAll(): List<T> {
@@ -38,7 +38,7 @@ abstract class ResultListAdapter<T>(itemCallback: DiffUtilItemCallback<T>) :
 
     class ResultListEntryViewHolder(val parentView: View, val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root)
 
-    abstract class DiffUtilItemCallback<U> : DiffUtil.ItemCallback<U>() {
+    abstract class DiffUtilItemCallback<U: Any> : DiffUtil.ItemCallback<U>() {
         override fun areItemsTheSame(
                 oldItem: U, newItem: U): Boolean {
             // Normally this would check for ids, but we don't have ids in these lists.

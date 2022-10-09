@@ -37,7 +37,7 @@ import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import javax.inject.Inject
 
-class ResultListViewModel<T> constructor(application: Application, private val tab: Tab) : AndroidViewModel(application) {
+class ResultListViewModel<T: Any> constructor(application: Application, private val tab: Tab) : AndroidViewModel(application) {
     companion object {
         private val TAG = Constants.TAG + ResultListViewModel::class.java.simpleName
     }

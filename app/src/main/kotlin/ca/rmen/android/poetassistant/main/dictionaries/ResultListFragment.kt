@@ -46,7 +46,7 @@ import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 
-class ResultListFragment<out T> : Fragment() {
+class ResultListFragment<out T: Any> : Fragment() {
     companion object {
         private val TAG = Constants.TAG + ResultListFragment::class.java.simpleName
         const val EXTRA_TAB = "tab"
