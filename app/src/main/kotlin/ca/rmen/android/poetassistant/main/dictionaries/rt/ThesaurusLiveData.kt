@@ -91,7 +91,7 @@ class ThesaurusLiveData constructor(context: Context, private val query: String,
         val layout = SettingsPrefs.getLayout(mPrefs)
         val favorites = mFavorites.getFavorites()
         entries.forEach {
-            data.add(RTEntryViewModel(context, RTEntryViewModel.Type.HEADING, it.wordType.name.toLowerCase(Locale.US)))
+            data.add(RTEntryViewModel(context, RTEntryViewModel.Type.HEADING, it.wordType.name.lowercase(Locale.US)))
             addResultSection(favorites, data, R.string.thesaurus_section_synonyms, it.synonyms, layout)
             addResultSection(favorites, data, R.string.thesaurus_section_antonyms, it.antonyms, layout)
         }

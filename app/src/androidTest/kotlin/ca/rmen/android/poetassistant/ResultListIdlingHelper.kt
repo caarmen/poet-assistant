@@ -29,7 +29,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
 object ResultListIdlingHelper {
     private val TAG = Constants.TAG + ResultListIdlingHelper::class.java.simpleName
 
-    fun <T> setupIdlingResource(adapter: ResultListAdapter<T>,
+    fun <T: Any> setupIdlingResource(adapter: ResultListAdapter<T>,
                                 oldList: MutableList<T>?, newList: MutableList<T>?,
                                 countingIdlingResource: CountingIdlingResource) {
         Log.v(TAG, "submitList: oldList = $oldList, newList = $newList, countingIdlingResource = ${countingIdlingResource.name}")

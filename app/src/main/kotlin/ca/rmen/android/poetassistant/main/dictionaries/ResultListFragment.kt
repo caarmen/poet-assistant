@@ -33,7 +33,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.rmen.android.poetassistant.Constants
@@ -46,7 +46,7 @@ import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 
-class ResultListFragment<out T> : Fragment() {
+class ResultListFragment<out T: Any> : Fragment() {
     companion object {
         private val TAG = Constants.TAG + ResultListFragment::class.java.simpleName
         const val EXTRA_TAB = "tab"
@@ -81,7 +81,7 @@ class ResultListFragment<out T> : Fragment() {
             mViewModel.usedQueryWord.observe(this, mUsedQueryWordChanged)
             mViewModel.emptyText.observe(this, mEmptyTextObserver)
             mViewModel.isDataAvailable.addOnPropertyChangedCallback(mDataAvailableChanged)
-            mHeaderViewModel = ViewModelProviders.of(this).get(ResultListHeaderViewModel::class.java)
+            mHeaderViewModel = ViewModelProvider(this).get(ResultListHeaderViewModel::class.java)
             mHeaderViewModel.filter.addOnPropertyChangedCallback(mFilterChanged)
             var headerFragment = childFragmentManager.findFragmentById(R.id.result_list_header)
             if (headerFragment == null) {

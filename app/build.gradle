@@ -23,7 +23,7 @@ apply plugin: 'jacoco'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 android {
-    compileSdkVersion 30
+    compileSdkVersion 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -32,7 +32,7 @@ android {
 
     buildFeatures.dataBinding = true
     jacoco {
-        version "0.8.6"
+        version "0.8.8"
     }
     lintOptions {
         abortOnError true
@@ -43,10 +43,11 @@ android {
 
     defaultConfig {
         applicationId "ca.rmen.android.poetassistant"
+        namespace "ca.rmen.android.poetassistant"
         minSdkVersion 21
-        targetSdkVersion 30
-        versionCode 113003
-        versionName "1.30.3"
+        targetSdkVersion 33
+        versionCode 113004
+        versionName "1.30.4"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
@@ -95,6 +96,7 @@ android {
                 jvmArgs '-noverify', '-ea'
                 jacoco {
                     includeNoLocationClasses = true
+                    jacoco.excludes = ['jdk.internal.*']
                 }
             }
             includeAndroidResources = true
@@ -136,7 +138,7 @@ android {
 }
 
 jacoco {
-    toolVersion '0.8.6'
+    toolVersion '0.8.8'
 }
 android.applicationVariants.all { variant ->
     variant.getMergeAssetsProvider().get().doLast {
@@ -168,7 +170,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.33.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.36.0'
     }
 }
 
@@ -181,7 +183,6 @@ dependencies {
     implementation "ca.rmen:rhymer:$rhymer_version"
     implementation "ca.rmen:porter-stemmer:$porterstemmer_version"
     implementation "com.google.dagger:dagger:$dagger_version"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
@@ -190,6 +191,7 @@ dependencies {
     // We need to explicitly add a couple of api dependencies here, otherwise alpha versions
     // of these libs will be pulled in transitively (by a non-alpha databinding dependency...)
     api "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
+    api "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     api "androidx.collection:collection:$collection_version"
 
     kapt "androidx.room:room-compiler:$room_version"
@@ -222,7 +224,7 @@ dependencies {
 dependencyUpdates.resolutionStrategy {
     componentSelection { rules ->
         rules.all { ComponentSelection selection ->
-            boolean rejected = ['alpha', 'alpha-preview', 'beta', 'rc', 'cr', 'm', 'eap'].any { qualifier ->
+            boolean rejected = ['alpha', 'alpha-preview', 'beta', 'rc', 'cr', 'm', 'eap', 'dev'].any { qualifier ->
                 selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
             }
             if ("com.android.databinding" == selection.candidate.group) {
@@ -262,8 +264,8 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", "crea
     getExecutionData().setFrom(fileTree(
             dir: "${buildDir}",
             includes: [
-                    "jacoco/testDebugUnitTest.exec",
-                    "outputs/code_coverage/debugAndroidTest/connected/*coverage.ec"
+                    "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
+                    "outputs/code_coverage/debugAndroidTest/connected/**/coverage.ec"
             ]))
 }
 

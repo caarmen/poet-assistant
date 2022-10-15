@@ -81,7 +81,8 @@ class Search constructor(private val searchableActivity: Activity, private val v
         Log.d(TAG, "search in $tab for $ word")
         viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false)
         ViewShownScheduler.runWhenShown(viewPager) {
-            (mPagerAdapter.getFragment(viewPager, tab) as ResultListFragment<*>?)?.query(word.trim().toLowerCase(Locale.US))
+            (mPagerAdapter.getFragment(viewPager, tab) as ResultListFragment<*>?)?.query(word.trim()
+                .lowercase(Locale.US))
         }
     }
 
@@ -90,7 +91,7 @@ class Search constructor(private val searchableActivity: Activity, private val v
      */
     fun search(word: String) {
         Log.d(TAG, "search called with $word")
-        val wordTrimmed = word.trim().toLowerCase(Locale.US)
+        val wordTrimmed = word.trim().lowercase(Locale.US)
 
         selectTabForSearch(wordTrimmed)
         ViewShownScheduler.runWhenShown(viewPager) {

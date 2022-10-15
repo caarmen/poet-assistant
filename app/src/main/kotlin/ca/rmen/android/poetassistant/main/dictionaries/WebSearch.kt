@@ -22,6 +22,8 @@ package ca.rmen.android.poetassistant.main.dictionaries
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import ca.rmen.android.poetassistant.R
 
 object WebSearch {
@@ -32,7 +34,13 @@ object WebSearch {
         var searchIntent = Intent(Intent.ACTION_WEB_SEARCH)
         searchIntent.putExtra(SearchManager.QUERY, text)
         // No apps can handle ACTION_WEB_SEARCH.  We'll try a more generic intent instead
-        if (context.packageManager.queryIntentActivities(searchIntent, 0).isEmpty()) {
+        val intentActivities = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.packageManager.queryIntentActivities(searchIntent, PackageManager.ResolveInfoFlags.of(0))
+        } else {
+            @Suppress("DEPRECATION")
+            context.packageManager.queryIntentActivities(searchIntent, 0)
+        }
+        if (intentActivities.isEmpty()) {
             searchIntent = Intent(Intent.ACTION_SEND)
             searchIntent.type = "text/plain"
             searchIntent.putExtra(Intent.EXTRA_TEXT, text)

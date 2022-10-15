@@ -24,6 +24,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.os.Build
 import android.text.TextUtils
@@ -185,7 +186,15 @@ object TextPopupMenu {
     @TargetApi(Build.VERSION_CODES.M)
     private fun getSupportedActivities(context: Context, text: String): List<ResolveInfo> {
         //https://android-developers.googleblog.com/2015/10/in-app-translations-in-android.html?hl=mk
-        return context.packageManager.queryIntentActivities(createProcessTextIntent(text), 0)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            context.packageManager.queryIntentActivities(
+                createProcessTextIntent(text),
+                PackageManager.ResolveInfoFlags.of(0)
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            context.packageManager.queryIntentActivities(createProcessTextIntent(text), 0)
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.M)

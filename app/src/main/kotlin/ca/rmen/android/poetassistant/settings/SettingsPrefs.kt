@@ -95,7 +95,7 @@ class SettingsPrefs(application: Application) {
         }
 
         fun getLayout(prefs: SettingsPrefs): ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout {
-            return SettingsPrefs.Layout.valueOf(prefs.layout.toUpperCase(Locale.US))
+            return SettingsPrefs.Layout.valueOf(prefs.layout.uppercase(Locale.US))
         }
 
         fun getTab(prefs: SettingsPrefs): Tab? {

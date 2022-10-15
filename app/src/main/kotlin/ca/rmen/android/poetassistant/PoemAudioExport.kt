@@ -137,7 +137,7 @@ class PoemAudioExport(val context: Context) {
             } else {
                 (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?)?.let {
                     val pendingIntent =
-                            PendingIntent.getActivity(context, 0, shareIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+                            PendingIntent.getActivity(context, 0, shareIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
                     it.notify(EXPORT_FINISH_NOTIFICATION_ID, NotificationCompat.Builder(context, NotificationChannel.createNotificationChannel(context))
                             .setAutoCancel(true)
                             .setContentIntent(pendingIntent)
@@ -183,7 +183,7 @@ class PoemAudioExport(val context: Context) {
 
     private fun getMainActivityIntent(): PendingIntent {
         val intent = Intent(context, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE)
     }
 
     private fun getAudioFile(): File? {
