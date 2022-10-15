@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2016-2017 Carmen Alvarez
+  ~ Copyright (c) 2016-Present Carmen Alvarez
   ~
   ~ This file is part of Poet Assistant.
   ~
@@ -69,7 +69,7 @@
     <string name="tts_hint">Compose your beautiful poetry here and press the play icon to listen to it</string>
     <string name="about_title">About %s</string>
     <string name="about_app_version">%1$s v%2$s</string>
-    <string name="about_copyright">Copyright © 2016–2019 Carmen Alvarez\nc@rmen.ca\nhttp://rmen.ca</string>
+    <string name="about_copyright">Copyright © 2016–Present Carmen Alvarez\nc@rmen.ca\nhttp://rmen.ca</string>
     <string name="about_projectUrl">Source code:\nhttp://github.com/caarmen/poet-assistant</string>
     <string name="about_issuesUrl">Report bugs:\nhttp://github.com/caarmen/poet-assistant/issues</string>
     <string name="about_rateUrl">Rate the app on the Play Store:\nhttps://play.google.com/store/apps/details?id=ca.rmen.android.poetassistant</string>
