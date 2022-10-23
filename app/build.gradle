@@ -39,6 +39,7 @@ android {
         textReport true
         ignoreWarnings true
         disable 'RestrictedApi'  // https://stackoverflow.com/questions/45648530/restricted-api-lint-error-when-deleting-table-room-persistence
+        checkReleaseBuilds false
     }
 
     defaultConfig {
@@ -46,8 +47,8 @@ android {
         namespace "ca.rmen.android.poetassistant"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 113004
-        versionName "1.30.4"
+        versionCode 113005
+        versionName "1.30.5"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
