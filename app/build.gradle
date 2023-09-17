@@ -16,10 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.36.0'
+    }
+}
 
+plugins {
+    id 'jacoco'
+}
 apply plugin: 'com.android.application'
 apply plugin: 'com.github.ben-manes.versions'
-apply plugin: 'jacoco'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 android {
@@ -166,14 +176,6 @@ repositories {
     jcenter()
 }
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.36.0'
-    }
-}
 
 dependencies {
 
@@ -238,9 +240,6 @@ dependencyUpdates.resolutionStrategy {
     }
 }
 task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", "createDebugCoverageReport"]) {
-    reports {
-        html.enabled = true
-    }
     getClassDirectories().setFrom(fileTree(
             dir: "${buildDir}",
             includes: ["tmp/kotlin-classes/debug/ca/rmen/android/poetassistant/**/*.class",
