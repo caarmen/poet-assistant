@@ -77,7 +77,7 @@ public class PoemSaveTest {
         assertFalse(poemFile.exists());
         typeAndSpeakPoem("Let's save a file");
         openMenuItem(R.string.file);
-        onView(allOf(withId(android.R.id.title), withText(R.string.file_save), isDisplayed())).perform(click());
+        onView(allOf(withId(R.id.title), withText(R.string.file_save), isDisplayed())).perform(click());
         assertTrue(poemFile.exists());
     }
 

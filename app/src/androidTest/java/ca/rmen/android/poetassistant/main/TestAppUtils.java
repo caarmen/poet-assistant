@@ -86,7 +86,7 @@ class TestAppUtils {
     static ViewInteraction typeQuery(String query) {
         // Type the query term and search
         getInstrumentation().waitForIdleSync();
-        ViewInteraction searchAutoComplete = onView(allOf(withId(androidx.appcompat.R.id.search_src_text), isDisplayed()));
+        ViewInteraction searchAutoComplete = onView(allOf(withId(R.id.search_src_text), isDisplayed()));
         searchAutoComplete.check(matches(isDisplayed()));
         searchAutoComplete.perform(typeText(query));
         getInstrumentation().waitForIdleSync();
@@ -239,7 +239,7 @@ class TestAppUtils {
     static void clearPoem() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             openMenuItem(R.string.file);
-            onView(allOf(withId(android.R.id.title), withText(R.string.file_new), isDisplayed())).perform(click());
+            onView(allOf(withId(R.id.title), withText(R.string.file_new), isDisplayed())).perform(click());
         } else {
             openMenuItem(R.string.file_clear);
         }
