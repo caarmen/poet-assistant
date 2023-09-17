@@ -210,8 +210,6 @@ dependencies {
     testImplementation "org.robolectric:robolectric:$robolectric_version"
     kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
 
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_canary_version"
-
     androidTestImplementation group: "org.easytesting", name: "fest-reflect", version: "$festreflect_version"
 
     androidTestImplementation "androidx.test:runner:$androidx_test_runner_version"
