@@ -43,7 +43,10 @@ android {
         jvmTarget = '1.8'
     }
 
-    buildFeatures.dataBinding = true
+    buildFeatures {
+        dataBinding = true
+        buildConfig = true
+    }
     jacoco {
         version "0.8.8"
     }
@@ -198,6 +201,7 @@ dependencies {
     // of these libs will be pulled in transitively (by a non-alpha databinding dependency...)
     api "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    api "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     api "androidx.collection:collection:$collection_version"
 
     kapt "androidx.room:room-compiler:$room_version"
