@@ -29,7 +29,7 @@ buildscript {
     ext.constraintlayout_version = "2.1.4"
     ext.lifecycle_version = "2.5.1"
     ext.material_version = "1.6.1"
-    ext.preference_version = "1.2.0"
+    ext.preference_version = "1.2.1"
     ext.room_version = "2.5.2"
 
     ext.dagger_version = '2.48'
