@@ -74,7 +74,7 @@ class TestUiUtils {
             getInstrumentation().waitForIdleSync();
             SystemClock.sleep(400); // :(
         }
-        onView(allOf(withId(R.id.title), withText(titleRes), isDisplayed())).perform(click());
+        onView(allOf(withId(android.R.id.title), withText(titleRes), isDisplayed())).perform(click());
     }
 
     static void swipeViewPagerRight(int count) {
