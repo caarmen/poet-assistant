@@ -24,7 +24,7 @@ buildscript {
     ext.kotlin_version = '1.9.10'
     ext.kotlin_coroutines_version = '1.7.3'
 
-    ext.appcompat_version = "1.5.1"
+    ext.appcompat_version = "1.6.1"
     ext.collection_version = "1.2.0"
     ext.constraintlayout_version = "2.1.4"
     ext.lifecycle_version = "2.5.1"
