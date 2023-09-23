@@ -30,6 +30,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
@@ -37,6 +38,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
@@ -49,6 +51,7 @@ import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.ActivitySettingsBinding
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SettingsActivity : AppCompatActivity() {
@@ -125,14 +128,6 @@ class SettingsActivity : AppCompatActivity() {
                             DIALOG_TAG)
 
                 })
-                // Hide the voice preference if we can't load any voices
-                val voicePreference = findPreference<Preference>(SettingsPrefs.PREF_VOICE) as VoicePreference
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    voicePreference.loadVoices()
-                }
-                if (voicePreference.entries == null || voicePreference.entries.size < 2) {
-                    removePreference(PREF_CATEGORY_VOICE, voicePreference)
-                }
                 setOnPreferenceClickListener(SettingsPrefs.PREF_VOICE_PREVIEW, Runnable { mViewModel.playTtsPreview() })
 
                 // Hide the system tts settings if no system app can handle it
@@ -177,6 +172,20 @@ class SettingsActivity : AppCompatActivity() {
 
                 setOnPreferenceClickListener(PREF_EXPORT_FAVORITES, Runnable { startActivityForResult(mViewModel.getExportFavoritesIntent(), ACTION_EXPORT_FAVORITES) })
                 setOnPreferenceClickListener(PREF_IMPORT_FAVORITES, Runnable { startActivityForResult(mViewModel.getImportFavoritesIntent(), ACTION_IMPORT_FAVORITES) })
+            }
+        }
+
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+            // Hide the voice preference if we can't load any voices
+            val voicePreference = findPreference<Preference>(SettingsPrefs.PREF_VOICE) as VoicePreference
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    voicePreference.loadVoices()
+                    if (voicePreference.entries == null || voicePreference.entries.size < 2) {
+                        removePreference(PREF_CATEGORY_VOICE, voicePreference)
+                    }
+                }
             }
         }
 

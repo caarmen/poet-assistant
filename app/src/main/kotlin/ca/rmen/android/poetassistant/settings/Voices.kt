@@ -28,6 +28,8 @@ import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.HtmlCompat
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.Locale
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -36,15 +38,18 @@ class Voices constructor(private val context: Context) {
         private val TAG = Constants.TAG + Voices::class.java.simpleName
     }
 
-    fun getVoices(textToSpeech: TextToSpeech): List<TtsVoice> {
+    suspend fun getVoices(textToSpeech: TextToSpeech): List<TtsVoice> {
 
-        val voices = try {
-            textToSpeech.voices
-        } catch (t: Throwable) {
-            // This happens if I choose "SoundAbout TTS" as the preferred engine.
-            // That implementation throws a NullPointerException.
-            Log.w(TAG, "Couldn't load the tts voices: ${t.message}", t)
-            return emptyList()
+
+        val voices = withContext(Dispatchers.IO) {
+            try {
+                textToSpeech.voices
+            } catch (t: Throwable) {
+                // This happens if I choose "SoundAbout TTS" as the preferred engine.
+                // That implementation throws a NullPointerException.
+                Log.w(TAG, "Couldn't load the tts voices: ${t.message}", t)
+                return@withContext emptyList()
+            }
         }
 
         if (voices == null) {
