@@ -70,6 +70,13 @@ android {
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
+        // The following argument makes the Android Test Orchestrator run its
+        // "pm clear" command after each test invocation. This command ensures
+        // that the app's state is completely cleared between tests.
+        // https://developer.android.com/training/testing/instrumented-tests/androidx-test-libraries/runner#use-android
+        testInstrumentationRunnerArguments clearPackageData: 'true', coverage: 'true', coverageFilePath: '/data/data/ca.rmen.android.poetassistant.test/'
+
+
         // used by Room, to test migrations
         sourceSets {
             main.java.srcDirs += "$projectDir/src/main/kotlin"
@@ -108,6 +115,7 @@ android {
     }
 
     testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
         unitTests {
             all {
                 jvmArgs '-noverify', '-ea'
@@ -224,6 +232,8 @@ dependencies {
     androidTestImplementation "androidx.test.ext:junit:$androidx_junit_version"
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 
+    androidTestUtil "androidx.test:orchestrator:$androidx_test_orchestrator_version"
+
 
 }
 
@@ -269,7 +279,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", "crea
             dir: "${buildDir}",
             includes: [
                     "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-                    "outputs/code_coverage/debugAndroidTest/connected/**/coverage.ec"
+                    "outputs/code_coverage/debugAndroidTest/connected/**/*.ec"
             ]))
 }
 
