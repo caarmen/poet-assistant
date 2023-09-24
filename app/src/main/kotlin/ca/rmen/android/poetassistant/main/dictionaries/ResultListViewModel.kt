@@ -27,8 +27,8 @@ import android.util.Log
 import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorite
 import ca.rmen.android.poetassistant.Favorites
@@ -63,7 +63,7 @@ class ResultListViewModel<T: Any> constructor(application: Application, private 
         mPrefsListener = PrefsListener()
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mPrefsListener)
         favoritesLiveData = mFavorites.getFavoritesLiveData()
-        resultListDataLiveData = Transformations.switchMap(mQueryParams) { queryParams ->
+        resultListDataLiveData = mQueryParams.switchMap { queryParams ->
             @Suppress("UNCHECKED_CAST")
             ResultListFactory.createLiveData(tab, application, queryParams.word, queryParams.filter) as LiveData<ResultListData<T>>
         }

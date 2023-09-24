@@ -16,21 +16,37 @@
  * You should have received a copy of the GNU General Public License
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.48.0'
+    }
+}
 
+plugins {
+    id 'jacoco'
+}
 apply plugin: 'com.android.application'
 apply plugin: 'com.github.ben-manes.versions'
-apply plugin: 'jacoco'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 
-    buildFeatures.dataBinding = true
+    buildFeatures {
+        dataBinding = true
+        buildConfig = true
+    }
     jacoco {
         version "0.8.8"
     }
@@ -46,13 +62,20 @@ android {
         applicationId "ca.rmen.android.poetassistant"
         namespace "ca.rmen.android.poetassistant"
         minSdkVersion 21
-        targetSdkVersion 33
-        versionCode 113005
-        versionName "1.30.5"
+        targetSdkVersion 34
+        versionCode 113006
+        versionName "1.30.6"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+
+        // The following argument makes the Android Test Orchestrator run its
+        // "pm clear" command after each test invocation. This command ensures
+        // that the app's state is completely cleared between tests.
+        // https://developer.android.com/training/testing/instrumented-tests/androidx-test-libraries/runner#use-android
+        testInstrumentationRunnerArguments coverage: 'true', coverageFilePath: '/data/data/ca.rmen.android.poetassistant.test/'
+
 
         // used by Room, to test migrations
         sourceSets {
@@ -92,6 +115,7 @@ android {
     }
 
     testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
         unitTests {
             all {
                 jvmArgs '-noverify', '-ea'
@@ -166,14 +190,6 @@ repositories {
     jcenter()
 }
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.36.0'
-    }
-}
 
 dependencies {
 
@@ -205,8 +221,6 @@ dependencies {
     testImplementation "org.robolectric:robolectric:$robolectric_version"
     kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
 
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$leak_canary_version"
-
     androidTestImplementation group: "org.easytesting", name: "fest-reflect", version: "$festreflect_version"
 
     androidTestImplementation "androidx.test:runner:$androidx_test_runner_version"
@@ -217,6 +231,8 @@ dependencies {
     androidTestImplementation "androidx.test:core:$androidx_test_core_version"
     androidTestImplementation "androidx.test.ext:junit:$androidx_junit_version"
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+
+    androidTestUtil "androidx.test:orchestrator:$androidx_test_orchestrator_version"
 
 
 }
@@ -238,9 +254,6 @@ dependencyUpdates.resolutionStrategy {
     }
 }
 task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", "createDebugCoverageReport"]) {
-    reports {
-        html.enabled = true
-    }
     getClassDirectories().setFrom(fileTree(
             dir: "${buildDir}",
             includes: ["tmp/kotlin-classes/debug/ca/rmen/android/poetassistant/**/*.class",
@@ -266,7 +279,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", "crea
             dir: "${buildDir}",
             includes: [
                     "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-                    "outputs/code_coverage/debugAndroidTest/connected/**/coverage.ec"
+                    "outputs/code_coverage/debugAndroidTest/connected/**/*.ec"
             ]))
 }
 

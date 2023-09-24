@@ -20,12 +20,15 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import android.Manifest;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
 import androidx.test.filters.LargeTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
+
 import android.view.View;
 
 import org.hamcrest.Matcher;
@@ -35,6 +38,7 @@ import org.junit.runner.RunWith;
 
 import java.util.Calendar;
 
+import ca.rmen.android.poetassistant.BuildConfig;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
@@ -113,6 +117,9 @@ public class RandomWordTest {
     @Test
     public void wotdNotificationTest() {
         openMenuItem(R.string.action_settings);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            InstrumentationRegistry.getInstrumentation().getUiAutomation().grantRuntimePermission(BuildConfig.APPLICATION_ID, Manifest.permission.POST_NOTIFICATIONS);
+        }
         clickPreference(R.string.wotd_setting_title);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             NotificationManager notificationManager = (NotificationManager) getInstrumentation().getTargetContext().getSystemService(Context.NOTIFICATION_SERVICE);

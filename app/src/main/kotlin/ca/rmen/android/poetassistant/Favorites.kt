@@ -20,7 +20,7 @@
 package ca.rmen.android.poetassistant
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import android.content.Context
 import android.net.Uri
 import androidx.annotation.MainThread
@@ -40,7 +40,7 @@ class Favorites (private val threading: Threading, private val favoriteDao: Favo
     }
 
     fun getIsFavoriteLiveData(word: String): LiveData<Boolean> {
-        return Transformations.map(favoriteDao.getCountLiveData(word)) { count -> count > 0 }
+        return favoriteDao.getCountLiveData(word).map { count -> count > 0 }
     }
 
     fun getFavoritesLiveData(): LiveData<List<Favorite>> = favoriteDao.getFavoritesLiveData()

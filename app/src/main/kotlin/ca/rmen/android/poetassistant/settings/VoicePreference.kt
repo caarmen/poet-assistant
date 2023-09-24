@@ -57,7 +57,7 @@ class VoicePreference : ListPreference {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    fun loadVoices() {
+    suspend fun loadVoices() {
         val tts = mTts.getTextToSpeech()
         if (tts != null) {
             val voices = Voices(context).getVoices(tts)
