@@ -5,3 +5,5 @@ Poet Assistant is an Android app which offers a set of tools to help with writin
 * a thesaurus, using the WordNet thesaurus.
 * a dictionary, using the WordNet dictionary.
 * a screen where you can enter your poem text, and have it read aloud back to you by the device's text-to-speech engine.
+
+Poet Assistant works offline, without any internet connection.
