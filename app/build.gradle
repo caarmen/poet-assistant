@@ -102,7 +102,7 @@ android {
     buildTypes {
         debug {
             testCoverageEnabled = project.gradle.startParameter.taskNames.any {
-                it.contains("testDebugUnitTest") || it.contains("connectedDebugAndroidTest") || it.contains("jacocoTestReport")
+                it.contains("jacocoTestReport")
             }
             applicationIdSuffix = ".test"
             resValue "string", "search_provider_authority", android.defaultConfig.applicationId + applicationIdSuffix + ".SuggestionsProvider"
@@ -254,7 +254,9 @@ dependencyUpdates.resolutionStrategy {
         }
     }
 }
-task jacocoTestReport(type: JacocoReport, dependsOn: ["testDebugUnitTest", "createDebugCoverageReport"]) {
+task jacocoTestReport(type: JacocoReport) {
+    mustRunAfter "testDebugUnitTest"
+    mustRunAfter "createDebugCoverageReport"
     getClassDirectories().setFrom(fileTree(
             dir: "${buildDir}",
             includes: ["tmp/kotlin-classes/debug/ca/rmen/android/poetassistant/**/*.class",
