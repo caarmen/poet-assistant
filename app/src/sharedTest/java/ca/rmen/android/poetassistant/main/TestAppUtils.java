@@ -20,6 +20,7 @@
 package ca.rmen.android.poetassistant.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.SystemClock;
 import androidx.annotation.StringRes;
@@ -245,5 +246,9 @@ public class TestAppUtils {
         }
         clickDialogPositiveButton(R.string.action_clear);
         onView(allOf(withId(R.id.tv_text), isDisplayed())).check(matches(withText("")));
+    }
+
+    public static void onNewIntent(MainActivity activity, Intent intent) {
+        activity.onNewIntent(intent);
     }
 }

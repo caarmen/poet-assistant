@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.shared.main;
 
 
 import android.app.Activity;
@@ -30,8 +30,11 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.annotation.Config;
 
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.MainActivity;
+import ca.rmen.android.poetassistant.main.TestAppUtils;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
@@ -159,6 +162,7 @@ public class IntentTest {
     }
 
     @Test
+    @Config(qualifiers = "w360dp-h640dp")
     public void onCreateViewThesaurusTest() {
         Intent intent = new Intent(Intent.ACTION_VIEW)
                 .setData(Uri.parse("poetassistant://thesaurus/muffin"));
@@ -177,13 +181,13 @@ public class IntentTest {
     private void launchNewIntent(String action, String extraKey, String extraValue) {
         Intent intent = new Intent(action);
         intent.putExtra(extraKey, extraValue);
-        getInstrumentation().runOnMainSync(() -> mActivityTestRule.getActivity().onNewIntent(intent));
+        getInstrumentation().runOnMainSync(() -> TestAppUtils.onNewIntent(mActivityTestRule.getActivity(), intent));
     }
 
     private void launchNewIntent(String action, String data) {
         Intent intent = new Intent(action);
         intent.setData(Uri.parse(data));
-        getInstrumentation().runOnMainSync(() -> mActivityTestRule.getActivity().onNewIntent(intent));
+        getInstrumentation().runOnMainSync(() -> TestAppUtils.onNewIntent(mActivityTestRule.getActivity(), intent));
     }
 
     private void checkRhymerOnly(String expectedRhyme1, String expectedRhyme2) {
