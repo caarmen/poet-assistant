@@ -29,6 +29,8 @@ import java.util.Collection;
 import androidx.preference.PreferenceManager;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
+import androidx.test.espresso.idling.CountingIdlingResource;
+
 import ca.rmen.android.poetassistant.InstrumentationThreading;
 import ca.rmen.android.poetassistant.Theme;
 import ca.rmen.android.poetassistant.UserDb;
@@ -64,7 +66,10 @@ final class ActivityTestRules {
                 .build();
         DaggerHelper.INSTANCE.setAppComponent(testAppComponent);
         InstrumentationThreading threading = (InstrumentationThreading) testAppComponent.getMainScreenComponent().getThreading();
-        IdlingRegistry.getInstance().register(threading.getCountingIdlingResource());
+        CountingIdlingResource threadingCountingIdlingResource = threading.getCountingIdlingResource();
+        if(threadingCountingIdlingResource != null) {
+           IdlingRegistry.getInstance().register(threadingCountingIdlingResource);
+        }
         cleanup(targetContext);
         ProcessTextRouter.INSTANCE.setEnabled(targetContext, true);
     }
