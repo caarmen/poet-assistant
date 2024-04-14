@@ -234,6 +234,7 @@ dependencies {
     androidTestImplementation "androidx.test:core:$androidx_test_core_version"
     androidTestImplementation "androidx.test.ext:junit:$androidx_junit_version"
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    androidTestImplementation "org.robolectric:annotations:$robolectric_version"
 
     androidTestUtil "androidx.test:orchestrator:$androidx_test_orchestrator_version"
 
