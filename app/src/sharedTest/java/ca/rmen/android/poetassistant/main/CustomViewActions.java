@@ -35,13 +35,13 @@ import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static org.hamcrest.Matchers.allOf;
 
-final class CustomViewActions {
+public final class CustomViewActions {
     private CustomViewActions() {
         // prevent instantiation
     }
 
     // thanks to http://stackoverflow.com/questions/33382344/espresso-test-click-x-y-coordinates
-    static ViewAction longTap(final int x, final int y) {
+    public static ViewAction longTap(final int x, final int y) {
         return new GeneralClickAction(
                 Tap.LONG,
                 view -> {

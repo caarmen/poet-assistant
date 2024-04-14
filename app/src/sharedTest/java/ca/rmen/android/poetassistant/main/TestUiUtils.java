@@ -55,7 +55,7 @@ import static org.hamcrest.Matchers.equalToIgnoringCase;
 /**
  * Generic utility functions for Ui operations like opening a menu or swiping the screen.
  */
-class TestUiUtils {
+public class TestUiUtils {
 
     private static final String TAG = Constants.TAG + TestUiUtils.class.getSimpleName();
 
@@ -63,7 +63,7 @@ class TestUiUtils {
         // prevent instantiation
     }
 
-    static void openMenuItem(@StringRes int titleRes) {
+    public static void openMenuItem(@StringRes int titleRes) {
         getInstrumentation().waitForIdleSync();
         swipeDown();
         try {
@@ -77,21 +77,21 @@ class TestUiUtils {
         onView(allOf(withId(R.id.title), withText(titleRes), isDisplayed())).perform(click());
     }
 
-    static void swipeViewPagerRight(int count) {
+    public static void swipeViewPagerRight(int count) {
         for (int i = 0; i < count; i++) {
             onView(allOf(withId(android.R.id.content), isDisplayed())).perform(swipeRight());
         }
         SystemClock.sleep(200);
     }
 
-    static void swipeViewPagerLeft(int count) {
+    public static void swipeViewPagerLeft(int count) {
         for (int i = 0; i < count; i++) {
             onView(allOf(withId(android.R.id.content), isDisplayed())).perform(swipeLeft());
         }
         SystemClock.sleep(200);
     }
 
-    static void checkTitleStripOrTab(Context context, @StringRes int titleRes) {
+    public static void checkTitleStripOrTab(Context context, @StringRes int titleRes) {
         if (context.getResources().getBoolean(R.bool.tab_text)) {
             checkSelectedTab(context, titleRes);
         } else {
@@ -117,13 +117,13 @@ class TestUiUtils {
                 .check(matches(isSelected()));
     }
 
-    static void scrollToPreference(@StringRes int prefTitleRes) {
+    public static void scrollToPreference(@StringRes int prefTitleRes) {
         // Scroll to the preference in case it's not visible
         onView(withId(R.id.recycler_view))
                 .perform(scrollTo(hasDescendant(withText(prefTitleRes))));
     }
 
-    static void clickPreference(@StringRes int prefTitleRes) {
+    public static void clickPreference(@StringRes int prefTitleRes) {
         scrollToPreference(prefTitleRes);
         // click on the preference
         onView(withText(prefTitleRes)).perform(click());

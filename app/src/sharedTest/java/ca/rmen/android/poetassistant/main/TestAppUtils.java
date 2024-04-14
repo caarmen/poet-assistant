@@ -60,12 +60,12 @@ import static org.hamcrest.Matchers.not;
 /**
  * Utility functions specific to the functionality of this app.
  */
-class TestAppUtils {
+public class TestAppUtils {
     private TestAppUtils() {
         // prevent instantiation
     }
 
-    static void clearSearchHistory() {
+    public static void clearSearchHistory() {
         // click on the settings menu item
         openMenuItem(R.string.action_settings);
 
@@ -78,12 +78,12 @@ class TestAppUtils {
         pressBack();
     }
 
-    static void openSearchView() {
+    public static void openSearchView() {
         // Tap on the search icon in the action bar
         onView(allOf(withId(R.id.action_search), withContentDescription(R.string.action_search), isDisplayed())).perform(click());
     }
 
-    static ViewInteraction typeQuery(String query) {
+    public static ViewInteraction typeQuery(String query) {
         // Type the query term and search
         getInstrumentation().waitForIdleSync();
         ViewInteraction searchAutoComplete = onView(allOf(withId(R.id.search_src_text), isDisplayed()));
@@ -93,7 +93,7 @@ class TestAppUtils {
         return searchAutoComplete;
     }
 
-    static void search(String query) {
+    public static void search(String query) {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
@@ -107,7 +107,7 @@ class TestAppUtils {
         getInstrumentation().waitForIdleSync();
     }
 
-    static void openThesaurus(Context context, String entry, String expectedFirstSynonym) {
+    public static void openThesaurus(Context context, String entry, String expectedFirstSynonym) {
         onView(allOf(withId(R.id.btn_thesaurus),
                 hasSibling(withText(entry)),
                 isDisplayed()))
@@ -116,14 +116,14 @@ class TestAppUtils {
         checkTitleStripOrTab(context, R.string.tab_thesaurus);
     }
 
-    static void openThesaurusCleanLayout(Context context, String entry, String expectedFirstSynonym) {
+    public static void openThesaurusCleanLayout(Context context, String entry, String expectedFirstSynonym) {
         onView(withText(entry)).perform(click());
         onView(withText(R.string.tab_thesaurus)).perform(click());
         CustomChecks.checkFirstSynonym(expectedFirstSynonym);
         checkTitleStripOrTab(context, R.string.tab_thesaurus);
     }
 
-    static void openDictionary(Context context, String entry, String expectedFirstDefinition) {
+    public static void openDictionary(Context context, String entry, String expectedFirstDefinition) {
         onView(allOf(withId(R.id.btn_dictionary),
                 hasSibling(withText(entry)),
                 isDisplayed()))
@@ -132,14 +132,14 @@ class TestAppUtils {
         CustomChecks.checkFirstDefinition(expectedFirstDefinition);
     }
 
-    static void openDictionaryCleanLayout(Context context, String entry, String expectedFirstDefinition) {
+    public static void openDictionaryCleanLayout(Context context, String entry, String expectedFirstDefinition) {
         onView(withText(entry)).perform(click());
         onView(withText(R.string.tab_dictionary)).perform(click());
         checkTitleStripOrTab(context, R.string.tab_dictionary);
         CustomChecks.checkFirstDefinition(expectedFirstDefinition);
     }
 
-    static void starQueryWord() {
+    public static void starQueryWord() {
         ViewInteraction starIcon = onView(
                 allOf(withId(R.id.btn_star_query), isDisplayed()));
         starIcon.check(matches(isNotChecked()));
@@ -147,7 +147,7 @@ class TestAppUtils {
         starIcon.check(matches(isChecked()));
     }
 
-    static void unStarQueryWord() {
+    public static void unStarQueryWord() {
         ViewInteraction starIcon = onView(
                 allOf(withId(R.id.btn_star_query), isDisplayed()));
         starIcon.check(matches(isChecked()));
@@ -156,7 +156,7 @@ class TestAppUtils {
                 .check(matches(isNotChecked()));
     }
 
-    static ViewInteraction openFilter(String expectedPrefilledFilter) {
+    public static ViewInteraction openFilter(String expectedPrefilledFilter) {
         getInstrumentation().waitForIdleSync();
         ViewInteraction vi = onView(allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()));
         vi.check(matches(isDisplayed()));
@@ -170,7 +170,7 @@ class TestAppUtils {
         return result;
     }
 
-    static void addFilter(String filter, String firstExpectedFilteredMatch) {
+    public static void addFilter(String filter, String firstExpectedFilteredMatch) {
         ViewInteraction filterView = openFilter("");
         filterView.perform(typeText(filter), closeSoftKeyboard());
         clickDialogPositiveButton(android.R.string.ok);
@@ -190,7 +190,7 @@ class TestAppUtils {
 
     }
 
-    static void clearFilter(String firstExpectedNonFilteredMatch) {
+    public static void clearFilter(String firstExpectedNonFilteredMatch) {
         onView(allOf(withId(R.id.btn_clear), withContentDescription(R.string.filter_clear), isDisplayed()))
                 .perform(click());
 
@@ -201,25 +201,25 @@ class TestAppUtils {
                 .check(matches(withText(firstExpectedNonFilteredMatch)));
     }
 
-    static void clearStarredWords() {
+    public static void clearStarredWords() {
         onView(allOf(withId(R.id.btn_delete), withContentDescription(R.string.action_clear_favorites), isDisplayed())).perform(click());
         clickDialogPositiveButton(R.string.action_clear);
     }
 
-    static void clickDialogPositiveButton(@StringRes int labelRes) {
+    public static void clickDialogPositiveButton(@StringRes int labelRes) {
         // Top ok on the confirmation dialog
         SystemClock.sleep(200);
         onView(allOf(withId(android.R.id.button1), withText(labelRes))).perform(scrollTo(), click());
     }
 
-    static void typeAndSpeakPoem(String poem) {
+    public static void typeAndSpeakPoem(String poem) {
         typePoem(poem);
         speakPoem();
         pressBack();
         getInstrumentation().waitForIdleSync();
     }
 
-    static void typePoem(String poem) {
+    public static void typePoem(String poem) {
         // The fab should be disabled until there is text
         ViewInteraction fab = onView(withClassName(is(FloatingActionButton.class.getName())));
         fab.check(matches(not(isEnabled())));
@@ -236,7 +236,7 @@ class TestAppUtils {
         fab.perform(click());
     }
 
-    static void clearPoem() {
+    public static void clearPoem() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             openMenuItem(R.string.file);
             onView(allOf(withId(R.id.title), withText(R.string.file_new), isDisplayed())).perform(click());

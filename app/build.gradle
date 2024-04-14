@@ -88,6 +88,7 @@ android {
                 java.srcDirs += "$projectDir/src/test/kotlin"
             }
             androidTest.java.srcDirs += "$projectDir/src/androidTest/kotlin"
+            androidTest.java.srcDirs += "$projectDir/src/sharedTest/java"
         }
 
         // used by Room, to test migrations

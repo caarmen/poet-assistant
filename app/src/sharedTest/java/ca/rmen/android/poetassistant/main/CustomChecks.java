@@ -61,12 +61,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-class CustomChecks {
+public class CustomChecks {
     private CustomChecks() {
         // prevent instantiation
     }
 
-    static void checkRhymes(Context context, String firstRhyme, String secondRhyme) {
+    public static void checkRhymes(Context context, String firstRhyme, String secondRhyme) {
         // Make sure we're in the rhymer tab
         checkTitleStripOrTab(context, R.string.tab_rhymer);
 
@@ -91,13 +91,13 @@ class CustomChecks {
         secondRhymeWord.check(matches(withText(secondRhyme)));
     }
 
-    static void checkRhyme(String expectedRhyme) {
+    public static void checkRhyme(String expectedRhyme) {
         // Scroll to the item in case it's not visible
         onView(allOf(withId(R.id.recycler_view), isDisplayed()))
                 .perform(scrollTo(hasDescendant(withText(expectedRhyme))));
     }
 
-    static void checkPatterns(Context context, String query, String... patterns) {
+    public static void checkPatterns(Context context, String query, String... patterns) {
         checkTitleStripOrTab(context, R.string.tab_pattern);
         Matcher<View> emptyViewMatch = allOf(withId(R.id.empty), withText(context.getString(R.string.empty_pattern_list_with_query, query)));
         ViewInteraction emptyView = onView(emptyViewMatch);
@@ -116,7 +116,7 @@ class CustomChecks {
         }
     }
 
-    static void checkStarredInList(String entry) {
+    public static void checkStarredInList(String entry) {
         ViewInteraction star = onView(
                 allOf(withId(R.id.btn_star_result),
                         childAtPosition(
@@ -126,7 +126,7 @@ class CustomChecks {
         star.check(matches(isChecked()));
     }
 
-    static void checkAllStarredWords(Context context, String... expectedStarredWords) {
+    public static void checkAllStarredWords(Context context, String... expectedStarredWords) {
         checkTitleStripOrTab(context, R.string.tab_favorites);
         Matcher<View> emptyViewMatch = allOf(withId(R.id.empty), withText(R.string.empty_favorites_list));
         ViewInteraction emptyView = onView(emptyViewMatch);
@@ -142,7 +142,7 @@ class CustomChecks {
         }
     }
 
-    static void checkSingleRootView(Context context) {
+    public static void checkSingleRootView(Context context) {
         SystemClock.sleep(500);
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -156,7 +156,7 @@ class CustomChecks {
         }
     }
 
-    static void checkSearchSuggestions(String... suggestions) {
+    public static void checkSearchSuggestions(String... suggestions) {
         SystemClock.sleep(500);
         Matcher<View> searchListMatcher = withClassName(endsWith("DropDownListView"));
         try {
@@ -181,7 +181,7 @@ class CustomChecks {
         }
     }
 
-    static void checkClipboard(Context context, String clipboardContent) {
+    public static void checkClipboard(Context context, String clipboardContent) {
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
         assertNotNull(clipboard);
         assertTrue("Expected to find " + clipboardContent + " in the clipboard", clipboard.hasPrimaryClip());
@@ -192,7 +192,7 @@ class CustomChecks {
         assertEquals(clipboardContent, item.getText());
     }
 
-    static void checkFirstDefinition(String expectedFirstDefinition) {
+    public static void checkFirstDefinition(String expectedFirstDefinition) {
         ViewInteraction firstDefinition = onView(
                 allOf(withId(R.id.definition), withText(expectedFirstDefinition),
                         childAtPosition(
@@ -204,7 +204,7 @@ class CustomChecks {
         firstDefinition.check(matches(withText(expectedFirstDefinition)));
     }
 
-    static void checkFirstSynonym(String expectedFirstSynonym) {
+    public static void checkFirstSynonym(String expectedFirstSynonym) {
         ViewInteraction firstSynonymWord = onView(
                 allOf(withId(R.id.text1), withText(expectedFirstSynonym),
                         childAtPosition(
@@ -216,7 +216,7 @@ class CustomChecks {
         firstSynonymWord.check(matches(withText(expectedFirstSynonym)));
     }
 
-    static void checkSynonym(String expectedSynonym) {
+    public static void checkSynonym(String expectedSynonym) {
         // Scroll to the item in case it's not visible
         onView(allOf(withId(R.id.recycler_view), isDisplayed()))
                 .perform(scrollTo(hasDescendant(withText(expectedSynonym))));
