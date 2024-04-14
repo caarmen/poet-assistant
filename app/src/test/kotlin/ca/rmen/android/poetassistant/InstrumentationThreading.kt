@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,28 +17,21 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger;
+package ca.rmen.android.poetassistant
 
-import android.app.Application;
-import androidx.room.Room;
+import androidx.test.espresso.idling.CountingIdlingResource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.setMain
 
-import javax.inject.Singleton;
+class InstrumentationThreading : CoroutineThreading(Dispatchers.Main, Dispatchers.Main) {
 
-import ca.rmen.android.poetassistant.UserDb;
-import dagger.Module;
-import dagger.Provides;
-
-@Module
-public class TestDbModule {
-
-    private final Application mApplication;
-
-    public TestDbModule(Application application) {
-        mApplication = application;
+    init {
+        val scope = TestScope()
+        val testDispatcher = UnconfinedTestDispatcher(scope.testScheduler)
+        Dispatchers.setMain(testDispatcher)
     }
 
-    @Provides @Singleton UserDb providesUserDb() {
-        return Room.inMemoryDatabaseBuilder(mApplication,
-                UserDb.class).allowMainThreadQueries().build();
-    }
+    fun getCountingIdlingResource(): CountingIdlingResource? = null
 }
