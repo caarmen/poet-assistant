@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.shared.main;
 
 
 import android.annotation.TargetApi;
@@ -30,6 +30,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.annotation.Config;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.search.ThesaurusRouterActivity;
@@ -60,6 +61,7 @@ public class ThesaurusRouterTest {
 
     @Test
     @TargetApi(Build.VERSION_CODES.M)
+    @Config(qualifiers = "w360dp-h640dp")
     public void onTextRouted() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
         Intent intent = new Intent(Intent.ACTION_PROCESS_TEXT);
