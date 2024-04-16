@@ -125,7 +125,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
         mTextToSpeech?.stop()
     }
 
-    private fun shutdown() {
+    fun shutdown() {
         mTextToSpeech?.let {
             it.setOnUtteranceProgressListener(null)
             @Suppress("DEPRECATION")
@@ -135,6 +135,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
             threading.executeForeground { mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null) }
             mTextToSpeech = null
         }
+        PreferenceManager.getDefaultSharedPreferences(context).unregisterOnSharedPreferenceChangeListener(mTtsPrefsListener)
     }
 
     private fun useVoiceFromSettings() = useVoice(mTextToSpeech, settingsPrefs.voice)
