@@ -115,7 +115,8 @@ android {
     }
 
     testOptions {
-        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+        // Uncomment below to use orchestrator for tests
+        // execution 'ANDROIDX_TEST_ORCHESTRATOR'
         unitTests {
             all {
                 jvmArgs '-noverify', '-ea'

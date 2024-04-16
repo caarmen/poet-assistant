@@ -75,6 +75,10 @@ final class ActivityTestRules {
         for (IdlingResource idlingResource : idlingResourceList) {
             IdlingRegistry.getInstance().unregister(idlingResource);
         }
+        TestAppComponent testAppComponent = (TestAppComponent) DaggerHelper.INSTANCE.getAppComponent(targetContext.getApplicationContext());
+        getInstrumentation().runOnMainSync(() ->  {
+            testAppComponent.getTts().shutdown();
+        });
     }
 
     private static void cleanup(Context targetContext) {
