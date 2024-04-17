@@ -20,8 +20,14 @@
 package ca.rmen.android.poetassistant.shared.main;
 
 
-import androidx.test.filters.LargeTest;
+import static androidx.test.espresso.Espresso.pressBack;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
+
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,13 +36,6 @@ import org.junit.runner.RunWith;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
-import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
-
-import static androidx.test.espresso.Espresso.pressBack;
-import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)

@@ -20,12 +20,27 @@
 package ca.rmen.android.poetassistant.shared.main;
 
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static org.hamcrest.Matchers.allOf;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkFirstDefinition;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkFirstSynonym;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
+
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.net.Uri;
-import androidx.test.filters.LargeTest;
+
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -36,21 +51,6 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.TestAppUtils;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
-import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
-
-import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static ca.rmen.android.poetassistant.main.CustomChecks.checkFirstDefinition;
-import static ca.rmen.android.poetassistant.main.CustomChecks.checkFirstSynonym;
-import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
-import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
