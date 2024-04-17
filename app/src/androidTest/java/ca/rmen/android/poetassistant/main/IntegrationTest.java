@@ -32,7 +32,6 @@ import org.junit.runner.RunWith;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
-import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
@@ -72,9 +71,6 @@ import static org.hamcrest.Matchers.endsWith;
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class IntegrationTest {
-
-    @Rule
-    public RetryTestRule retry = new RetryTestRule();
 
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
