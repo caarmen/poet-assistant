@@ -38,7 +38,7 @@ class InstrumentationThreading : CoroutineThreading(Dispatchers.Default, Dispatc
         mCountingIdlingResource = CountingIdlingResource(TAG + System.currentTimeMillis(), true)
     }
 
-    fun getCountingIdlingResource() = mCountingIdlingResource
+    fun getCountingIdlingResource(): CountingIdlingResource?  = mCountingIdlingResource
 
     override fun executeForeground(delayMs: Long, body: () -> Unit) : Threading.Cancelable {
         // We don't count the idling resource if there's a delay. This is to avoid making tests

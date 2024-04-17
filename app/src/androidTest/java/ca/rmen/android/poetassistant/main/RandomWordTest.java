@@ -20,16 +20,36 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withParent;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertNotNull;
+import static ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition;
+import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withAdapterItemCount;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
+
 import android.Manifest;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
 import android.service.notification.StatusBarNotification;
-import androidx.test.filters.LargeTest;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
-
 import android.view.View;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import org.hamcrest.Matcher;
 import org.junit.Rule;
@@ -41,43 +61,10 @@ import java.util.Calendar;
 import ca.rmen.android.poetassistant.BuildConfig;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
-import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
-
-import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.contrib.RecyclerViewActions.scrollTo;
-import static androidx.test.espresso.matcher.ViewMatchers.hasChildCount;
-import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
-import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
-import static androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withParent;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition;
-import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withAdapterItemCount;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.scrollToPreference;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
-import static junit.framework.Assert.assertTrue;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertNotNull;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class RandomWordTest {
-    @Rule
-    public RetryTestRule retry = new RetryTestRule();
 
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
@@ -108,13 +95,6 @@ public class RandomWordTest {
     }
 
     @Test
-    public void randomWordTest() {
-        openMenuItem(R.string.action_random_word);
-        checkTitleStripOrTab(mActivityTestRule.getActivity(), R.string.tab_dictionary);
-        onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(not(isEmptyOrNullString()))));
-    }
-
-    @Test
     public void wotdNotificationTest() {
         openMenuItem(R.string.action_settings);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -141,58 +121,4 @@ public class RandomWordTest {
         clickPreference(R.string.wotd_setting_title);
     }
 
-    @Test
-    public void wotdNotificationPriorityPresenceTest() {
-        openMenuItem(R.string.action_settings);
-        Matcher<View> prioritySettingMatcher = withText(R.string.wotd_setting_system_notification_priority_title);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            onView(prioritySettingMatcher).check(doesNotExist());
-        } else {
-            onView(withId(R.id.recycler_view))
-                    .perform(scrollTo(hasDescendant(prioritySettingMatcher)));
-            onView(prioritySettingMatcher).check(matches(isDisplayed()));
-        }
-    }
-
-    @Test
-    public void wotdNotificationPriorityEnabledTest() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return; // The setting isn't available on O+
-        }
-        openMenuItem(R.string.action_settings);
-        scrollToPreference(R.string.wotd_setting_system_notification_priority_title);
-        onView(withText(R.string.wotd_setting_system_notification_priority_title)).check(matches(not(isEnabled())));
-        clickPreference(R.string.wotd_setting_title);
-        onView(withText(R.string.wotd_setting_system_notification_priority_title)).check(matches(isEnabled()));
-    }
-
-    @Test
-    public void wotdNotificationPrioritySelectionTest() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return; // The setting isn't available on O+
-        }
-        openMenuItem(R.string.action_settings);
-        scrollToPreference(R.string.wotd_setting_system_notification_priority_title);
-        clickPreference(R.string.wotd_setting_title);
-
-        clickPreference(R.string.wotd_setting_system_notification_priority_title);
-        onView(withId(R.id.select_dialog_listview)).check(matches(hasChildCount(5)));
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_default)).check(matches(isChecked()));
-
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_max)).perform(click());
-        clickPreference(R.string.wotd_setting_system_notification_priority_title);
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_max)).check(matches(isChecked()));
-
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_high)).perform(click());
-        clickPreference(R.string.wotd_setting_system_notification_priority_title);
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_high)).check(matches(isChecked()));
-
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_low)).perform(click());
-        clickPreference(R.string.wotd_setting_system_notification_priority_title);
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_low)).check(matches(isChecked()));
-
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_min)).perform(click());
-        clickPreference(R.string.wotd_setting_system_notification_priority_title);
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_min)).check(matches(isChecked()));
-    }
 }

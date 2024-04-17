@@ -17,20 +17,8 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.shared.main;
 
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import androidx.test.espresso.NoMatchingViewException;
-import androidx.test.espresso.PerformException;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.LargeTest;
-import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
-import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
 import static androidx.test.espresso.Espresso.pressBack;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhyme;
@@ -41,12 +29,22 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 
+import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.PerformException;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.MainActivity;
+import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
+
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class ThesaurusSettingsTest {
-
-    @Rule
-    public RetryTestRule retry = new RetryTestRule();
 
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);

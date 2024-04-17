@@ -26,7 +26,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter
 import ca.rmen.android.poetassistant.wotd.WotdAdapter
 
-class ResultListAdapterFactoryImpl : ResultListAdapterFactory {
+open class ResultListAdapterFactoryImpl : ResultListAdapterFactory {
 
     override fun createAdapter(activity: Activity, tab: Tab): ResultListAdapter<out Any> {
         return when (tab) {

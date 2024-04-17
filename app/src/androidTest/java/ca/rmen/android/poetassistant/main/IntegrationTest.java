@@ -23,7 +23,6 @@ package ca.rmen.android.poetassistant.main;
 import android.content.Context;
 import androidx.annotation.IdRes;
 import androidx.annotation.StringRes;
-import androidx.test.espresso.ViewInteraction;
 import androidx.test.filters.LargeTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -33,13 +32,11 @@ import org.junit.runner.RunWith;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
-import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
@@ -56,10 +53,8 @@ import static ca.rmen.android.poetassistant.main.TestAppUtils.clearFilter;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearSearchHistory;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.clearStarredWords;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.clickDialogPositiveButton;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openDictionary;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openDictionaryCleanLayout;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.openFilter;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openThesaurus;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.openThesaurusCleanLayout;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
@@ -76,9 +71,6 @@ import static org.hamcrest.Matchers.endsWith;
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class IntegrationTest {
-
-    @Rule
-    public RetryTestRule retry = new RetryTestRule();
 
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
@@ -206,16 +198,6 @@ public class IntegrationTest {
     }
 
     @Test
-    public void copyTest() {
-        Context context = mActivityTestRule.getActivity();
-        search("donkey");
-        String wordToCopy = "swanky";
-        onView(allOf(withText(wordToCopy), isDisplayed())).perform(click());
-        onView(allOf(withText(endsWith(context.getString(R.string.menu_copy))), isDisplayed())).perform(click());
-        getInstrumentation().runOnMainSync(() -> checkClipboard(context, wordToCopy));
-    }
-
-    @Test
     public void copyCleanLayoutTest() {
         Context context = mActivityTestRule.getActivity();
         useCleanLayout();
@@ -262,15 +244,6 @@ public class IntegrationTest {
         onView(withId(R.id.tv_source_code))
                 .check(matches(isCompletelyDisplayed()))
                 .check(matches(withText(R.string.about_projectUrl)));
-    }
-
-    @Test
-    public void saveFilterTest() {
-        search("pugnacious");
-        addFilter("vulturous", "rapacious");
-        ViewInteraction filterView = openFilter("vulturous");
-        filterView.perform(closeSoftKeyboard());
-        clickDialogPositiveButton(android.R.string.ok);
     }
 
     private void checkLicense(@IdRes int linkResId, @StringRes int linkTitle, String licenseContent) {

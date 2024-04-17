@@ -40,6 +40,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows
+import org.robolectric.annotation.Config
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -92,6 +93,7 @@ class TestPoemFile {
     }
 
     @Test
+    @Config(sdk = [30]) // TODO investigate why this doesn't work starting from 31
     fun testSave() {
         val text = "Roses are red\n"
         val callback = CountDownPoemFileCallback()

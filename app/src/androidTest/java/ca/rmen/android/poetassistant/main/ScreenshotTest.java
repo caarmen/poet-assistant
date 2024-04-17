@@ -42,7 +42,6 @@ import androidx.test.runner.screenshot.ScreenCapture;
 import androidx.test.runner.screenshot.ScreenCaptureProcessor;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
-import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
 import static androidx.test.espresso.Espresso.onIdle;
 import static androidx.test.espresso.Espresso.onView;
@@ -61,9 +60,6 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ScreenshotTest {
-
-    @Rule
-    public RetryTestRule retry = new RetryTestRule(1);
 
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);

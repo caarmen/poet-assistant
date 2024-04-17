@@ -29,13 +29,13 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-final class CustomViewMatchers {
+public final class CustomViewMatchers {
     private CustomViewMatchers() {
         // prevent instantiation
     }
 
     // This is generated from the test recorder
-    static Matcher<View> childAtPosition(
+    public static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
 
         return new TypeSafeMatcher<View>() {
@@ -69,7 +69,7 @@ final class CustomViewMatchers {
         };
     }
 
-    static Matcher<View> withAdapterItemCount(int count) {
+    public static Matcher<View> withAdapterItemCount(int count) {
         return new BoundedMatcher<View, RecyclerView>(RecyclerView.class) {
             @Override
             public void describeTo(Description description) {

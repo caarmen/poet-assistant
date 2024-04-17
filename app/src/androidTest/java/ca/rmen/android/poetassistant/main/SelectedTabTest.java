@@ -20,12 +20,18 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkFirstDefinition;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.SystemClock;
+
 import androidx.annotation.StringRes;
-import androidx.test.filters.LargeTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
 
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
@@ -35,22 +41,11 @@ import org.junit.runners.MethodSorters;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
-import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
-
-import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
-import static ca.rmen.android.poetassistant.main.CustomChecks.checkFirstDefinition;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 
 @LargeTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(AndroidJUnit4.class)
 public class SelectedTabTest {
-
-    @Rule
-    public RetryTestRule retry = new RetryTestRule();
 
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, false);
@@ -95,16 +90,6 @@ public class SelectedTabTest {
         checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan");
     }
 
-    @Test
-    public void openAfterLastRhymer() {
-        testSaveTab(() -> {
-        }, R.string.tab_rhymer, R.string.tab_rhymer);
-    }
-
-    @Test
-    public void openAfterLastThesaurus() {
-        testSaveTab(() -> swipeViewPagerLeft(1), R.string.tab_thesaurus, R.string.tab_thesaurus);
-    }
 
     @Test
     public void openAfterLastDictionary() {
@@ -119,16 +104,6 @@ public class SelectedTabTest {
     @Test
     public void openAfterLastFavorites() {
         testSaveTab(() -> swipeViewPagerLeft(4), R.string.tab_favorites, R.string.tab_favorites);
-    }
-
-    @Test
-    public void openAfterLastWotd() {
-        testSaveTab(() -> openMenuItem(R.string.action_wotd_history), R.string.tab_wotd, R.string.tab_rhymer);
-    }
-
-    @Test
-    public void openAfterLastPattern() {
-        testSaveTab(() -> search("h*llo"), R.string.tab_pattern, R.string.tab_rhymer);
     }
 
     private void testSaveTab(Runnable openTabAction, @StringRes int expectedTabBeforeStop, @StringRes int expectedTabAfterRestart) {

@@ -17,26 +17,26 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main;
+package ca.rmen.android.poetassistant.shared.main;
 
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.matcher.ViewMatchers.hasSibling;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static org.hamcrest.Matchers.allOf;
-import static ca.rmen.android.poetassistant.main.CustomChecks.checkAllStarredWords;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.clearStarredWords;
+import static org.hamcrest.Matchers.endsWith;
+import static ca.rmen.android.poetassistant.main.CustomChecks.checkClipboard;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.addFilter;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.clickDialogPositiveButton;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.openFilter;
 import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.unStarQueryWord;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
 
 import android.content.Context;
 
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
@@ -45,35 +45,33 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-public class FavoritesTest {
+public class IntegrationTest {
 
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 
+
     @Test
-    public void favoritesTest() {
+    public void copyTest() {
         Context context = mActivityTestRule.getActivity();
-        search("cheesecake");
-        starQueryWord();
-        onView(allOf(withId(R.id.btn_star_result), hasSibling(withText("ache")))).perform(click());
-        swipeViewPagerLeft(4);
-        checkAllStarredWords(context, "cheesecake", "ache");
-        swipeViewPagerRight(3);
-        unStarQueryWord();
-        swipeViewPagerLeft(3);
-        checkAllStarredWords(context, "ache");
-        onView(allOf(withId(R.id.btn_star_result), hasSibling(withText("ache")), isDisplayed())).perform(click());
-        checkAllStarredWords(context);
-        swipeViewPagerRight(2);
-        starQueryWord();
-        swipeViewPagerLeft(2);
-        checkAllStarredWords(context, "cheesecake");
-        clearStarredWords();
-        checkAllStarredWords(context);
+        search("donkey");
+        String wordToCopy = "swanky";
+        onView(allOf(withText(wordToCopy), isDisplayed())).perform(click());
+        onView(allOf(withText(endsWith(context.getString(R.string.menu_copy))), isDisplayed())).perform(click());
+        getInstrumentation().runOnMainSync(() -> checkClipboard(context, wordToCopy));
+    }
+
+    @Test
+    public void saveFilterTest() {
+        search("pugnacious");
+        addFilter("vulturous", "rapacious");
+        ViewInteraction filterView = openFilter("vulturous");
+        filterView.perform(closeSoftKeyboard());
+        clickDialogPositiveButton(android.R.string.ok);
     }
 }
-

@@ -112,7 +112,12 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
         mSearch = Search(this, mBinding.viewPager)
         // Load our dictionaries when the activity starts, so that the first search can already be fast.
         mThreading.execute({ loadDatabase() },
-                { onDatabaseLoadResult(it) })
+                {
+                    onDatabaseLoadResult(it)
+                    if (Intent.ACTION_SEARCH == intent.action) {
+                        handleSearchIntent(intent)
+                    }
+                })
         volumeControlStream = AudioManager.STREAM_MUSIC
     }
 
@@ -158,17 +163,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
         when (intent.action) {
         // The user entered a search term either by typing or by voice
             Intent.ACTION_SEARCH -> {
-                var query = intent.dataString
-                if (TextUtils.isEmpty(query)) {
-                    query = intent.getStringExtra(SearchManager.QUERY)
-                }
-                if (TextUtils.isEmpty(query)) {
-                    val userQuery = intent.getCharSequenceExtra(SearchManager.USER_QUERY)
-                    if (!userQuery.isNullOrEmpty()) query = userQuery.toString()
-                }
-                if (TextUtils.isEmpty(query)) return
-                mSearch.addSuggestions(query!!)
-                mSearch.search(query)
+                handleSearchIntent(intent)
             }
         // We got here from a deep link
             Intent.ACTION_VIEW -> {
@@ -185,6 +180,19 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
         }
     }
 
+    private fun handleSearchIntent(intent: Intent) {
+        var query = intent.dataString
+        if (TextUtils.isEmpty(query)) {
+            query = intent.getStringExtra(SearchManager.QUERY)
+        }
+        if (TextUtils.isEmpty(query)) {
+            val userQuery = intent.getCharSequenceExtra(SearchManager.USER_QUERY)
+            if (!userQuery.isNullOrEmpty()) query = userQuery.toString()
+        }
+        if (TextUtils.isEmpty(query)) return
+        mSearch.addSuggestions(query!!)
+        mSearch.search(query)
+    }
     private fun handleDeepLink(uri: Uri?) {
         Log.d(TAG, "handleDeepLink, uri=$uri")
         if (uri == null) return
