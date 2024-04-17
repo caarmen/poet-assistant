@@ -57,9 +57,6 @@ import static org.hamcrest.Matchers.allOf;
 public class IntentTest {
 
     @Rule
-    public RetryTestRule retry = new RetryTestRule();
-
-    @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, false);
 
     @Test

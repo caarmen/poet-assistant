@@ -44,15 +44,11 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.rules.ActivityStageIdlingResource;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
-import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class FavoritesTest {
-
-    @Rule
-    public RetryTestRule retry = new RetryTestRule();
 
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);

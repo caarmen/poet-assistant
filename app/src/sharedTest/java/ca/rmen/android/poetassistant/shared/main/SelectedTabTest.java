@@ -40,15 +40,11 @@ import org.junit.runners.MethodSorters;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
-import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
 @LargeTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(AndroidJUnit4.class)
 public class SelectedTabTest {
-
-    @Rule
-    public RetryTestRule retry = new RetryTestRule();
 
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, false);

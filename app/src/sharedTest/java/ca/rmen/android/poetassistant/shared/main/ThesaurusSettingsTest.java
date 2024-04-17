@@ -47,9 +47,6 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 public class ThesaurusSettingsTest {
 
     @Rule
-    public RetryTestRule retry = new RetryTestRule();
-
-    @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 
     @Test

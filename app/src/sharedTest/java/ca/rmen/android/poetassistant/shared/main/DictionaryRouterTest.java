@@ -51,9 +51,6 @@ import static org.hamcrest.Matchers.allOf;
 public class DictionaryRouterTest {
 
     @Rule
-    public RetryTestRule retry = new RetryTestRule();
-
-    @Rule
     public PoetAssistantActivityTestRule<DictionaryRouterActivity> mActivityTestRule =
             new PoetAssistantActivityTestRule<>(DictionaryRouterActivity.class, false);
 

@@ -50,9 +50,6 @@ import static org.hamcrest.Matchers.allOf;
 public class RhymerRouterTest {
 
     @Rule
-    public RetryTestRule retry = new RetryTestRule();
-
-    @Rule
     public PoetAssistantActivityTestRule<RhymerRouterActivity> mActivityTestRule =
             new PoetAssistantActivityTestRule<>(RhymerRouterActivity.class, false);
 

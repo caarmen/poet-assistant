@@ -41,9 +41,6 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class RhymeSettingsTest {
-    @Rule
-    public RetryTestRule retry = new RetryTestRule();
-
 
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);

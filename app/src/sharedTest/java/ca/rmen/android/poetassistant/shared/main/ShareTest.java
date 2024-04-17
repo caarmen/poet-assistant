@@ -49,14 +49,10 @@ import org.junit.runner.RunWith;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantIntentsTestRule;
-import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
 public class ShareTest {
-
-    @Rule
-    public RetryTestRule retry = new RetryTestRule();
 
     @Rule
     public PoetAssistantIntentsTestRule<MainActivity> mActivityTestRule = new PoetAssistantIntentsTestRule<>(MainActivity.class);

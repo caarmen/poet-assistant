@@ -53,9 +53,6 @@ import static org.hamcrest.Matchers.allOf;
 public class ThesaurusRouterTest {
 
     @Rule
-    public RetryTestRule retry = new RetryTestRule();
-
-    @Rule
     public PoetAssistantActivityTestRule<ThesaurusRouterActivity> mActivityTestRule =
             new PoetAssistantActivityTestRule<>(ThesaurusRouterActivity.class, false);
 
