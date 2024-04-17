@@ -74,7 +74,7 @@ android {
         // "pm clear" command after each test invocation. This command ensures
         // that the app's state is completely cleared between tests.
         // https://developer.android.com/training/testing/instrumented-tests/androidx-test-libraries/runner#use-android
-        testInstrumentationRunnerArguments coverage: 'true', coverageFilePath: '/data/data/ca.rmen.android.poetassistant.test/'
+        testInstrumentationRunnerArguments clearPackageData: 'true', coverage: 'true', coverageFilePath: '/data/data/ca.rmen.android.poetassistant.test/'
 
 
         // used by Room, to test migrations
