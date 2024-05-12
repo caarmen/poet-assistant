@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       checks: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -19,16 +20,29 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
       - name: Run unit tests
-        run: ./gradlew --no-daemon testDebugUnitTest
+        run: ./gradlew --no-daemon testDebugUnitTest jacocoTestReport
       - name: Publish Test Report
         uses: mikepenz/action-junit-report@v4
         if: always() # always run even if the previous step fails
         with:
           report_paths: "app/build/test-results/testDebugUnitTest/*.xml"
           check_name: UnitTests
-      - name: Archive reports
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.6.1
+        with:
+          paths: |
+            ${{ github.workspace }}/app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Archive unit tests
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: reports
+          name: unit-tests
           path: app/build/reports/tests/testDebugUnitTest
+      - name: Archive coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: app/build/reports/jacoco
