@@ -1,0 +1,34 @@
+name: Tests
+on: 
+  pull_request:
+  push:
+      branches:
+        - main
+jobs:
+  UnitTests:
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Run unit tests
+        run: ./gradlew --no-daemon testDebugUnitTest
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v4
+        if: always() # always run even if the previous step fails
+        with:
+          report_paths: "app/build/test-results/testDebugUnitTest/*.xml"
+          check_name: UnitTests
+      - name: Archive reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: app/build/reports/tests/testDebugUnitTest
