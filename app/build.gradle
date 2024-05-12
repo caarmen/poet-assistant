@@ -48,7 +48,7 @@ android {
         buildConfig = true
     }
     jacoco {
-        version "0.8.8"
+        version "0.8.12"
     }
     lintOptions {
         abortOnError true
@@ -74,7 +74,7 @@ android {
         // "pm clear" command after each test invocation. This command ensures
         // that the app's state is completely cleared between tests.
         // https://developer.android.com/training/testing/instrumented-tests/androidx-test-libraries/runner#use-android
-        testInstrumentationRunnerArguments clearPackageData: 'true', coverage: 'true', coverageFilePath: '/data/data/ca.rmen.android.poetassistant.test/'
+        // testInstrumentationRunnerArguments clearPackageData: 'true', coverage: 'true', coverageFilePath: '/data/data/ca.rmen.android.poetassistant.test/'
 
 
         // used by Room, to test migrations
@@ -168,7 +168,7 @@ android {
 }
 
 jacoco {
-    toolVersion '0.8.8'
+    toolVersion '0.8.12'
 }
 android.applicationVariants.all { variant ->
     variant.getMergeAssetsProvider().get().doLast {
@@ -270,6 +270,7 @@ dependencyUpdates.resolutionStrategy {
 }
 task jacocoTestReport(type: JacocoReport) {
     mustRunAfter "testDebugUnitTest"
+    mustRunAfter "connectedDebugAndroidTest"
     mustRunAfter "createDebugCoverageReport"
     getClassDirectories().setFrom(fileTree(
             dir: "${buildDir}",
