@@ -20,19 +20,19 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.gradle_plugin_version = '8.1.1'
-    ext.kotlin_version = '1.9.10'
-    ext.kotlin_coroutines_version = '1.7.3'
+    ext.gradle_plugin_version = '8.4.0'
+    ext.kotlin_version = '1.9.24'
+    ext.kotlin_coroutines_version = '1.8.1'
 
     ext.appcompat_version = "1.6.1"
-    ext.collection_version = "1.2.0"
+    ext.collection_version = "1.4.0"
     ext.constraintlayout_version = "2.1.4"
-    ext.lifecycle_version = "2.6.2"
-    ext.material_version = "1.9.0"
+    ext.lifecycle_version = "2.7.0"
+    ext.material_version = "1.12.0"
     ext.preference_version = "1.2.1"
-    ext.room_version = "2.5.2"
+    ext.room_version = "2.6.1"
 
-    ext.dagger_version = '2.48'
+    ext.dagger_version = '2.51.1'
     ext.porterstemmer_version = "1.0.0"
     ext.rhymer_version = "1.2.0"
 
@@ -43,6 +43,7 @@ buildscript {
     ext.androidx_test_rules_version = "1.5.0"
     ext.androidx_test_core_version = "1.5.0"
     ext.androidx_test_orchestrator_version = "1.4.2"
+    ext.androidx_test_uiautomator_version = "2.3.0"
     ext.androidx_junit_version = "1.1.5"
     ext.espresso_version = "3.5.1"
 
