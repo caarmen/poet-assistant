@@ -33,7 +33,7 @@ apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 android {
-    compileSdkVersion 34
+    compileSdkVersion 35
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -62,7 +62,7 @@ android {
         applicationId "ca.rmen.android.poetassistant"
         namespace "ca.rmen.android.poetassistant"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode 113008
         versionName "1.30.8"
         // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
