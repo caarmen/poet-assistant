@@ -1,6 +1,8 @@
 Change Log
 ==========
 
+Newer release notes are on the [releases](https://github.com/caarmen/poet-assistant/releases) page.
+
 1.30.3  *(2020-10-28)*
 --------------------
 * Android 11: Declare more `<queries>` elements in the manifest
