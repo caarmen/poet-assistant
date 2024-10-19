@@ -5,8 +5,10 @@ on:
       branches:
         - master
 jobs:
-  UnitTests:
+  Tests:
     runs-on: ubuntu-latest
+    env:
+      ANDROID_SDK_ROOT: ${{vars.ANDROID_SDK_ROOT}}
     permissions:
       checks: write
       pull-requests: write
@@ -17,16 +19,29 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-      - name: Run unit tests
-        run: ./gradlew --no-daemon testDebugUnitTest jacocoTestReport
-      - name: Publish Test Report
+      - name: Run tests
+        env:
+          GMSAAS_API_TOKEN: ${{secrets.GMSAAS_API_TOKEN}}
+          GMSAAS_RECIPE_UUID: ${{vars.GMSAAS_RECIPE_UUID}}
+        run: bash scripts/run_tests.bash
+      - name: Publish Unit Test Report
         uses: mikepenz/action-junit-report@v4
         if: always() # always run even if the previous step fails
         with:
           report_paths: "app/build/test-results/testDebugUnitTest/*.xml"
           check_name: UnitTests
+      - name: Publish Instrumentation Test Report
+        uses: mikepenz/action-junit-report@v4
+        if: always() # always run even if the previous step fails
+        with:
+          report_paths: "app/build/outputs/androidTest-results/connected/**/*.xml"
+          check_name: InstrumentationTests
       - name: Add coverage to PR
         id: jacoco
         uses: madrapps/jacoco-report@v1.6.1
@@ -40,9 +55,21 @@ jobs:
         with:
           name: unit-tests
           path: app/build/reports/tests/testDebugUnitTest
+      - name: Archive instrumentation tests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: instrumentation-tests
+          path: app/build/reports/androidTests/connected/debug
       - name: Archive coverage
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: app/build/reports/jacoco
+      - name: Archive logcat
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logcat
+          path: /tmp/lolcat.log
