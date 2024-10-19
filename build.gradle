@@ -39,13 +39,13 @@ buildscript {
     ext.junit_version = "4.13.2"
     ext.robolectric_version = "4.13"
     ext.festreflect_version = "1.4.1"
-    ext.androidx_test_runner_version = "1.5.2"
-    ext.androidx_test_rules_version = "1.5.0"
-    ext.androidx_test_core_version = "1.5.0"
-    ext.androidx_test_orchestrator_version = "1.4.2"
+    ext.androidx_test_runner_version = "1.6.2"
+    ext.androidx_test_rules_version = "1.6.1"
+    ext.androidx_test_core_version = "1.6.1"
+    ext.androidx_test_orchestrator_version = "1.5.1"
     ext.androidx_test_uiautomator_version = "2.3.0"
-    ext.androidx_junit_version = "1.1.5"
-    ext.espresso_version = "3.5.1"
+    ext.androidx_junit_version = "1.2.1"
+    ext.espresso_version = "3.6.1"
 
     repositories {
         google()
