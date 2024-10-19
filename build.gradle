@@ -21,8 +21,8 @@
 
 buildscript {
     ext.gradle_plugin_version = '8.7.1'
-    ext.kotlin_version = '1.9.24'
-    ext.kotlin_coroutines_version = '1.8.1'
+    ext.kotlin_version = '2.0.21'
+    ext.kotlin_coroutines_version = '1.9.0'
 
     ext.appcompat_version = "1.6.1"
     ext.collection_version = "1.4.0"
