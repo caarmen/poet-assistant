@@ -171,17 +171,16 @@ jacoco {
     toolVersion '0.8.12'
 }
 android.applicationVariants.all { variant ->
-    variant.getMergeAssetsProvider().get().doLast {
-        copy {
-            from project.rootDir
-            into "${project.buildDir}/generated/license_assets/"
-            include 'LICENSE.txt'
-            include 'LICENSE-rhyming-dictionary.txt'
-            include 'LICENSE-thesaurus-wordnet.txt'
-            include 'LICENSE-dictionary-wordnet.txt'
-            include 'LICENSE-google-ngram-dataset.txt'
-        }
+    def copyLicenseFilesTask = tasks.register("copyLicenseFilesFor${variant.name.capitalize()}", Copy) {
+        from project.rootDir
+        into "${project.buildDir}/generated/license_assets/"
+        include 'LICENSE.txt'
+        include 'LICENSE-rhyming-dictionary.txt'
+        include 'LICENSE-thesaurus-wordnet.txt'
+        include 'LICENSE-dictionary-wordnet.txt'
+        include 'LICENSE-google-ngram-dataset.txt'
     }
+    variant.mergeAssetsProvider.configure { dependsOn copyLicenseFilesTask }
 }
 
 project.gradle.taskGraph.whenReady {
