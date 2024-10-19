@@ -23,15 +23,6 @@ def run_gmsaas_command(command: str) -> dict:
     )
 
 
-def gmsaas_stop_all_instances():
-    logger.info("Stop all instances.")
-    instances_list_output = run_gmsaas_command("instances list")
-
-    for instance in instances_list_output["instances"]:
-        run_gmsaas_command(f"instances stop {instance["uuid"]}")
-        logger.info(f"Stopped {instance["uuid"]} ({instance["name"]})")
-
-
 def gmsaas_authenticate():
     logger.info("Authenticate.")
     auth_token_output = run_gmsaas_command(
@@ -58,11 +49,16 @@ def gmsaas_config():
 def gmsaas_start_instance() -> str:
     logger.info("Start new instance.")
     instances_start_output = run_gmsaas_command(
-        f"instances start {recipe_uuid} poet-assistant-tests"
+        f"instances start --max-run-duration 30 {recipe_uuid} poet-assistant-tests"
     )
     instance_uuid = instances_start_output["instance"]["uuid"]
     logger.info(f"Started instance {instance_uuid}.")
     return instance_uuid
+
+
+def gmsaas_stop_instance(instance_uuid: str):
+    logger.info(f"Stop instance {instance_uuid}.")
+    run_gmsaas_command(f"instances stop {instance_uuid}")
 
 
 def gmsaas_connect_adb(instance_uuid: str):
@@ -114,7 +110,6 @@ def gradle_run_tests() -> int:
 # Setup the device.
 gmsaas_authenticate()
 gmsaas_config()
-gmsaas_stop_all_instances()
 instance_uuid = gmsaas_start_instance()
 gmsaas_connect_adb(instance_uuid)
 
@@ -124,7 +119,7 @@ adb_disable_animations()
 tests_return_code = gradle_run_tests()
 
 # Cleanup.
-gmsaas_stop_all_instances()
+gmsaas_stop_instance(instance_uuid)
 gmsaas_logout()
 
 exit(code=tests_return_code)
