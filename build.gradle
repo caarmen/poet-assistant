@@ -37,7 +37,7 @@ buildscript {
     ext.rhymer_version = "1.2.0"
 
     ext.junit_version = "4.13.2"
-    ext.robolectric_version = "4.12.1"
+    ext.robolectric_version = "4.13"
     ext.festreflect_version = "1.4.1"
     ext.androidx_test_runner_version = "1.5.2"
     ext.androidx_test_rules_version = "1.5.0"
