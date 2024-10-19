@@ -10,8 +10,8 @@ logging.basicConfig(
 )
 parser = argparse.ArgumentParser()
 parser.add_argument("recipe_uuid", type=str)
+parser.add_argument("instance_name", type=str)
 args = parser.parse_args()
-recipe_uuid = args.recipe_uuid
 
 
 def run_gmsaas_command(command: str) -> dict:
@@ -46,10 +46,13 @@ def gmsaas_config():
     logger.info(f"Configuration now {config_set_output["configuration"]}")
 
 
-def gmsaas_start_instance() -> str:
+def gmsaas_start_instance(
+    recipe_uuid: str,
+    instance_name: str,
+) -> str:
     logger.info("Start new instance.")
     instances_start_output = run_gmsaas_command(
-        f"instances start --max-run-duration 30 {recipe_uuid} poet-assistant-tests"
+        f"instances start --max-run-duration 30 {recipe_uuid} '{instance_name}'"
     )
     instance_uuid = instances_start_output["instance"]["uuid"]
     logger.info(f"Started instance {instance_uuid}.")
@@ -110,7 +113,10 @@ def gradle_run_tests() -> int:
 # Setup the device.
 gmsaas_authenticate()
 gmsaas_config()
-instance_uuid = gmsaas_start_instance()
+instance_uuid = gmsaas_start_instance(
+    recipe_uuid=args.recipe_uuid,
+    instance_name=args.instance_name,
+)
 gmsaas_connect_adb(instance_uuid)
 
 # Run the tests.
