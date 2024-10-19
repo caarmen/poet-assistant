@@ -1,7 +1,7 @@
 Poet Assistant
 ==============
 
-[![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/caarmen/poet-assistant/tests.yaml)](https://github.com/caarmen/poet-assistant/actions/workflows/tests.yml?query=branch%3Amaster)
+[![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/caarmen/poet-assistant/tests.yaml)](https://github.com/caarmen/poet-assistant/actions/workflows/tests.yaml?query=branch%3Amaster)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/caarmen/poet-assistant)](https://github.com/caarmen/poet-assistant/releases)
 
 [![GitHub repo size](https://img.shields.io/github/repo-size/caarmen/poet-assistant)](https://github.com/caarmen/poet-assistant/archive/refs/heads/main.zip)
