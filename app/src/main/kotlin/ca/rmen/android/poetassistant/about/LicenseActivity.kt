@@ -30,6 +30,7 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.ActivityLicenseBinding
+import ca.rmen.android.poetassistant.fixInsets
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -60,6 +61,7 @@ class LicenseActivity : AppCompatActivity() {
         val title = intent.getStringExtra(EXTRA_TITLE)
         val licenseFile = intent.getStringExtra(EXTRA_LICENSE_TEXT_ASSET_FILE)!!
         mBinding.tvTitle.text = title
+        fixInsets(mBinding.root)
         val threading = DaggerHelper.getMainScreenComponent(this).getThreading()
         threading.execute({ readFile(licenseFile) },
                 { mBinding.tvLicenseText.text = it })

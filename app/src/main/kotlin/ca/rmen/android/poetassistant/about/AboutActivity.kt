@@ -29,6 +29,7 @@ import android.widget.TextView
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.VectorCompat
 import ca.rmen.android.poetassistant.databinding.ActivityAboutBinding
+import ca.rmen.android.poetassistant.fixInsets
 
 class AboutActivity : AppCompatActivity() {
 
@@ -50,6 +51,7 @@ class AboutActivity : AppCompatActivity() {
         val appVersionText = getString(R.string.about_app_version, getString(R.string.app_name), versionName)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_about)
         mBinding.txtVersion.text = appVersionText
+        fixInsets(mBinding.root)
         hackSetIcons()
     }
 
