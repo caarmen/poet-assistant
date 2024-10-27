@@ -20,132 +20,143 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".about.AboutActivity">
+        android:orientation="vertical">
+        <View
+            android:id="@+id/status_bar_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="?colorPrimary" />
 
-        <ImageView
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:alpha="0.2"
-            android:contentDescription="@string/app_name"
-            android:scaleType="fitEnd"
-            android:src="@mipmap/ic_launcher" />
+            tools:context=".about.AboutActivity">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
+            <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp">
+                android:layout_height="match_parent"
+                android:alpha="0.2"
+                android:contentDescription="@string/app_name"
+                android:scaleType="fitEnd"
+                android:src="@mipmap/ic_launcher" />
 
-                <TextView
-                    android:id="@+id/txtVersion"
-                    android:layout_width="wrap_content"
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textStyle="bold" />
+                    android:orientation="vertical"
+                    android:padding="8dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:autoLink="all"
-                    android:gravity="center_vertical"
-                    android:text="@string/about_copyright"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColorLink="@color/primary" />
+                    <TextView
+                        android:id="@+id/txtVersion"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold" />
 
-                <TextView
-                    style="@style/AboutActivityItem"
-                    android:id="@+id/tv_source_code"
-                    android:text="@string/about_projectUrl"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:autoLink="all"
+                        android:gravity="center_vertical"
+                        android:text="@string/about_copyright"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColorLink="@color/primary" />
 
-                <TextView
-                    style="@style/AboutActivityItem"
-                    android:id="@+id/tv_bug_report"
-                    android:text="@string/about_issuesUrl"/>
+                    <TextView
+                        style="@style/AboutActivityItem"
+                        android:id="@+id/tv_source_code"
+                        android:text="@string/about_projectUrl"/>
 
-                <TextView
-                    style="@style/AboutActivityItem"
-                    android:id="@+id/tv_rate"
-                    android:text="@string/about_rateUrl"/>
+                    <TextView
+                        style="@style/AboutActivityItem"
+                        android:id="@+id/tv_bug_report"
+                        android:text="@string/about_issuesUrl"/>
 
-                <TextView
-                    style="@style/AboutActivityItem"
-                    android:id="@+id/tv_legal"
-                    android:text="@string/about_legal"/>
+                    <TextView
+                        style="@style/AboutActivityItem"
+                        android:id="@+id/tv_rate"
+                        android:text="@string/about_rateUrl"/>
 
-                <TextView
-                    style="@style/AboutActivitySubItem"
-                    android:id="@+id/tv_privacy_policy"
-                    android:text="@string/about_privacy_policy"/>
+                    <TextView
+                        style="@style/AboutActivityItem"
+                        android:id="@+id/tv_legal"
+                        android:text="@string/about_legal"/>
 
-                <TextView
-                    style="@style/AboutActivitySubItem"
-                    android:id="@+id/tv_poet_assistant_license"
-                    android:onClick="onClickAppLicense"
-                    android:text="@string/about_license_app"
-                    android:textColor="@color/primary" />
+                    <TextView
+                        style="@style/AboutActivitySubItem"
+                        android:id="@+id/tv_privacy_policy"
+                        android:text="@string/about_privacy_policy"/>
 
-                <TextView
-                    android:id="@+id/tv_rhymer_license"
-                    style="@style/AboutActivitySubItem"
-                    android:onClick="onClickRhymerLicense"
-                    android:text="@string/about_license_rhyming_dictionary"
-                    android:textColor="@color/primary" />
+                    <TextView
+                        style="@style/AboutActivitySubItem"
+                        android:id="@+id/tv_poet_assistant_license"
+                        android:onClick="onClickAppLicense"
+                        android:text="@string/about_license_app"
+                        android:textColor="@color/primary" />
 
-                <TextView
-                    android:id="@+id/tv_thesaurus_license"
-                    style="@style/AboutActivitySubItem"
-                    android:onClick="onClickThesaurusLicense"
-                    android:text="@string/about_license_thesaurus"
-                    android:textColor="@color/primary" />
+                    <TextView
+                        android:id="@+id/tv_rhymer_license"
+                        style="@style/AboutActivitySubItem"
+                        android:onClick="onClickRhymerLicense"
+                        android:text="@string/about_license_rhyming_dictionary"
+                        android:textColor="@color/primary" />
 
-                <TextView
-                    android:id="@+id/tv_dictionary_license"
-                    style="@style/AboutActivitySubItem"
-                    android:onClick="onClickDictionaryLicense"
-                    android:text="@string/about_license_dictionary"
-                    android:textColor="@color/primary" />
+                    <TextView
+                        android:id="@+id/tv_thesaurus_license"
+                        style="@style/AboutActivitySubItem"
+                        android:onClick="onClickThesaurusLicense"
+                        android:text="@string/about_license_thesaurus"
+                        android:textColor="@color/primary" />
 
-                <TextView
-                    android:id="@+id/tv_google_ngram_dataset_license"
-                    style="@style/AboutActivitySubItem"
-                    android:onClick="onClickGoogleNgramDatasetLicense"
-                    android:text="@string/about_license_google_ngram_dataset"
-                    android:textColor="@color/primary" />
+                    <TextView
+                        android:id="@+id/tv_dictionary_license"
+                        style="@style/AboutActivitySubItem"
+                        android:onClick="onClickDictionaryLicense"
+                        android:text="@string/about_license_dictionary"
+                        android:textColor="@color/primary" />
 
-                <TextView
-                    style="@style/AboutActivitySubItem"
-                    android:id="@+id/tv_support_lib_license"
-                    android:text="@string/about_license_support_lib"/>
+                    <TextView
+                        android:id="@+id/tv_google_ngram_dataset_license"
+                        style="@style/AboutActivitySubItem"
+                        android:onClick="onClickGoogleNgramDatasetLicense"
+                        android:text="@string/about_license_google_ngram_dataset"
+                        android:textColor="@color/primary" />
 
-                <TextView
-                    style="@style/AboutActivitySubItem"
-                    android:id="@+id/tv_dagger_license"
-                    android:text="@string/about_license_dagger"/>
+                    <TextView
+                        style="@style/AboutActivitySubItem"
+                        android:id="@+id/tv_support_lib_license"
+                        android:text="@string/about_license_support_lib"/>
 
-                <TextView
-                    style="@style/AboutActivitySubItem"
-                    android:id="@+id/tv_kotlin_license"
-                    android:text="@string/about_license_kotlin"/>
+                    <TextView
+                        style="@style/AboutActivitySubItem"
+                        android:id="@+id/tv_dagger_license"
+                        android:text="@string/about_license_dagger"/>
 
-                <TextView
-                    style="@style/AboutActivitySubItem"
-                    android:id="@+id/tv_prefs_license"
-                    android:text="@string/about_license_prefs"/>
+                    <TextView
+                        style="@style/AboutActivitySubItem"
+                        android:id="@+id/tv_kotlin_license"
+                        android:text="@string/about_license_kotlin"/>
 
-                <TextView
-                    style="@style/AboutActivitySubItem"
-                    android:id="@+id/tv_stemmer_license"
-                    android:text="@string/about_porter_stemming_algorithm"/>
-            </LinearLayout>
-        </ScrollView>
-    </FrameLayout>
+                    <TextView
+                        style="@style/AboutActivitySubItem"
+                        android:id="@+id/tv_prefs_license"
+                        android:text="@string/about_license_prefs"/>
+
+                    <TextView
+                        style="@style/AboutActivitySubItem"
+                        android:id="@+id/tv_stemmer_license"
+                        android:text="@string/about_porter_stemming_algorithm"/>
+                </LinearLayout>
+            </ScrollView>
+        </FrameLayout>
+    </LinearLayout>
 </layout>
