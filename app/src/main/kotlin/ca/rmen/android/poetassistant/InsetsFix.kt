@@ -31,10 +31,21 @@ fun fixInsets(view: View) {
     ViewCompat.setOnApplyWindowInsetsListener(view) { v, windowInsets ->
         val insets = windowInsets.getInsets(
             WindowInsetsCompat.Type.systemBars()
-                    or WindowInsetsCompat.Type.displayCutout()
+                    or WindowInsetsCompat.Type.displayCutout() or WindowInsetsCompat.Type.statusBars()
         )
+        // To control the status bar color, we have to draw a view behind it.
+        // https://developer.android.com/reference/android/view/Window.html#setStatusBarColor(int)
+        // If we have this view, then make it the height of the status bar.
+        val statusBarView = v.findViewById<View>(R.id.status_bar_view)
+        statusBarView?.updateLayoutParams<ViewGroup.LayoutParams> {
+            height = insets.top
+        }
         v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            topMargin = insets.top
+            // If we don't have a status bar view, we need to shift the content
+            // of the root view down, so it's below the status bar.
+            if (statusBarView == null) {
+                topMargin = insets.top
+            }
             leftMargin = insets.left
             bottomMargin = insets.bottom
             rightMargin = insets.right

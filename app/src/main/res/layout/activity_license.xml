@@ -20,44 +20,55 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".about.LicenseActivity">
+        android:orientation="vertical">
+        <View
+            android:id="@+id/status_bar_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="?colorPrimary" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".about.LicenseActivity">
 
 
-        <HorizontalScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
+            <HorizontalScrollView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:orientation="vertical"
-                android:padding="8dp">
+                android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/tv_title"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center_vertical"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textStyle="bold"
-                    tools:text="License title"/>
+                    android:layout_margin="8dp"
+                    android:orientation="vertical"
+                    android:padding="8dp">
 
-                <TextView
-                    android:id="@+id/tv_license_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:autoLink="web"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColorLink="@color/primary"
-                    tools:text="@tools:sample/lorem/random"/>
+                    <TextView
+                        android:id="@+id/tv_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center_vertical"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textStyle="bold"
+                        tools:text="License title"/>
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/tv_license_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoLink="web"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textColorLink="@color/primary"
+                        tools:text="@tools:sample/lorem/random"/>
 
-        </HorizontalScrollView>
-    </ScrollView>
+                </LinearLayout>
+
+            </HorizontalScrollView>
+        </ScrollView>
+    </LinearLayout>
 </layout>
