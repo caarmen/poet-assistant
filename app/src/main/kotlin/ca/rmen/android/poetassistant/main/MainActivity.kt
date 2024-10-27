@@ -40,6 +40,7 @@ import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.core.view.updatePadding
 import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorites
@@ -48,6 +49,7 @@ import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.about.AboutActivity
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding
+import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
@@ -119,6 +121,19 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
                     }
                 })
         volumeControlStream = AudioManager.STREAM_MUSIC
+        getInsets(mBinding.toolbar) { view, insets ->
+            view.updatePadding(
+                left = insets.left,
+                right = insets.right,
+            )
+        }
+        getInsets(mBinding.appBarLayout) { view, insets ->
+            view.updatePadding(
+                left = insets.left,
+                right = insets.right,
+                top = insets.top,
+            )
+        }
     }
 
     override fun onResume() {

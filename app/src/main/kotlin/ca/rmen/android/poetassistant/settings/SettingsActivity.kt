@@ -35,6 +35,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -49,7 +50,8 @@ import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.ActivitySettingsBinding
-import ca.rmen.android.poetassistant.fixInsets
+import ca.rmen.android.poetassistant.getInsets
+import ca.rmen.android.poetassistant.fixStatusBarViewForInsets
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -64,7 +66,14 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = DataBindingUtil.setContentView<ActivitySettingsBinding>(this, R.layout.activity_settings)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        fixInsets(binding.root)
+        getInsets(binding.settingsFragment) { view, insets ->
+            view.updatePadding(
+                left = insets.left,
+                right = insets.right,
+                bottom = insets.bottom,
+            )
+            fixStatusBarViewForInsets(binding.statusBarView, insets)
+        }
         volumeControlStream = AudioManager.STREAM_MUSIC
     }
 

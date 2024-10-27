@@ -26,10 +26,12 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
+import androidx.core.view.updatePadding
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.VectorCompat
 import ca.rmen.android.poetassistant.databinding.ActivityAboutBinding
-import ca.rmen.android.poetassistant.fixInsets
+import ca.rmen.android.poetassistant.fixStatusBarViewForInsets
+import ca.rmen.android.poetassistant.getInsets
 
 class AboutActivity : AppCompatActivity() {
 
@@ -51,7 +53,14 @@ class AboutActivity : AppCompatActivity() {
         val appVersionText = getString(R.string.about_app_version, getString(R.string.app_name), versionName)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_about)
         mBinding.txtVersion.text = appVersionText
-        fixInsets(mBinding.root)
+        getInsets(mBinding.aboutContent) { view, insets ->
+            view.updatePadding(
+                left = insets.left,
+                right = insets.right,
+                bottom = insets.bottom,
+            )
+            fixStatusBarViewForInsets(mBinding.statusBarView, insets)
+        }
         hackSetIcons()
     }
 
