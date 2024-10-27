@@ -30,9 +30,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
+import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -45,7 +43,7 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.VectorCompat
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding
-import ca.rmen.android.poetassistant.fixInsets
+import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
@@ -77,7 +75,13 @@ class ResultListFragment<out T: Any> : Fragment() {
             mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_result_list, container, false)
             mBinding.recyclerView.layoutManager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
             mBinding.recyclerView.setHasFixedSize(true)
-            fixInsets(mBinding.recyclerView)
+            getInsets(mBinding.recyclerView) { view, insets ->
+                view.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    leftMargin = insets.left
+                    bottomMargin = insets.bottom
+                    rightMargin = insets.right
+                }
+            }
             @Suppress("UNCHECKED_CAST")
             mViewModel = ResultListFactory.createViewModel(it, this) as ResultListViewModel<T>
             mBinding.viewModel = mViewModel

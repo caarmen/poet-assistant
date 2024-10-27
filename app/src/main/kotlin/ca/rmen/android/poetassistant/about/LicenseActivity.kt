@@ -25,12 +25,14 @@ import android.os.Bundle
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.ActivityLicenseBinding
-import ca.rmen.android.poetassistant.fixInsets
+import ca.rmen.android.poetassistant.fixStatusBarViewForInsets
+import ca.rmen.android.poetassistant.getInsets
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -61,7 +63,14 @@ class LicenseActivity : AppCompatActivity() {
         val title = intent.getStringExtra(EXTRA_TITLE)
         val licenseFile = intent.getStringExtra(EXTRA_LICENSE_TEXT_ASSET_FILE)!!
         mBinding.tvTitle.text = title
-        fixInsets(mBinding.root)
+        getInsets(mBinding.licenseContent) { view, insets ->
+            view.updatePadding(
+                left = insets.left,
+                right = insets.right,
+                bottom = insets.bottom,
+            )
+            fixStatusBarViewForInsets(mBinding.statusBarView, insets)
+        }
         val threading = DaggerHelper.getMainScreenComponent(this).getThreading()
         threading.execute({ readFile(licenseFile) },
                 { mBinding.tvLicenseText.text = it })
