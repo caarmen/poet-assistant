@@ -26,7 +26,7 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
       - name: Start Genymotion Cloud SaaS instance
-        uses: genymobile/genymotion-saas-github-action@features/support-api-token
+        uses: genymobile/genymotion-saas-github-action@v1
         with:
           api_token: ${{ secrets.GMSAAS_API_TOKEN }}
           recipe_uuid: ${{ vars.GMSAAS_RECIPE_UUID }}
