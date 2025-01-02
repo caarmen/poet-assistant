@@ -18,6 +18,12 @@
   -->
 
 <resources>
+
+    <color name="background">#000</color>
+    <color name="error">#f88</color>
+    <color name="surface">#181818</color>
+    <color name="on_surface">#deffffff</color>
+    <color name="primary">#879fab</color>
     <color name="primary_dark">#859AA4</color>
     <color name="primary_text">#cccccc</color>
     <color name="secondary_text">#727272</color>
