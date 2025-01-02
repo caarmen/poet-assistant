@@ -21,6 +21,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     tools:background="#000">
 
@@ -31,6 +32,7 @@
         android:contentDescription="@string/content_description_icon_suggested_word"
         android:padding="8dp"
         android:scaleType="centerInside"
+        app:tint="?attr/colorPrimary"
         tools:src="@drawable/ic_search_history" />
 
     <TextView
@@ -39,7 +41,6 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:textSize="18sp"
-        android:theme="@style/AppTheme.AppBarOverlay"
         tools:text="happy" />
 
     <!-- we don't care about the rest of the views, but we have to declare them -->

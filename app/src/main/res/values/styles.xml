@@ -71,16 +71,8 @@
         <item name="preferenceTheme">@style/AppPreferenceTheme</item>
     </style>
 
-    <style name="AppTheme.SearchViewStyle" parent="Widget.AppCompat.SearchView.ActionBar">
-        <item name="suggestionRowLayout">@layout/suggested_word</item>
-    </style>
-
     <style name="AppPreferenceTheme" parent="@style/PreferenceThemeOverlay">
         <item name="android:textAppearanceMedium">?android:attr/textAppearanceListItem</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
-        <item name="searchViewStyle">@style/AppTheme.SearchViewStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

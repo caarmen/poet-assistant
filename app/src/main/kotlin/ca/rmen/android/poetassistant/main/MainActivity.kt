@@ -32,7 +32,6 @@ import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
@@ -41,6 +40,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.updatePadding
+import androidx.lifecycle.ViewModelProvider
 import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorites
@@ -56,6 +56,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search
+import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsViewModel
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment
 import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
@@ -134,6 +135,9 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
                 top = insets.top,
             )
         }
+        val searchView = mBinding.searchView
+        val suggestionsViewModel = ViewModelProvider(this).get(SuggestionsViewModel::class.java)
+        mSearch.setSearchView(searchView, suggestionsViewModel)
     }
 
     override fun onResume() {
@@ -224,8 +228,6 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         Log.d(TAG, "onCreateOptionsMenu, menu=$menu")
         menuInflater.inflate(R.menu.menu_main, menu)
-        val searchView = menu.findItem(R.id.action_search).actionView as SearchView
-        mSearch.setSearchView(searchView)
         return super.onCreateOptionsMenu(menu)
     }
 
