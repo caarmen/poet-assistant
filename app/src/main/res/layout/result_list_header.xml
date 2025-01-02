@@ -52,6 +52,7 @@
             <TextView
                 android:id="@+id/tv_list_header"
                 style="?android:attr/textAppearanceLarge"
+                android:background="@android:color/transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
@@ -190,7 +191,7 @@
                 android:layout_gravity="center_vertical"
                 android:gravity="center_vertical"
                 android:text="@null"
-                android:textColor="#37474f"
+                android:textColor="?attr/colorOnPrimary"
                 tools:text="@string/filter_rhymer_label" />
 
             <TextView
@@ -201,7 +202,7 @@
                 android:layout_marginEnd="8dp"
                 android:freezesText="true"
                 android:gravity="center_vertical"
-                android:textColor="#37474f"
+                android:textColor="?attr/colorOnPrimary"
                 android:text="@={viewModel.filter}"
                 tools:text="yesterday" />
 

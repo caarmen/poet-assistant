@@ -18,9 +18,16 @@
   -->
 
 <resources>
+    <color name="background">#fff</color>
+    <color name="error">#f00</color>
+    <!-- status bar color in main -->
+    <color name="surface">#f6f7f9</color>
+    <color name="on_surface">#de000000</color>
+    <color name="on_primary">#fff</color>
+    <!-- status bar color in settings -->
     <color name="primary">#607D8B</color>
     <color name="primary_dark">#455A64</color>
-    <color name="accent">#ffff00</color>
+    <color name="accent">@color/primary</color>
     <color name="dialog_accent">@color/primary</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#727272</color>
@@ -31,5 +38,5 @@
     <color name="divider">#1f000000</color>
     <color name="ic_launcher_background">#FFFFFF</color>
     <color name="tab_default">#b3ffffff</color>
-    <color name="tab_selected">#ffffff</color>
+    <color name="tab_selected">@color/on_primary</color>
 </resources>

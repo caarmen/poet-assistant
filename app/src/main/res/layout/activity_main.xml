@@ -47,7 +47,6 @@
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
                 app:tabMode="@{@bool/tab_text? TabLayout.MODE_SCROLLABLE : TabLayout.MODE_FIXED}"
-                app:tabTextAppearance="@style/AppTheme.TextAppearance.Design.Tab"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -64,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
                 android:background="@color/primary"
-                android:textColor="#fff"
+                android:textColor="?attr/colorOnPrimary"
                 android:textSize="12sp"
                 android:visibility="@{@bool/tab_text? View.GONE:View.VISIBLE}" />
         </androidx.viewpager.widget.ViewPager>

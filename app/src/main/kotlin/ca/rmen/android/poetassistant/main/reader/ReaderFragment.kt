@@ -218,7 +218,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
         Log.v(TAG, "updatePlayButton: playButtonState $playButtonState")
         if (playButtonState != null) {
             mBinding.btnPlay.isEnabled = playButtonState.isEnabled
-            mBinding.btnPlay.setImageResource(playButtonState.iconId)
+            mBinding.btnPlay.setIconResource(playButtonState.iconId)
         }
     }
 

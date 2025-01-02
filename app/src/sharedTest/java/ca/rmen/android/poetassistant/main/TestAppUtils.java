@@ -26,7 +26,9 @@ import android.os.SystemClock;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.StringRes;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import com.google.android.material.button.MaterialButton;
+
 import androidx.test.espresso.ViewInteraction;
 import android.text.TextUtils;
 
@@ -227,7 +229,10 @@ public class TestAppUtils {
 
     public static void typePoem(String poem) {
         // The fab should be disabled until there is text
-        ViewInteraction fab = onView(withClassName(is(FloatingActionButton.class.getName())));
+        ViewInteraction fab = onView(allOf(
+                withId(R.id.btn_play),
+                withClassName(is(MaterialButton.class.getName()))
+        ));
         fab.check(matches(not(isEnabled())));
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.tv_text), isDisplayed()));
@@ -238,7 +243,7 @@ public class TestAppUtils {
     }
 
     static void speakPoem() {
-        ViewInteraction fab = onView(allOf(withClassName(is(FloatingActionButton.class.getName())), isEnabled()));
+        ViewInteraction fab = onView(allOf(withClassName(is(MaterialButton.class.getName())), isEnabled()));
         fab.perform(click());
     }
 
