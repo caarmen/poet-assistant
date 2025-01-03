@@ -86,13 +86,13 @@ public class TestAppUtils {
 
     public static void openSearchView() {
         // Tap on the search icon in the action bar
-        onView(allOf(withId(R.id.action_search), withContentDescription(R.string.action_search), isDisplayed())).perform(click());
+        onView(allOf(withId(R.id.open_search_bar_text_view), isDisplayed())).perform(click());
     }
 
     public static ViewInteraction typeQuery(String query) {
         // Type the query term and search
         getInstrumentation().waitForIdleSync();
-        ViewInteraction searchAutoComplete = onView(allOf(withId(R.id.search_src_text), isDisplayed()));
+        ViewInteraction searchAutoComplete = onView(allOf(withId(R.id.open_search_view_edit_text), isDisplayed()));
         searchAutoComplete.check(matches(isDisplayed()));
         searchAutoComplete.perform(typeText(query));
         getInstrumentation().waitForIdleSync();

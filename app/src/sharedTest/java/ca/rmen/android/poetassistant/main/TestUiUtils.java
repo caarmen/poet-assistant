@@ -23,6 +23,8 @@ import android.content.Context;
 import android.os.SystemClock;
 import androidx.annotation.StringRes;
 import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.PerformException;
+
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -68,7 +70,7 @@ public class TestUiUtils {
         swipeDown();
         try {
             onView(allOf(isDisplayed(), withClassName(endsWith("OverflowMenuButton")))).perform(click());
-        } catch (NoMatchingViewException e) {
+        } catch (NoMatchingViewException | PerformException e) {
             Log.wtf(TAG, "Couldn't press the menu button in the action bar. Resorting to the menu key event. Is this cheating?", e);
             onView(withId(android.R.id.content)).perform(pressKey(KeyEvent.KEYCODE_MENU));
             getInstrumentation().waitForIdleSync();

@@ -24,8 +24,12 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.SystemClock;
+
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.NoMatchingRootException;
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.contrib.RecyclerViewActions;
+
 import android.view.View;
 import android.view.WindowManager;
 
@@ -39,14 +43,12 @@ import ca.rmen.android.poetassistant.R;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.RecyclerViewActions.scrollTo;
-import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.hasSibling;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withChild;
-import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -55,7 +57,6 @@ import static ca.rmen.android.poetassistant.main.CustomViewMatchers.withChildCou
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -157,15 +158,14 @@ public class CustomChecks {
     }
 
     public static void checkSearchSuggestions(String... suggestions) {
-        SystemClock.sleep(500);
-        Matcher<View> searchListMatcher = withClassName(endsWith("DropDownListView"));
+        SystemClock.sleep(1000);
+        Espresso.onIdle();
+        Matcher<View> searchListMatcher = withId(R.id.search_suggestions_list);
         try {
-            ViewInteraction searchSuggestionsList = onView(searchListMatcher)
-                    .inRoot(isPlatformPopup());
+            ViewInteraction searchSuggestionsList = onView(searchListMatcher);
             searchSuggestionsList.check(matches(withChildCount(suggestions.length)));
             for (int i = 0; i < suggestions.length; i++) {
                 onView(allOf(withId(android.R.id.text1), withParent(childAtPosition(searchListMatcher, i))))
-                        .inRoot(isPlatformPopup())
                         .check(matches(withText(suggestions[i])));
             }
         } catch (NoMatchingRootException e) {
@@ -219,6 +219,6 @@ public class CustomChecks {
     public static void checkSynonym(String expectedSynonym) {
         // Scroll to the item in case it's not visible
         onView(allOf(withId(R.id.thesaurus_recycler_view), isDisplayed()))
-                .perform(scrollTo(hasDescendant(withText(expectedSynonym))));
+                .perform(RecyclerViewActions.scrollTo(withChild(withText(expectedSynonym))));
     }
 }
