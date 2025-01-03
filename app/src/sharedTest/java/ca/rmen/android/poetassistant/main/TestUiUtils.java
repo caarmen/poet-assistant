@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.main;
 import android.content.Context;
 import android.os.SystemClock;
 import androidx.annotation.StringRes;
-import androidx.test.espresso.Espresso;
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.PerformException;
 
@@ -50,7 +49,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static ca.rmen.android.poetassistant.main.CustomViewActions.expand;
 import static ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.endsWith;
@@ -69,8 +67,6 @@ public class TestUiUtils {
 
     public static void openMenuItem(@StringRes int titleRes) {
         getInstrumentation().waitForIdleSync();
-        onView(withId(R.id.app_bar_layout)).perform(expand());
-        Espresso.onIdle();
         swipeDown();
         try {
             onView(allOf(isDisplayed(), withClassName(endsWith("OverflowMenuButton")))).perform(click());

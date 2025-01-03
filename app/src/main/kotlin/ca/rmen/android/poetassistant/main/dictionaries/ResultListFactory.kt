@@ -202,6 +202,21 @@ object ResultListFactory {
         }
     }
 
+    /**
+     * Determine if the matched word in the results list header should be selectable
+     * (for copying/pasting).
+     *
+     * If we make the matched word always selectable, this causes issues with the
+     * app bar: When loading the app, the content scrolls up, partially hiding the
+     * top bar.
+     *
+     * Maybe there's a better way to avoid this scrolling. But in any case, it doesn't
+     * make sense for the text to be selectable if it's empty, or if it's just a "label"
+     * as in the case of the favorites result list header.
+     */
+    fun getMatchedWordSelectability(tab: Tab, matchedWord: String) =
+        matchedWord.isNotBlank() && tab != Tab.FAVORITES
+
     fun getTabName(context: Context, tab: Tab): String {
         return when (tab) {
             Tab.PATTERN -> context.getString(R.string.tab_pattern)

@@ -59,7 +59,7 @@
                 android:layout_centerVertical="true"
                 android:freezesText="true"
                 android:gravity="start|center_vertical"
-                android:textIsSelectable="true"
+                android:textIsSelectable="@{viewModel.isMatchedWordSelectable}"
                 android:textStyle="bold"
                 android:text="@{viewModel.query}"
                 tools:text="Query" />

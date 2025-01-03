@@ -37,6 +37,7 @@ import javax.inject.Inject
 
 class ResultListHeaderViewModel(application: Application) : AndroidViewModel(application) {
     val query = ObservableField<String>()
+    val isMatchedWordSelectable = ObservableField(false)
     val filter = ObservableField<String>()
     val isFavorite = ObservableBoolean()
     val showHeader = ObservableBoolean()
