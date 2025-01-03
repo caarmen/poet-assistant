@@ -150,11 +150,6 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
         AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout)
     }
 
-    override fun onBackPressed() {
-        Log.v(TAG, "onBackPressed")
-        super.onBackPressed()
-    }
-
     override fun onPause() {
         Log.v(TAG, "onPause")
         super.onPause()

@@ -150,12 +150,10 @@ public class PoemTest {
         swipeViewPagerLeft(3);
         String poemText = "Here is a poem with lookup disabled";
         typePoem(poemText);
-        pressBack();
 
         assertPopupMissing("rhymer");
         assertPopupMissing("thesaurus");
         assertPopupMissing("dictionary");
-        pressBack();
         closeSoftKeyboard();
 
         openMenuItem(R.string.action_settings);

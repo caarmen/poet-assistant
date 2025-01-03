@@ -21,6 +21,8 @@ package ca.rmen.android.poetassistant.main;
 
 
 import android.content.Context;
+
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.filters.LargeTest;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -104,9 +106,14 @@ public class SearchTest {
         searchAutoComplete.perform(typeText("o"));
         checkSearchSuggestions("awesome", "awesomely");
 
+        Espresso.pressBack();
+        Espresso.onIdle();
         searchAutoComplete.perform(clearText());
         searchAutoComplete.perform(typeText("carme"));
         checkSearchSuggestions("carmen", "carmelite");
+        Espresso.pressBack();
+        Espresso.pressBack();
+        Espresso.onIdle();
 
         clearSearchHistory();
 
