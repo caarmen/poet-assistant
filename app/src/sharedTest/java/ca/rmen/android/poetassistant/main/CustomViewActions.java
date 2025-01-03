@@ -35,6 +35,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static org.hamcrest.Matchers.allOf;
 
+import com.google.android.material.appbar.AppBarLayout;
+
 public final class CustomViewActions {
     private CustomViewActions() {
         // prevent instantiation
@@ -101,6 +103,25 @@ public final class CustomViewActions {
                         view1 -> GeneralLocation.CENTER.calculateCoordinates(lastChild),
                         Press.FINGER, 0, 0)
                         .perform(uiController, view);
+            }
+        };
+    }
+
+    static ViewAction expand() {
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return allOf(isAssignableFrom(AppBarLayout.class));
+            }
+
+            @Override
+            public String getDescription() {
+                return "Expand an AppBarLayout";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                ((AppBarLayout)view).setExpanded(true);
             }
         };
     }

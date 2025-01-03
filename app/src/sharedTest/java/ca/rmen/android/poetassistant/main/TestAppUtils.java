@@ -29,6 +29,7 @@ import androidx.annotation.StringRes;
 
 import com.google.android.material.button.MaterialButton;
 
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.ViewInteraction;
 import android.text.TextUtils;
 
@@ -55,6 +56,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withParent;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static ca.rmen.android.poetassistant.main.CustomViewActions.expand;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
@@ -86,6 +88,9 @@ public class TestAppUtils {
 
     public static void openSearchView() {
         // Tap on the search icon in the action bar
+        onView(withId(R.id.app_bar_layout)).perform(expand());
+        Espresso.onIdle();
+        SystemClock.sleep(1000); // :'(
         onView(allOf(withId(R.id.open_search_bar_text_view), isDisplayed())).perform(click());
     }
 
@@ -104,6 +109,9 @@ public class TestAppUtils {
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         SystemClock.sleep(1000);
+        onView(withId(R.id.app_bar_layout)).perform(expand());
+        Espresso.onIdle();
+        SystemClock.sleep(1000); // Apparently Espresso.onIdle() isn't enough :(
         openSearchView();
 
         // Type the query term and search
