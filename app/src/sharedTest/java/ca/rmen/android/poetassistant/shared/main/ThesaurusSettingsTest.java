@@ -40,6 +40,7 @@ import org.junit.runner.RunWith;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.MainActivity;
+import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
 @LargeTest
@@ -72,14 +73,14 @@ public class ThesaurusSettingsTest {
         clickPreference(R.string.thesaurus_reverse_lookup_setting_title);
         pressBack();
         search("number");
-        addFilter("mistake", "bloomer");
+        addFilter(Tab.RHYMER, "mistake", "bloomer");
         checkRhyme("blunder");
     }
 
     @Test(expected = NoMatchingViewException.class)
     public void testFilterWithReverseLookupDisabled() {
         search("number");
-        addFilter("mistake", null);
+        addFilter(Tab.RHYMER, "mistake", null);
         checkRhyme("blunder");
     }
 }

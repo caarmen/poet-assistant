@@ -86,7 +86,7 @@ public class ShareTest {
         Context context = mActivityTestRule.getActivity();
         search("happy");
         swipeViewPagerLeft(1);
-        addFilter("messed", "blessed");
+        addFilter(Tab.THESAURUS, "messed", "blessed");
         openMenuItem(R.string.share);
         String expectedContent = context.getString(R.string.share_thesaurus_title_with_filter, "happy", "messed");
         checkShareIntentContains(expectedContent);

@@ -74,7 +74,7 @@ public class CustomChecks {
                 allOf(withId(R.id.text1), withText(firstRhyme),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(R.id.recycler_view),
+                                        withId(R.id.rhymer_recycler_view),
                                         1),
                                 1),
                         isDisplayed()));
@@ -84,7 +84,7 @@ public class CustomChecks {
                 allOf(withId(R.id.text1), withText(secondRhyme),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(R.id.recycler_view),
+                                        withId(R.id.rhymer_recycler_view),
                                         2),
                                 1),
                         isDisplayed()));
@@ -93,7 +93,7 @@ public class CustomChecks {
 
     public static void checkRhyme(String expectedRhyme) {
         // Scroll to the item in case it's not visible
-        onView(allOf(withId(R.id.recycler_view), isDisplayed()))
+        onView(allOf(withId(R.id.rhymer_recycler_view), isDisplayed()))
                 .perform(scrollTo(hasDescendant(withText(expectedRhyme))));
     }
 
@@ -101,7 +101,7 @@ public class CustomChecks {
         checkTitleStripOrTab(context, R.string.tab_pattern);
         Matcher<View> emptyViewMatch = allOf(withId(R.id.empty), withText(context.getString(R.string.empty_pattern_list_with_query, query)));
         ViewInteraction emptyView = onView(emptyViewMatch);
-        Matcher<View> recyclerViewMatch = allOf(withId(R.id.recycler_view), hasSibling(emptyViewMatch));
+        Matcher<View> recyclerViewMatch = allOf(withId(R.id.pattern_recycler_view), hasSibling(emptyViewMatch));
         if (patterns.length > 0) {
             emptyView.check(matches(not(isDisplayed())));
             onView(recyclerViewMatch).check(matches(withChildCount(patterns.length)));
@@ -134,7 +134,7 @@ public class CustomChecks {
             emptyView.check(matches(isCompletelyDisplayed()));
         } else {
             emptyView.check(matches(not(isDisplayed())));
-            Matcher<View> recyclerViewMatch = allOf(withId(R.id.recycler_view), hasSibling(emptyViewMatch));
+            Matcher<View> recyclerViewMatch = allOf(withId(R.id.favorites_recycler_view), hasSibling(emptyViewMatch));
             onView(recyclerViewMatch).check(matches(withChildCount(expectedStarredWords.length)));
             for (String word : expectedStarredWords) {
                 onView(allOf(withId(R.id.text1), withParent(withParent(recyclerViewMatch)), withText(word))).check(matches(isDisplayed()));
@@ -197,7 +197,7 @@ public class CustomChecks {
                 allOf(withId(R.id.definition), withText(expectedFirstDefinition),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(R.id.recycler_view),
+                                        withId(R.id.dictionary_recycler_view),
                                         0),
                                 1),
                         isDisplayed()));
@@ -209,7 +209,7 @@ public class CustomChecks {
                 allOf(withId(R.id.text1), withText(expectedFirstSynonym),
                         childAtPosition(
                                 childAtPosition(
-                                        withId(R.id.recycler_view),
+                                        withId(R.id.thesaurus_recycler_view),
                                         2),
                                 1),
                         isDisplayed()));
@@ -218,7 +218,7 @@ public class CustomChecks {
 
     public static void checkSynonym(String expectedSynonym) {
         // Scroll to the item in case it's not visible
-        onView(allOf(withId(R.id.recycler_view), isDisplayed()))
+        onView(allOf(withId(R.id.thesaurus_recycler_view), isDisplayed()))
                 .perform(scrollTo(hasDescendant(withText(expectedSynonym))));
     }
 }

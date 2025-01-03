@@ -28,6 +28,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.util.Log
 import android.view.View
+import androidx.annotation.IdRes
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.TtsState
@@ -211,5 +212,15 @@ object ResultListFactory {
             Tab.DICTIONARY -> context.getString(R.string.tab_dictionary)
             else -> context.getString(R.string.tab_reader)
         }
+    }
+    @IdRes
+    fun getRecyclerViewId(tab: Tab): Int = when (tab) {
+        Tab.PATTERN -> R.id.pattern_recycler_view
+        Tab.FAVORITES -> R.id.favorites_recycler_view
+        Tab.WOTD -> R.id.wotd_recycler_view
+        Tab.RHYMER -> R.id.rhymer_recycler_view
+        Tab.THESAURUS -> R.id.thesaurus_recycler_view
+        Tab.DICTIONARY -> R.id.dictionary_recycler_view
+        else -> R.id.recycler_view
     }
 }

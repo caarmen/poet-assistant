@@ -72,7 +72,7 @@ public class RandomWordTest {
     @Test
     public void openWotdListTest() {
         openMenuItem(R.string.action_wotd_history);
-        Matcher<View> latestEntryViewMatcher = childAtPosition(withId(R.id.recycler_view), 0);
+        Matcher<View> latestEntryViewMatcher = childAtPosition(withId(R.id.wotd_recycler_view), 0);
         // Check that the date field in the first (most recent) entry in the Wotd list contains today's date.
         Calendar cal = Calendar.getInstance();
         int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
@@ -90,7 +90,7 @@ public class RandomWordTest {
         onView(allOf(withId(R.id.btn_star_result), isDescendantOfA(latestEntryViewMatcher)))
                 .perform(click());
         swipeViewPagerRight(1);
-        onView(allOf(withId(R.id.recycler_view), isDisplayed())).check(matches(withAdapterItemCount(1)));
+        onView(allOf(withId(R.id.favorites_recycler_view), isDisplayed())).check(matches(withAdapterItemCount(1)));
 
     }
 

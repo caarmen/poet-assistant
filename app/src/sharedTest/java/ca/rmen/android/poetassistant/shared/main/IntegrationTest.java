@@ -46,6 +46,7 @@ import org.junit.runner.RunWith;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.MainActivity;
+import ca.rmen.android.poetassistant.main.Tab;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
 @LargeTest
@@ -69,7 +70,7 @@ public class IntegrationTest {
     @Test
     public void saveFilterTest() {
         search("pugnacious");
-        addFilter("vulturous", "rapacious");
+        addFilter(Tab.RHYMER, "vulturous", "rapacious");
         ViewInteraction filterView = openFilter("vulturous");
         filterView.perform(closeSoftKeyboard());
         clickDialogPositiveButton(android.R.string.ok);

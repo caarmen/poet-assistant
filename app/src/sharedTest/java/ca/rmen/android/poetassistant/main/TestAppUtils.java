@@ -23,12 +23,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.SystemClock;
+
+import androidx.annotation.IdRes;
 import androidx.annotation.StringRes;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.test.espresso.ViewInteraction;
 import android.text.TextUtils;
 
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
@@ -171,33 +174,35 @@ public class TestAppUtils {
         return result;
     }
 
-    public static void addFilter(String filter, String firstExpectedFilteredMatch) {
+    public static void addFilter(Tab tab, String filter, String firstExpectedFilteredMatch) {
+        @IdRes int recyclerViewId = ResultListFactory.INSTANCE.getRecyclerViewId(tab);
         ViewInteraction filterView = openFilter("");
         filterView.perform(typeText(filter), closeSoftKeyboard());
         clickDialogPositiveButton(android.R.string.ok);
 
         if (TextUtils.isEmpty(firstExpectedFilteredMatch)) {
-            onView(allOf(withId(R.id.empty), hasSibling(withId(R.id.recycler_view)), isDisplayed()))
+            onView(allOf(withId(R.id.empty), hasSibling(withId(recyclerViewId)), isDisplayed()))
                     .check(matches(isDisplayed()));
         } else {
-            onView(allOf(withId(R.id.empty), hasSibling(allOf(withId(R.id.recycler_view), isDisplayed()))))
+            onView(allOf(withId(R.id.empty), hasSibling(allOf(withId(recyclerViewId), isDisplayed()))))
                     .check(matches(not(isDisplayed())));
             onView(allOf(withId(R.id.text1),
                     withText(firstExpectedFilteredMatch),
-                    withParent(withParent(withId(R.id.recycler_view))),
+                    withParent(withParent(withId(recyclerViewId))),
                     isDisplayed()))
                     .check(matches(withText(firstExpectedFilteredMatch)));
         }
 
     }
 
-    public static void clearFilter(String firstExpectedNonFilteredMatch) {
+    public static void clearFilter(Tab tab, String firstExpectedNonFilteredMatch) {
+        @IdRes int recyclerViewId = ResultListFactory.INSTANCE.getRecyclerViewId(tab);
         onView(allOf(withId(R.id.btn_clear), withContentDescription(R.string.filter_clear), isDisplayed()))
                 .perform(click());
 
         onView(allOf(withId(R.id.text1),
                 withText(firstExpectedNonFilteredMatch),
-                withParent(withParent(withId(R.id.recycler_view))),
+                withParent(withParent(withId(recyclerViewId))),
                 isDisplayed()))
                 .check(matches(withText(firstExpectedNonFilteredMatch)));
     }

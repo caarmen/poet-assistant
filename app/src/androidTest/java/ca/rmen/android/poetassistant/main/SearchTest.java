@@ -144,7 +144,7 @@ public class SearchTest {
     @Test
     public void patternSearchTooManyResultsTest() {
         search("a*");
-        onView(allOf(withId(R.id.recycler_view), isDisplayed()))
+        onView(allOf(withId(R.id.pattern_recycler_view), isDisplayed()))
                 .check(matches(withAdapterItemCount(501)));
     }
 

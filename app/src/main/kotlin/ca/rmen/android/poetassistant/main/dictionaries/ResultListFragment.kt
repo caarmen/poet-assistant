@@ -82,6 +82,7 @@ class ResultListFragment<out T: Any> : Fragment() {
                     rightMargin = insets.right
                 }
             }
+            mBinding.recyclerView.id = ResultListFactory.getRecyclerViewId(it)
             @Suppress("UNCHECKED_CAST")
             mViewModel = ResultListFactory.createViewModel(it, this) as ResultListViewModel<T>
             mBinding.viewModel = mViewModel
