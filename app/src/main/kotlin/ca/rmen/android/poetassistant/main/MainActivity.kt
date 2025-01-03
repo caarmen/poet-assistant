@@ -39,6 +39,7 @@ import android.view.MenuItem
 import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.updatePadding
 import androidx.lifecycle.ViewModelProvider
 import ca.rmen.android.poetassistant.BuildConfig
@@ -135,6 +136,15 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
                 top = insets.top,
             )
         }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (mBinding.appBarLayout.top < 0) {
+                    mBinding.appBarLayout.setExpanded(true, true)
+                } else {
+                    finish()
+                }
+            }
+        })
         val searchView = mBinding.searchView
         val suggestionsViewModel = ViewModelProvider(this).get(SuggestionsViewModel::class.java)
         mSearch.setSearchView(searchView, suggestionsViewModel)
