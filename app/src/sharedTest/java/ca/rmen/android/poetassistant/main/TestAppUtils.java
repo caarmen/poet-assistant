@@ -23,12 +23,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.SystemClock;
+
+import androidx.annotation.IdRes;
 import androidx.annotation.StringRes;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import com.google.android.material.button.MaterialButton;
+
 import androidx.test.espresso.ViewInteraction;
 import android.text.TextUtils;
 
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
@@ -81,13 +86,13 @@ public class TestAppUtils {
 
     public static void openSearchView() {
         // Tap on the search icon in the action bar
-        onView(allOf(withId(R.id.action_search), withContentDescription(R.string.action_search), isDisplayed())).perform(click());
+        onView(allOf(withId(R.id.open_search_bar_text_view), isDisplayed())).perform(click());
     }
 
     public static ViewInteraction typeQuery(String query) {
         // Type the query term and search
         getInstrumentation().waitForIdleSync();
-        ViewInteraction searchAutoComplete = onView(allOf(withId(R.id.search_src_text), isDisplayed()));
+        ViewInteraction searchAutoComplete = onView(allOf(withId(R.id.open_search_view_edit_text), isDisplayed()));
         searchAutoComplete.check(matches(isDisplayed()));
         searchAutoComplete.perform(typeText(query));
         getInstrumentation().waitForIdleSync();
@@ -171,33 +176,35 @@ public class TestAppUtils {
         return result;
     }
 
-    public static void addFilter(String filter, String firstExpectedFilteredMatch) {
+    public static void addFilter(Tab tab, String filter, String firstExpectedFilteredMatch) {
+        @IdRes int recyclerViewId = ResultListFactory.INSTANCE.getRecyclerViewId(tab);
         ViewInteraction filterView = openFilter("");
         filterView.perform(typeText(filter), closeSoftKeyboard());
         clickDialogPositiveButton(android.R.string.ok);
 
         if (TextUtils.isEmpty(firstExpectedFilteredMatch)) {
-            onView(allOf(withId(R.id.empty), hasSibling(withId(R.id.recycler_view)), isDisplayed()))
+            onView(allOf(withId(R.id.empty), hasSibling(withId(recyclerViewId)), isDisplayed()))
                     .check(matches(isDisplayed()));
         } else {
-            onView(allOf(withId(R.id.empty), hasSibling(allOf(withId(R.id.recycler_view), isDisplayed()))))
+            onView(allOf(withId(R.id.empty), hasSibling(allOf(withId(recyclerViewId), isDisplayed()))))
                     .check(matches(not(isDisplayed())));
             onView(allOf(withId(R.id.text1),
                     withText(firstExpectedFilteredMatch),
-                    withParent(withParent(withId(R.id.recycler_view))),
+                    withParent(withParent(withId(recyclerViewId))),
                     isDisplayed()))
                     .check(matches(withText(firstExpectedFilteredMatch)));
         }
 
     }
 
-    public static void clearFilter(String firstExpectedNonFilteredMatch) {
+    public static void clearFilter(Tab tab, String firstExpectedNonFilteredMatch) {
+        @IdRes int recyclerViewId = ResultListFactory.INSTANCE.getRecyclerViewId(tab);
         onView(allOf(withId(R.id.btn_clear), withContentDescription(R.string.filter_clear), isDisplayed()))
                 .perform(click());
 
         onView(allOf(withId(R.id.text1),
                 withText(firstExpectedNonFilteredMatch),
-                withParent(withParent(withId(R.id.recycler_view))),
+                withParent(withParent(withId(recyclerViewId))),
                 isDisplayed()))
                 .check(matches(withText(firstExpectedNonFilteredMatch)));
     }
@@ -222,7 +229,10 @@ public class TestAppUtils {
 
     public static void typePoem(String poem) {
         // The fab should be disabled until there is text
-        ViewInteraction fab = onView(withClassName(is(FloatingActionButton.class.getName())));
+        ViewInteraction fab = onView(allOf(
+                withId(R.id.btn_play),
+                withClassName(is(MaterialButton.class.getName()))
+        ));
         fab.check(matches(not(isEnabled())));
         ViewInteraction appCompatEditText = onView(
                 allOf(withId(R.id.tv_text), isDisplayed()));
@@ -233,7 +243,7 @@ public class TestAppUtils {
     }
 
     static void speakPoem() {
-        ViewInteraction fab = onView(allOf(withClassName(is(FloatingActionButton.class.getName())), isEnabled()));
+        ViewInteraction fab = onView(allOf(withClassName(is(MaterialButton.class.getName())), isEnabled()));
         fab.perform(click());
     }
 

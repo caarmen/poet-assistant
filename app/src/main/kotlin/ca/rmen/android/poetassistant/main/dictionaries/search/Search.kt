@@ -21,13 +21,12 @@ package ca.rmen.android.poetassistant.main.dictionaries.search
 
 import android.app.Activity
 import android.app.SearchManager
-import android.content.ComponentName
 import android.content.ContentValues
-import android.content.Context
-import androidx.annotation.MainThread
-import androidx.viewpager.widget.ViewPager
-import androidx.appcompat.widget.SearchView
 import android.util.Log
+import androidx.annotation.MainThread
+import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Threading
@@ -36,7 +35,10 @@ import ca.rmen.android.poetassistant.main.PagerAdapter
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
+import ca.rmen.android.poetassistant.widget.DebounceTextWatcher
 import ca.rmen.android.poetassistant.widget.ViewShownScheduler
+import com.google.android.material.search.SearchView
+import kotlinx.coroutines.launch
 import java.util.Locale
 import javax.inject.Inject
 
@@ -65,11 +67,45 @@ class Search constructor(private val searchableActivity: Activity, private val v
         mPagerAdapter = viewPager.adapter as PagerAdapter
     }
 
-    fun setSearchView(searchView: SearchView) {
-        (searchableActivity.getSystemService(Context.SEARCH_SERVICE) as SearchManager?)?.let {
-            val searchableActivityComponentName = ComponentName(searchableActivity, searchableActivity.javaClass)
-            searchView.queryHint = searchableActivity.getString(R.string.search_hint) // To hopefully prevent some crashes (!!) :(
-            searchView.setSearchableInfo(it.getSearchableInfo(searchableActivityComponentName))
+    fun setSearchView(searchView: SearchView, suggestionsViewModel: SuggestionsViewModel) {
+        searchView.hint =
+            searchableActivity.getString(R.string.search_hint) // To hopefully prevent some crashes (!!) :(
+        // Step 1: Setup suggestions
+        val suggestionsList: RecyclerView = searchView.findViewById(R.id.search_suggestions_list)
+        val adapter = SuggestionsAdapter()
+        suggestionsList.adapter = adapter
+        // Step 1a: Fetch suggestions from the disk when the user stops typing.
+        DebounceTextWatcher.debounce(searchView.editText, {
+            val typedText = searchView.editText.text.toString()
+            suggestionsViewModel.fetchSuggestions(typedText)
+        })
+        // Step 2a: When the suggestions list is updated, notify the recycler view adapter.
+        suggestionsViewModel.viewModelScope.launch {
+            suggestionsViewModel.suggestions.collect { value ->
+                Log.d(TAG, "Emitted $value")
+                adapter.suggestions.clear()
+                adapter.suggestions.addAll(value)
+                adapter.notifyDataSetChanged()
+            }
+        }
+
+        // Step 2: Listen for search events:
+        fun searchTermSelected(searchTerm: String) {
+            searchView.hide()
+            if (searchTerm.isNotBlank()) {
+                addSuggestions(searchTerm)
+                search(searchTerm)
+            }
+        }
+
+        // Case 2a: Handle when the user taps enter from the search widget
+        searchView.editText.setOnEditorActionListener { _, _, _ ->
+            searchTermSelected(searchView.editText.text.toString())
+            false
+        }
+        // Case 2b: Handle when the user clicked on a search suggestion.
+        adapter.listener = { value ->
+            searchTermSelected(value)
         }
     }
 

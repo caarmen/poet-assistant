@@ -29,29 +29,8 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         tools:context=".main.MainActivity">
-
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/app_bar_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fitsSystemWindows="true"
-            android:theme="@style/AppTheme.AppBarOverlay">
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary" />
-
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tabs"
-                app:tabMode="@{@bool/tab_text? TabLayout.MODE_SCROLLABLE : TabLayout.MODE_FIXED}"
-                app:tabTextAppearance="@style/AppTheme.TextAppearance.Design.Tab"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/view_pager"
@@ -64,10 +43,47 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
                 android:background="@color/primary"
-                android:textColor="#fff"
+                android:textColor="?attr/colorOnPrimary"
                 android:textSize="12sp"
                 android:visibility="@{@bool/tab_text? View.GONE:View.VISIBLE}" />
         </androidx.viewpager.widget.ViewPager>
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:statusBarForeground="?attr/colorSurface"
+            android:backgroundTint="?attr/colorPrimary"
+            android:fitsSystemWindows="true">
+
+            <com.google.android.material.search.SearchBar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/search_hint" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabs"
+                app:tabMode="@{@bool/tab_text? TabLayout.MODE_SCROLLABLE : TabLayout.MODE_FIXED}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <com.google.android.material.search.SearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_anchor="@id/toolbar">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/search_suggestions_list"
+                app:layoutManager="LinearLayoutManager"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+        </com.google.android.material.search.SearchView>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

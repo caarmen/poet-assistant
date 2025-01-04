@@ -82,6 +82,7 @@ class ResultListFragment<out T: Any> : Fragment() {
                     rightMargin = insets.right
                 }
             }
+            mBinding.recyclerView.id = ResultListFactory.getRecyclerViewId(it)
             @Suppress("UNCHECKED_CAST")
             mViewModel = ResultListFactory.createViewModel(it, this) as ResultListViewModel<T>
             mBinding.viewModel = mViewModel
@@ -221,7 +222,12 @@ class ResultListFragment<out T: Any> : Fragment() {
 
     private val mFavoritesObserver = Observer<List<Favorite>> { reload() }
 
-    private val mUsedQueryWordChanged = Observer<String> { usedQueryWord -> mHeaderViewModel.query.set(usedQueryWord) }
+    private val mUsedQueryWordChanged = Observer<String> { usedQueryWord ->
+        mHeaderViewModel.query.set(usedQueryWord)
+        mTab?.let {
+            mHeaderViewModel.isMatchedWordSelectable.set(ResultListFactory.getMatchedWordSelectability(it, usedQueryWord))
+        }
+    }
 
     private val mEmptyTextObserver = Observer<EmptyText> { emptyText ->
         mBinding.empty.text = when (emptyText) {

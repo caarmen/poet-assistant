@@ -20,17 +20,51 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppBaseTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+    <style name="AppBaseTheme" parent="Theme.Material3.DayNight">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
-        <item name="android:textColorPrimary">@color/primary_text</item>
-        <item name="android:textColorSecondary">@color/secondary_text</item>
-        <item name="alertDialogTheme">@style/AppAlertDialog</item>
         <item name="windowActionModeOverlay">true</item>
-        <item name="textAppearancePopupMenuHeader">@style/AppPopupMenuHeader</item>
 
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorSecondary">@color/secondary_text</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorError">@color/error</item>
+
+        <item name="colorPrimaryInverse">@color/primary</item>
+        <item name="colorPrimaryContainer">@color/primary</item>
+        <item name="colorOnPrimaryContainer">@color/on_primary</item>
+        <item name="colorSecondaryContainer">@color/primary</item>
+        <item name="colorOnSecondaryContainer">@color/on_primary</item>
+        <item name="colorTertiary">@color/primary</item>
+        <item name="colorOnTertiary">@color/on_primary</item>
+        <item name="colorTertiaryContainer">@color/primary</item>
+        <item name="colorOnTertiaryContainer">@color/on_primary</item>
+        <item name="colorSurfaceVariant">@color/surface</item>
+        <item name="colorOnSurfaceVariant">@color/on_surface</item>
+        <item name="colorSurfaceInverse">@color/on_surface</item>
+        <item name="colorOnSurfaceInverse">@color/surface</item>
+        <item name="colorOutline">@color/primary</item>
+        <item name="colorErrorContainer">@color/error</item>
+        <item name="colorOnErrorContainer">@color/on_primary</item>
+
+        <item name="colorSurface">@color/surface</item>
+        <item name="simpleItemSelectedColor">#f00</item>
+        <item name="colorSurfaceContainerHighest">#ff0</item>
+        <item name="colorOnSurface">@color/on_surface</item>
+
+        <item name="tabStyle">@style/Widget.App.TabLayout</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+    <style name="Widget.App.TabLayout" parent="Widget.Material3.TabLayout">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.TabLayout</item>
+    </style>
+
+    <style name="ThemeOverlay.App.TabLayout" parent="">
+        <item name="colorPrimary">@color/tab_selected</item>
+        <item name="colorSurface">@color/primary</item>
+        <item name="colorOnSurfaceVariant">@color/tab_default</item>
     </style>
 
     <style name="AppTheme" parent="AppBaseTheme">
@@ -41,35 +75,10 @@
         <item name="android:textAppearanceMedium">?android:attr/textAppearanceListItem</item>
     </style>
 
-    <style name="AppTheme.Settings">
-        <item name="colorAccent">@color/dialog_accent</item>
-    </style>
-
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="AppTheme.TextAppearance.Design.Tab" parent="TextAppearance.Design.Tab">
-        <item name="android:textSize">@dimen/tab_text_size</item>
-    </style>
-
-    <style name="AppTheme.SearchViewStyle" parent="Widget.AppCompat.SearchView.ActionBar">
-        <item name="suggestionRowLayout">@layout/suggested_word</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" >
-        <item name="searchViewStyle">@style/AppTheme.SearchViewStyle</item>
-    </style>
-
-    <style name="AppAlertDialog" parent="Theme.AppCompat.DayNight.Dialog">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/dialog_accent</item>
-    </style>
-
-    <style name="AppPopupMenuHeader" parent="TextAppearance.AppCompat.Widget.PopupMenu.Header">
-        <item name="android:textColor">@color/dialog_accent</item>
+        <item name="android:windowTranslucentStatus">false</item>
     </style>
 
     <style name="AboutActivityItem">

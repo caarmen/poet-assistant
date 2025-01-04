@@ -31,6 +31,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.IdRes
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -104,6 +107,13 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
         DebounceTextWatcher.debounce(mBinding.tvText) { mViewModel.updateWordCount() }
         TextPopupMenu.addSelectionPopupMenu(mBinding.root, mBinding.tvText, activity as OnWordClickListener)
         mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver)
+        ViewCompat.setOnApplyWindowInsetsListener(mBinding.tvText) { _, insets ->
+            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            mBinding.readerContent.updatePadding(
+                bottom = imeHeight
+            )
+            insets
+        }
         return mBinding.root
     }
 
@@ -218,7 +228,7 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
         Log.v(TAG, "updatePlayButton: playButtonState $playButtonState")
         if (playButtonState != null) {
             mBinding.btnPlay.isEnabled = playButtonState.isEnabled
-            mBinding.btnPlay.setImageResource(playButtonState.iconId)
+            mBinding.btnPlay.setIconResource(playButtonState.iconId)
         }
     }
 

@@ -28,6 +28,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.util.Log
 import android.view.View
+import androidx.annotation.IdRes
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.TtsState
@@ -201,6 +202,21 @@ object ResultListFactory {
         }
     }
 
+    /**
+     * Determine if the matched word in the results list header should be selectable
+     * (for copying/pasting).
+     *
+     * If we make the matched word always selectable, this causes issues with the
+     * app bar: When loading the app, the content scrolls up, partially hiding the
+     * top bar.
+     *
+     * Maybe there's a better way to avoid this scrolling. But in any case, it doesn't
+     * make sense for the text to be selectable if it's empty, or if it's just a "label"
+     * as in the case of the favorites result list header.
+     */
+    fun getMatchedWordSelectability(tab: Tab, matchedWord: String) =
+        matchedWord.isNotBlank() && tab != Tab.FAVORITES
+
     fun getTabName(context: Context, tab: Tab): String {
         return when (tab) {
             Tab.PATTERN -> context.getString(R.string.tab_pattern)
@@ -211,5 +227,15 @@ object ResultListFactory {
             Tab.DICTIONARY -> context.getString(R.string.tab_dictionary)
             else -> context.getString(R.string.tab_reader)
         }
+    }
+    @IdRes
+    fun getRecyclerViewId(tab: Tab): Int = when (tab) {
+        Tab.PATTERN -> R.id.pattern_recycler_view
+        Tab.FAVORITES -> R.id.favorites_recycler_view
+        Tab.WOTD -> R.id.wotd_recycler_view
+        Tab.RHYMER -> R.id.rhymer_recycler_view
+        Tab.THESAURUS -> R.id.thesaurus_recycler_view
+        Tab.DICTIONARY -> R.id.dictionary_recycler_view
+        else -> R.id.recycler_view
     }
 }

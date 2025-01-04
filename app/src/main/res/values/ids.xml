@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="rhymer_recycler_view" type="id"/>
+    <item name="thesaurus_recycler_view" type="id"/>
+    <item name="dictionary_recycler_view" type="id"/>
+    <item name="favorites_recycler_view" type="id"/>
+    <item name="pattern_recycler_view" type="id"/>
+    <item name="wotd_recycler_view" type="id"/>
+</resources>

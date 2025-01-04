@@ -65,8 +65,8 @@ class FilterDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         Log.v(TAG, "onCreateDialog: savedInstanceState=$savedInstanceState")
         activity?.let { context ->
-            val themedLayoutInflater = LayoutInflater.from(ContextThemeWrapper(context, R.style.AppAlertDialog))
-            val binding = DataBindingUtil.inflate<InputDialogEditTextBinding>(themedLayoutInflater,
+            val layoutInflater = LayoutInflater.from(context)
+            val binding = DataBindingUtil.inflate<InputDialogEditTextBinding>(layoutInflater,
                     R.layout.input_dialog_edit_text, null, false)
             arguments?.let { args ->
                 binding.edit.setText(args.getString(EXTRA_TEXT))
