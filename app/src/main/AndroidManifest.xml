@@ -46,11 +46,24 @@
         android:supportsRtl="true"
         android:enableOnBackInvokedCallback="true"
         android:theme="@style/AppTheme">
+        <!--
+            Set windowSoftInputMode=adjustPan.
+            Without this, we have this problem:
+            - Have a long poem already entered.
+            - Launch the app.
+            - Swipe to the composer tab.
+            - Scroll to the end of the poem.
+            - Open the keyboard at the end.
+            - Type a few lines.
+            The lines are entered, but the keyboard is still covering them.
+            You'd have to swipe the view to scroll it up, to reveal the new lines.
+        -->
         <activity
             android:name=".main.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
