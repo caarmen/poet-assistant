@@ -20,12 +20,30 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import static androidx.test.espresso.Espresso.onIdle;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
+
 import android.Manifest;
 import android.graphics.Bitmap;
 import android.os.SystemClock;
 
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.filters.LargeTest;
+import androidx.test.rule.GrantPermissionRule;
+import androidx.test.runner.screenshot.BasicScreenCaptureProcessor;
+import androidx.test.runner.screenshot.ScreenCapture;
+import androidx.test.runner.screenshot.ScreenCaptureProcessor;
+
+import com.google.testing.junit.testparameterinjector.TestParameter;
+import com.google.testing.junit.testparameterinjector.TestParameterInjector;
+
+import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,32 +52,18 @@ import org.junit.runners.MethodSorters;
 import java.io.IOException;
 import java.util.HashSet;
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.LargeTest;
-import androidx.test.rule.GrantPermissionRule;
-import androidx.test.runner.screenshot.BasicScreenCaptureProcessor;
-import androidx.test.runner.screenshot.ScreenCapture;
-import androidx.test.runner.screenshot.ScreenCaptureProcessor;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.Theme;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
-
-import static androidx.test.espresso.Espresso.onIdle;
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.pressBack;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.search;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
+import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 
 @LargeTest
-@Ignore
-@RunWith(AndroidJUnit4.class)
+@RunWith(TestParameterInjector.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ScreenshotTest {
+
+    @TestParameter({SettingsPrefs.THEME_LIGHT, SettingsPrefs.THEME_DARK})
+    String themePreference;
 
     @Rule
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
@@ -67,21 +71,17 @@ public class ScreenshotTest {
     @Rule
     public GrantPermissionRule writeScreenshotRule = GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-    @Test
-    public void takeLightScreenshotsTest() {
-        takeScreenshots();
+    @Before
+    public void setupTheme() {
+        getInstrumentation().runOnMainSync(() -> {
+            SettingsPrefs settingsPrefs = new SettingsPrefs(ApplicationProvider.getApplicationContext());
+            settingsPrefs.setTheme(themePreference);
+            Theme.INSTANCE.setThemeFromSettings(settingsPrefs);
+        });
     }
 
     @Test
-    public void takeDarkScreenshotsTest() {
-        openMenuItem(R.string.action_settings);
-        clickPreference(R.string.pref_theme_title);
-        onView(withText(R.string.pref_theme_value_dark)).perform(click());
-        pressBack();
-        takeScreenshots();
-    }
-
-    private void takeScreenshots() {
+    public void testTakeScreenshots() {
         starWords("acquiesce", "askance", "benight", "deferential", "fractious", "implacable", "obfuscation", "peon", "possibleness");
         search("chance");
         takeScreenshot("rhymer");
