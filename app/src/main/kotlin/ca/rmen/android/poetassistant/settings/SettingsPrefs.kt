@@ -129,7 +129,7 @@ class SettingsPrefs(application: Application) {
 
     var theme: String
         get() {
-            return sharedPreferences.getString(PREF_THEME, THEME_LIGHT) ?: THEME_LIGHT
+            return sharedPreferences.getString(PREF_THEME, THEME_LIGHT) ?: THEME_AUTO
         }
         set(newValue) {
             sharedPreferences.edit().putString(PREF_THEME, newValue).apply()

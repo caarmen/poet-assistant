@@ -213,7 +213,7 @@ public class IntegrationTest {
     public void themeTest() {
         openMenuItem(R.string.action_settings);
         clickPreference(R.string.pref_theme_title);
-        onView(withText(R.string.pref_theme_value_light)).check(matches(isChecked()));
+        onView(withText(R.string.pref_theme_value_auto)).check(matches(isChecked()));
         onView(withText(R.string.pref_theme_value_dark)).perform(click());
         pressBack();
 

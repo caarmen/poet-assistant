@@ -104,7 +104,7 @@
         android:title="@string/pref_category_ui">
 
         <ListPreference
-            android:defaultValue="Light"
+            android:defaultValue="Auto"
             android:entries="@array/pref_theme_titles"
             android:entryValues="@array/pref_theme_values"
             android:icon="@drawable/ic_settings_theme"
