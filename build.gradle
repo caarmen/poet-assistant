@@ -46,6 +46,7 @@ buildscript {
     ext.androidx_test_uiautomator_version = "2.3.0"
     ext.androidx_junit_version = "1.2.1"
     ext.espresso_version = "3.6.1"
+    ext.test_parameter_injector_version = "1.18"
 
     repositories {
         google()

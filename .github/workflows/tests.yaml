@@ -32,6 +32,10 @@ jobs:
           recipe_uuid: ${{ vars.GMSAAS_RECIPE_UUID }}
       - name: Run tests
         run: bash scripts/run_tests.bash
+      - name: Run screenshot tests
+        run: |
+          bash scripts/run_screenshots.sh
+          zip -r screenshots.zip screenshots
       - name: Publish Unit Test Report
         uses: mikepenz/action-junit-report@v4
         if: always() # always run even if the previous step fails
@@ -83,3 +87,10 @@ jobs:
           path: |
             ./app/build/outputs/apk/debug/app-debug.apk
             ./app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+      - name: Archive screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: |
+            ./screenshots.zip
