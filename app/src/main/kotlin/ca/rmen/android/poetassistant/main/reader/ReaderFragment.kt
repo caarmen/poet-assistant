@@ -107,6 +107,18 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
         DebounceTextWatcher.debounce(mBinding.tvText) { mViewModel.updateWordCount() }
         TextPopupMenu.addSelectionPopupMenu(mBinding.root, mBinding.tvText, activity as OnWordClickListener)
         mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver)
+        // Add padding to the bottom of the reader content when the keyboard is open.
+        // Without this, we have this problem:
+        // 1. Have a long poem already entered.
+        // 2. Launch the app.
+        // 3. Swipe to the composer tab.
+        // 4. Tap in the middle of the poem to open the keyboard.
+        // You can't scroll down to the end of the poem.
+        //
+        // Note this has a little glitch, but maybe pas grave?:
+        // 4. Tap in the end of the poem (instead of the middle).
+        // You can scroll down to the end of the poem, and you see quite a bit of
+        // empty padding underneath it.
         ViewCompat.setOnApplyWindowInsetsListener(mBinding.tvText) { _, insets ->
             val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
             mBinding.readerContent.updatePadding(
