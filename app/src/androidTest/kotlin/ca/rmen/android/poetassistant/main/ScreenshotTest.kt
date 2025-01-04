@@ -18,15 +18,14 @@
  */
 package ca.rmen.android.poetassistant.main
 
-import android.Manifest
+import android.app.Application
 import android.graphics.Bitmap
 import android.os.SystemClock
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.rule.GrantPermissionRule
-import androidx.test.runner.screenshot.BasicScreenCaptureProcessor
+import androidx.test.runner.screenshot.ScreenCapture
 import androidx.test.runner.screenshot.ScreenCaptureProcessor
 import androidx.test.runner.screenshot.Screenshot
 import ca.rmen.android.poetassistant.R
@@ -41,6 +40,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
+import java.io.File
 import java.io.IOException
 
 
@@ -56,24 +56,33 @@ class ScreenshotTest {
     @TestParameter
     lateinit var themePreference: ThemePreference
 
+    private lateinit var deviceScreenshotsFolder: File
+
     @JvmField
     @Rule
-    var activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(
+    val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(
         MainActivity::class.java, true
     )
 
-    @JvmField
-    @Rule
-    var writeScreenshotRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
     @Before
-    fun setupTheme() {
+    fun setup() {
+        // Set the theme
         InstrumentationRegistry.getInstrumentation().runOnMainSync {
             val settingsPrefs =
                 SettingsPrefs(ApplicationProvider.getApplicationContext())
             settingsPrefs.theme = themePreference.value
             setThemeFromSettings(settingsPrefs)
         }
+
+        // Create a fresh folder to store the screenshots
+        deviceScreenshotsFolder = File(
+            ApplicationProvider.getApplicationContext<Application>().getExternalFilesDir(null),
+            "screenshots-${themePreference.value}"
+        )
+        if (deviceScreenshotsFolder.exists()) {
+            deviceScreenshotsFolder.deleteRecursively()
+        }
+        deviceScreenshotsFolder.mkdirs()
     }
 
     @Test
@@ -113,6 +122,22 @@ class ScreenshotTest {
         }
     }
 
+    private inner class Processor : ScreenCaptureProcessor {
+        override fun process(capture: ScreenCapture): String {
+            val deviceFile = File(deviceScreenshotsFolder, "${capture.name}.png")
+            deviceFile.outputStream().use {
+                capture.bitmap.compress(
+                    Bitmap.CompressFormat.PNG,
+                    0,
+                    it,
+                )
+            }
+            return deviceFile.absolutePath
+        }
+    }
+
+    private val processor = Processor()
+
     // https://stackoverflow.com/questions/38519568/how-to-take-screenshot-at-the-point-where-test-fail-in-espresso
     private fun takeScreenshot(filename: String) {
         SystemClock.sleep(500) // :(
@@ -121,11 +146,8 @@ class ScreenshotTest {
         capture.setName(filename)
         capture.setFormat(Bitmap.CompressFormat.PNG)
 
-        val processors = HashSet<ScreenCaptureProcessor>()
-        processors.add(BasicScreenCaptureProcessor())
-
         try {
-            capture.process(processors)
+            capture.process(setOf(processor))
         } catch (e: IOException) {
             e.printStackTrace()
         }
