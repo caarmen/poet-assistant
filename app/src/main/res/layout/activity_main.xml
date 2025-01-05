@@ -29,7 +29,6 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
         tools:context=".main.MainActivity">
 
         <androidx.viewpager.widget.ViewPager
@@ -78,7 +77,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/search_suggestions_list"
                 app:layoutManager="LinearLayoutManager"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
             </androidx.recyclerview.widget.RecyclerView>

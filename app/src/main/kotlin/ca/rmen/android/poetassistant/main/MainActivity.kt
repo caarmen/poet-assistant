@@ -135,6 +135,12 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
                 top = insets.top,
             )
         }
+        getInsets(mBinding.searchSuggestionsList) { view, insets ->
+            view.updatePadding(
+                left = insets.left,
+                right = insets.right,
+            )
+        }
         val searchView = mBinding.searchView
         val suggestionsViewModel = ViewModelProvider(this).get(SuggestionsViewModel::class.java)
         mSearch.setSearchView(searchView, suggestionsViewModel)
