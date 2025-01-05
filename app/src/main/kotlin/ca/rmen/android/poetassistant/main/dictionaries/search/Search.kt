@@ -23,7 +23,6 @@ import android.app.Activity
 import android.app.SearchManager
 import android.content.ContentValues
 import android.util.Log
-import android.view.View
 import androidx.annotation.MainThread
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
@@ -69,12 +68,8 @@ class Search constructor(private val searchableActivity: Activity, private val v
     }
 
     fun setSearchView(searchView: SearchView, suggestionsViewModel: SuggestionsViewModel) {
-        // Workaround 1: On older versions (not sure which ones) of Android, the SearchView is partially
-        // covered by the status bar, unless we make this spacer view visible:
-        searchView.findViewById<View>(R.id.open_search_view_status_bar_spacer).visibility = View.VISIBLE
-
         searchView.hint =
-            searchableActivity.getString(R.string.search_hint) // Workaround 2: To hopefully prevent some crashes (!!) :(
+            searchableActivity.getString(R.string.search_hint) // To hopefully prevent some crashes (!!) :(
         // Step 1: Setup suggestions
         val suggestionsList: RecyclerView = searchView.findViewById(R.id.search_suggestions_list)
         val adapter = SuggestionsAdapter()
