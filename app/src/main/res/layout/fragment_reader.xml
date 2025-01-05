@@ -34,13 +34,22 @@
             type="ca.rmen.android.poetassistant.main.reader.ReaderFragment.ButtonListener"/>
     </data>
 
-    <ScrollView
+    <!--
+        Use NestedScrollView.
+        Without this, we have this problem:
+        - have a long poem already entered.
+        - launch the app.
+        - swipe to the composer tab.
+        - don't open the keyboard (don't tap inside the edit text).
+        - try to scroll down.
+        You can't scroll down to the end of the poem
+    -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:fillViewport="false"
-        android:nestedScrollingEnabled="true"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
@@ -94,5 +103,5 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="45 words, 300 characters"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </layout>
