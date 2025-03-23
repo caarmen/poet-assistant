@@ -22,9 +22,9 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.benmanes)
     id("jacoco")
+    id("kotlin-kapt")
+    id("kotlin-android")
 }
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 35
 
