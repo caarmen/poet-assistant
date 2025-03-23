@@ -267,6 +267,19 @@ tasks.named<DependencyUpdatesTask>("dependencyUpdates").configure {
         }
     }
 }
+tasks.withType<Test>().configureEach {
+    // Copied from the now in android app config:
+    // https://github.com/android/nowinandroid/blob/main/build-logic/convention/src/main/kotlin/com/google/samples/apps/nowinandroid/Jacoco.kt
+    configure<JacocoTaskExtension> {
+        // Required for JaCoCo + Robolectric
+        // https://github.com/robolectric/robolectric/issues/2230
+        isIncludeNoLocationClasses = true
+
+        // Required for JDK 11 with the above
+        // https://github.com/gradle/gradle/issues/5184#issuecomment-391982009
+        excludes = listOf("jdk.internal.*")
+    }
+}
 tasks.register<JacocoReport>("jacocoTestReport") {
     mustRunAfter("testDebugUnitTest")
     mustRunAfter("connectedDebugAndroidTest")
