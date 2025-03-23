@@ -51,10 +51,9 @@ buildscript {
 
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:$gradle_plugin_version"
 
         classpath 'org.jacoco:org.jacoco.core:0.8.12'
         // NOTE: Do not place your application dependencies here; they belong
@@ -64,12 +63,13 @@ buildscript {
 }
 
 plugins {
+    alias(libs.plugins.android.application) apply false
     id 'com.google.devtools.ksp' version "${kotlin_version}-${ksp_version}" apply false
 }
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     // Show a report in the log when running tests

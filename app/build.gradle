@@ -18,7 +18,8 @@
  */
 buildscript {
     repositories {
-        jcenter()
+        google()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.52.0'
@@ -26,10 +27,10 @@ buildscript {
 }
 
 plugins {
+    alias(libs.plugins.android.application)
     id 'jacoco'
     id 'com.google.devtools.ksp'
 }
-apply plugin: 'com.android.application'
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
@@ -192,7 +193,7 @@ project.gradle.taskGraph.whenReady {
 
 repositories {
     google()
-    jcenter()
+    mavenCentral()
 }
 
 
