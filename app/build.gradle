@@ -26,14 +26,14 @@ plugins {
     id("kotlin-android")
 }
 android {
-    compileSdkVersion 35
+    compileSdkVersion(35)
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
     }
 
     buildFeatures {
@@ -41,33 +41,33 @@ android {
         buildConfig = true
     }
     jacoco {
-        version "0.8.12"
+        version("0.8.12")
     }
     lintOptions {
-        abortOnError true
-        textReport true
-        ignoreWarnings true
-        disable 'RestrictedApi'  // https://stackoverflow.com/questions/45648530/restricted-api-lint-error-when-deleting-table-room-persistence
-        checkReleaseBuilds false
+        abortOnError = true
+        textReport = true
+        ignoreWarnings = true
+        disable("RestrictedApi")  // https://stackoverflow.com/questions/45648530/restricted-api-lint-error-when-deleting-table-room-persistence
+        checkReleaseBuilds = false
     }
 
     defaultConfig {
-        applicationId "ca.rmen.android.poetassistant"
-        namespace "ca.rmen.android.poetassistant"
-        minSdkVersion 21
-        targetSdkVersion 35
-        versionCode 113101
-        versionName "1.31.1"
-        // setting vectorDrawables.useSupportLibrary = true means pngs won't be generated at
+        applicationId("ca.rmen.android.poetassistant")
+        namespace = "ca.rmen.android.poetassistant"
+        minSdkVersion(21)
+        targetSdkVersion(35)
+        versionCode(113101)
+        versionName("1.31.1")
+        // setting vectorDrawables.useSupportLibrary = true means pngs won"t be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner("androidx.test.runner.AndroidJUnitRunner")
 
         // The following argument makes the Android Test Orchestrator run its
         // "pm clear" command after each test invocation. This command ensures
-        // that the app's state is completely cleared between tests.
+        // that the app"s state is completely cleared between tests.
         // https://developer.android.com/training/testing/instrumented-tests/androidx-test-libraries/runner#use-android
-        // testInstrumentationRunnerArguments clearPackageData: 'true', coverage: 'true', coverageFilePath: '/data/data/ca.rmen.android.poetassistant.test/'
+        // testInstrumentationRunnerArguments clearPackageData: "true", coverage: "true", coverageFilePath: "/data/data/ca.rmen.android.poetassistant.test/"
 
 
         // used by Room, to test migrations
@@ -105,21 +105,21 @@ android {
             resValue "string", "search_provider_authority", android.defaultConfig.applicationId + applicationIdSuffix + ".SuggestionsProvider"
         }
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            resValue "string", "search_provider_authority", android.defaultConfig.applicationId + ".SuggestionsProvider"
+            minifyEnabled(true)
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            resValue("string", "search_provider_authority", android.defaultConfig.applicationId + ".SuggestionsProvider")
         }
     }
 
     testOptions {
         // Uncomment below to use orchestrator for tests
-        // execution 'ANDROIDX_TEST_ORCHESTRATOR'
+        // execution "ANDROIDX_TEST_ORCHESTRATOR"
         unitTests {
             all {
-                jvmArgs '-noverify', '-ea'
+                jvmArgs("-noverify", "-ea")
                 jacoco {
                     includeNoLocationClasses = true
-                    jacoco.excludes = ['jdk.internal.*']
+                    jacoco.excludes = ["jdk.internal.*"]
                 }
             }
             includeAndroidResources = true
@@ -133,10 +133,10 @@ android {
         println "Using signing properties from gradle properties"
         signingConfigs {
             release {
-                keyAlias rootProject.AndroidSigningKeyAlias
-                keyPassword rootProject.AndroidSigningKeyPassword
-                storeFile file(rootProject.AndroidSigningStoreFile)
-                storePassword rootProject.AndroidSigningStorePassword
+                keyAlias(rootProject.AndroidSigningKeyAlias)
+                keyPassword(rootProject.AndroidSigningKeyPassword)
+                storeFile(file(rootProject.AndroidSigningStoreFile))
+                storePassword(rootProject.AndroidSigningStorePassword)
             }
             android.buildTypes.release.signingConfig = signingConfigs.release
         }
@@ -147,33 +147,33 @@ android {
         println "Using signing properties from environment variables"
             signingConfigs {
                 release {
-                    keyAlias System.env.AndroidSigningKeyAlias
-                    keyPassword System.env.AndroidSigningKeyPassword
-                    storeFile file(System.env.AndroidSigningStoreFile)
-                    storePassword System.env.AndroidSigningStorePassword
+                    keyAlias(System.env.AndroidSigningKeyAlias)
+                    keyPassword(System.env.AndroidSigningKeyPassword)
+                    storeFile(file(System.env.AndroidSigningStoreFile))
+                    storePassword(System.env.AndroidSigningStorePassword)
                 }
                 android.buildTypes.release.signingConfig = signingConfigs.release
             }
     } else {
-        println "No signing properties found"
+        println("No signing properties found")
         android.buildTypes.release.signingConfig = null
     }
 }
 
 jacoco {
-    toolVersion '0.8.12'
+    toolVersion = "0.8.12"
 }
 android.applicationVariants.all { variant ->
     def copyLicenseFilesTask = tasks.register("copyLicenseFilesFor${variant.name.capitalize()}", Copy) {
-        from project.rootDir
-        into "${project.buildDir}/generated/license_assets/"
-        include 'LICENSE.txt'
-        include 'LICENSE-rhyming-dictionary.txt'
-        include 'LICENSE-thesaurus-wordnet.txt'
-        include 'LICENSE-dictionary-wordnet.txt'
-        include 'LICENSE-google-ngram-dataset.txt'
+        from(project.rootDir)
+        into("${project.buildDir}/generated/license_assets/")
+        include("LICENSE.txt")
+        include("LICENSE-rhyming-dictionary.txt")
+        include("LICENSE-thesaurus-wordnet.txt")
+        include("LICENSE-dictionary-wordnet.txt")
+        include("LICENSE-google-ngram-dataset.txt")
     }
-    variant.mergeAssetsProvider.configure { dependsOn copyLicenseFilesTask }
+    variant.mergeAssetsProvider.configure { dependsOn(copyLicenseFilesTask) }
 }
 
 project.gradle.taskGraph.whenReady {
@@ -238,22 +238,22 @@ dependencies {
 dependencyUpdates.resolutionStrategy {
     componentSelection { rules ->
         rules.all { ComponentSelection selection ->
-            boolean rejected = ['alpha', 'alpha-preview', 'beta', 'rc', 'cr', 'm', 'eap', 'dev'].any { qualifier ->
+            boolean rejected = ["alpha", "alpha-preview", "beta", "rc", "cr", "m", "eap", "dev"].any { qualifier ->
                 selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
             }
             if ("com.android.databinding" == selection.candidate.group) {
                 rejected = true
             }
             if (rejected) {
-                selection.reject('Release candidate')
+                selection.reject("Release candidate")
             }
         }
     }
 }
 task jacocoTestReport(type: JacocoReport) {
-    mustRunAfter "testDebugUnitTest"
-    mustRunAfter "connectedDebugAndroidTest"
-    mustRunAfter "createDebugCoverageReport"
+    mustRunAfter("testDebugUnitTest")
+    mustRunAfter("connectedDebugAndroidTest")
+    mustRunAfter("createDebugCoverageReport")
     getClassDirectories().setFrom(fileTree(
             dir: "${buildDir}",
             includes: ["tmp/kotlin-classes/debug/ca/rmen/android/poetassistant/**/*.class",
