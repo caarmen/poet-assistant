@@ -120,6 +120,37 @@ android {
             )
         }
         release {
+            if (rootProject.hasProperty("AndroidSigningKeyAlias")
+                && rootProject.hasProperty("AndroidSigningKeyPassword")
+                && rootProject.hasProperty("AndroidSigningStoreFile")
+                && rootProject.hasProperty("AndroidSigningStorePassword")
+            ) {
+                println("Using signing properties from gradle properties")
+                signingConfigs {
+                    create("release") {
+                        keyAlias = rootProject.extra["AndroidSigningKeyAlias"] as String
+                        keyPassword = rootProject.extra["AndroidSigningKeyPassword"] as String
+                        storeFile = file(rootProject.extra["AndroidSigningStoreFile"] as String)
+                        storePassword = rootProject.extra["AndroidSigningStorePassword"] as String
+                    }
+                }
+            } else if (System.getenv("AndroidSigningKeyPassword") != null
+                && System.getenv("AndroidSigningKeyPassword") != null
+                && System.getenv("AndroidSigningStoreFile") != null
+                && System.getenv("AndroidSigningStorePassword") != null
+            ) {
+                println("Using signing properties from environment variables")
+                signingConfigs {
+                    create("release") {
+                        keyAlias = System.getenv("AndroidSigningKeyAlias")
+                        keyPassword = System.getenv("AndroidSigningKeyPassword")
+                        storeFile = file(System.getenv("AndroidSigningStoreFile"))
+                        storePassword = System.getenv("AndroidSigningStorePassword")
+                    }
+                }
+            } else {
+                println("No signing properties found")
+            }
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             resValue(
@@ -142,37 +173,6 @@ android {
         }
     }
 
-    if (rootProject.hasProperty("AndroidSigningKeyAlias")
-        && rootProject.hasProperty("AndroidSigningKeyPassword")
-        && rootProject.hasProperty("AndroidSigningStoreFile")
-        && rootProject.hasProperty("AndroidSigningStorePassword")
-    ) {
-        println("Using signing properties from gradle properties")
-        signingConfigs {
-            create("release") {
-                keyAlias = rootProject.extra["AndroidSigningKeyAlias"] as String
-                keyPassword = rootProject.extra["AndroidSigningKeyPassword"] as String
-                storeFile = file(rootProject.extra["AndroidSigningStoreFile"] as String)
-                storePassword = rootProject.extra["AndroidSigningStorePassword"] as String
-            }
-        }
-    } else if (System.getenv("AndroidSigningKeyPassword") != null
-        && System.getenv("AndroidSigningKeyPassword") != null
-        && System.getenv("AndroidSigningStoreFile") != null
-        && System.getenv("AndroidSigningStorePassword") != null
-    ) {
-        println("Using signing properties from environment variables")
-        signingConfigs {
-            create("release") {
-                keyAlias = System.getenv("AndroidSigningKeyAlias")
-                keyPassword = System.getenv("AndroidSigningKeyPassword")
-                storeFile = file(System.getenv("AndroidSigningStoreFile"))
-                storePassword = System.getenv("AndroidSigningStorePassword")
-            }
-        }
-    } else {
-        println("No signing properties found")
-    }
 
 }
 
