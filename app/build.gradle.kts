@@ -17,7 +17,6 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import com.android.build.gradle.api.ApplicationVariant
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
@@ -43,22 +42,23 @@ android {
         dataBinding = true
         buildConfig = true
     }
-    jacoco {
-        version = "0.8.12"
+
+    testCoverage {
+        jacocoVersion = "0.8.12"
     }
-    lintOptions {
-        isAbortOnError = true
+    lint {
+        abortOnError = true
         textReport = true
-        isIgnoreWarnings = true
-        disable("RestrictedApi")  // https://stackoverflow.com/questions/45648530/restricted-api-lint-error-when-deleting-table-room-persistence
-        isCheckReleaseBuilds = false
+        ignoreWarnings = true
+        disable.add("RestrictedApi")  // https://stackoverflow.com/questions/45648530/restricted-api-lint-error-when-deleting-table-room-persistence
+        checkReleaseBuilds = false
     }
 
     defaultConfig {
         applicationId = "ca.rmen.android.poetassistant"
         namespace = "ca.rmen.android.poetassistant"
-        minSdkVersion(21)
-        targetSdkVersion(35)
+        minSdk = 21
+        targetSdk = 35
         versionCode = 113101
         versionName = "1.31.1"
         // setting vectorDrawables.useSupportLibrary = true means pngs won"t be generated at
@@ -77,10 +77,10 @@ android {
         sourceSets {
             getByName("main") {
                 java.srcDirs(listOf("$projectDir/src/main/kotlin"))
-                assets.srcDirs("${project.buildDir}/generated/license_assets")
+                assets.srcDirs("${project.layout.buildDirectory}/generated/license_assets")
             }
             getByName("androidTest") {
-                assets.srcDirs(files("$projectDir/src/androidTest/schemas".toString()))
+                assets.srcDirs(files("$projectDir/src/androidTest/schemas"))
                 java.srcDirs(
                     "$projectDir/src/androidTest/kotlin",
                     "$projectDir/src/sharedTest/java",
@@ -102,14 +102,17 @@ android {
         // used by Room, to test migrations
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments.put("room.schemaLocation", projectDir.resolve("schemas").toString())
+                arguments["room.schemaLocation"] = projectDir.resolve("schemas").toString()
             }
         }
     }
 
     buildTypes {
         debug {
-            isTestCoverageEnabled = project.gradle.startParameter.taskNames.any {
+            enableUnitTestCoverage = project.gradle.startParameter.taskNames.any {
+                it.contains("jacocoTestReport")
+            }
+            enableAndroidTestCoverage = project.gradle.startParameter.taskNames.any {
                 it.contains("jacocoTestReport")
             }
             applicationIdSuffix = ".test"
@@ -180,7 +183,7 @@ jacoco {
     toolVersion = "0.8.12"
 }
 android.applicationVariants.all{ variant ->
-    val copyLicenseFilesTask = tasks.register<Copy>("copyLicenseFilesFor${variant.name.capitalize()}") {
+    val copyLicenseFilesTask = tasks.register<Copy>("copyLicenseFilesFor${variant.name.replaceFirstChar{it.uppercase()}}") {
         from(project.rootDir)
         into("${project.layout.buildDirectory}/generated/license_assets/")
         include("LICENSE.txt")
@@ -269,7 +272,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     mustRunAfter("testDebugUnitTest")
     mustRunAfter("connectedDebugAndroidTest")
     mustRunAfter("createDebugCoverageReport")
-    getClassDirectories().setFrom(
+    classDirectories.setFrom(
         fileTree(mapOf(
             "dir" to "${layout.buildDirectory}",
             "includes" to listOf("tmp/kotlin-classes/debug/ca/rmen/android/poetassistant/**/*.class",
@@ -292,13 +295,13 @@ tasks.register<JacocoReport>("jacocoTestReport") {
                 "**/com/android/**/*.class")
         ))
     )
-    getSourceDirectories().setFrom(
+    sourceDirectories.setFrom(
         files(
             "${project.projectDir}/src/main/java",
             "${project.projectDir}/src/main/kotlin"
         )
     )
-    getExecutionData().setFrom(
+    executionData.setFrom(
         fileTree(mapOf(
             "dir" to "${layout.buildDirectory}",
             "includes" to listOf(
