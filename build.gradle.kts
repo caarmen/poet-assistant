@@ -23,20 +23,18 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlin.jvm) apply false
-    id ("jacoco")
+    id("jacoco")
 }
 allprojects {
 
     // Show a report in the log when running tests
-    tasks.withType(Test).tap {
-        configureEach {
-            testLogging {
-                events("passed", "skipped", "failed", "standardOut", "standardError")
-            }
+    tasks.withType<Test>().configureEach {
+        testLogging {
+            events("passed", "skipped", "failed", "standardOut", "standardError")
         }
     }
 }
 
-tasks.register('clean', Delete) {
+tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
