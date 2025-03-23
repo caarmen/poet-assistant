@@ -16,12 +16,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
 
 plugins {
     alias(libs.plugins.android.application)
@@ -187,12 +181,6 @@ project.gradle.taskGraph.whenReady {
         ignoreFailures = true
     }
 }
-
-repositories {
-    google()
-    mavenCentral()
-}
-
 
 dependencies {
     implementation(libs.androidx.appcompat)
