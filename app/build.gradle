@@ -21,12 +21,13 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.51.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.52.0'
     }
 }
 
 plugins {
     id 'jacoco'
+    id 'com.google.devtools.ksp'
 }
 apply plugin: 'com.android.application'
 apply plugin: 'com.github.ben-manes.versions'
@@ -215,11 +216,11 @@ dependencies {
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     api "androidx.collection:collection:$collection_version"
 
-    kapt "androidx.room:room-compiler:$room_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    ksp "androidx.room:room-compiler:$room_version"
+    ksp "com.google.dagger:dagger-compiler:$dagger_version"
 
     androidTestImplementation "androidx.room:room-testing:$room_version"
-    kaptAndroidTest "com.google.dagger:dagger-compiler:$dagger_version"
+    ksp "com.google.dagger:dagger-compiler:$dagger_version"
 
     testImplementation "junit:junit:$junit_version"
     testImplementation "androidx.test.ext:junit:$androidx_junit_version"
@@ -232,7 +233,7 @@ dependencies {
     testImplementation group: "org.easytesting", name: "fest-reflect", version: "$festreflect_version"
     testImplementation "androidx.arch.core:core-testing:2.2.0"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlin_coroutines_version"
-    kaptTest "com.google.dagger:dagger-compiler:$dagger_version"
+    kspTest "com.google.dagger:dagger-compiler:$dagger_version"
 
     androidTestImplementation group: "org.easytesting", name: "fest-reflect", version: "$festreflect_version"
 
@@ -303,14 +304,3 @@ task jacocoTestReport(type: JacocoReport) {
         xml.required = true
     }
 }
-
-// Necessary for Prefs to work (see https://kotlinlang.org/docs/reference/kapt.html)
-kapt {
-    correctErrorTypes = true
-    javacOptions {
-        // Increase the max count of errors from annotation processors.
-        // Default is 100.
-        option("-Xmaxerrs", 10000)
-    }
-}
-
