@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Carmen Alvarez
+ * Copyright (c) 2016-2018 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -16,17 +16,25 @@
  * You should have received a copy of the GNU General Public License
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
-pluginManagement {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
+
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    id("jacoco")
+}
+allprojects {
+
+    // Show a report in the log when running tests
+    tasks.withType<Test>().configureEach {
+        testLogging {
+            events("passed", "skipped", "failed", "standardOut", "standardError")
+        }
     }
 }
-dependencyResolutionManagement {
-    repositories {
-        google()
-        mavenCentral()
-    }
+
+tasks.register<Delete>("clean") {
+    delete(rootProject.layout.buildDirectory)
 }
-include ':app'
