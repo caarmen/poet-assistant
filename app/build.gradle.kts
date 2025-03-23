@@ -77,7 +77,7 @@ android {
         sourceSets {
             getByName("main") {
                 java.srcDirs(listOf("$projectDir/src/main/kotlin"))
-                assets.srcDirs("${project.layout.buildDirectory}/generated/license_assets")
+                assets.srcDirs(project.layout.buildDirectory.dir("generated/license_assets"))
             }
             getByName("androidTest") {
                 assets.srcDirs(files("$projectDir/src/androidTest/schemas"))
@@ -182,20 +182,19 @@ android {
 jacoco {
     toolVersion = "0.8.12"
 }
-android.applicationVariants.all{ variant ->
-    val copyLicenseFilesTask = tasks.register<Copy>("copyLicenseFilesFor${variant.name.replaceFirstChar{it.uppercase()}}") {
+android.applicationVariants.configureEach {
+    val copyLicenseFilesTask = tasks.register<Copy>("copyLicenseFilesFor${name.replaceFirstChar{it.uppercase()}}") {
         from(project.rootDir)
-        into("${project.layout.buildDirectory}/generated/license_assets/")
+        into(project.layout.buildDirectory.dir("generated/license_assets/"))
         include("LICENSE.txt")
         include("LICENSE-rhyming-dictionary.txt")
         include("LICENSE-thesaurus-wordnet.txt")
         include("LICENSE-dictionary-wordnet.txt")
         include("LICENSE-google-ngram-dataset.txt")
     }
-    variant.mergeAssetsProvider.configure {
+    mergeAssetsProvider.configure {
         dependsOn(copyLicenseFilesTask)
     }
-    true
 }
 
 dependencies {
@@ -274,7 +273,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     mustRunAfter("createDebugCoverageReport")
     classDirectories.setFrom(
         fileTree(mapOf(
-            "dir" to "${layout.buildDirectory}",
+            "dir" to layout.buildDirectory,
             "includes" to listOf("tmp/kotlin-classes/debug/ca/rmen/android/poetassistant/**/*.class",
                 "intermediates/javac/debug/compileDebugWithJavac/classes/ca/rmen/android/poetassistant/**/*.class"),
             "excludes" to listOf("**/R.class", "**/R*.class", "**/Manifest.class", "**/Manifest*.class", "**/BuildConfig.class",
@@ -303,7 +302,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     )
     executionData.setFrom(
         fileTree(mapOf(
-            "dir" to "${layout.buildDirectory}",
+            "dir" to layout.buildDirectory,
             "includes" to listOf(
                 "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
                 "outputs/code_coverage/debugAndroidTest/connected/**/*.ec"
