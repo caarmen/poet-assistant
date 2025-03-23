@@ -32,7 +32,7 @@ buildscript {
     ext.preference_version = "1.2.1"
     ext.room_version = "2.6.1"
 
-    ext.dagger_version = '2.54'
+    ext.dagger_version = '2.56'
     ext.porterstemmer_version = "1.0.0"
     ext.rhymer_version = "1.2.0"
 
