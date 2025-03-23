@@ -163,10 +163,10 @@ android {
 jacoco {
     toolVersion = "0.8.12"
 }
-android.applicationVariants.all { variant ->
+android.applicationVariants.configureEach { variant ->
     def copyLicenseFilesTask = tasks.register("copyLicenseFilesFor${variant.name.capitalize()}", Copy) {
         from(project.rootDir)
-        into("${project.buildDir}/generated/license_assets/")
+        into("${project.layout.buildDirectory}/generated/license_assets/")
         include("LICENSE.txt")
         include("LICENSE-rhyming-dictionary.txt")
         include("LICENSE-thesaurus-wordnet.txt")
@@ -250,12 +250,12 @@ dependencyUpdates.resolutionStrategy {
         }
     }
 }
-task jacocoTestReport(type: JacocoReport) {
+tasks.register('jacocoTestReport', JacocoReport) {
     mustRunAfter("testDebugUnitTest")
     mustRunAfter("connectedDebugAndroidTest")
     mustRunAfter("createDebugCoverageReport")
     getClassDirectories().setFrom(fileTree(
-            dir: "${buildDir}",
+            dir: "${layout.buildDirectory}",
             includes: ["tmp/kotlin-classes/debug/ca/rmen/android/poetassistant/**/*.class",
                        "intermediates/javac/debug/compileDebugWithJavac/classes/ca/rmen/android/poetassistant/**/*.class"],
             excludes: ["**/R.class", "**/R*.class", "**/Manifest.class", "**/Manifest*.class", "**/BuildConfig.class",
@@ -276,7 +276,7 @@ task jacocoTestReport(type: JacocoReport) {
                        "**/com/android/**/*.class"]))
     getSourceDirectories().setFrom(files("${project.projectDir}/src/main/java", "${project.projectDir}/src/main/kotlin"))
     getExecutionData().setFrom(fileTree(
-            dir: "${buildDir}",
+            dir: "${layout.buildDirectory}",
             includes: [
                     "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
                     "outputs/code_coverage/debugAndroidTest/connected/**/*.ec"
