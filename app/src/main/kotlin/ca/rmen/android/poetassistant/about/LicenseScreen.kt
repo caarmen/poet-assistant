@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ca.rmen.android.poetassistant.ExcludeFromJacocoGeneratedReport
 import ca.rmen.android.poetassistant.R
 
 @Composable
@@ -59,6 +60,7 @@ fun LicenseScreen(
 }
 
 @Composable
+@ExcludeFromJacocoGeneratedReport
 @Preview(showBackground = true, heightDp = 300)
 fun LicenseScreenPreview() {
     LicenseScreen(
