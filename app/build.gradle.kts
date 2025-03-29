@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Carmen Alvarez
+ * Copyright (c) 2016-present Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -21,8 +21,8 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.benmanes)
+    alias(libs.plugins.ksp)
     id("jacoco")
     id("kotlin-kapt")
     id("kotlin-android")
@@ -199,52 +199,51 @@ android.applicationVariants.configureEach {
 
 dependencies {
     implementation(libs.androidx.appcompat)
-    implementation(libs.google.material)
-    implementation(libs.androidx.preference)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.rhymer)
-    implementation(libs.porter.stemmer)
-    implementation(libs.dagger)
+    implementation(libs.androidx.preference)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.dagger)
+    implementation(libs.google.material)
     implementation(libs.kotlin)
-    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.porter.stemmer)
+    implementation(libs.rhymer)
 
     // We need to explicitly add a couple of api dependencies here, otherwise alpha versions
     // of these libs will be pulled in transitively (by a non-alpha databinding dependency...)
+    api(libs.androidx.collection)
     api(libs.androidx.lifecycle.runtime)
     api(libs.androidx.lifecycle.viewmodel.ktx)
-    api(libs.androidx.collection)
 
     ksp(libs.androidx.room.compiler)
     ksp(libs.dagger.compiler)
 
-    androidTestImplementation(libs.androidx.room.testing)
-
-    testImplementation(libs.junit)
-    testImplementation(libs.androidx.test.ext)
-    testImplementation(libs.robolectric)
-    testImplementation(libs.androidx.test.runner)
-    testImplementation(libs.androidx.test.rules)
-    testImplementation(libs.androidx.test.espresso.core)
-    testImplementation(libs.androidx.test.espresso.contrib)
-    testImplementation(libs.androidx.test.espresso.intents)
-    testImplementation(libs.fest.reflect)
-    testImplementation(libs.androidx.arch.core.testing)
-    testImplementation(libs.kotlinx.coroutines.test)
     kspTest(libs.dagger.compiler)
+    testImplementation(libs.androidx.arch.core.testing)
+    testImplementation(libs.androidx.test.espresso.contrib)
+    testImplementation(libs.androidx.test.espresso.core)
+    testImplementation(libs.androidx.test.espresso.intents)
+    testImplementation(libs.androidx.test.ext)
+    testImplementation(libs.androidx.test.rules)
+    testImplementation(libs.androidx.test.runner)
+    testImplementation(libs.fest.reflect)
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.robolectric)
 
-    androidTestImplementation(libs.fest.reflect)
-    androidTestImplementation(libs.androidx.test.runner)
-    androidTestImplementation(libs.androidx.test.rules)
-    androidTestImplementation(libs.androidx.test.espresso.core)
-    androidTestImplementation(libs.androidx.test.espresso.contrib)
-    androidTestImplementation(libs.androidx.test.espresso.intents)
+    androidTestImplementation(libs.androidx.room.testing)
     androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.espresso.contrib)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.test.espresso.intents)
     androidTestImplementation(libs.androidx.test.ext)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.uiautomator)
-    androidTestImplementation(libs.robolectric.annotations)
+    androidTestImplementation(libs.fest.reflect)
     androidTestImplementation(libs.google.test.parameter.injector)
+    androidTestImplementation(libs.robolectric.annotations)
 
     androidTestUtil(libs.androidx.test.orchesetrator)
 }

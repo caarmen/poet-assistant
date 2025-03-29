@@ -67,5 +67,5 @@ robolectric-annotations = { group = "org.robolectric", name = "annotations", ver
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 benmanes = { id = "com.github.ben-manes.versions", version.ref = "benmanes" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
