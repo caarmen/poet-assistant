@@ -21,6 +21,9 @@ package ca.rmen.android.poetassistant.about
 
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions
@@ -31,19 +34,20 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.TestUiUtils
-import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
-import org.hamcrest.Matchers
+import ca.rmen.android.poetassistant.rules.PoetAssistantComposeTestRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
+@Config(qualifiers = "w600dp-h800dp")
 @RunWith(AndroidJUnit4::class)
 class AboutScreenTest {
-    @JvmField
-    @Rule
-    val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(
-        MainActivity::class.java, true
-    )
+    @get:Rule
+    val composeTestRule = createAndroidComposeRule<MainActivity>()
+
+    @get:Rule
+    val poetAssistantComposeTestRule = PoetAssistantComposeTestRule(composeTestRule)
 
     @Test
     fun openAboutScreenTest() {
@@ -69,9 +73,7 @@ class AboutScreenTest {
             .check(ViewAssertions.matches(ViewMatchers.isCompletelyDisplayed()))
             .perform(ViewActions.click())
 
-        Espresso.onView(withId(R.id.tv_license_text))
-            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
-            .check(ViewAssertions.matches(ViewMatchers.withText(Matchers.containsString(licenseContent))))
+        composeTestRule.onNodeWithText(text=licenseContent, substring = true).assertIsDisplayed()
         Espresso.pressBack()
     }
 

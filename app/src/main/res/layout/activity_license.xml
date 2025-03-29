@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (c) 2016 Carmen Alvarez
+  ~ Copyright (c) 2016 - present Carmen Alvarez
   ~
   ~ This file is part of Poet Assistant.
   ~
@@ -17,60 +17,23 @@
   ~ along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <View
             android:id="@+id/status_bar_view"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="?attr/colorSurface" />
 
-        <ScrollView
+        <androidx.compose.ui.platform.ComposeView
             android:id="@+id/license_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            tools:context=".about.LicenseActivity">
+            android:layout_height="match_parent" />
 
-
-            <HorizontalScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:id="@+id/tv_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:gravity="center_vertical"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textStyle="bold"
-                        tools:text="License title"/>
-
-                    <TextView
-                        android:id="@+id/tv_license_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:autoLink="web"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColorLink="@color/primary"
-                        tools:text="@tools:sample/lorem/random"/>
-
-                </LinearLayout>
-
-            </HorizontalScrollView>
-        </ScrollView>
     </LinearLayout>
 </layout>
