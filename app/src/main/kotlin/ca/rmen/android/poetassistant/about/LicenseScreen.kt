@@ -23,8 +23,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -33,29 +40,49 @@ import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.ExcludeFromJacocoGeneratedReport
 import ca.rmen.android.poetassistant.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LicenseScreen(
     title: String,
     licenseText: String,
     modifier: Modifier = Modifier,
+    onBack: () -> Unit = {}
 ) {
     val horizontalScrollState = rememberScrollState()
     val verticalScrollState = rememberScrollState()
-    Column(
-        modifier = modifier
-            .padding(16.dp)
-            .horizontalScroll(enabled = true, state = horizontalScrollState)
-            .verticalScroll(enabled = true, state = verticalScrollState)
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(bottom = 16.dp),
-        )
-        Text(
-            text = licenseText,
-            style = MaterialTheme.typography.bodySmall,
-        )
+    Scaffold(
+        modifier = modifier, topBar = {
+            TopAppBar(
+                title = {
+                    Text(stringResource(R.string.license_title))
+                },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.abc_action_bar_up_description),
+                        )
+                    }
+                }
+            )
+        }) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(16.dp)
+                .horizontalScroll(enabled = true, state = horizontalScrollState)
+                .verticalScroll(enabled = true, state = verticalScrollState)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.padding(bottom = 16.dp),
+            )
+            Text(
+                text = licenseText,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
     }
 }
 
