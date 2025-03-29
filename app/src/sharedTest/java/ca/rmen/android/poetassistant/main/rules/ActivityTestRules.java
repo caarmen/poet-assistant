@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Carmen Alvarez
+ * Copyright (c) 2017 - present Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -48,13 +48,13 @@ import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static junit.framework.Assert.assertTrue;
 
-final class ActivityTestRules {
+public final class ActivityTestRules {
 
     private ActivityTestRules() {
         // prevent instantiation
     }
 
-    static void beforeActivityLaunched(Context targetContext) {
+    public static void beforeActivityLaunched(Context targetContext) {
         IdlingRegistry.getInstance().register(new TtsIdlingResource(targetContext));
 
         Application application = (Application) targetContext.getApplicationContext();
@@ -74,7 +74,7 @@ final class ActivityTestRules {
         ProcessTextRouter.INSTANCE.setEnabled(targetContext, true);
     }
 
-    static void afterActivityFinished(Context targetContext) {
+    public static void afterActivityFinished(Context targetContext) {
         cleanup(targetContext);
         Collection<IdlingResource> idlingResourceList = IdlingRegistry.getInstance().getResources();
         for (IdlingResource idlingResource : idlingResourceList) {

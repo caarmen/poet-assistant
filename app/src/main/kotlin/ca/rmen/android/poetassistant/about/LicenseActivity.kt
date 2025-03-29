@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2017 Carmen Alvarez
+ * Copyright (c) 2016 - present Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -60,9 +60,8 @@ class LicenseActivity : AppCompatActivity() {
             it.setTitle(R.string.license_title)
         }
 
-        val title = intent.getStringExtra(EXTRA_TITLE)
+        val title = intent.getStringExtra(EXTRA_TITLE)!!
         val licenseFile = intent.getStringExtra(EXTRA_LICENSE_TEXT_ASSET_FILE)!!
-        mBinding.tvTitle.text = title
         getInsets(mBinding.licenseContent) { view, insets ->
             view.updatePadding(
                 left = insets.left,
@@ -73,7 +72,14 @@ class LicenseActivity : AppCompatActivity() {
         }
         val threading = DaggerHelper.getMainScreenComponent(this).getThreading()
         threading.execute({ readFile(licenseFile) },
-                { mBinding.tvLicenseText.text = it })
+                {
+                    mBinding.licenseContent.setContent {
+                        LicenseScreen(
+                            title = title,
+                            licenseText = it,
+                        )
+                    }
+                })
     }
 
     @WorkerThread
