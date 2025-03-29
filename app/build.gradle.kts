@@ -22,6 +22,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.benmanes)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     id("jacoco")
     id("kotlin-kapt")
@@ -39,6 +40,7 @@ android {
     }
 
     buildFeatures {
+        compose = true
         dataBinding = true
         buildConfig = true
     }
@@ -198,7 +200,11 @@ android.applicationVariants.configureEach {
 }
 
 dependencies {
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.preference)
     implementation(libs.androidx.room.runtime)
@@ -210,6 +216,8 @@ dependencies {
     implementation(libs.porter.stemmer)
     implementation(libs.rhymer)
 
+    debugImplementation(libs.androidx.compose.ui.tooling)
+
     // We need to explicitly add a couple of api dependencies here, otherwise alpha versions
     // of these libs will be pulled in transitively (by a non-alpha databinding dependency...)
     api(libs.androidx.collection)
@@ -220,6 +228,7 @@ dependencies {
     ksp(libs.dagger.compiler)
 
     kspTest(libs.dagger.compiler)
+    testImplementation(platform(libs.androidx.compose.bom))
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.androidx.test.espresso.contrib)
     testImplementation(libs.androidx.test.espresso.core)
@@ -227,11 +236,13 @@ dependencies {
     testImplementation(libs.androidx.test.ext)
     testImplementation(libs.androidx.test.rules)
     testImplementation(libs.androidx.test.runner)
+    testImplementation(libs.androidx.ui.test.junit4.android)
     testImplementation(libs.fest.reflect)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
 
+    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.room.testing)
     androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.espresso.contrib)
@@ -241,6 +252,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.rules)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.uiautomator)
+    androidTestImplementation(libs.androidx.ui.test.junit4.android)
     androidTestImplementation(libs.fest.reflect)
     androidTestImplementation(libs.google.test.parameter.injector)
     androidTestImplementation(libs.robolectric.annotations)
