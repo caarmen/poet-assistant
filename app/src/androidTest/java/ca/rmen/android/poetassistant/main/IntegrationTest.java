@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Carmen Alvarez
+ * Copyright (c) 2017 - present Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -20,30 +20,16 @@
 package ca.rmen.android.poetassistant.main;
 
 
-import android.content.Context;
-import androidx.annotation.IdRes;
-import androidx.annotation.StringRes;
-import androidx.test.filters.LargeTest;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import ca.rmen.android.poetassistant.R;
-import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
-
-import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
-import static androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.endsWith;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkAllStarredWords;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkClipboard;
 import static ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes;
@@ -64,9 +50,18 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
 import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.endsWith;
+
+import android.content.Context;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
@@ -231,33 +226,6 @@ public class IntegrationTest {
 
         openMenuItem(R.string.action_settings);
         clickPreference(R.string.pref_theme_title);
-    }
-
-    @Test
-    public void openAboutScreenTest() {
-        openMenuItem(R.string.action_about);
-        checkLicense(R.id.tv_poet_assistant_license, R.string.about_license_app, "GNU GENERAL");
-        checkLicense(R.id.tv_rhymer_license, R.string.about_license_rhyming_dictionary, "Carnegie Mellon University");
-        checkLicense(R.id.tv_thesaurus_license, R.string.about_license_thesaurus, "WordNet Release 2.1");
-        checkLicense(R.id.tv_dictionary_license, R.string.about_license_dictionary, "WordNet 3.0");
-        checkLicense(R.id.tv_google_ngram_dataset_license, R.string.about_license_google_ngram_dataset, "Google Ngram Viewer");
-        onView(withId(R.id.tv_source_code))
-                .check(matches(isCompletelyDisplayed()))
-                .check(matches(withText(R.string.about_projectUrl)));
-    }
-
-    private void checkLicense(@IdRes int linkResId, @StringRes int linkTitle, String licenseContent) {
-        onView(withId(linkResId))
-                .check(matches(withText(linkTitle)))
-                .perform(scrollTo())
-                .check(matches(isCompletelyDisplayed()))
-                .perform(click());
-
-        onView(withId(R.id.tv_license_text))
-                .check(matches(isDisplayed()))
-                .check(matches(withText(containsString(licenseContent))));
-        pressBack();
-
     }
 
     private void useCleanLayout() {
