@@ -23,6 +23,9 @@ import ca.rmen.android.poetassistant.JunitThreading
 import ca.rmen.android.poetassistant.Threading
 import dagger.Module
 import dagger.Provides
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import javax.inject.Singleton
 
 @Module
@@ -30,4 +33,9 @@ class JunitThreadingModule {
     @Provides
     @Singleton
     fun providesThreading() : Threading = JunitThreading()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Provides
+    @Singleton
+    fun providesIODispatcher(): CoroutineDispatcher = UnconfinedTestDispatcher()
 }

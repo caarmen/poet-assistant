@@ -22,17 +22,13 @@ package ca.rmen.android.poetassistant.about
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.WorkerThread
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.collectAsState
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.theme.AppTheme
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
 
 class LicenseActivity : AppCompatActivity() {
     companion object {
@@ -52,38 +48,20 @@ class LicenseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val licenseViewModel: LicenseViewModel by viewModels()
         val title = intent.getStringExtra(EXTRA_TITLE)!!
         val licenseFile = intent.getStringExtra(EXTRA_LICENSE_TEXT_ASSET_FILE)!!
-        val threading = DaggerHelper.getMainScreenComponent(this).getThreading()
-        threading.execute(
-            { readFile(licenseFile) },
-            {
-                setContent {
-                    AppTheme {
-                        LicenseScreen(
-                            title = title,
-                            licenseText = it,
-                            onBack = onBackPressedDispatcher::onBackPressed
-                        )
-                    }
-                }
-            })
-    }
-
-    @WorkerThread
-    private fun readFile(fileName: String): String {
-
-        try {
-            BufferedReader(InputStreamReader(assets.open(fileName))).use {
-                val builder = StringBuilder()
-                it.forEachLine { line ->
-                    builder.append(line).append('\n')
-                }
-                return builder.toString()
+        licenseViewModel.readLicenseText(licenseFile)
+        setContent {
+            val licenseText = licenseViewModel.licenseText.collectAsState()
+            AppTheme {
+                LicenseScreen(
+                    title = title,
+                    licenseText = licenseText.value,
+                    onBack = onBackPressedDispatcher::onBackPressed
+                )
             }
-        } catch (e: IOException) {
-            Log.e(TAG, "Couldn't read license file $fileName: ${e.message}", e)
-            return ""
         }
     }
+
 }
