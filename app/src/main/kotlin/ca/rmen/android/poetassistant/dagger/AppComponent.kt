@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.dagger
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.PoemAudioExport
 import ca.rmen.android.poetassistant.Threading
+import ca.rmen.android.poetassistant.about.LicenseViewModel
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapterFactory
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListHeaderViewModel
@@ -48,6 +49,7 @@ import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
 import ca.rmen.android.poetassistant.wotd.WotdLiveData
 import dagger.Component
 import dagger.Subcomponent
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
 @Singleton
@@ -64,6 +66,7 @@ interface AppComponent {
         fun getFavorites(): Favorites
         fun getSettingsPrefs(): SettingsPrefs
         fun getThreading(): Threading
+        fun getIODispatcher(): CoroutineDispatcher
         fun getResultListAdapterFactory() : ResultListAdapterFactory
     }
 
@@ -75,6 +78,7 @@ interface AppComponent {
         fun injectDict(resultListViewModel: ResultListViewModel<DictionaryEntry>)
         fun inject(rtEntry: RTEntryViewModel)
         fun inject(resultListHeaderViewModel: ResultListHeaderViewModel)
+        fun inject(licenseViewModel: LicenseViewModel)
         fun inject(readerViewModel: ReaderViewModel)
         fun inject(poemAudioExport: PoemAudioExport)
         fun inject(rhymerLiveData: RhymerLiveData)
