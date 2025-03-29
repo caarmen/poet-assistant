@@ -1,5 +1,5 @@
 [versions]
-agp = "8.9.0"
+agp = "8.9.1"
 androidxAppCompat = "1.7.0"
 androidxArchCoreTesting = "2.2.0"
 androidxCollection = "1.5.0"
