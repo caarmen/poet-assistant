@@ -165,6 +165,7 @@
             android:name=".about.LicenseActivity"
             android:label="@string/license_title"
             android:parentActivityName=".about.AboutActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             tools:ignore="UnusedAttribute">
             <!-- Parent activity meta-data to support 4.0 -->
             <meta-data

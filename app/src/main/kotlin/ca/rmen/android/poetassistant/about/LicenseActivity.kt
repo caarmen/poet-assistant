@@ -23,16 +23,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.updatePadding
-import androidx.databinding.DataBindingUtil
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.dagger.DaggerHelper
-import ca.rmen.android.poetassistant.databinding.ActivityLicenseBinding
-import ca.rmen.android.poetassistant.fixStatusBarViewForInsets
-import ca.rmen.android.poetassistant.getInsets
+import ca.rmen.android.poetassistant.theme.AppTheme
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -44,42 +41,33 @@ class LicenseActivity : AppCompatActivity() {
         private const val EXTRA_LICENSE_TEXT_ASSET_FILE = "license_text_asset_file"
 
         fun start(context: Context, title: String, licenseText: String) {
-            context.startActivity(Intent(context, LicenseActivity::class.java)
+            context.startActivity(
+                Intent(context, LicenseActivity::class.java)
                     .putExtra(EXTRA_TITLE, title)
-                    .putExtra(EXTRA_LICENSE_TEXT_ASSET_FILE, licenseText))
+                    .putExtra(EXTRA_LICENSE_TEXT_ASSET_FILE, licenseText)
+            )
         }
     }
 
-    private lateinit var mBinding: ActivityLicenseBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_license)
-        supportActionBar?.let {
-            it.setDisplayHomeAsUpEnabled(true)
-            it.setTitle(R.string.license_title)
-        }
-
+        enableEdgeToEdge()
         val title = intent.getStringExtra(EXTRA_TITLE)!!
         val licenseFile = intent.getStringExtra(EXTRA_LICENSE_TEXT_ASSET_FILE)!!
-        getInsets(mBinding.licenseContent) { view, insets ->
-            view.updatePadding(
-                left = insets.left,
-                right = insets.right,
-                bottom = insets.bottom,
-            )
-            fixStatusBarViewForInsets(mBinding.statusBarView, insets)
-        }
         val threading = DaggerHelper.getMainScreenComponent(this).getThreading()
-        threading.execute({ readFile(licenseFile) },
-                {
-                    mBinding.licenseContent.setContent {
+        threading.execute(
+            { readFile(licenseFile) },
+            {
+                setContent {
+                    AppTheme {
                         LicenseScreen(
                             title = title,
                             licenseText = it,
+                            onBack = onBackPressedDispatcher::onBackPressed
                         )
                     }
-                })
+                }
+            })
     }
 
     @WorkerThread
