@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2016 - present Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -19,11 +19,7 @@
 package ca.rmen.android.poetassistant
 
 import android.app.Application
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import dagger.hilt.android.HiltAndroidApp
 
-open class PoetAssistantApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        Theme.setThemeFromSettings(DaggerHelper.getMainScreenComponent(this).getSettingsPrefs())
-    }
-}
+@HiltAndroidApp
+class PoetAssistantApplication : Application()

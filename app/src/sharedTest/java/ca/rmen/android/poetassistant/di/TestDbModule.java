@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,8 +17,27 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant;
+package ca.rmen.android.poetassistant.di;
 
-@SuppressWarnings("unused") // this is picked automagically for tests thanks to the Test prefix.
-public class TestPoetAssistantApplication extends PoetAssistantApplication {
+import android.app.Application;
+import androidx.room.Room;
+
+import javax.inject.Singleton;
+
+import ca.rmen.android.poetassistant.UserDb;
+import dagger.Module;
+import dagger.Provides;
+import dagger.hilt.components.SingletonComponent;
+import dagger.hilt.testing.TestInstallIn;
+
+@TestInstallIn(components = {SingletonComponent.class}, replaces = {DbModule.class})
+@Module
+public class TestDbModule {
+
+    @Provides
+    @Singleton
+    UserDb providesUserDb(Application application) {
+        return Room.inMemoryDatabaseBuilder(application,
+                UserDb.class).allowMainThreadQueries().build();
+    }
 }

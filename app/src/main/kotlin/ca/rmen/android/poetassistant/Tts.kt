@@ -117,7 +117,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
     fun speakToFile(text: String) {
         if (!isReady()) return
-        val poemAudioExport = PoemAudioExport(context)
+        val poemAudioExport = PoemAudioExport(context, threading, this)
         poemAudioExport.speakToFile(mTextToSpeech!!, text)
     }
 

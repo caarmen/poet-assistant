@@ -17,13 +17,18 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger
+package ca.rmen.android.poetassistant.di
 
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapterFactory
+import dagger.hilt.components.SingletonComponent
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.testing.TestInstallIn
 import javax.inject.Singleton
-
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [ResultListModule::class],
+)
 @Module
 class TestResultListModule {
 

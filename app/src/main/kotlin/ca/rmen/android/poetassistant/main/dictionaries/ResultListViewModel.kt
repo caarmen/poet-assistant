@@ -31,24 +31,26 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.MutableLiveData
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorite
-import ca.rmen.android.poetassistant.Favorites
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
-import javax.inject.Inject
+import dagger.hilt.android.EntryPointAccessors
 
-class ResultListViewModel<T: Any> constructor(application: Application, private val tab: Tab) : AndroidViewModel(application) {
+class ResultListViewModel<T: Any> constructor(
+    application: Application,
+    private val tab: Tab,
+    ) : AndroidViewModel(application) {
     companion object {
         private val TAG = Constants.TAG + ResultListViewModel::class.java.simpleName
     }
 
+    val settingsPrefs: SettingsPrefs
     val isDataAvailable = ObservableBoolean()
     val emptyText = MutableLiveData<EmptyText>()
     val layout = MutableLiveData<ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout>()
     val showHeader = MutableLiveData<Boolean>()
     val usedQueryWord = MutableLiveData<String>()
     private var mAdapter: ResultListAdapter<T>? = null
-    @Inject lateinit var mFavorites: Favorites
 
     data class QueryParams(val word: String?, val filter: String?)
 
@@ -58,11 +60,12 @@ class ResultListViewModel<T: Any> constructor(application: Application, private 
     val favoritesLiveData: LiveData<List<Favorite>>
 
     init {
-        ResultListFactory.inject(application, tab, this)
+        val entryPoint = EntryPointAccessors.fromApplication(application, NonAndroidEntryPoint::class.java)
+        settingsPrefs = entryPoint.prefs()
         emptyText.value = EmptyTextNoQuery
         mPrefsListener = PrefsListener()
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mPrefsListener)
-        favoritesLiveData = mFavorites.getFavoritesLiveData()
+        favoritesLiveData = entryPoint.favorites().getFavoritesLiveData()
         resultListDataLiveData = mQueryParams.switchMap { queryParams ->
             @Suppress("UNCHECKED_CAST")
             ResultListFactory.createLiveData(tab, application, queryParams.word, queryParams.filter) as LiveData<ResultListData<T>>
@@ -116,7 +119,7 @@ class ResultListViewModel<T: Any> constructor(application: Application, private 
     private inner class PrefsListener : SharedPreferences.OnSharedPreferenceChangeListener {
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
             if (SettingsPrefs.PREF_LAYOUT == key) {
-                layout.value = SettingsPrefs.getLayout(DaggerHelper.getMainScreenComponent(getApplication()).getSettingsPrefs())
+                layout.value = SettingsPrefs.getLayout(settingsPrefs)
             }
         }
 

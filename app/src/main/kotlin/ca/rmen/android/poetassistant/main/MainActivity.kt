@@ -47,7 +47,6 @@ import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.about.AboutActivity
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding
 import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
@@ -61,8 +60,10 @@ import ca.rmen.android.poetassistant.main.reader.ReaderFragment
 import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.widget.CABEditText
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener, CABEditText.ImeListener {
     companion object {
         private val TAG = Constants.TAG + MainActivity::class.java.simpleName
@@ -86,7 +87,6 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
             window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         }
         super.onCreate(savedInstanceState)
-        DaggerHelper.getMainScreenComponent(application).inject(this)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setSupportActionBar(mBinding.toolbar)
         mPagerAdapter = PagerAdapter(this, supportFragmentManager, intent)
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
             mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
         }
 
-        mSearch = Search(this, mBinding.viewPager)
+        mSearch = Search(this, mBinding.viewPager, dictionary = mDictionary, threading = mThreading)
         // Load our dictionaries when the activity starts, so that the first search can already be fast.
         mThreading.execute({ loadDatabase() },
                 {

@@ -23,7 +23,8 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.di.IODispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,19 +32,17 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
 
-class LicenseViewModel(private val application: Application) :
+@HiltViewModel
+class LicenseViewModel @Inject constructor(
+    private val application: Application,
+    @IODispatcher private val ioDispatcher: CoroutineDispatcher
+) :
     AndroidViewModel(application) {
 
     companion object {
         private val TAG = Constants.TAG + LicenseViewModel::class.java.simpleName
     }
 
-    init {
-        DaggerHelper.getMainScreenComponent(application).inject(this)
-    }
-
-    @Inject
-    lateinit var ioDispatcher: CoroutineDispatcher
 
     private val _licenseText = MutableStateFlow("")
     val licenseText = _licenseText.asStateFlow()

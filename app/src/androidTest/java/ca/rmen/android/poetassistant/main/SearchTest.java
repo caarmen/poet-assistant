@@ -33,6 +33,8 @@ import org.junit.runner.RunWith;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
@@ -60,10 +62,14 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTa
 import static org.hamcrest.Matchers.allOf;
 
 @LargeTest
+@HiltAndroidTest
 @RunWith(AndroidJUnit4.class)
 public class SearchTest {
 
-    @Rule
+    @Rule(order = 0)
+    public HiltAndroidRule hiltTestRule = new HiltAndroidRule(this);
+
+    @Rule(order = 1)
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 
     @Test

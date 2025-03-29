@@ -21,7 +21,8 @@ package ca.rmen.android.poetassistant.main.dictionaries
 
 import androidx.lifecycle.LiveData
 import android.content.Context
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 
 abstract class ResultListLiveData<T> protected constructor(protected val context: Context) : LiveData<T>() {
     private var mIsLoading = false
@@ -30,13 +31,17 @@ abstract class ResultListLiveData<T> protected constructor(protected val context
     override fun onActive() {
         if (value == null && !mIsLoading) {
             mIsLoading = true
-            val threading = DaggerHelper.getMainScreenComponent(context).getThreading()
+            val entryPoint = EntryPointAccessors.fromApplication(
+                context.applicationContext,
+                NonAndroidEntryPoint::class.java
+            )
+            val threading = entryPoint.threading()
             threading.execute(
-                    { loadInBackground() },
-                    {
-                        value = it
-                        mIsLoading = false
-                    }
+                { loadInBackground() },
+                {
+                    value = it
+                    mIsLoading = false
+                }
             )
         }
     }

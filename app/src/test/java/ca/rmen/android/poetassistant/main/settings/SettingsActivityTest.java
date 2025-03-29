@@ -24,6 +24,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.ResolveInfo;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -39,13 +40,20 @@ import ca.rmen.android.poetassistant.Environment;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
+import dagger.hilt.android.testing.HiltTestApplication;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.robolectric.Shadows.shadowOf;
 
+@HiltAndroidTest
+@Config(application = HiltTestApplication.class)
 @RunWith(RobolectricTestRunner.class)
 public class SettingsActivityTest {
+    @Rule(order = 0)
+    public HiltAndroidRule hiltTestRule = new HiltAndroidRule(this);
     private static final String SYSTEM_TTS_SETTINGS_INTENT = "com.android.settings.TTS_SETTINGS";
     @Test
     @Config(sdk=27)

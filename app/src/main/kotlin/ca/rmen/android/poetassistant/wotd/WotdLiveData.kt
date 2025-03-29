@@ -25,27 +25,30 @@ import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import dagger.hilt.android.EntryPointAccessors
 import java.util.Calendar
 import java.util.Random
 import java.util.TimeZone
-import javax.inject.Inject
 
 class WotdLiveData(context: Context) : ResultListLiveData<ResultListData<WotdEntryViewModel>>(context) {
     companion object {
         private val TAG = Constants.TAG + WotdLiveData::class.java.simpleName
     }
 
-    @Inject lateinit var mDictionary: Dictionary
-    @Inject lateinit var mPrefs: SettingsPrefs
-    @Inject lateinit var mFavorites: Favorites
+    private val mDictionary: Dictionary
+    private val mPrefs: SettingsPrefs
+    private val mFavorites: Favorites
 
     init {
-        DaggerHelper.getWotdComponent(context).inject(this)
+        val entryPoint = EntryPointAccessors.fromApplication(context.applicationContext, NonAndroidEntryPoint::class.java)
+        mDictionary = entryPoint.dictionary()
+        mPrefs = entryPoint.prefs()
+        mFavorites = entryPoint.favorites()
     }
 
     override fun loadInBackground(): ResultListData<WotdEntryViewModel> {
@@ -69,7 +72,8 @@ class WotdLiveData(context: Context) : ResultListLiveData<ResultListData<WotdEnt
                 val position = random.nextInt(cursor.count)
                 if (cursor.moveToPosition(position)) {
                     val word = cursor.getString(0)
-                    data.add(WotdEntryViewModel(context,
+                    data.add(WotdEntryViewModel(
+                            mFavorites,
                             word,
                             date,
                             favorites.contains(word),

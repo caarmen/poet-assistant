@@ -40,6 +40,8 @@ import ca.rmen.android.poetassistant.main.rules.ActivityStageIdlingResource;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 import static androidx.test.espresso.Espresso.onView;
@@ -57,14 +59,18 @@ import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
  * https://github.com/caarmen/poet-assistant/issues/81
  */
 @LargeTest
+@HiltAndroidTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(AndroidJUnit4.class)
 public class TaskStackTest {
 
-    @Rule
+    @Rule(order = 0)
+    public HiltAndroidRule hiltTestRule = new HiltAndroidRule(this);
+
+    @Rule(order = 1)
     public RetryTestRule retry = new RetryTestRule();
 
-    @Rule
+    @Rule(order = 2)
     public PoetAssistantActivityTestRule<SettingsActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(SettingsActivity.class, false);
 
     @Test

@@ -23,9 +23,10 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
+import dagger.hilt.android.EntryPointAccessors
 
 class DictionaryLiveData(context: Context, private val query: String) : ResultListLiveData<ResultListData<DictionaryEntry.DictionaryEntryDetails>>(context) {
     companion object {
@@ -36,7 +37,8 @@ class DictionaryLiveData(context: Context, private val query: String) : ResultLi
         Log.v(TAG, "loadInBackground: query=$query")
         val result = ArrayList<DictionaryEntry.DictionaryEntryDetails>()
         if (TextUtils.isEmpty(query)) return ResultListData(query, result)
-        val dictionary = DaggerHelper.getMainScreenComponent(context).getDictionary()
+        val entryPoint = EntryPointAccessors.fromApplication(context.applicationContext, NonAndroidEntryPoint::class.java)
+        val dictionary = entryPoint.dictionary()
         val entry = dictionary.lookup(query)
         result.addAll(entry.details)
         return ResultListData(entry.word, result)

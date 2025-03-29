@@ -17,20 +17,23 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger
+package ca.rmen.android.poetassistant.di
 
 import android.app.Application
 import androidx.room.Room
 import ca.rmen.android.poetassistant.UserDb
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+@InstallIn(SingletonComponent::class)
 @Module
-class DbModule(private val application: Application) {
+class DbModule() {
     @Provides
     @Singleton
-    fun providesUserDb(): UserDb {
+    fun providesUserDb(application: Application): UserDb {
         return Room.databaseBuilder(application,
                 UserDb::class.java, "userdata.db")
                 .addMigrations(UserDb.MIGRATION_1_2).build()

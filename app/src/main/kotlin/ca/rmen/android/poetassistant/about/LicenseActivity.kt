@@ -29,7 +29,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.collectAsState
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.theme.AppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LicenseActivity : AppCompatActivity() {
     companion object {
         private val TAG = Constants.TAG + LicenseActivity::class.java.simpleName

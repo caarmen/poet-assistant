@@ -24,17 +24,22 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.Threading
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class WotdBroadcastReceiver : BroadcastReceiver() {
     companion object {
         private val TAG = Constants.TAG + WotdBroadcastReceiver::class.java.simpleName
     }
 
+    @Inject lateinit var dictionary: Dictionary
+    @Inject lateinit var threading: Threading
+
     override fun onReceive(context: Context, intent: Intent) {
         Log.v(TAG, "onReceive: intent=$intent")
-        val dictionary = DaggerHelper.getWotdComponent(context).getDictionary()
-        val threading = DaggerHelper.getWotdComponent(context).getThreading()
         threading.execute({Wotd.notifyWotd(context, dictionary)})
     }
 }

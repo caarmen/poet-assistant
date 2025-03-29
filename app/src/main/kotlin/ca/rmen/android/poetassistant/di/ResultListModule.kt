@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2018 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,28 +17,23 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger;
+package ca.rmen.android.poetassistant.di
 
-import android.app.Application;
-import androidx.room.Room;
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapterFactory
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapterFactoryImpl
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-import javax.inject.Singleton;
-
-import ca.rmen.android.poetassistant.UserDb;
-import dagger.Module;
-import dagger.Provides;
-
+@InstallIn(SingletonComponent::class)
 @Module
-public class TestDbModule {
+class ResultListModule {
 
-    private final Application mApplication;
-
-    public TestDbModule(Application application) {
-        mApplication = application;
-    }
-
-    @Provides @Singleton UserDb providesUserDb() {
-        return Room.inMemoryDatabaseBuilder(mApplication,
-                UserDb.class).allowMainThreadQueries().build();
+    @Provides
+    @Singleton
+    fun providesResultListAdapterFactory(): ResultListAdapterFactory {
+        return ResultListAdapterFactoryImpl()
     }
 }

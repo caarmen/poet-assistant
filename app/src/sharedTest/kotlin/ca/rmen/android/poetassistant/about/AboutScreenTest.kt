@@ -35,18 +35,28 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.TestUiUtils
 import ca.rmen.android.poetassistant.rules.PoetAssistantComposeTestRule
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.HiltTestApplication
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
-@Config(qualifiers = "w600dp-h800dp")
+@HiltAndroidTest
+@Config(
+    application = HiltTestApplication::class,
+    qualifiers = "w600dp-h800dp",
+)
 @RunWith(AndroidJUnit4::class)
 class AboutScreenTest {
-    @get:Rule
+    @get:Rule(order = 0)
+    val hiltTestRule = HiltAndroidRule(this)
+
+    @get:Rule(order = 1)
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-    @get:Rule
+    @get:Rule(order = 2)
     val poetAssistantComposeTestRule = PoetAssistantComposeTestRule(composeTestRule)
 
     @Test

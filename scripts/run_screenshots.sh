@@ -18,7 +18,7 @@ run_tests() {
   adb -s "${device}" shell settings put global animator_duration_scale 0
   adb -s "${device}" shell settings put global transition_animation_scale 0
   adb -s "${device}" shell settings put global window_animation_scale 0
-  adb -s "${device}" shell am instrument -w -m -e debug false -e class ca.rmen.android.poetassistant.main.ScreenshotTest ca.rmen.android.poetassistant.test.test/androidx.test.runner.AndroidJUnitRunner > "${output}" 2>&1
+  adb -s "${device}" shell am instrument -w -m -e debug false -e class ca.rmen.android.poetassistant.main.ScreenshotTest ca.rmen.android.poetassistant.test.test/ca.rmen.android.poetassistant.di.CustomTestRunner > "${output}" 2>&1
 
   echo "pulling screenshots to ${device}-light and ${device}-dark"
   screenshots_local_folder="screenshots"

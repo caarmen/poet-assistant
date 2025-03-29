@@ -19,17 +19,15 @@
 
 package ca.rmen.android.poetassistant.wotd
 
-import android.content.Context
 import androidx.databinding.ObservableBoolean
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 
-class WotdEntryViewModel(context: Context, val text: String, val date: String, isFavoriteInitialValue: Boolean, val showButtons: Boolean) {
+class WotdEntryViewModel(private val favorites: Favorites, val text: String, val date: String, isFavoriteInitialValue: Boolean, val showButtons: Boolean) {
     val isFavorite = ObservableBoolean()
 
     init {
         isFavorite.set(isFavoriteInitialValue)
-        val favorites = DaggerHelper.getWotdComponent(context).getFavorites()
         isFavorite.addOnPropertyChangedCallback(BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
             override fun onChanged() {
                 favorites.saveFavorite(text, isFavorite.get())

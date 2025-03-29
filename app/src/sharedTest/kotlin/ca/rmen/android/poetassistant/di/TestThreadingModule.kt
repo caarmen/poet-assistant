@@ -17,25 +17,24 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger
+package ca.rmen.android.poetassistant.di
 
-import ca.rmen.android.poetassistant.JunitThreading
+import ca.rmen.android.poetassistant.InstrumentationThreading
 import ca.rmen.android.poetassistant.Threading
 import dagger.Module
 import dagger.Provides
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
 import javax.inject.Singleton
 
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [ThreadingModule::class]
+)
 @Module
-class JunitThreadingModule {
-    @Provides
-    @Singleton
-    fun providesThreading() : Threading = JunitThreading()
+class TestThreadingModule {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Provides
     @Singleton
-    fun providesIODispatcher(): CoroutineDispatcher = UnconfinedTestDispatcher()
+    fun providesThreading(): Threading = InstrumentationThreading()
 }

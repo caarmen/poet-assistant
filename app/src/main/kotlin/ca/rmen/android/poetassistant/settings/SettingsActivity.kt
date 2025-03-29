@@ -48,15 +48,16 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.TtsState
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.ActivitySettingsBinding
 import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.fixStatusBarViewForInsets
 import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class SettingsActivity : AppCompatActivity() {
     companion object {
         private val TAG = Constants.TAG + SettingsActivity::class.java.simpleName
@@ -77,6 +78,7 @@ class SettingsActivity : AppCompatActivity() {
         volumeControlStream = AudioManager.STREAM_MUSIC
     }
 
+    @AndroidEntryPoint
     class GeneralPreferenceFragment : PreferenceFragmentCompat(), ConfirmDialogFragment.ConfirmDialogListener {
         companion object {
             private const val DIALOG_TAG = "dialog_tag"
@@ -116,9 +118,8 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             context?.let {
-                DaggerHelper.getSettingsComponent(it).inject(this)
-                mViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
                 mTts.getTtsLiveData().observe(this, mTtsObserver)
+                mViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
                 mViewModel.snackbarText.observe(this, mSnackbarCallback)
             }
         }

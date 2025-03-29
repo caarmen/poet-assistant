@@ -30,10 +30,10 @@ import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.TtsState
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 import ca.rmen.android.poetassistant.databinding.LiveDataMapping
-import javax.inject.Inject
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 
 class ResultListHeaderViewModel(application: Application) : AndroidViewModel(application) {
     val query = ObservableField<String>()
@@ -46,18 +46,21 @@ class ResultListHeaderViewModel(application: Application) : AndroidViewModel(app
     val isFavoriteLiveData: LiveData<Boolean>
     val ttsStateLiveData: LiveData<TtsState>
 
-    @Inject lateinit var mFavorites: Favorites
-    @Inject lateinit var mTts: Tts
+    private val mFavorites: Favorites
+    private val mTts: Tts
 
     init {
-        DaggerHelper.getMainScreenComponent(application).inject(this)
+        val entryPoint = EntryPointAccessors.fromApplication(application, NonAndroidEntryPoint::class.java)
+        mFavorites = entryPoint.favorites()
+        mTts = entryPoint.tts()
         ttsStateLiveData = mTts.getTtsLiveData()
         // Expose a LiveData to the fragment, so it can update the star icon when the favorite
         // value changes in the DB. This is relevant when the favorite value changes because the star
         // was clicked in *another* fragment. If we only had one screen where the user could change
         // the favorites, a simple databinding between the star checkbox and this ViewModel would
         // suffice to sync the db and the UI.
-        isFavoriteLiveData = LiveDataMapping.fromObservableField(query).switchMap { query -> mFavorites.getIsFavoriteLiveData(query) }
+        isFavoriteLiveData =
+            LiveDataMapping.fromObservableField(query).switchMap { query -> mFavorites.getIsFavoriteLiveData(query) }
         // When the user taps on the star icon, update the favorite in the DB
         isFavorite.addOnPropertyChangedCallback(BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
             override fun onChanged() {
@@ -68,11 +71,11 @@ class ResultListHeaderViewModel(application: Application) : AndroidViewModel(app
         }))
     }
 
-    fun speak() = query.get()?.let {mTts.speak(it)}
+    fun speak() = query.get()?.let { mTts.speak(it) }
 
     fun clearFilter() = filter.set(null)
 
-    fun webSearch() = query.get()?.let {WebSearch.search(getApplication(), it)}
+    fun webSearch() = query.get()?.let { WebSearch.search(getApplication(), it) }
 
     fun clearFavorites() {
         mFavorites.clear()

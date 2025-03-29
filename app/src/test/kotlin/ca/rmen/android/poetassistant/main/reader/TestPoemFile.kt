@@ -24,11 +24,9 @@ import android.util.Log
 import android.webkit.WebView
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Environment
-import ca.rmen.android.poetassistant.dagger.AppModule
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
-import ca.rmen.android.poetassistant.dagger.DaggerJunitAppComponent
-import ca.rmen.android.poetassistant.dagger.DbModule
-import ca.rmen.android.poetassistant.dagger.JunitThreadingModule
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.HiltTestApplication
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -36,6 +34,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -47,23 +46,22 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 
+@HiltAndroidTest
+@Config(application = HiltTestApplication::class)
 @RunWith(RobolectricTestRunner::class)
 class TestPoemFile {
     companion object {
         private val TAG = Constants.TAG + TestPoemFile::class.java.simpleName
     }
 
+    @get:Rule
+    val hiltTestRule = HiltAndroidRule(this)
+
     private lateinit var mPoemFile: File
     private lateinit var mPoemUri: Uri
 
     @Before
     fun setup() {
-        val testAppComponent = DaggerJunitAppComponent.builder()
-                .appModule(AppModule(Environment.getApplication()))
-                .dbModule(DbModule(Environment.getApplication()))
-                .junitThreadingModule(JunitThreadingModule())
-                .build()
-        DaggerHelper.setAppComponent(testAppComponent)
         mPoemFile = File(Environment.getApplication().filesDir, "test-poem.txt")
         if (mPoemFile.exists()) {
             assertTrue(mPoemFile.delete())

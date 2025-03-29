@@ -26,12 +26,20 @@ import androidx.annotation.DrawableRes
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SuggestionsViewModel(private val application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class SuggestionsViewModel @Inject constructor(
+    private val application: Application,
+    private val mSuggestions: Suggestions,
+    private val dictionary: Dictionary
+    ) : AndroidViewModel(application) {
 
     data class SearchSuggestion(
         val word: String,
@@ -49,7 +57,12 @@ class SuggestionsViewModel(private val application: Application) : AndroidViewMo
         viewModelScope.launch(Dispatchers.IO) {
 
             val foundSuggestions = mutableListOf<SearchSuggestion>()
-            SuggestionsCursor(application, typedText).use { cursor ->
+            SuggestionsCursor(
+                application,
+                suggestions = mSuggestions,
+                dictionary = dictionary,
+                filter = typedText
+            ).use { cursor ->
                 val wordColumn = cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1)
                 val iconColumn = cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_ICON_1)
                 Log.d(TAG, "${cursor.count} results for $typedText")
