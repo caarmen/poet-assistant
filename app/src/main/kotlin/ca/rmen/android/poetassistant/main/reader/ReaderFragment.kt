@@ -67,7 +67,6 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
         fun newInstance(initialText: String?): ReaderFragment {
             Log.d(TAG, "newInstance: initialText = $initialText")
             val fragment = ReaderFragment()
-            fragment.retainInstance = true
             val bundle = Bundle(1)
             bundle.putString(EXTRA_INITIAL_TEXT, initialText)
             fragment.arguments = bundle
