@@ -29,8 +29,13 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+// Split into separate impl and base class to get full code coverage stats:
+// https://medium.com/livefront/dagger-hilt-testing-injected-android-components-with-code-coverage-30089a1f6872
+
 @AndroidEntryPoint
-class WotdBroadcastReceiver : BroadcastReceiver() {
+class WotdBroadcastReceiver : WotdBroadcastReceiverImpl()
+
+open class WotdBroadcastReceiverImpl : BroadcastReceiver() {
     companion object {
         private val TAG = Constants.TAG + WotdBroadcastReceiver::class.java.simpleName
     }

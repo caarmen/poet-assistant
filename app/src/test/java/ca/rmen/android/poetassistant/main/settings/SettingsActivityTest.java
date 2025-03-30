@@ -38,6 +38,7 @@ import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
 import ca.rmen.android.poetassistant.Environment;
 import ca.rmen.android.poetassistant.R;
+import ca.rmen.android.poetassistant.settings.GeneralPreferenceFragment;
 import ca.rmen.android.poetassistant.settings.SettingsActivity;
 import ca.rmen.android.poetassistant.settings.SettingsPrefs;
 import dagger.hilt.android.testing.HiltAndroidRule;
@@ -63,7 +64,7 @@ public class SettingsActivityTest {
         SettingsActivity settingsActivity = activityController.create().start().resume().visible().get();
         PreferenceFragmentCompat settingsFragment = (PreferenceFragmentCompat) settingsActivity.getSupportFragmentManager().findFragmentById(R.id.settings_fragment);
         assertNotNull(settingsFragment);
-        PreferenceCategory preferenceCategory = (PreferenceCategory) settingsFragment.findPreference(SettingsActivity.GeneralPreferenceFragment.PREF_CATEGORY_VOICE);
+        PreferenceCategory preferenceCategory = (PreferenceCategory) settingsFragment.findPreference(GeneralPreferenceFragment.PREF_CATEGORY_VOICE);
         Preference preference = preferenceCategory.findPreference(SettingsPrefs.PREF_SYSTEM_TTS_SETTINGS);
         preference.performClick();
         Intent nextIntent =  shadowOf(Environment.getApplication()).getNextStartedActivity();

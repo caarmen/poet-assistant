@@ -55,15 +55,15 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+// Split into separate impl and base class to get full code coverage stats:
+// https://medium.com/livefront/dagger-hilt-testing-injected-android-components-with-code-coverage-30089a1f6872
+
+private const val EXTRA_INITIAL_TEXT = "initial_text"
+private val TAG = Constants.TAG + ReaderFragment::class.java.simpleName
+
 @AndroidEntryPoint
-class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
+class ReaderFragment : ReaderFragmentImpl() {
     companion object {
-        private val TAG = Constants.TAG + ReaderFragment::class.java.simpleName
-        private const val EXTRA_INITIAL_TEXT = "initial_text"
-        private const val DIALOG_TAG = "dialog"
-        private const val ACTION_FILE_OPEN = 0
-        private const val ACTION_FILE_SAVE_AS = 1
-        private const val ACTION_FILE_NEW = 2
         fun newInstance(initialText: String?): ReaderFragment {
             Log.d(TAG, "newInstance: initialText = $initialText")
             val fragment = ReaderFragment()
@@ -72,6 +72,16 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
             fragment.arguments = bundle
             return fragment
         }
+
+    }
+}
+
+open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
+    companion object {
+        private const val DIALOG_TAG = "dialog"
+        private const val ACTION_FILE_OPEN = 0
+        private const val ACTION_FILE_SAVE_AS = 1
+        private const val ACTION_FILE_NEW = 2
     }
 
     private lateinit var mViewModel: ReaderViewModel

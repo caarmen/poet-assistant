@@ -31,7 +31,7 @@
 
         <variable
             name="buttonListener"
-            type="ca.rmen.android.poetassistant.main.reader.ReaderFragment.ButtonListener"/>
+            type="ca.rmen.android.poetassistant.main.reader.ReaderFragmentImpl.ButtonListener"/>
     </data>
 
     <!--

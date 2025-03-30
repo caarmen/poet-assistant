@@ -27,16 +27,18 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.collectAsState
-import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+private const val EXTRA_TITLE = "title"
+private const val EXTRA_LICENSE_TEXT_ASSET_FILE = "license_text_asset_file"
+
+// Split into separate impl and base class to get full code coverage stats:
+// https://medium.com/livefront/dagger-hilt-testing-injected-android-components-with-code-coverage-30089a1f6872
+
 @AndroidEntryPoint
-class LicenseActivity : AppCompatActivity() {
+class LicenseActivity: LicenseActivityImpl() {
     companion object {
-        private val TAG = Constants.TAG + LicenseActivity::class.java.simpleName
-        private const val EXTRA_TITLE = "title"
-        private const val EXTRA_LICENSE_TEXT_ASSET_FILE = "license_text_asset_file"
 
         fun start(context: Context, title: String, licenseText: String) {
             context.startActivity(
@@ -46,6 +48,9 @@ class LicenseActivity : AppCompatActivity() {
             )
         }
     }
+}
+
+open class LicenseActivityImpl : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -63,8 +63,13 @@ import ca.rmen.android.poetassistant.widget.CABEditText
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+// Split into separate impl and base class to get full code coverage stats:
+// https://medium.com/livefront/dagger-hilt-testing-injected-android-components-with-code-coverage-30089a1f6872
+
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener, CABEditText.ImeListener {
+class MainActivity : MainActivityImpl()
+
+open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener, CABEditText.ImeListener {
     companion object {
         private val TAG = Constants.TAG + MainActivity::class.java.simpleName
         private const val DIALOG_TAG = "dialog"
@@ -278,7 +283,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
             val tab = mPagerAdapter.getTabForPosition(position)
 
             if (tab == Tab.READER) {
-                AppBarLayoutHelper.enableAutoHide(this@MainActivity)
+                AppBarLayoutHelper.enableAutoHide(this@MainActivityImpl)
             } else {
                 // Hide the keyboard when we navigate to any tab other than the reader tab.
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
