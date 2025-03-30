@@ -34,8 +34,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -80,8 +78,4 @@ class AppModule {
     @Singleton
     fun providesSuggestions(userDb: UserDb) = Suggestions(userDb.suggestionDao())
 
-    @Provides
-    @Singleton
-    @IODispatcher
-    fun providesIODispatcher(): CoroutineDispatcher = Dispatchers.IO
 }

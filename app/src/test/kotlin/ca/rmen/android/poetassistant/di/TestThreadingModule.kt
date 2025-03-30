@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2016 - current Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -25,6 +25,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import javax.inject.Singleton
 
 @TestInstallIn(
@@ -37,4 +40,10 @@ class TestThreadingModule {
     @Provides
     @Singleton
     fun providesThreading(): Threading = InstrumentationThreading()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Provides
+    @Singleton
+    @IODispatcher
+    fun providesIODispatcher(): CoroutineDispatcher = UnconfinedTestDispatcher()
 }

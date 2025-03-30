@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Carmen Alvarez
+ * Copyright (c) 2016 - current Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -19,25 +19,30 @@
 
 package ca.rmen.android.poetassistant.di
 
-import ca.rmen.android.poetassistant.CoroutineThreading
+import ca.rmen.android.poetassistant.InstrumentationThreading
 import ca.rmen.android.poetassistant.Threading
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
-@InstallIn(SingletonComponent::class)
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [ThreadingModule::class]
+)
 @Module
-class ThreadingModule {
+class TestThreadingModule {
+
     @Provides
     @Singleton
-    fun providesThreading() : Threading = CoroutineThreading(Dispatchers.Default, Dispatchers.Main)
+    fun providesThreading(): Threading = InstrumentationThreading()
 
     @Provides
     @Singleton
     @IODispatcher
     fun providesIODispatcher(): CoroutineDispatcher = Dispatchers.IO
+
 }
