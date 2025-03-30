@@ -25,28 +25,28 @@ import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.search.Patterns
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
-import javax.inject.Inject
+import dagger.hilt.android.EntryPointAccessors
 
 class PatternLiveData constructor(context: Context, private val query: String) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context) {
     companion object {
         private val TAG = Constants.TAG + PatternLiveData::class.java.simpleName
     }
 
-    @Inject
-    lateinit var mDictionary: Dictionary
-    @Inject
-    lateinit var mPrefs: SettingsPrefs
-    @Inject
-    lateinit var mFavorites: Favorites
+    private val mDictionary: Dictionary
+    private val mPrefs: SettingsPrefs
+    private val mFavorites: Favorites
 
     init {
-        DaggerHelper.getMainScreenComponent(context).inject(this)
+        val entryPoint = EntryPointAccessors.fromApplication(context.applicationContext, NonAndroidEntryPoint::class.java)
+        mDictionary = entryPoint.dictionary()
+        mPrefs = entryPoint.prefs()
+        mFavorites = entryPoint.favorites()
     }
 
     override fun loadInBackground(): ResultListData<RTEntryViewModel> {

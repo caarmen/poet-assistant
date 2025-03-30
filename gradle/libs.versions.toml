@@ -7,6 +7,7 @@ androidxCollection = "1.5.0"
 androidxComposeBom = "2025.03.01"
 androidxConstraintLayout = "2.2.1"
 androidxEspresso = "3.6.1"
+androidxFragment = "1.8.6"
 androidxLifecycle = "2.8.7"
 androidxPreference = "1.2.1"
 androidxRoom = "2.6.1"
@@ -17,10 +18,10 @@ androidxTestRules = "1.6.1"
 androidxTestRunner = "1.6.2"
 androidxUiAutomator = "2.3.0"
 benmanes = "0.52.0"
-dagger = "2.56"
 festReflect = "1.4.1"
 googleTestParameterInjector = "1.18"
 googleMaterial = "1.12.0"
+hilt = "2.56.1"
 jacoco = "0.8.12"
 junit4 = "4.13.2"
 kotlin = "2.1.20"
@@ -42,6 +43,7 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-constraintlayout= { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidxConstraintLayout" }
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidxFragment" }
 androidx-lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle" }
 androidx-preference= { group = "androidx.preference", name = "preference", version.ref = "androidxPreference" }
@@ -58,11 +60,12 @@ androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
 androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "androidxUiAutomator" }
 androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
-dagger = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" }
-dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
 fest-reflect = { group = "org.easytesting", name = "fest-reflect", version.ref = "festReflect" }
 google-material = { group = "com.google.android.material", name = "material", version.ref = "googleMaterial"}
 google-test-parameter-injector = { group = "com.google.testparameterinjector", name = "test-parameter-injector", version.ref = "googleTestParameterInjector" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-android-testing= { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 junit = { group = "junit", name = "junit", version.ref = "junit4" }
 kotlin = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk7", version.ref = "kotlin" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
@@ -76,6 +79,7 @@ robolectric-annotations = { group = "org.robolectric", name = "annotations", ver
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 benmanes = { id = "com.github.ben-manes.versions", version.ref = "benmanes" }
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

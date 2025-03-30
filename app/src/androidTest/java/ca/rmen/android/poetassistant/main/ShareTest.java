@@ -52,12 +52,18 @@ import org.junit.runner.RunWith;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantIntentsTestRule;
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
 
 @LargeTest
+@HiltAndroidTest
 @RunWith(AndroidJUnit4.class)
 public class ShareTest {
 
-    @Rule
+    @Rule(order = 0)
+    public HiltAndroidRule hiltTestRule = new HiltAndroidRule(this);
+
+    @Rule(order = 1)
     public PoetAssistantIntentsTestRule<MainActivity> mActivityTestRule = new PoetAssistantIntentsTestRule<>(MainActivity.class);
 
     @Test

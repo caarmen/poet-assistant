@@ -25,21 +25,33 @@ import android.app.job.JobService
 import android.os.Build
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.Threading
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
+
+// Split into separate impl and base class to get full code coverage stats:
+// https://medium.com/livefront/dagger-hilt-testing-injected-android-components-with-code-coverage-30089a1f6872
+
+@AndroidEntryPoint
+class WotdJobService : WotdJobServiceImpl()
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-class WotdJobService : JobService() {
+open class WotdJobServiceImpl : JobService() {
 
     companion object {
         private val TAG = Constants.TAG + WotdJobService::class.java.simpleName
     }
 
+    lateinit var dictionary: Dictionary
+    lateinit var threading: Threading
+
     override fun onStartJob(params: JobParameters?): Boolean {
         Log.v(TAG, "onStartJob: params=$params")
-        val dictionary = DaggerHelper.getWotdComponent(application).getDictionary()
-        val threading = DaggerHelper.getWotdComponent(application).getThreading()
-        threading.execute({
-            Wotd.notifyWotd(applicationContext, dictionary)
+        val entryPoint = EntryPointAccessors.fromApplication(applicationContext, NonAndroidEntryPoint::class.java)
+        entryPoint.threading().execute({
+            Wotd.notifyWotd(applicationContext, entryPoint.dictionary())
             jobFinished(params, false)
         })
         return true

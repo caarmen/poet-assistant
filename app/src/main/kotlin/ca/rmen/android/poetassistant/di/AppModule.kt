@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2017 Carmen Alvarez
+ * Copyright (c) 2016 - present Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-package ca.rmen.android.poetassistant.dagger
+package ca.rmen.android.poetassistant.di
 
 import android.app.Application
 import ca.rmen.android.poetassistant.Favorites
+import ca.rmen.android.poetassistant.Theme
 import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.UserDb
@@ -32,17 +32,22 @@ import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-class AppModule(private val application: Application) {
-    @Provides
-    @Singleton
-    fun providesTts(settingsPrefs: SettingsPrefs, threading: Threading): Tts = Tts(application, settingsPrefs, threading)
+@InstallIn(SingletonComponent::class)
+class AppModule {
 
     @Provides
     @Singleton
-    fun providesEmbeddedDb(): EmbeddedDb = EmbeddedDb(application)
+    fun providesTts(application: Application, settingsPrefs: SettingsPrefs, threading: Threading): Tts =
+        Tts(application, settingsPrefs, threading)
+
+    @Provides
+    @Singleton
+    fun providesEmbeddedDb(application: Application): EmbeddedDb = EmbeddedDb(application)
 
     @Provides
     @Singleton
@@ -58,9 +63,11 @@ class AppModule(private val application: Application) {
 
     @Provides
     @Singleton
-    fun providesSettingsPrefs(): SettingsPrefs {
+    fun providesSettingsPrefs(application: Application): SettingsPrefs {
         SettingsPrefs.migrateSettings(application)
-        return SettingsPrefs(application)
+        val settingsPrefs = SettingsPrefs(application)
+        Theme.setThemeFromSettings(settingsPrefs)
+        return settingsPrefs
     }
 
     @Provides
@@ -70,4 +77,5 @@ class AppModule(private val application: Application) {
     @Provides
     @Singleton
     fun providesSuggestions(userDb: UserDb) = Suggestions(userDb.suggestionDao())
+
 }

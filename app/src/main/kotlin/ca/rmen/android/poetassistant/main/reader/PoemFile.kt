@@ -34,7 +34,8 @@ import androidx.annotation.VisibleForTesting
 import androidx.annotation.WorkerThread
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 import java.io.BufferedWriter
 import java.io.IOException
 import java.io.OutputStreamWriter
@@ -47,7 +48,7 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
 
         fun open(context: Context, uri: Uri, callback: PoemFileCallback) {
             Log.d(TAG, "open(uri=$uri, callback=$callback")
-            val threading = DaggerHelper.getMainScreenComponent(context).getThreading()
+            val threading = EntryPointAccessors.fromApplication(context, NonAndroidEntryPoint::class.java).threading()
             threading.execute({ readPoemFile(context, uri) },
                     { poemFile -> callback.onPoemLoaded(poemFile) },
                     { throwable ->
@@ -66,7 +67,7 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
 
         fun save(context: Context, uri: Uri, text: String, callback: PoemFileCallback) {
             Log.d(TAG, "save: uri=$uri, text=$text, callback=$callback")
-            val threading = DaggerHelper.getMainScreenComponent(context).getThreading()
+            val threading = EntryPointAccessors.fromApplication(context, NonAndroidEntryPoint::class.java).threading()
             threading.execute(
                     { savePoemFile(context, uri, text) },
                     { poemFile -> callback.onPoemSaved(poemFile) },

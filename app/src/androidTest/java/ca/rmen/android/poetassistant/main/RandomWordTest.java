@@ -61,12 +61,18 @@ import java.util.Calendar;
 import ca.rmen.android.poetassistant.BuildConfig;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
 
 @LargeTest
+@HiltAndroidTest
 @RunWith(AndroidJUnit4.class)
 public class RandomWordTest {
 
-    @Rule
+    @Rule(order = 0)
+    public HiltAndroidRule hiltTestRule = new HiltAndroidRule(this);
+
+    @Rule(order = 1)
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 
     @Test

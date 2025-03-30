@@ -20,22 +20,37 @@ package ca.rmen.android.poetassistant.main.reader
 
 import android.text.Selection
 import android.text.SpannableStringBuilder
-import ca.rmen.android.poetassistant.Environment
+import androidx.test.core.app.ApplicationProvider
+import ca.rmen.android.poetassistant.Tts
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.HiltTestApplication
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import javax.inject.Inject
 
+@HiltAndroidTest
+@Config(application = HiltTestApplication::class)
 @RunWith(RobolectricTestRunner::class)
 class TestReaderViewModel {
+
+    @get:Rule
+    val hiltTestRule = HiltAndroidRule(this)
+
+    @Inject lateinit var tts: Tts
 
     private lateinit var viewModel: ReaderViewModel
 
     @Before
     fun setUp() {
-        viewModel = ReaderViewModel(Environment.getApplication())
+        hiltTestRule.inject()
+        viewModel = ReaderViewModel(ApplicationProvider.getApplicationContext(), tts)
     }
 
     @After

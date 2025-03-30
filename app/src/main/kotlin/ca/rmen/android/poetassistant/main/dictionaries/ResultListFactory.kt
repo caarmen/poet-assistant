@@ -32,8 +32,8 @@ import androidx.annotation.IdRes
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.TtsState
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListExporter
@@ -50,6 +50,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLiveData
 import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
 import ca.rmen.android.poetassistant.wotd.WotdListExporter
 import ca.rmen.android.poetassistant.wotd.WotdLiveData
+import dagger.hilt.android.EntryPointAccessors
 
 object ResultListFactory {
     private val TAG = Constants.TAG + ResultListFactory::class.java.simpleName
@@ -71,8 +72,8 @@ object ResultListFactory {
     }
 
     fun createAdapter(activity: Activity, tab: Tab): ResultListAdapter<out Any> {
-        return DaggerHelper.getMainScreenComponent(activity)
-                .getResultListAdapterFactory().createAdapter(activity, tab)
+        return EntryPointAccessors.fromApplication(activity, NonAndroidEntryPoint::class.java)
+            .resultListAdapterFactory().createAdapter(activity, tab)
     }
 
     fun createViewModel(tab: Tab, fragment: Fragment): ResultListViewModel<*>? {
@@ -125,22 +126,6 @@ object ResultListFactory {
             else -> context.getString(R.string.filter_thesaurus_message)
         }
         return FilterDialogFragment.newInstance(dialogMessage, text)
-    }
-
-    fun inject(context: Context, tab: Tab, viewModel: ResultListViewModel<*>) {
-        @Suppress("UNCHECKED_CAST")
-        when (tab) {
-            Tab.RHYMER, Tab.THESAURUS, Tab.PATTERN, Tab.FAVORITES ->
-                DaggerHelper.getMainScreenComponent(context)
-                        .inject(viewModel as ResultListViewModel<RTEntryViewModel>)
-            Tab.WOTD ->
-                DaggerHelper.getMainScreenComponent(context)
-                        .injectWotd(viewModel as ResultListViewModel<WotdEntryViewModel>)
-            Tab.DICTIONARY ->
-                DaggerHelper.getMainScreenComponent(context)
-                        .injectDict(viewModel as ResultListViewModel<DictionaryEntry>)
-            else -> Unit
-        }
     }
 
     fun getFilterLabel(context: Context, tab: Tab): String {

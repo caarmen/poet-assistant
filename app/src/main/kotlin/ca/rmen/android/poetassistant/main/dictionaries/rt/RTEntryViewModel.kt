@@ -21,8 +21,9 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt
 
 import android.content.Context
 import androidx.databinding.ObservableBoolean
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 
 class RTEntryViewModel(context: Context, val type: Type, val text: String,
                        isFavoriteInitialValue: Boolean, val hasDefinition: Boolean, val showButtons: Boolean) {
@@ -41,7 +42,7 @@ class RTEntryViewModel(context: Context, val type: Type, val text: String,
             this(context, type, text, isFavoriteInitialValue, true, showButtons)
 
     init {
-        val favorites = DaggerHelper.getMainScreenComponent(context).getFavorites()
+        val favorites = EntryPointAccessors.fromApplication(context, NonAndroidEntryPoint::class.java).favorites()
         isFavorite.set(isFavoriteInitialValue)
         isFavorite.addOnPropertyChangedCallback(BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
             override fun onChanged() {

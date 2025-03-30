@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2018 Carmen Alvarez
+ * Copyright (c) 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,20 +17,27 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger
+package ca.rmen.android.poetassistant.di
 
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapterFactory
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapterFactoryImpl
+import ca.rmen.android.poetassistant.CoroutineThreading
+import ca.rmen.android.poetassistant.Threading
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
+@InstallIn(SingletonComponent::class)
 @Module
-class TestResultListModule {
+class ThreadingModule {
+    @Provides
+    @Singleton
+    fun providesThreading() : Threading = CoroutineThreading(Dispatchers.Default, Dispatchers.Main)
 
     @Provides
     @Singleton
-    fun providesResultListAdapterFactory(): ResultListAdapterFactory {
-        return ResultListAdapterFactoryImpl()
-    }
+    @IODispatcher
+    fun providesIODispatcher(): CoroutineDispatcher = Dispatchers.IO
 }

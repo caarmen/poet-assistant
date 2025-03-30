@@ -30,7 +30,6 @@ import androidx.viewpager.widget.ViewPager
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Threading
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.PagerAdapter
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
@@ -40,7 +39,6 @@ import ca.rmen.android.poetassistant.widget.ViewShownScheduler
 import com.google.android.material.search.SearchView
 import kotlinx.coroutines.launch
 import java.util.Locale
-import javax.inject.Inject
 
 /**
  * Glue between the fragments, activity, and view pager, for executing searches.
@@ -52,18 +50,19 @@ import javax.inject.Inject
  * This class also configures the SearchView widget, and intercepts searches to add them to
  * the list of suggested words.
  */
-class Search constructor(private val searchableActivity: Activity, private val viewPager: ViewPager) {
+class Search constructor(
+    private val searchableActivity: Activity,
+    private val viewPager: ViewPager,
+    private val dictionary: Dictionary,
+    private val threading: Threading,
+    ) {
     companion object {
         private val TAG = Constants.TAG + Search::class.java.simpleName
     }
 
     private val mPagerAdapter: PagerAdapter
-    @Inject
-    lateinit var mDictionary: Dictionary
-    @Inject lateinit var mThreading: Threading
 
     init {
-        DaggerHelper.getMainScreenComponent(searchableActivity.application).inject(this)
         mPagerAdapter = viewPager.adapter as PagerAdapter
     }
 
@@ -175,8 +174,8 @@ class Search constructor(private val searchableActivity: Activity, private val v
 
     fun lookupRandom() {
         Log.d(TAG, "lookupRandom")
-        mThreading.execute(
-                { mDictionary.getRandomEntry() },
+        threading.execute(
+                { dictionary.getRandomEntry() },
                 { entry ->
                     entry?.let {
                         search(entry.word)
@@ -191,7 +190,7 @@ class Search constructor(private val searchableActivity: Activity, private val v
      */
     @MainThread
     fun addSuggestions(suggestion: String) {
-        mThreading.execute({
+        threading.execute({
             val contentValues = ContentValues(1)
             contentValues.put(SearchManager.QUERY, suggestion)
             searchableActivity.contentResolver.insert(SuggestionsProvider.CONTENT_URI, contentValues)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Carmen Alvarez
+ * Copyright (c) 2016-2018 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,8 +17,24 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant;
+package ca.rmen.android.poetassistant.di
 
-@SuppressWarnings("unused") // this is picked automagically for tests thanks to the Test prefix.
-public class TestPoetAssistantApplication extends PoetAssistantApplication {
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapterFactory
+import dagger.hilt.components.SingletonComponent
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.testing.TestInstallIn
+import javax.inject.Singleton
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [ResultListModule::class],
+)
+@Module
+class TestResultListModule {
+
+    @Provides
+    @Singleton
+    fun providesResultListAdapterFactory(): ResultListAdapterFactory {
+        return InstrumentationResultListAdapterFactory()
+    }
 }

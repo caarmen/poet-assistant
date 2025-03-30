@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2018 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,11 +17,23 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger
+package ca.rmen.android.poetassistant.di
 
-import dagger.Component
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapterFactory
+import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapterFactoryImpl
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@Singleton
-@Component(modules = [AppModule::class, DbModule::class, ResultListModule::class, JunitThreadingModule::class])
-interface JunitAppComponent : AppComponent
+@InstallIn(SingletonComponent::class)
+@Module
+class ResultListModule {
+
+    @Provides
+    @Singleton
+    fun providesResultListAdapterFactory(): ResultListAdapterFactory {
+        return ResultListAdapterFactoryImpl()
+    }
+}

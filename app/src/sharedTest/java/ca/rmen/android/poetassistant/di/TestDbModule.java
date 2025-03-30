@@ -17,25 +17,27 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger
+package ca.rmen.android.poetassistant.di;
 
-import ca.rmen.android.poetassistant.JunitThreading
-import ca.rmen.android.poetassistant.Threading
-import dagger.Module
-import dagger.Provides
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import javax.inject.Singleton
+import android.app.Application;
+import androidx.room.Room;
 
+import javax.inject.Singleton;
+
+import ca.rmen.android.poetassistant.UserDb;
+import dagger.Module;
+import dagger.Provides;
+import dagger.hilt.components.SingletonComponent;
+import dagger.hilt.testing.TestInstallIn;
+
+@TestInstallIn(components = {SingletonComponent.class}, replaces = {DbModule.class})
 @Module
-class JunitThreadingModule {
-    @Provides
-    @Singleton
-    fun providesThreading() : Threading = JunitThreading()
+public class TestDbModule {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Provides
     @Singleton
-    fun providesIODispatcher(): CoroutineDispatcher = UnconfinedTestDispatcher()
+    UserDb providesUserDb(Application application) {
+        return Room.inMemoryDatabaseBuilder(application,
+                UserDb.class).allowMainThreadQueries().build();
+    }
 }

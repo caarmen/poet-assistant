@@ -35,27 +35,18 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ProcessLifecycleOwner
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.Share
 import java.io.File
-import javax.inject.Inject
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
-class PoemAudioExport(val context: Context) {
+class PoemAudioExport(val context: Context, private val threading: Threading, private val mTts: Tts) {
     companion object {
         private val TAG = Constants.TAG + PoemAudioExport::class.java.simpleName
         private const val EXPORT_PROGRESS_NOTIFICATION_ID = 1336
         private const val EXPORT_FINISH_NOTIFICATION_ID = 1337
         private const val EXPORT_FOLDER_PATH = "export"
         private const val TEMP_AUDIO_FILE = "poem.wav"
-    }
-
-    @Inject
-    lateinit var mTts: Tts
-
-    init {
-        DaggerHelper.getMainScreenComponent(context).inject(this)
     }
 
     fun speakToFile(textToSpeech: TextToSpeech, text: String) {
@@ -66,7 +57,6 @@ class PoemAudioExport(val context: Context) {
             mTts.getTtsLiveData().observeForever(mTtsObserver)
             notifyPoemAudioInProgress()
             val textToRead = text.substring(0, Math.min(text.length, TextToSpeech.getMaxSpeechInputLength()))
-            val threading = DaggerHelper.getMainScreenComponent(context).getThreading()
             threading.execute({ deleteExistingAudioFile(audioFile) },
                     { speakToFile(textToSpeech, textToRead, audioFile) })
         }

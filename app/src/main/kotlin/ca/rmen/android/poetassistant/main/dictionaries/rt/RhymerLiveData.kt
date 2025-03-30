@@ -25,13 +25,13 @@ import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.rhymer.RhymeResult
+import dagger.hilt.android.EntryPointAccessors
 import java.util.TreeSet
-import javax.inject.Inject
 
 class RhymerLiveData(context: Context, val query: String, val filter: String?) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context) {
 
@@ -64,20 +64,17 @@ class RhymerLiveData(context: Context, val query: String, val filter: String?) :
         }
     }
 
-    @Inject
-    lateinit var mPrefs: SettingsPrefs
-
-    @Inject
-    lateinit var mRhymer: Rhymer
-
-    @Inject
-    lateinit var mThesaurus: Thesaurus
-
-    @Inject
-    lateinit var mFavorites: Favorites
+    private val mPrefs: SettingsPrefs
+    private val mRhymer: Rhymer
+    private val mThesaurus: Thesaurus
+    private val mFavorites: Favorites
 
     init {
-        DaggerHelper.getMainScreenComponent(context).inject(this)
+        val entryPoint = EntryPointAccessors.fromApplication(context.applicationContext, NonAndroidEntryPoint::class.java)
+        mRhymer = entryPoint.rhymer()
+        mThesaurus = entryPoint.thesaurus()
+        mPrefs = entryPoint.prefs()
+        mFavorites = entryPoint.favorites()
     }
 
     override fun loadInBackground(): ResultListData<RTEntryViewModel> {

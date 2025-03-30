@@ -47,7 +47,6 @@ import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.about.AboutActivity
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding
 import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
@@ -61,9 +60,16 @@ import ca.rmen.android.poetassistant.main.reader.ReaderFragment
 import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.widget.CABEditText
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener, CABEditText.ImeListener {
+// Split into separate impl and base class to get full code coverage stats:
+// https://medium.com/livefront/dagger-hilt-testing-injected-android-components-with-code-coverage-30089a1f6872
+
+@AndroidEntryPoint
+class MainActivity : MainActivityImpl()
+
+open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener, CABEditText.ImeListener {
     companion object {
         private val TAG = Constants.TAG + MainActivity::class.java.simpleName
         private const val DIALOG_TAG = "dialog"
@@ -86,7 +92,6 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
             window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         }
         super.onCreate(savedInstanceState)
-        DaggerHelper.getMainScreenComponent(application).inject(this)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setSupportActionBar(mBinding.toolbar)
         mPagerAdapter = PagerAdapter(this, supportFragmentManager, intent)
@@ -112,7 +117,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
             mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
         }
 
-        mSearch = Search(this, mBinding.viewPager)
+        mSearch = Search(this, mBinding.viewPager, dictionary = mDictionary, threading = mThreading)
         // Load our dictionaries when the activity starts, so that the first search can already be fast.
         mThreading.execute({ loadDatabase() },
                 {
@@ -278,7 +283,7 @@ class MainActivity : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDia
             val tab = mPagerAdapter.getTabForPosition(position)
 
             if (tab == Tab.READER) {
-                AppBarLayoutHelper.enableAutoHide(this@MainActivity)
+                AppBarLayoutHelper.enableAutoHide(this@MainActivityImpl)
             } else {
                 // Hide the keyboard when we navigate to any tab other than the reader tab.
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?

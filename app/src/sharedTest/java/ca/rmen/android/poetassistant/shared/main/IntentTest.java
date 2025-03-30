@@ -51,12 +51,20 @@ import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.MainActivity;
 import ca.rmen.android.poetassistant.main.TestAppUtils;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
+import dagger.hilt.android.testing.HiltTestApplication;
 
 @LargeTest
+@HiltAndroidTest
+@Config(application = HiltTestApplication.class)
 @RunWith(AndroidJUnit4.class)
 public class IntentTest {
 
-    @Rule
+    @Rule(order = 0)
+    public HiltAndroidRule hiltTestRule = new HiltAndroidRule(this);
+
+    @Rule(order = 1)
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, false);
 
     @Test

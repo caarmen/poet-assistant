@@ -43,12 +43,16 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.TtsState
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.LiveDataMapping
 import ca.rmen.android.poetassistant.main.dictionaries.Share
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-class ReaderViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class ReaderViewModel @Inject constructor(
+    application: Application,
+    private val mTts: Tts,
+    ) : AndroidViewModel(application) {
     companion object {
         private val TAG = Constants.TAG + ReaderViewModel::class.java.simpleName
         /**
@@ -94,13 +98,10 @@ class ReaderViewModel(application: Application) : AndroidViewModel(application) 
 
     val playButtonStateLiveData = MediatorLiveData<ReaderViewModel.PlayButtonState>()
 
-    @Inject
-    lateinit var mTts: Tts
     private val mPoemPrefs: PoemPrefs
     private val mSharedPreferences: SharedPreferences
 
     init {
-        DaggerHelper.getMainScreenComponent(application).inject(this)
         mPoemPrefs = PoemPrefs(application)
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
         mPrefsListener = PrefsListener()

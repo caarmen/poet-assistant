@@ -32,7 +32,7 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/settings_fragment"
-            android:name="ca.rmen.android.poetassistant.settings.SettingsActivity$GeneralPreferenceFragment"
+            android:name="ca.rmen.android.poetassistant.settings.GeneralPreferenceFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>

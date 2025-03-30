@@ -20,15 +20,31 @@
 package ca.rmen.android.poetassistant.main;
 
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
+import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withParent;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.lessThan;
+import static org.junit.Assert.assertThat;
+import static ca.rmen.android.poetassistant.main.CustomViewActions.clickLastChild;
+import static ca.rmen.android.poetassistant.main.CustomViewActions.scrollToEnd;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.speakPoem;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem;
+import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
+import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
+
 import android.annotation.TargetApi;
 import android.os.Build;
-
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
@@ -39,46 +55,35 @@ import androidx.test.espresso.action.Press;
 import androidx.test.espresso.action.Tap;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+
+import org.junit.FixMethodOrder;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.Tts;
 import ca.rmen.android.poetassistant.TtsState;
-import ca.rmen.android.poetassistant.dagger.DaggerHelper;
-import ca.rmen.android.poetassistant.dagger.TestAppComponent;
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
 import ca.rmen.android.poetassistant.main.rules.RetryTestRule;
-
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.pressBack;
-import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
-import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withParent;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
-import static ca.rmen.android.poetassistant.main.CustomViewActions.clickLastChild;
-import static ca.rmen.android.poetassistant.main.CustomViewActions.scrollToEnd;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.speakPoem;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem;
-import static ca.rmen.android.poetassistant.main.TestAppUtils.typePoem;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem;
-import static ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.lessThan;
-import static org.junit.Assert.assertThat;
+import dagger.hilt.android.EntryPointAccessors;
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
 
 @LargeTest
 @RunWith(AndroidJUnit4.class)
+@HiltAndroidTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ATtsTest {
+    @Rule(order = 0)
+    public HiltAndroidRule hiltTestRule = new HiltAndroidRule(this);
 
-    @Rule
+    @Rule(order = 1)
     public RetryTestRule retry = new RetryTestRule();
 
-    @Rule
+    @Rule(order = 2)
     public PoetAssistantActivityTestRule<MainActivity> mActivityTestRule = new PoetAssistantActivityTestRule<>(MainActivity.class, true);
 
     public static class TtsObserver implements Observer<TtsState> {
@@ -89,7 +94,6 @@ public class ATtsTest {
             timeUtteranceCompleted = System.currentTimeMillis();
         }
     }
-
 
     @Test
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -150,7 +154,7 @@ public class ATtsTest {
     }
 
     private Tts getTts() {
-        return ((TestAppComponent) DaggerHelper.INSTANCE.getAppComponent(mActivityTestRule.getActivity())).getTts();
+        return EntryPointAccessors.fromApplication(mActivityTestRule.getActivity(), NonAndroidEntryPoint.class).tts();
     }
     private long timePoem(String poem) {
         TtsObserver receiver = new TtsObserver();

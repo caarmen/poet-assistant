@@ -19,35 +19,36 @@
 
 package ca.rmen.android.poetassistant.rt
 
-import ca.rmen.android.poetassistant.Environment
-import ca.rmen.android.poetassistant.dagger.AppModule
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
-import ca.rmen.android.poetassistant.dagger.DaggerJunitAppComponent
-import ca.rmen.android.poetassistant.dagger.DbModule
-import ca.rmen.android.poetassistant.dagger.JunitThreadingModule
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusEntry
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.HiltTestApplication
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 import java.util.Arrays
+import javax.inject.Inject
 
+@HiltAndroidTest
+@Config(application = HiltTestApplication::class)
 @RunWith(RobolectricTestRunner::class)
 class TestThesaurus {
 
-    private lateinit var thesaurus: Thesaurus
+    @get:Rule
+    val hiltTestRule = HiltAndroidRule(this)
+
+    @Inject
+    lateinit var thesaurus: Thesaurus
+
     @Before
     fun setup() {
-        val testAppComponent = DaggerJunitAppComponent.builder()
-                .appModule(AppModule(Environment.getApplication()))
-                .dbModule(DbModule(Environment.getApplication()))
-                .junitThreadingModule(JunitThreadingModule())
-                .build()
-        DaggerHelper.setAppComponent(testAppComponent)
-        thesaurus = DaggerHelper.getMainScreenComponent(Environment.getApplication()).getThesaurus()
+        hiltTestRule.inject()
     }
 
     @Test

@@ -47,12 +47,19 @@ import org.robolectric.annotation.Config;
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.search.ThesaurusRouterActivity;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
+import dagger.hilt.android.testing.HiltTestApplication;
 
 @LargeTest
+@HiltAndroidTest
+@Config(application = HiltTestApplication.class)
 @RunWith(AndroidJUnit4.class)
 public class ThesaurusRouterTest {
 
-    @Rule
+    @Rule(order = 0)
+    public HiltAndroidRule hiltTestRule = new HiltAndroidRule(this);
+    @Rule(order = 1)
     public PoetAssistantActivityTestRule<ThesaurusRouterActivity> mActivityTestRule =
             new PoetAssistantActivityTestRule<>(ThesaurusRouterActivity.class, false);
 

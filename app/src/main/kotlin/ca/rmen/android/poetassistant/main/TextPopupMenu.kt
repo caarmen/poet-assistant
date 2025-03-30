@@ -36,12 +36,13 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.dictionaries.Share
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.widget.HackFor23381
 import ca.rmen.android.poetassistant.widget.PopupMenuHelper
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.EntryPointAccessors
 
 object TextPopupMenu {
     enum class Style {
@@ -89,7 +90,7 @@ object TextPopupMenu {
      * @param listener this listener will be notified when the user selects one of the popup menu items
      */
     fun addSelectionPopupMenu(snackbarView: View, textView: TextView, listener: OnWordClickListener) {
-        val settingsPrefs = DaggerHelper.getMainScreenComponent(textView.context).getSettingsPrefs()
+        val settingsPrefs = EntryPointAccessors.fromApplication(snackbarView.context, NonAndroidEntryPoint::class.java).prefs()
         if (!settingsPrefs.isSelectionLookupEnabled) {
             return
         }

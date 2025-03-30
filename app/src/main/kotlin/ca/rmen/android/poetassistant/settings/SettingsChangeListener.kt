@@ -26,37 +26,33 @@ import androidx.core.app.TaskStackBuilder
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Theme
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter
 import ca.rmen.android.poetassistant.wotd.Wotd
-import javax.inject.Inject
 
-class SettingsChangeListener(private val context: Context) : SharedPreferences.OnSharedPreferenceChangeListener {
+class SettingsChangeListener(
+    private val context: Context,
+    private val dictionary: Dictionary, private val settingsPrefs: SettingsPrefs
+) : SharedPreferences.OnSharedPreferenceChangeListener {
     companion object {
         private val TAG = Constants.TAG + SettingsChangeListener::class.java.simpleName
-    }
-
-    @Inject lateinit var mSettingsPrefs: SettingsPrefs
-    @Inject lateinit var mDictionary: Dictionary
-
-    init {
-        DaggerHelper.getSettingsComponent(context).inject(this)
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
         Log.v(TAG, "onSharedPreferenceChanged: key = $key")
         when (key) {
-        // When the theme changes, restart the activity
+            // When the theme changes, restart the activity
             SettingsPrefs.PREF_THEME -> {
-                Theme.setThemeFromSettings(mSettingsPrefs)
+                Theme.setThemeFromSettings(settingsPrefs)
                 restartSettingsActivity()
             }
+
             SettingsPrefs.PREF_WOTD_ENABLED, SettingsPrefs.PREF_WOTD_NOTIFICATION_PRIORITY -> {
-                Wotd.setWotdEnabled(context, mDictionary, mSettingsPrefs.isWotdEnabled)
+                Wotd.setWotdEnabled(context, dictionary, settingsPrefs.isWotdEnabled)
             }
+
             SettingsPrefs.PREF_SELECTION_LOOKUP -> {
-                ProcessTextRouter.setEnabled(context, mSettingsPrefs.isSelectionLookupEnabled)
+                ProcessTextRouter.setEnabled(context, settingsPrefs.isSelectionLookupEnabled)
                 restartSettingsActivity()
             }
         }
@@ -65,8 +61,8 @@ class SettingsChangeListener(private val context: Context) : SharedPreferences.O
     private fun restartSettingsActivity() {
         val intent = Intent(context, SettingsActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         TaskStackBuilder.create(context)
-                .addNextIntentWithParentStack(intent)
-                .startActivities()
+            .addNextIntentWithParentStack(intent)
+            .startActivities()
     }
 
 }

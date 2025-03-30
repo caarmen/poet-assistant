@@ -22,6 +22,7 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.benmanes)
+    alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     id("jacoco")
@@ -66,7 +67,7 @@ android {
         // setting vectorDrawables.useSupportLibrary = true means pngs won"t be generated at
         // build time: http://android-developers.blogspot.fr/2016/02/android-support-library-232.html
         vectorDrawables.useSupportLibrary = true
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "ca.rmen.android.poetassistant.di.CustomTestRunner"
 
         // The following argument makes the Android Test Orchestrator run its
         // "pm clear" command after each test invocation. This command ensures
@@ -184,6 +185,9 @@ android {
 jacoco {
     toolVersion = "0.8.12"
 }
+kapt {
+    correctErrorTypes = true
+}
 android.applicationVariants.configureEach {
     val copyLicenseFilesTask = tasks.register<Copy>("copyLicenseFilesFor${name.replaceFirstChar{it.uppercase()}}") {
         from(project.rootDir)
@@ -206,10 +210,11 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.preference)
     implementation(libs.androidx.room.runtime)
-    implementation(libs.dagger)
     implementation(libs.google.material)
+    implementation(libs.hilt.android)
     implementation(libs.kotlin)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
@@ -225,9 +230,10 @@ dependencies {
     api(libs.androidx.lifecycle.viewmodel.ktx)
 
     ksp(libs.androidx.room.compiler)
-    ksp(libs.dagger.compiler)
+    kapt(libs.hilt.android.compiler)
 
-    kspTest(libs.dagger.compiler)
+    kaptTest(libs.hilt.android.compiler)
+
     testImplementation(platform(libs.androidx.compose.bom))
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation(libs.androidx.test.espresso.contrib)
@@ -238,6 +244,7 @@ dependencies {
     testImplementation(libs.androidx.test.runner)
     testImplementation(libs.androidx.ui.test.junit4.android)
     testImplementation(libs.fest.reflect)
+    testImplementation(libs.hilt.android.testing)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
@@ -255,7 +262,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4.android)
     androidTestImplementation(libs.fest.reflect)
     androidTestImplementation(libs.google.test.parameter.injector)
+    androidTestImplementation(libs.hilt.android.testing)
     androidTestImplementation(libs.robolectric.annotations)
+    kaptAndroidTest(libs.hilt.android.compiler)
 
     androidTestUtil(libs.androidx.test.orchesetrator)
 }

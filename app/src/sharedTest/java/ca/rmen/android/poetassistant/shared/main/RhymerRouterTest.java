@@ -40,16 +40,24 @@ import androidx.test.filters.LargeTest;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.annotation.Config;
 
 import ca.rmen.android.poetassistant.R;
 import ca.rmen.android.poetassistant.main.dictionaries.search.RhymerRouterActivity;
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule;
+import dagger.hilt.android.testing.HiltAndroidRule;
+import dagger.hilt.android.testing.HiltAndroidTest;
+import dagger.hilt.android.testing.HiltTestApplication;
 
 @LargeTest
+@HiltAndroidTest
+@Config(application = HiltTestApplication.class)
 @RunWith(AndroidJUnit4.class)
 public class RhymerRouterTest {
+    @Rule(order = 0)
+    public HiltAndroidRule hiltTestRule = new HiltAndroidRule(this);
 
-    @Rule
+    @Rule(order = 1)
     public PoetAssistantActivityTestRule<RhymerRouterActivity> mActivityTestRule =
             new PoetAssistantActivityTestRule<>(RhymerRouterActivity.class, false);
 

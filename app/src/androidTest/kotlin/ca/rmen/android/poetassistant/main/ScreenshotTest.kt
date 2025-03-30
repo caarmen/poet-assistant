@@ -34,6 +34,8 @@ import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
 import org.junit.FixMethodOrder
 import org.junit.Rule
@@ -45,6 +47,7 @@ import java.io.IOException
 
 
 @LargeTest
+@HiltAndroidTest
 @RunWith(TestParameterInjector::class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class ScreenshotTest {
@@ -58,8 +61,11 @@ class ScreenshotTest {
 
     private lateinit var deviceScreenshotsFolder: File
 
+    @get:Rule(order=0)
+    val hiltTestRule = HiltAndroidRule(this)
+
     @JvmField
-    @Rule
+    @Rule(order=1)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(
         MainActivity::class.java, true
     )

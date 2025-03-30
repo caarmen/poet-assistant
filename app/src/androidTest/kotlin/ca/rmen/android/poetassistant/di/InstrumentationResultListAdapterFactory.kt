@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.dagger
+package ca.rmen.android.poetassistant.di
 
 import android.app.Activity
 import ca.rmen.android.poetassistant.main.Tab
@@ -28,7 +28,10 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.InstrumentationRTListA
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.wotd.InstrumentationWotdAdapter
 import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
+@InstallIn(SingletonComponent::class)
 @Module
 class InstrumentationResultListAdapterFactory : ResultListAdapterFactory {
     override fun createAdapter(activity: Activity, tab: Tab): ResultListAdapter<out Any> {

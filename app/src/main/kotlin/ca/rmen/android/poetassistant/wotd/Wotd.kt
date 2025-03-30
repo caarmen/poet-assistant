@@ -31,12 +31,13 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.NotificationChannel
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.HtmlCompat
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.Share
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import dagger.hilt.android.EntryPointAccessors
 import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
@@ -61,7 +62,7 @@ object Wotd {
         } else {
             WotdAlarm.schedule(context)
         }
-        val threading = DaggerHelper.getWotdComponent(context).getThreading()
+        val threading = EntryPointAccessors.fromApplication(context, NonAndroidEntryPoint::class.java).threading()
         threading.execute({ notifyWotd(context, dictionary) })
     }
 
@@ -107,9 +108,9 @@ object Wotd {
                         context.getString(R.string.share),
                         getShareIntent(context, entry))
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            val settingsPrefs = EntryPointAccessors.fromApplication(context, NonAndroidEntryPoint::class.java).prefs()
             builder.priority = SettingsPrefs.NotificationPriority.valueOf(
-                DaggerHelper.getMainScreenComponent(context).getSettingsPrefs()
-                                        .wotdNotificationPriority.uppercase(Locale.US)
+                settingsPrefs.wotdNotificationPriority.uppercase(Locale.US)
             ).priority
         }
         val notification = builder.build()

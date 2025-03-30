@@ -42,7 +42,6 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.compat.HtmlCompat
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.TextPopupMenu
@@ -53,35 +52,47 @@ import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.widget.CABEditText
 import ca.rmen.android.poetassistant.widget.DebounceTextWatcher
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
+// Split into separate impl and base class to get full code coverage stats:
+// https://medium.com/livefront/dagger-hilt-testing-injected-android-components-with-code-coverage-30089a1f6872
+
+private const val EXTRA_INITIAL_TEXT = "initial_text"
+private val TAG = Constants.TAG + ReaderFragment::class.java.simpleName
+
+@AndroidEntryPoint
+class ReaderFragment : ReaderFragmentImpl() {
     companion object {
-        private val TAG = Constants.TAG + ReaderFragment::class.java.simpleName
-        private const val EXTRA_INITIAL_TEXT = "initial_text"
-        private const val DIALOG_TAG = "dialog"
-        private const val ACTION_FILE_OPEN = 0
-        private const val ACTION_FILE_SAVE_AS = 1
-        private const val ACTION_FILE_NEW = 2
         fun newInstance(initialText: String?): ReaderFragment {
             Log.d(TAG, "newInstance: initialText = $initialText")
             val fragment = ReaderFragment()
-            fragment.retainInstance = true
             val bundle = Bundle(1)
             bundle.putString(EXTRA_INITIAL_TEXT, initialText)
             fragment.arguments = bundle
             return fragment
         }
+
+    }
+}
+
+open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
+    companion object {
+        private const val DIALOG_TAG = "dialog"
+        private const val ACTION_FILE_OPEN = 0
+        private const val ACTION_FILE_SAVE_AS = 1
+        private const val ACTION_FILE_NEW = 2
     }
 
     private lateinit var mViewModel: ReaderViewModel
-    private lateinit var mThreading: Threading
+    @Inject
+    lateinit var mThreading: Threading
     private lateinit var mBinding: FragmentReaderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.v(TAG, "onCreate: savedInstanceState = $savedInstanceState")
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        mThreading = DaggerHelper.getMainScreenComponent(requireContext()).getThreading()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

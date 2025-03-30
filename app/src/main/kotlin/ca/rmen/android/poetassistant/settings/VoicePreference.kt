@@ -25,8 +25,9 @@ import android.os.Build
 import androidx.preference.ListPreference
 import android.util.AttributeSet
 import ca.rmen.android.poetassistant.Tts
-import ca.rmen.android.poetassistant.dagger.DaggerHelper
-import javax.inject.Inject
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
 
 class VoicePreference : ListPreference {
     @Suppress("unused")
@@ -49,11 +50,11 @@ class VoicePreference : ListPreference {
         init()
     }
 
-    @Inject
-    lateinit var mTts: Tts
+    private lateinit var mTts: Tts
 
     private fun init() {
-        DaggerHelper.getSettingsComponent(context).inject(this)
+        val entryPoint = EntryPointAccessors.fromApplication(context.applicationContext, NonAndroidEntryPoint::class.java)
+        mTts = entryPoint.tts()
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
