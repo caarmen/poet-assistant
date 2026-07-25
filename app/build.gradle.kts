@@ -80,7 +80,7 @@ android {
         sourceSets {
             getByName("main") {
                 java.srcDirs(listOf("$projectDir/src/main/kotlin"))
-                assets.srcDirs(project.layout.buildDirectory.dir("generated/license_assets"))
+                assets.srcDirs(project.layout.buildDirectory.dir("generated/license_assets").get().asFile)
             }
             getByName("androidTest") {
                 assets.srcDirs(files("$projectDir/src/androidTest/schemas"))
