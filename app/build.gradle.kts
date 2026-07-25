@@ -60,7 +60,7 @@ android {
     defaultConfig {
         applicationId = "ca.rmen.android.poetassistant"
         namespace = "ca.rmen.android.poetassistant"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
         versionCode = 113101
         versionName = "1.31.1"
