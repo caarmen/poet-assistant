@@ -4,7 +4,7 @@ androidxActivity = "1.13.0"
 androidxAppCompat = "1.7.1"
 androidxArchCoreTesting = "2.2.0"
 androidxCollection = "1.6.0"
-androidxComposeBom = "2025.03.01" #2026.06.01 causes errors LicenseScreen.kt:62:43 Unresolved reference 'Icons'.
+androidxComposeBom = "2026.06.01"
 androidxConstraintLayout = "2.2.1"
 androidxEspresso = "3.7.0"
 androidxFragment = "1.8.9"
@@ -38,6 +38,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "androidxArchCoreTesting" }
 androidx-collection = { group = "androidx.collection", name = "collection", version.ref = "androidxCollection" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
+androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
