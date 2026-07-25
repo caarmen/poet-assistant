@@ -30,7 +30,7 @@ plugins {
     id("kotlin-android")
 }
 android {
-    compileSdk = 35
+    compileSdk = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -61,7 +61,7 @@ android {
         applicationId = "ca.rmen.android.poetassistant"
         namespace = "ca.rmen.android.poetassistant"
         minSdk = 21
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 113101
         versionName = "1.31.1"
         // setting vectorDrawables.useSupportLibrary = true means pngs won"t be generated at
