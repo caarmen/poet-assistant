@@ -86,10 +86,10 @@ class ResultListFragment<out T: Any> : Fragment() {
             @Suppress("UNCHECKED_CAST")
             mViewModel = ResultListFactory.createViewModel(it, this) as ResultListViewModel<T>
             mBinding.viewModel = mViewModel
-            mViewModel.layout.observe(this, mLayoutSettingChanged)
-            mViewModel.showHeader.observe(this, mShowHeaderChanged)
-            mViewModel.usedQueryWord.observe(this, mUsedQueryWordChanged)
-            mViewModel.emptyText.observe(this, mEmptyTextObserver)
+            mViewModel.layout.observe(viewLifecycleOwner, mLayoutSettingChanged)
+            mViewModel.showHeader.observe(viewLifecycleOwner, mShowHeaderChanged)
+            mViewModel.usedQueryWord.observe(viewLifecycleOwner, mUsedQueryWordChanged)
+            mViewModel.emptyText.observe(viewLifecycleOwner, mEmptyTextObserver)
             mViewModel.isDataAvailable.addOnPropertyChangedCallback(mDataAvailableChanged)
             mHeaderViewModel = ViewModelProvider(this).get(ResultListHeaderViewModel::class.java)
             mHeaderViewModel.filter.addOnPropertyChangedCallback(mFilterChanged)
@@ -98,8 +98,10 @@ class ResultListFragment<out T: Any> : Fragment() {
                 headerFragment = ResultListHeaderFragment.newInstance(it)
                 childFragmentManager.beginTransaction().replace(R.id.result_list_header, headerFragment).commit()
             }
-            mViewModel.favoritesLiveData.observe(this, mFavoritesObserver)
-            mViewModel.resultListDataLiveData.observe(this, Observer { data -> mViewModel.setData(data) })
+            mViewModel.favoritesLiveData.observe(viewLifecycleOwner, mFavoritesObserver)
+            mViewModel.resultListDataLiveData.observe(
+                viewLifecycleOwner, Observer { data -> mViewModel.setData(data) }
+            )
             return mBinding.root
         }
         return super.onCreateView(inflater, container, savedInstanceState)

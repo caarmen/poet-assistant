@@ -72,8 +72,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:iconSize="48dp"
-                app:iconCompat="@{viewModel.playButtonDrawable}"/>
+                app:iconSize="48dp" />
 
 
             <ca.rmen.android.poetassistant.widget.CABEditText

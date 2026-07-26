@@ -15,7 +15,11 @@
             "notNull": false
           }
         ],
-        "indices": []
+        "indices": [],
+        "primaryKey": {
+            "columnNames": [],
+            "autoGenerate": false
+        }
       },
       {
         "tableName": "SUGGESTION",
@@ -28,7 +32,11 @@
             "notNull": false
           }
         ],
-        "indices": []
+        "indices": [],
+        "primaryKey": {
+            "columnNames": [],
+            "autoGenerate": false
+        }
       }
     ],
     "setupQueries": []

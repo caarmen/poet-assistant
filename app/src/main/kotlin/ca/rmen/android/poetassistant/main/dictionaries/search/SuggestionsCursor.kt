@@ -75,6 +75,6 @@ class SuggestionsCursor(
     }
 
     private fun addSuggestion(word: String, @DrawableRes iconId: Int) {
-        addRow(arrayOf(count, word, iconId, word))
+        addRow(arrayOf<Any>(count, word, iconId, word))
     }
 }

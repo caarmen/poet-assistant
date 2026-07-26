@@ -19,11 +19,13 @@
 
 package ca.rmen.android.poetassistant.rt
 
+import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusEntry
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -46,9 +48,17 @@ class TestThesaurus {
     @Inject
     lateinit var thesaurus: Thesaurus
 
+    @Inject
+    lateinit var embeddedDb: EmbeddedDb
+
     @Before
     fun setup() {
         hiltTestRule.inject()
+    }
+
+    @After
+    fun tearDown() {
+        embeddedDb.close()
     }
 
     @Test

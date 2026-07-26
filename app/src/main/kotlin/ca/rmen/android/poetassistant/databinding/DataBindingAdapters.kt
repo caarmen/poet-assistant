@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.databinding
 import androidx.databinding.BindingAdapter
 import androidx.annotation.DrawableRes
 import android.widget.ImageView
-import com.google.android.material.button.MaterialButton
 
 object DataBindingAdapters {
     @JvmStatic
@@ -31,9 +30,4 @@ object DataBindingAdapters {
         imageView.setImageResource(resource)
     }
 
-    @JvmStatic
-    @BindingAdapter("iconCompat")
-    fun setIcon(button: MaterialButton, @DrawableRes resource: Int) {
-        button.setIconResource(resource)
-    }
 }

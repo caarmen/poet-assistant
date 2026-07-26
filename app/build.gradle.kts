@@ -18,32 +18,35 @@
  */
 
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.androidBuiltInKotlin)
     alias(libs.plugins.benmanes)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
     id("jacoco")
-    id("kotlin-kapt")
-    id("kotlin-android")
 }
 android {
-    compileSdk = 35
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 1
+        }
+    }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     buildFeatures {
         compose = true
         dataBinding = true
         buildConfig = true
+        resValues = true
     }
 
     testCoverage {
@@ -51,7 +54,6 @@ android {
     }
     lint {
         abortOnError = true
-        textReport = true
         ignoreWarnings = true
         disable.add("RestrictedApi")  // https://stackoverflow.com/questions/45648530/restricted-api-lint-error-when-deleting-table-room-persistence
         checkReleaseBuilds = false
@@ -60,8 +62,8 @@ android {
     defaultConfig {
         applicationId = "ca.rmen.android.poetassistant"
         namespace = "ca.rmen.android.poetassistant"
-        minSdk = 21
-        targetSdk = 35
+        minSdk = 23
+        targetSdk = 36
         versionCode = 113101
         versionName = "1.31.1"
         // setting vectorDrawables.useSupportLibrary = true means pngs won"t be generated at
@@ -76,38 +78,16 @@ android {
         // testInstrumentationRunnerArguments clearPackageData: "true", coverage: "true", coverageFilePath: "/data/data/ca.rmen.android.poetassistant.test/"
 
 
-        // used by Room, to test migrations
         sourceSets {
-            getByName("main") {
-                java.srcDirs(listOf("$projectDir/src/main/kotlin"))
-                assets.srcDirs(project.layout.buildDirectory.dir("generated/license_assets"))
-            }
-            getByName("androidTest") {
-                assets.srcDirs(files("$projectDir/src/androidTest/schemas"))
-                java.srcDirs(
-                    "$projectDir/src/androidTest/kotlin",
-                    "$projectDir/src/sharedTest/java",
-                    "$projectDir/src/sharedTest/kotlin",
-                )
-            }
+            // Still need to declare the location of robolectric shadows the old way.
             getByName("test") {
-                manifest.srcFile("src/test/AndroidManifest.xml")
-                java.srcDirs(
-                    listOf(
-                        "$projectDir/src/test/kotlin",
-                        "$projectDir/src/sharedTest/java",
-                        "$projectDir/src/sharedTest/kotlin",
-                    )
-                )
+                java.directories.add("$projectDir/src/test/kotlin")
             }
         }
-
+    }
+    room {
         // used by Room, to test migrations
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments["room.schemaLocation"] = projectDir.resolve("schemas").toString()
-            }
-        }
+        schemaDirectory(projectDir.resolve("src/androidTest/schemas").toString())
     }
 
     buildTypes {
@@ -168,6 +148,26 @@ android {
         }
     }
 
+    sourceSets.named("main") {
+        java.directories.add("src/main/kotlin")
+        assets.directories.add(project.layout.buildDirectory.dir("generated/license_assets").get().asFile.path)
+    }
+    sourceSets.named("androidTest") {
+        assets.directories.add("$projectDir/src/androidTest/schemas")
+        java.directories.add("$projectDir/src/sharedTest/java")
+        kotlin.directories.addAll(listOf(
+            "$projectDir/src/androidTest/kotlin",
+            "$projectDir/src/sharedTest/kotlin",
+        ))
+    }
+    sourceSets.named("test") {
+        manifest.srcFile("src/test/AndroidManifest.xml")
+        java.directories.add("$projectDir/src/sharedTest/java")
+        kotlin.directories.addAll(listOf(
+            "$projectDir/src/test/kotlin",
+            "$projectDir/src/sharedTest/kotlin",
+        ))
+    }
     testOptions {
         // Uncomment below to use orchestrator for tests
         // execution "ANDROIDX_TEST_ORCHESTRATOR"
@@ -185,21 +185,52 @@ android {
 jacoco {
     toolVersion = "0.8.12"
 }
-kapt {
-    correctErrorTypes = true
-}
-android.applicationVariants.configureEach {
-    val copyLicenseFilesTask = tasks.register<Copy>("copyLicenseFilesFor${name.replaceFirstChar{it.uppercase()}}") {
-        from(project.rootDir)
-        into(project.layout.buildDirectory.dir("generated/license_assets/"))
-        include("LICENSE.txt")
-        include("LICENSE-rhyming-dictionary.txt")
-        include("LICENSE-thesaurus-wordnet.txt")
-        include("LICENSE-dictionary-wordnet.txt")
-        include("LICENSE-google-ngram-dataset.txt")
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.fromTarget("11")
     }
-    mergeAssetsProvider.configure {
-        dependsOn(copyLicenseFilesTask)
+}
+
+androidComponents {
+    onVariants { variant ->
+        val capitalName = variant.name.replaceFirstChar { it.uppercase() }
+
+        val copyLicenseFilesTask = tasks.register<CopyLicenseTask>("copyLicenseFilesFor$capitalName") {
+            outputDir.set(layout.buildDirectory.dir("generated/license_assets/"))
+        }
+
+        // 'sources' is a property defined on the variant parameter here
+        variant.sources.assets?.addGeneratedSourceDirectory(
+            copyLicenseFilesTask,
+            CopyLicenseTask::outputDir
+        )
+    }
+}
+
+// Define a custom task that uses DirectoryProperty natively compatible with AGP 9+
+abstract class CopyLicenseTask : DefaultTask() {
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @TaskAction
+    fun execute() {
+        val target = outputDir.get().asFile
+        target.mkdirs()
+
+        val licenses = listOf(
+            "LICENSE.txt",
+            "LICENSE-rhyming-dictionary.txt",
+            "LICENSE-thesaurus-wordnet.txt",
+            "LICENSE-dictionary-wordnet.txt",
+            "LICENSE-google-ngram-dataset.txt"
+        )
+
+        for (license in licenses) {
+            val sourceFile = project.rootDir.resolve(license)
+            if (sourceFile.exists()) {
+                sourceFile.copyTo(target.resolve(license), overwrite = true)
+            }
+        }
     }
 }
 
@@ -207,6 +238,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.appcompat)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.constraintlayout)
@@ -230,9 +262,9 @@ dependencies {
     api(libs.androidx.lifecycle.viewmodel.ktx)
 
     ksp(libs.androidx.room.compiler)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 
-    kaptTest(libs.hilt.android.compiler)
+    kspTest(libs.hilt.android.compiler)
 
     testImplementation(platform(libs.androidx.compose.bom))
     testImplementation(libs.androidx.arch.core.testing)
@@ -264,7 +296,7 @@ dependencies {
     androidTestImplementation(libs.google.test.parameter.injector)
     androidTestImplementation(libs.hilt.android.testing)
     androidTestImplementation(libs.robolectric.annotations)
-    kaptAndroidTest(libs.hilt.android.compiler)
+    kspAndroidTest(libs.hilt.android.compiler)
 
     androidTestUtil(libs.androidx.test.orchesetrator)
 }
@@ -344,5 +376,11 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     )
     reports {
         xml.required = true
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.1")
     }
 }

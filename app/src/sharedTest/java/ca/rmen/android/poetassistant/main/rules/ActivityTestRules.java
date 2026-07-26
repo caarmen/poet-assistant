@@ -84,6 +84,10 @@ public final class ActivityTestRules {
         }
         Tts tts =  EntryPointAccessors.fromApplication(targetContext.getApplicationContext(), ActivityTestRulesEntryPoint.class).tts();
         getInstrumentation().runOnMainSync(tts::shutdown);
+
+        ActivityTestRulesEntryPoint entryPoint = EntryPointAccessors.fromApplication(targetContext.getApplicationContext(), ActivityTestRulesEntryPoint.class);
+        UserDb userDb = entryPoint.userDb();
+        userDb.close();
     }
 
     private static void cleanup(Context targetContext) {
@@ -98,8 +102,6 @@ public final class ActivityTestRules {
             notificationManager.cancelAll();
         }
         ActivityTestRulesEntryPoint entryPoint =   EntryPointAccessors.fromApplication(targetContext.getApplicationContext(), ActivityTestRulesEntryPoint.class);
-        UserDb userDb = entryPoint.userDb();
-        userDb.close();
         EmbeddedDb embeddedDb = entryPoint.embeddedDb();
         embeddedDb.close();
         getInstrumentation().runOnMainSync(() -> {

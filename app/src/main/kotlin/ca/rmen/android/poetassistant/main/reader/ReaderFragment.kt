@@ -42,6 +42,7 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.compat.HtmlCompat
+import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.TextPopupMenu
@@ -110,6 +111,7 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         mViewModel.snackbarText.observe(this, mSnackbarCallback)
         mViewModel.ttsError.observe(this, mTtsErrorCallback)
         mViewModel.poemFile.observe(this, mPoemFileCallback)
+        mViewModel.playButtonDrawable.addOnPropertyChangedCallback(mPlayButtonDrawableObserver)
         mBinding.tvText.imeListener = object : CABEditText.ImeListener {
             override fun onImeClosed() {
                 AppBarLayoutHelper.forceExpandAppBarLayout(activity)
@@ -138,6 +140,11 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
             insets
         }
         return mBinding.root
+    }
+
+    override fun onDestroyView() {
+        mViewModel.playButtonDrawable.removeOnPropertyChangedCallback(mPlayButtonDrawableObserver)
+        super.onDestroyView()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -294,6 +301,12 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         // return false, allowing us to display a "play" button.
         mThreading.executeForeground(5000, this::updatePlayButton)
     }
+
+    private val mPlayButtonDrawableObserver = BindingCallbackAdapter(object: BindingCallbackAdapter.Callback {
+        override fun onChanged() {
+            mBinding.btnPlay.setIconResource(mViewModel.playButtonDrawable.get())
+        }
+    })
 
     inner class ButtonListener {
         fun onPlayButtonClicked() {
