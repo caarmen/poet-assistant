@@ -78,6 +78,7 @@ robolectric-annotations = { group = "org.robolectric", name = "annotations", ver
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+androidBuiltInKotlin = { id = "com.android.built-in-kotlin", version.ref = "agp" }
 benmanes = { id = "com.github.ben-manes.versions", version.ref = "benmanes" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
