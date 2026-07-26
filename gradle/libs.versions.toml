@@ -29,7 +29,7 @@ ksp = "2.3.10"
 porterStemmer = "1.0.0"
 rhymer = "1.2.0"
 robolectric = "4.16.1"
-uiTestJunit4Android = "1.7.8" # 1.11.4 introduces androidx.compose.ui.R$id does not have member field 'int androidx_compose_ui_view_compose_view_context'
+uiTestJunit4Android = "1.11.4"
 
 [libraries]
 
