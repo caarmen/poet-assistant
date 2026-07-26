@@ -155,12 +155,6 @@ class ResultListFragment<out T: Any> : Fragment() {
         arguments?.let {
             if (it.containsKey(EXTRA_QUERY)) {
                 mViewModel.setQueryParams(ResultListViewModel.QueryParams(it.getString(EXTRA_QUERY), it.getString(EXTRA_FILTER)))
-            } else {
-                mTab?.let { tab ->
-                    if (ResultListFactory.isLoadWithoutQuerySupported(tab)) {
-                        mViewModel.setQueryParams(ResultListViewModel.QueryParams(null, null))
-                    }
-                }
             }
         }
     }
