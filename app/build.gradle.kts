@@ -187,9 +187,6 @@ android {
 jacoco {
     toolVersion = "0.8.12"
 }
-kapt {
-    correctErrorTypes = true
-}
 kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.fromTarget("11")
@@ -238,9 +235,9 @@ dependencies {
     api(libs.androidx.lifecycle.viewmodel.ktx)
 
     ksp(libs.androidx.room.compiler)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 
-    kaptTest(libs.hilt.android.compiler)
+    kspTest(libs.hilt.android.compiler)
 
     testImplementation(platform(libs.androidx.compose.bom))
     testImplementation(libs.androidx.arch.core.testing)
@@ -272,7 +269,7 @@ dependencies {
     androidTestImplementation(libs.google.test.parameter.injector)
     androidTestImplementation(libs.hilt.android.testing)
     androidTestImplementation(libs.robolectric.annotations)
-    kaptAndroidTest(libs.hilt.android.compiler)
+    kspAndroidTest(libs.hilt.android.compiler)
 
     androidTestUtil(libs.androidx.test.orchesetrator)
 }
