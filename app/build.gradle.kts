@@ -27,6 +27,7 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
     id("jacoco")
 }
 android {
@@ -83,13 +84,10 @@ android {
                 java.directories.add("$projectDir/src/test/kotlin")
             }
         }
-
+    }
+    room {
         // used by Room, to test migrations
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments["room.schemaLocation"] = projectDir.resolve("schemas").toString()
-            }
-        }
+        schemaDirectory(projectDir.resolve("src/androidTest/schemas").toString())
     }
 
     buildTypes {
@@ -378,5 +376,11 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     )
     reports {
         xml.required = true
+    }
+}
+
+configurations.all {
+    resolutionStrategy {
+        force("org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.1")
     }
 }

@@ -33,6 +33,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+import androidx.test.platform.app.InstrumentationRegistry;
+
 import ca.rmen.android.poetassistant.UserDb;
 
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
@@ -47,8 +49,8 @@ public class DbMigrationTest {
     public MigrationTestHelper helper;
 
     public DbMigrationTest() {
-        helper = new MigrationTestHelper(getInstrumentation(),
-                UserDb.class.getName(),
+        helper = new MigrationTestHelper(InstrumentationRegistry.getInstrumentation(),
+                UserDb.class.getCanonicalName(),
                 new FrameworkSQLiteOpenHelperFactory());
     }
 
