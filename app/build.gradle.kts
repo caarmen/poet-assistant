@@ -192,18 +192,47 @@ kotlin {
         jvmTarget = JvmTarget.fromTarget("11")
     }
 }
-android.applicationVariants.configureEach {
-    val copyLicenseFilesTask = tasks.register<Copy>("copyLicenseFilesFor${name.replaceFirstChar{it.uppercase()}}") {
-        from(project.rootDir)
-        into(project.layout.buildDirectory.dir("generated/license_assets/"))
-        include("LICENSE.txt")
-        include("LICENSE-rhyming-dictionary.txt")
-        include("LICENSE-thesaurus-wordnet.txt")
-        include("LICENSE-dictionary-wordnet.txt")
-        include("LICENSE-google-ngram-dataset.txt")
+
+androidComponents {
+    onVariants { variant ->
+        val capitalName = variant.name.replaceFirstChar { it.uppercase() }
+
+        val copyLicenseFilesTask = tasks.register<CopyLicenseTask>("copyLicenseFilesFor$capitalName") {
+            outputDir.set(layout.buildDirectory.dir("generated/license_assets/"))
+        }
+
+        // 'sources' is a property defined on the variant parameter here
+        variant.sources.assets?.addGeneratedSourceDirectory(
+            copyLicenseFilesTask,
+            CopyLicenseTask::outputDir
+        )
     }
-    mergeAssetsProvider.configure {
-        dependsOn(copyLicenseFilesTask)
+}
+
+// Define a custom task that uses DirectoryProperty natively compatible with AGP 9+
+abstract class CopyLicenseTask : DefaultTask() {
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @TaskAction
+    fun execute() {
+        val target = outputDir.get().asFile
+        target.mkdirs()
+
+        val licenses = listOf(
+            "LICENSE.txt",
+            "LICENSE-rhyming-dictionary.txt",
+            "LICENSE-thesaurus-wordnet.txt",
+            "LICENSE-dictionary-wordnet.txt",
+            "LICENSE-google-ngram-dataset.txt"
+        )
+
+        for (license in licenses) {
+            val sourceFile = project.rootDir.resolve(license)
+            if (sourceFile.exists()) {
+                sourceFile.copyTo(target.resolve(license), overwrite = true)
+            }
+        }
     }
 }
 
