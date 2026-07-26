@@ -77,29 +77,10 @@ android {
         // testInstrumentationRunnerArguments clearPackageData: "true", coverage: "true", coverageFilePath: "/data/data/ca.rmen.android.poetassistant.test/"
 
 
-        // used by Room, to test migrations
         sourceSets {
-            getByName("main") {
-                java.directories.add("src/main/kotlin")
-                assets.directories.add(project.layout.buildDirectory.dir("generated/license_assets").get().asFile.path)
-            }
-            getByName("androidTest") {
-                assets.directories.add("$projectDir/src/androidTest/schemas")
-                java.directories.addAll(listOf(
-                    "$projectDir/src/androidTest/kotlin",
-                    "$projectDir/src/sharedTest/java",
-                    "$projectDir/src/sharedTest/kotlin",
-                ))
-            }
+            // Still need to declare the location of robolectric shadows the old way.
             getByName("test") {
-                manifest.srcFile("src/test/AndroidManifest.xml")
-                java.directories.addAll(
-                    listOf(
-                        "$projectDir/src/test/kotlin",
-                        "$projectDir/src/sharedTest/java",
-                        "$projectDir/src/sharedTest/kotlin",
-                    )
-                )
+                java.directories.add("$projectDir/src/test/kotlin")
             }
         }
 
@@ -169,6 +150,26 @@ android {
         }
     }
 
+    sourceSets.named("main") {
+        java.directories.add("src/main/kotlin")
+        assets.directories.add(project.layout.buildDirectory.dir("generated/license_assets").get().asFile.path)
+    }
+    sourceSets.named("androidTest") {
+        assets.directories.add("$projectDir/src/androidTest/schemas")
+        java.directories.add("$projectDir/src/sharedTest/java")
+        kotlin.directories.addAll(listOf(
+            "$projectDir/src/androidTest/kotlin",
+            "$projectDir/src/sharedTest/kotlin",
+        ))
+    }
+    sourceSets.named("test") {
+        manifest.srcFile("src/test/AndroidManifest.xml")
+        java.directories.add("$projectDir/src/sharedTest/java")
+        kotlin.directories.addAll(listOf(
+            "$projectDir/src/test/kotlin",
+            "$projectDir/src/sharedTest/kotlin",
+        ))
+    }
     testOptions {
         // Uncomment below to use orchestrator for tests
         // execution "ANDROIDX_TEST_ORCHESTRATOR"
@@ -183,22 +184,6 @@ android {
 
 }
 
-android.sourceSets.named("androidTest") {
-    assets.directories.add("$projectDir/src/androidTest/schemas")
-    java.directories.add("$projectDir/src/sharedTest/java")
-    kotlin.directories.addAll(listOf(
-        "$projectDir/src/androidTest/kotlin",
-        "$projectDir/src/sharedTest/kotlin",
-    ))
-}
-android.sourceSets.named("test") {
-    manifest.srcFile("src/test/AndroidManifest.xml")
-    java.directories.add("$projectDir/src/sharedTest/java")
-    kotlin.directories.addAll(listOf(
-        "$projectDir/src/test/kotlin",
-        "$projectDir/src/sharedTest/kotlin",
-    ))
-}
 jacoco {
     toolVersion = "0.8.12"
 }
