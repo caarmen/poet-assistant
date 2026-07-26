@@ -27,7 +27,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     id("jacoco")
-    id("kotlin-kapt")
     id("kotlin-android")
 }
 android {
@@ -184,6 +183,22 @@ android {
 
 }
 
+android.sourceSets.named("androidTest") {
+    assets.directories.add("$projectDir/src/androidTest/schemas")
+    java.directories.add("$projectDir/src/sharedTest/java")
+    kotlin.directories.addAll(listOf(
+        "$projectDir/src/androidTest/kotlin",
+        "$projectDir/src/sharedTest/kotlin",
+    ))
+}
+android.sourceSets.named("test") {
+    manifest.srcFile("src/test/AndroidManifest.xml")
+    java.directories.add("$projectDir/src/sharedTest/java")
+    kotlin.directories.addAll(listOf(
+        "$projectDir/src/test/kotlin",
+        "$projectDir/src/sharedTest/kotlin",
+    ))
+}
 jacoco {
     toolVersion = "0.8.12"
 }
