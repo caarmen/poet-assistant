@@ -46,6 +46,7 @@ android {
         compose = true
         dataBinding = true
         buildConfig = true
+        resValues = true
     }
 
     testCoverage {
@@ -53,7 +54,6 @@ android {
     }
     lint {
         abortOnError = true
-        textReport = true
         ignoreWarnings = true
         disable.add("RestrictedApi")  // https://stackoverflow.com/questions/45648530/restricted-api-lint-error-when-deleting-table-room-persistence
         checkReleaseBuilds = false
@@ -81,20 +81,20 @@ android {
         // used by Room, to test migrations
         sourceSets {
             getByName("main") {
-                java.srcDirs(listOf("$projectDir/src/main/kotlin"))
-                assets.srcDirs(project.layout.buildDirectory.dir("generated/license_assets").get().asFile)
+                java.directories.add("src/main/kotlin")
+                assets.directories.add(project.layout.buildDirectory.dir("generated/license_assets").get().asFile.path)
             }
             getByName("androidTest") {
-                assets.srcDirs(files("$projectDir/src/androidTest/schemas"))
-                java.srcDirs(
+                assets.directories.add("$projectDir/src/androidTest/schemas")
+                java.directories.addAll(listOf(
                     "$projectDir/src/androidTest/kotlin",
                     "$projectDir/src/sharedTest/java",
                     "$projectDir/src/sharedTest/kotlin",
-                )
+                ))
             }
             getByName("test") {
                 manifest.srcFile("src/test/AndroidManifest.xml")
-                java.srcDirs(
+                java.directories.addAll(
                     listOf(
                         "$projectDir/src/test/kotlin",
                         "$projectDir/src/sharedTest/java",
