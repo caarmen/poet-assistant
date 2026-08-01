@@ -37,10 +37,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ProcessLifecycleOwner
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.Share
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
-class PoemAudioExport(val context: Context, private val threading: Threading, private val mTts: Tts) {
+class PoemAudioExport(val context: Context, val mTts: Tts) {
     companion object {
         private val TAG = Constants.TAG + PoemAudioExport::class.java.simpleName
         private const val EXPORT_PROGRESS_NOTIFICATION_ID = 1336
@@ -49,7 +54,11 @@ class PoemAudioExport(val context: Context, private val threading: Threading, pr
         private const val TEMP_AUDIO_FILE = "poem.wav"
     }
 
-    fun speakToFile(textToSpeech: TextToSpeech, text: String) {
+    fun speakToFile(
+        textToSpeech: TextToSpeech, text: String,
+        coroutineScope: CoroutineScope,
+        ioDispatcher: CoroutineDispatcher,
+    ) {
         val audioFile = getAudioFile()
         if (audioFile == null) {
             notifyPoemAudioFailed()
@@ -57,8 +66,14 @@ class PoemAudioExport(val context: Context, private val threading: Threading, pr
             mTts.getTtsLiveData().observeForever(mTtsObserver)
             notifyPoemAudioInProgress()
             val textToRead = text.substring(0, Math.min(text.length, TextToSpeech.getMaxSpeechInputLength()))
-            threading.execute({ deleteExistingAudioFile(audioFile) },
-                    { speakToFile(textToSpeech, textToRead, audioFile) })
+            coroutineScope.launch {
+                withContext(ioDispatcher) {
+                    deleteExistingAudioFile(audioFile)
+                }
+                withContext(Dispatchers.Main) {
+                    speakToFile(textToSpeech, textToRead, audioFile)
+                }
+            }
         }
     }
 

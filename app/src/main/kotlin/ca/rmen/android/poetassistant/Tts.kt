@@ -31,6 +31,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 
 class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs, private val threading: Threading) {
     companion object {
@@ -115,10 +117,10 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
         }
     }
 
-    fun speakToFile(text: String) {
+    fun speakToFile(text: String, coroutineScope: CoroutineScope, ioDispatcher: CoroutineDispatcher) {
         if (!isReady()) return
-        val poemAudioExport = PoemAudioExport(context, threading, this)
-        poemAudioExport.speakToFile(mTextToSpeech!!, text)
+        val poemAudioExport = PoemAudioExport(context, this)
+        poemAudioExport.speakToFile(mTextToSpeech!!, text, coroutineScope, ioDispatcher)
     }
 
     fun stop() {

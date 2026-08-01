@@ -39,19 +39,23 @@ import androidx.annotation.StringRes
 import android.text.Selection
 import android.text.TextUtils
 import android.util.Log
+import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.databinding.LiveDataMapping
+import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.dictionaries.Share
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Inject
 
 @HiltViewModel
 class ReaderViewModel @Inject constructor(
     application: Application,
     private val mTts: Tts,
+    @IODispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : AndroidViewModel(application) {
     companion object {
         private val TAG = Constants.TAG + ReaderViewModel::class.java.simpleName
@@ -160,7 +164,7 @@ class ReaderViewModel @Inject constructor(
 
     fun speakToFile() {
         poem.get()?.let {
-            mTts.speakToFile(it)
+            mTts.speakToFile(it, viewModelScope, ioDispatcher)
             snackbarText.value = SnackbarText(R.string.share_poem_audio_snackbar)
         }
     }
