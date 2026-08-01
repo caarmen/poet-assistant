@@ -19,8 +19,6 @@
 
 package ca.rmen.android.poetassistant.di
 
-import ca.rmen.android.poetassistant.CoroutineThreading
-import ca.rmen.android.poetassistant.Threading
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,10 +30,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 @Module
 class ThreadingModule {
-    @Provides
-    @Singleton
-    fun providesThreading() : Threading = CoroutineThreading(Dispatchers.Default, Dispatchers.Main)
-
     @Provides
     @Singleton
     @IODispatcher

@@ -28,14 +28,12 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import ca.rmen.android.poetassistant.InstrumentationThreading
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.UserDb
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
 import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.Theme
-import ca.rmen.android.poetassistant.Threading
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -48,7 +46,6 @@ object ActivityTestRules {
     @EntryPoint
     @InstallIn(SingletonComponent::class)
     interface ActivityTestRulesEntryPoint {
-        fun threading(): Threading
         fun tts(): Tts
         fun userDb(): UserDb
         fun embeddedDb(): EmbeddedDb
@@ -57,11 +54,6 @@ object ActivityTestRules {
     fun beforeActivityLaunched(targetContext: Context) {
         IdlingRegistry.getInstance().register(TtsIdlingResource(targetContext))
 
-        val threading = EntryPointAccessors.fromApplication(targetContext.applicationContext, ActivityTestRulesEntryPoint::class.java).threading() as InstrumentationThreading
-        val threadingCountingIdlingResource = threading.getCountingIdlingResource()
-        if (threadingCountingIdlingResource != null) {
-            IdlingRegistry.getInstance().register(threadingCountingIdlingResource)
-        }
         cleanup(targetContext)
         ProcessTextRouter.setEnabled(targetContext, true)
     }
