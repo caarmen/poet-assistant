@@ -29,9 +29,10 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.CoroutineScope
 import java.util.TreeSet
 
-class FavoritesLiveData(context: Context) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context) {
+class FavoritesLiveData(context: Context, coroutineScope: CoroutineScope) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + FavoritesLiveData::class.java.simpleName
     }

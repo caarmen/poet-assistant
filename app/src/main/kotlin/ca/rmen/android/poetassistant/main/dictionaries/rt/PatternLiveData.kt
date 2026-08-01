@@ -32,8 +32,9 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.search.Patterns
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.CoroutineScope
 
-class PatternLiveData constructor(context: Context, private val query: String) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context) {
+class PatternLiveData(context: Context, coroutineScope: CoroutineScope, private val query: String) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + PatternLiveData::class.java.simpleName
     }

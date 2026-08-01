@@ -31,11 +31,12 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.CoroutineScope
 import java.util.Calendar
 import java.util.Random
 import java.util.TimeZone
 
-class WotdLiveData(context: Context) : ResultListLiveData<ResultListData<WotdEntryViewModel>>(context) {
+class WotdLiveData(context: Context, coroutineScope: CoroutineScope) : ResultListLiveData<ResultListData<WotdEntryViewModel>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + WotdLiveData::class.java.simpleName
     }

@@ -27,8 +27,9 @@ import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.CoroutineScope
 
-class DictionaryLiveData(context: Context, private val query: String) : ResultListLiveData<ResultListData<DictionaryEntry.DictionaryEntryDetails>>(context) {
+class DictionaryLiveData(context: Context, coroutineScope: CoroutineScope, private val query: String) : ResultListLiveData<ResultListData<DictionaryEntry.DictionaryEntryDetails>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + DictionaryLiveData::class.java.simpleName
     }

@@ -31,9 +31,10 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.rhymer.RhymeResult
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.CoroutineScope
 import java.util.TreeSet
 
-class RhymerLiveData(context: Context, val query: String, val filter: String?) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context) {
+class RhymerLiveData(context: Context, coroutineScope: CoroutineScope, val query: String, val filter: String?) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
 
     companion object {
         private val TAG = Constants.TAG + RhymerLiveData::class.java.simpleName
