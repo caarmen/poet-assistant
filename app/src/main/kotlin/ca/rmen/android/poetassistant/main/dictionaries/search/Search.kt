@@ -177,17 +177,12 @@ class Search constructor(
      * Lookup a random word. Update the view pager tabs with the results of this word.
      */
 
-    fun lookupRandom() {
+    suspend fun lookupRandom() {
         Log.d(TAG, "lookupRandom")
-        threading.execute(
-                { dictionary.getRandomEntry() },
-                { entry ->
-                    entry?.let {
-                        search(entry.word)
-                        viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false)
-                    }
-                }
-        )
+        dictionary.getRandomEntry()?.let { entry ->
+            search(entry.word)
+            viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false)
+        }
     }
 
     /**

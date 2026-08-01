@@ -62,6 +62,7 @@ import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.widget.CABEditText
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 // Split into separate impl and base class to get full code coverage stats:
@@ -248,7 +249,9 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
                 return true
             }
             R.id.action_random_word -> {
-                mSearch.lookupRandom()
+                lifecycleScope.launch {
+                    mSearch.lookupRandom()
+                }
                 return true
             }
             R.id.action_settings -> {

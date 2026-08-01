@@ -26,6 +26,7 @@ import androidx.lifecycle.MutableLiveData
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
@@ -48,7 +49,7 @@ class SettingsViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
     val snackbarText = MutableLiveData<String>()
-    private val mListener: SettingsChangeListener = SettingsChangeListener(application, dictionary, settingsPrefs)
+    private val mListener: SettingsChangeListener = SettingsChangeListener(application, dictionary, settingsPrefs, viewModelScope)
 
     init {
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mListener)

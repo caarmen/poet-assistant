@@ -25,11 +25,13 @@ import android.app.job.JobService
 import android.os.Build
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 // Split into separate impl and base class to get full code coverage stats:
 // https://medium.com/livefront/dagger-hilt-testing-injected-android-components-with-code-coverage-30089a1f6872
@@ -45,15 +47,16 @@ open class WotdJobServiceImpl : JobService() {
     }
 
     lateinit var dictionary: Dictionary
-    lateinit var threading: Threading
+    private val jobServiceScope = CoroutineScope(SupervisorJob())
 
     override fun onStartJob(params: JobParameters?): Boolean {
         Log.v(TAG, "onStartJob: params=$params")
         val entryPoint = EntryPointAccessors.fromApplication(applicationContext, NonAndroidEntryPoint::class.java)
-        entryPoint.threading().execute({
+        jobServiceScope.launch(entryPoint.ioDispatcher()) {
             Wotd.notifyWotd(applicationContext, entryPoint.dictionary())
             jobFinished(params, false)
-        })
+
+        }
         return true
     }
 

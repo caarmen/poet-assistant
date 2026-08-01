@@ -12,6 +12,7 @@ import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)
@@ -28,5 +29,6 @@ interface NonAndroidEntryPoint {
     fun suggestions(): Suggestions
     fun prefs(): SettingsPrefs
     fun threading(): Threading
+    @IODispatcher fun ioDispatcher(): CoroutineDispatcher
     fun resultListAdapterFactory(): ResultListAdapterFactory
 }

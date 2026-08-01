@@ -29,10 +29,14 @@ import ca.rmen.android.poetassistant.Theme
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter
 import ca.rmen.android.poetassistant.wotd.Wotd
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class SettingsChangeListener(
     private val context: Context,
-    private val dictionary: Dictionary, private val settingsPrefs: SettingsPrefs
+    private val dictionary: Dictionary,
+    private val settingsPrefs: SettingsPrefs,
+    private val scope: CoroutineScope,
 ) : SharedPreferences.OnSharedPreferenceChangeListener {
     companion object {
         private val TAG = Constants.TAG + SettingsChangeListener::class.java.simpleName
@@ -48,7 +52,9 @@ class SettingsChangeListener(
             }
 
             SettingsPrefs.PREF_WOTD_ENABLED, SettingsPrefs.PREF_WOTD_NOTIFICATION_PRIORITY -> {
-                Wotd.setWotdEnabled(context, dictionary, settingsPrefs.isWotdEnabled)
+                scope.launch {
+                    Wotd.setWotdEnabled(context, dictionary, settingsPrefs.isWotdEnabled)
+                }
             }
 
             SettingsPrefs.PREF_SELECTION_LOOKUP -> {
