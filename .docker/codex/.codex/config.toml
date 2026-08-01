@@ -1,0 +1,3 @@
+[[skills.config]]
+path = "/opt/myproj/.vibe/skills"
+enabled = false
