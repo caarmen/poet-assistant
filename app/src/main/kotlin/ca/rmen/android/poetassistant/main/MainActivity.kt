@@ -29,7 +29,6 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.MainThread
-import androidx.annotation.WorkerThread
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import android.text.TextUtils
@@ -46,7 +45,6 @@ import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.about.AboutActivity
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding
 import ca.rmen.android.poetassistant.di.IODispatcher
@@ -65,6 +63,7 @@ import ca.rmen.android.poetassistant.widget.CABEditText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 // Split into separate impl and base class to get full code coverage stats:
@@ -87,7 +86,6 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
     @Inject lateinit var mThesaurus: Thesaurus
     @Inject lateinit var mDictionary: Dictionary
     @Inject lateinit var mFavorites: Favorites
-    @Inject lateinit var mThreading: Threading
 
     @IODispatcher @Inject lateinit var ioDispatcher: CoroutineDispatcher
 
@@ -125,13 +123,13 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
 
         mSearch = Search(this, mBinding.viewPager, dictionary = mDictionary, ioDispatcher =  ioDispatcher)
         // Load our dictionaries when the activity starts, so that the first search can already be fast.
-        mThreading.execute({ loadDatabase() },
-                {
-                    onDatabaseLoadResult(it)
-                    if (Intent.ACTION_SEARCH == intent.action) {
-                        handleSearchIntent(intent)
-                    }
-                })
+        lifecycleScope.launch {
+            val dbLoaded = loadDatabase()
+            onDatabaseLoadResult(dbLoaded)
+            if (Intent.ACTION_SEARCH == intent.action) {
+                handleSearchIntent(intent)
+            }
+        }
         volumeControlStream = AudioManager.STREAM_MUSIC
         getInsets(mBinding.toolbar) { view, insets ->
             view.updatePadding(
@@ -172,9 +170,10 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
         super.onPause()
     }
 
-    @WorkerThread
-    private fun loadDatabase(): Boolean {
-        return mRhymer.isLoaded() && mThesaurus.isLoaded() && mDictionary.isLoaded()
+    private suspend fun loadDatabase(): Boolean {
+        return withContext(ioDispatcher) {
+            mRhymer.isLoaded() && mThesaurus.isLoaded() && mDictionary.isLoaded()
+        }
     }
 
     @MainThread
