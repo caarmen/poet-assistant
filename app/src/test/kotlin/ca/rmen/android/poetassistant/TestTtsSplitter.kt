@@ -17,131 +17,127 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant;
+package ca.rmen.android.poetassistant
 
+import org.junit.Assert.assertEquals
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+@RunWith(RobolectricTestRunner::class)
+class TestTtsSplitter {
 
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-
-@RunWith(RobolectricTestRunner.class)
-public class TestTtsSplitter {
     @Test
-    public void testSplit1() {
+    fun testSplit1() {
         testSplit("To be or not to be",
-                "To be or not to be");
+                "To be or not to be")
     }
 
     @Test
-    public void testSplit2() {
+    fun testSplit2() {
         testSplit("To be or not to be.. that is the question",
-                "To be or not to be. that is the question");
+                "To be or not to be. that is the question")
     }
 
     @Test
-    public void testSplit3() {
+    fun testSplit3() {
         testSplit("To be or not to be... that is the question",
                 "To be or not to be",
                 "",
-                " that is the question");
+                " that is the question")
     }
 
     @Test
-    public void testSplit4() {
+    fun testSplit4() {
         testSplit("To be or not to be.... that is the question",
                 "To be or not to be",
                 "",
                 "",
-                " that is the question");
+                " that is the question")
     }
 
     @Test
-    public void testSplit5() {
+    fun testSplit5() {
         testSplit("To be or not to be..... that is the question",
                 "To be or not to be",
                 "",
                 "",
                 "",
-                " that is the question");
+                " that is the question")
     }
 
     @Test
-    public void testSplit6() {
+    fun testSplit6() {
         testSplit("To be or not to be...... that is the question",
                 "To be or not to be",
                 "",
                 "",
                 "",
                 "",
-                " that is the question");
+                " that is the question")
     }
 
     @Test
-    public void testSplit7() {
+    fun testSplit7() {
         testSplit("To be  ... or not to be... that is the question",
                 "To be  ",
                 "",
                 " or not to be",
                 "",
-                " that is the question");
+                " that is the question")
     }
 
     @Test
-    public void testSplit8() {
+    fun testSplit8() {
         testSplit("To be or not to be. That is the question",
-                "To be or not to be. That is the question");
+                "To be or not to be. That is the question")
     }
 
     @Test
-    public void testSplit9() {
+    fun testSplit9() {
         testSplit("To be or not to be. That. is. the. question",
-                "To be or not to be. That. is. the. question");
+                "To be or not to be. That. is. the. question")
     }
 
     @Test
-    public void testSplit10() {
+    fun testSplit10() {
         testSplit("To be or not to be.. That.. is.. the.. question",
-                "To be or not to be. That. is. the. question");
+                "To be or not to be. That. is. the. question")
     }
 
     @Test
-    public void testSplit11() {
+    fun testSplit11() {
         testSplit("To be or not to be.\nThat..\nis.\n the\nquestion",
-                "To be or not to be.\nThat.\nis.\n the\nquestion");
+                "To be or not to be.\nThat.\nis.\n the\nquestion")
     }
 
     @Test
-    public void testSplitDotsOnly1() {
-        testSplit(".");
+    fun testSplitDotsOnly1() {
+        testSplit(".")
     }
 
     @Test
-    public void testSplitDotsOnly2() {
-        testSplit("..");
+    fun testSplitDotsOnly2() {
+        testSplit("..")
     }
 
     @Test
-    public void testSplitDotsOnly3() {
-        testSplit("...", "");
+    fun testSplitDotsOnly3() {
+        testSplit("...", "")
     }
 
     @Test
-    public void testSplitDotsOnly4() {
-        testSplit("....", "", "");
+    fun testSplitDotsOnly4() {
+        testSplit("....", "", "")
     }
 
     @Test
-    public void testEmpty() {
-        testSplit("");
+    fun testEmpty() {
+        testSplit("")
     }
 
-    private void testSplit(String input, String... expectedTokens) {
-        List<String> tokens = TtsSplitter.INSTANCE.split(input);
-        assertEquals(Arrays.asList(expectedTokens), tokens);
+    private fun testSplit(input: String, vararg expectedTokens: String) {
+        val tokens = TtsSplitter.split(input)
+        assertEquals(expectedTokens.asList(), tokens)
     }
 }
