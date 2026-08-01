@@ -55,7 +55,6 @@ import org.junit.Assert.fail
 
 object CustomChecks {
 
-    @JvmStatic
     fun checkRhymes(context: Context, firstRhyme: String, secondRhyme: String) {
         // Make sure we're in the rhymer tab
         TestUiUtils.checkTitleStripOrTab(context, R.string.tab_rhymer)
@@ -81,14 +80,12 @@ object CustomChecks {
         secondRhymeWord.check(matches(withText(secondRhyme)))
     }
 
-    @JvmStatic
     fun checkRhyme(expectedRhyme: String) {
         // Scroll to the item in case it's not visible
         onView(allOf(withId(R.id.rhymer_recycler_view), isDisplayed()))
                 .perform(scrollTo<ResultListAdapter.ResultListEntryViewHolder>(hasDescendant(withText(expectedRhyme))))
     }
 
-    @JvmStatic
     fun checkPatterns(context: Context, query: String, vararg patterns: String) {
         checkTitleStripOrTab(context, R.string.tab_pattern)
         val emptyViewMatch: Matcher<View> = allOf(withId(R.id.empty), withText(context.getString(R.string.empty_pattern_list_with_query, query)))
@@ -108,7 +105,6 @@ object CustomChecks {
         }
     }
 
-    @JvmStatic
     fun checkStarredInList(entry: String) {
         val star = onView(
                 allOf(withId(R.id.btn_star_result),
@@ -119,7 +115,6 @@ object CustomChecks {
         star.check(matches(isChecked()))
     }
 
-    @JvmStatic
     fun checkAllStarredWords(context: Context, vararg expectedStarredWords: String) {
         checkTitleStripOrTab(context, R.string.tab_favorites)
         val emptyViewMatch: Matcher<View> = allOf(withId(R.id.empty), withText(R.string.empty_favorites_list))
@@ -136,7 +131,6 @@ object CustomChecks {
         }
     }
 
-    @JvmStatic
     fun checkSingleRootView(context: Context) {
         SystemClock.sleep(500)
         val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -151,7 +145,6 @@ object CustomChecks {
         }
     }
 
-    @JvmStatic
     fun checkSearchSuggestions(vararg suggestions: String) {
         SystemClock.sleep(1000)
         Espresso.onIdle()
@@ -176,7 +169,6 @@ object CustomChecks {
         }
     }
 
-    @JvmStatic
     fun checkClipboard(context: Context, clipboardContent: String) {
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         assertNotNull(clipboard)
@@ -188,7 +180,6 @@ object CustomChecks {
         assertEquals(clipboardContent, item.text)
     }
 
-    @JvmStatic
     fun checkFirstDefinition(expectedFirstDefinition: String) {
         val firstDefinition = onView(
                 allOf(withId(R.id.definition), withText(expectedFirstDefinition),
@@ -201,7 +192,6 @@ object CustomChecks {
         firstDefinition.check(matches(withText(expectedFirstDefinition)))
     }
 
-    @JvmStatic
     fun checkFirstSynonym(expectedFirstSynonym: String) {
         val firstSynonymWord = onView(
                 allOf(withId(R.id.text1), withText(expectedFirstSynonym),
@@ -214,7 +204,6 @@ object CustomChecks {
         firstSynonymWord.check(matches(withText(expectedFirstSynonym)))
     }
 
-    @JvmStatic
     fun checkSynonym(expectedSynonym: String) {
         // Scroll to the item in case it's not visible
         onView(allOf(withId(R.id.thesaurus_recycler_view), isDisplayed()))

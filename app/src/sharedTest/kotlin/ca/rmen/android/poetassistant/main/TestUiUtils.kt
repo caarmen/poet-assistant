@@ -59,7 +59,6 @@ object TestUiUtils {
 
     private val TAG = Constants.TAG + TestUiUtils::class.simpleName
 
-    @JvmStatic
     fun openMenuItem(@StringRes titleRes: Int) {
         getInstrumentation().waitForIdleSync()
         swipeDown()
@@ -79,7 +78,6 @@ object TestUiUtils {
         onView(allOf(withId(R.id.title), withText(titleRes), isDisplayed())).perform(click())
     }
 
-    @JvmStatic
     fun swipeViewPagerRight(count: Int) {
         for (i in 0 until count) {
             onView(allOf(withId(android.R.id.content), isDisplayed())).perform(swipeRight())
@@ -87,7 +85,6 @@ object TestUiUtils {
         SystemClock.sleep(200)
     }
 
-    @JvmStatic
     fun swipeViewPagerLeft(count: Int) {
         for (i in 0 until count) {
             onView(allOf(withId(android.R.id.content), isDisplayed())).perform(swipeLeft())
@@ -95,7 +92,6 @@ object TestUiUtils {
         SystemClock.sleep(200)
     }
 
-    @JvmStatic
     fun checkTitleStripOrTab(context: Context, @StringRes titleRes: Int) {
         if (context.resources.getBoolean(R.bool.tab_text)) {
             checkSelectedTab(context, titleRes)
@@ -128,7 +124,6 @@ object TestUiUtils {
                 .perform(scrollTo<ResultListAdapter.ResultListEntryViewHolder>(hasDescendant(withText(prefTitleRes))))
     }
 
-    @JvmStatic
     fun clickPreference(@StringRes prefTitleRes: Int) {
         scrollToPreference(prefTitleRes)
         // click on the preference

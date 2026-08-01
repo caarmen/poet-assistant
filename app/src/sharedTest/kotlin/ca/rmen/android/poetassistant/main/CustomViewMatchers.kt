@@ -30,7 +30,6 @@ import org.hamcrest.TypeSafeMatcher
 // This is generated from the test recorder
 object CustomViewMatchers {
 
-    @JvmStatic
     fun childAtPosition(parentMatcher: Matcher<View>, position: Int): Matcher<View> {
         return object : TypeSafeMatcher<View>() {
             override fun describeTo(description: Description) {
@@ -59,7 +58,6 @@ object CustomViewMatchers {
         }
     }
 
-    @JvmStatic
     fun withAdapterItemCount(count: Int): Matcher<View> {
         return object : BoundedMatcher<View, RecyclerView>(RecyclerView::class.java) {
             override fun describeTo(description: Description) {

@@ -36,7 +36,6 @@ import org.hamcrest.Matchers.allOf
 // thanks to http://stackoverflow.com/questions/33382344/espresso-test-click-x-y-coordinates
 object CustomViewActions {
 
-    @JvmStatic
     fun longTap(x: Int, y: Int): ViewAction {
         return GeneralClickAction(
                 Tap.LONG,
@@ -52,7 +51,6 @@ object CustomViewActions {
                 0, 0)
     }
 
-    @JvmStatic
     fun scrollToEnd(): ViewAction {
         return object : ViewAction {
 
@@ -73,7 +71,6 @@ object CustomViewActions {
         }
     }
 
-    @JvmStatic
     fun clickLastChild(): ViewAction {
         return object : ViewAction {
 

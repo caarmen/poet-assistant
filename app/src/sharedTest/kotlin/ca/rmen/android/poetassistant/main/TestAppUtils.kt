@@ -60,7 +60,6 @@ import org.hamcrest.Matchers.not
  */
 object TestAppUtils {
 
-    @JvmStatic
     fun clearSearchHistory() {
         // click on the settings menu item
         TestUiUtils.openMenuItem(R.string.action_settings)
@@ -74,13 +73,11 @@ object TestAppUtils {
         pressBack()
     }
 
-    @JvmStatic
     fun openSearchView() {
         // Tap on the search icon in the action bar
         onView(allOf(withId(R.id.open_search_bar_text_view), isDisplayed())).perform(click())
     }
 
-    @JvmStatic
     fun typeQuery(query: String): ViewInteraction {
         // Type the query term and search
         getInstrumentation().waitForIdleSync()
@@ -91,7 +88,6 @@ object TestAppUtils {
         return searchAutoComplete
     }
 
-    @JvmStatic
     fun search(query: String) {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
@@ -106,7 +102,6 @@ object TestAppUtils {
         getInstrumentation().waitForIdleSync()
     }
 
-    @JvmStatic
     fun openThesaurus(context: Context, entry: String, expectedFirstSynonym: String) {
         onView(allOf(withId(R.id.btn_thesaurus),
                 hasSibling(withText(entry)),
@@ -116,7 +111,6 @@ object TestAppUtils {
         TestUiUtils.checkTitleStripOrTab(context, R.string.tab_thesaurus)
     }
 
-    @JvmStatic
     fun openThesaurusCleanLayout(context: Context, entry: String, expectedFirstSynonym: String) {
         onView(withText(entry)).perform(click())
         onView(withText(R.string.tab_thesaurus)).perform(click())
@@ -124,7 +118,6 @@ object TestAppUtils {
         TestUiUtils.checkTitleStripOrTab(context, R.string.tab_thesaurus)
     }
 
-    @JvmStatic
     fun openDictionary(context: Context, entry: String, expectedFirstDefinition: String) {
         onView(allOf(withId(R.id.btn_dictionary),
                 hasSibling(withText(entry)),
@@ -134,7 +127,6 @@ object TestAppUtils {
         CustomChecks.checkFirstDefinition(expectedFirstDefinition)
     }
 
-    @JvmStatic
     fun openDictionaryCleanLayout(context: Context, entry: String, expectedFirstDefinition: String) {
         onView(withText(entry)).perform(click())
         onView(withText(R.string.tab_dictionary)).perform(click())
@@ -142,7 +134,6 @@ object TestAppUtils {
         CustomChecks.checkFirstDefinition(expectedFirstDefinition)
     }
 
-    @JvmStatic
     fun starQueryWord() {
         val starIcon = onView(
                 allOf(withId(R.id.btn_star_query), isDisplayed()))
@@ -151,7 +142,6 @@ object TestAppUtils {
         starIcon.check(matches(isChecked()))
     }
 
-    @JvmStatic
     fun unStarQueryWord() {
         val starIcon = onView(
                 allOf(withId(R.id.btn_star_query), isDisplayed()))
@@ -161,7 +151,6 @@ object TestAppUtils {
                 .check(matches(isNotChecked()))
     }
 
-    @JvmStatic
     fun openFilter(expectedPrefilledFilter: String): ViewInteraction {
         getInstrumentation().waitForIdleSync()
         val vi = onView(allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()))
@@ -176,7 +165,6 @@ object TestAppUtils {
         return result
     }
 
-    @JvmStatic
     fun addFilter(tab: Tab, filter: String, firstExpectedFilteredMatch: String?) {
         @IdRes val recyclerViewId = ResultListFactory.getRecyclerViewId(tab)
         val filterView = openFilter("")
@@ -198,7 +186,6 @@ object TestAppUtils {
 
     }
 
-    @JvmStatic
     fun clearFilter(tab: Tab, firstExpectedNonFilteredMatch: String) {
         @IdRes val recyclerViewId = ResultListFactory.getRecyclerViewId(tab)
         onView(allOf(withId(R.id.btn_clear), withContentDescription(R.string.filter_clear), isDisplayed()))
@@ -211,20 +198,17 @@ object TestAppUtils {
                 .check(matches(withText(firstExpectedNonFilteredMatch)))
     }
 
-    @JvmStatic
     fun clearStarredWords() {
         onView(allOf(withId(R.id.btn_delete), withContentDescription(R.string.action_clear_favorites), isDisplayed())).perform(click())
         clickDialogPositiveButton(R.string.action_clear)
     }
 
-    @JvmStatic
     fun clickDialogPositiveButton(@StringRes labelRes: Int) {
         // Top ok on the confirmation dialog
         SystemClock.sleep(200)
         onView(allOf(withId(android.R.id.button1), withText(labelRes))).perform(scrollTo(), click())
     }
 
-    @JvmStatic
     fun typeAndSpeakPoem(poem: String) {
         typePoem(poem)
         speakPoem()
@@ -232,7 +216,6 @@ object TestAppUtils {
         getInstrumentation().waitForIdleSync()
     }
 
-    @JvmStatic
     fun typePoem(poem: String) {
         // The fab should be disabled until there is text
         val fab = onView(allOf(
@@ -248,13 +231,11 @@ object TestAppUtils {
         fab.check(matches(isEnabled()))
     }
 
-    @JvmStatic
     fun speakPoem() {
         val fab = onView(allOf(withClassName(`is`(MaterialButton::class.java.name)), isEnabled()))
         fab.perform(click())
     }
 
-    @JvmStatic
     fun clearPoem() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             TestUiUtils.openMenuItem(R.string.file)
@@ -266,7 +247,6 @@ object TestAppUtils {
         onView(allOf(withId(R.id.tv_text), isDisplayed())).check(matches(withText("")))
     }
 
-    @JvmStatic
     fun onNewIntent(activity: MainActivity, intent: Intent) {
         activity.handleNewIntent(intent)
     }

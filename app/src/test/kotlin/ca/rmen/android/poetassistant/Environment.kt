@@ -23,7 +23,6 @@ import android.app.Application
 import org.robolectric.RuntimeEnvironment
 
 object Environment {
-    @JvmStatic
     fun getApplication() : Application {
         return RuntimeEnvironment.application
     }
