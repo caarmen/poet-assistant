@@ -23,10 +23,6 @@ package ca.rmen.android.poetassistant
  * Run background and foreground tasks directly in the same thread, blocking.
  */
 class JunitThreading : Threading {
-    override fun executeForeground(delayMs: Long, body: () -> Unit) : Threading.Cancelable {
-        body.invoke()
-        return NoOpCancelable()
-    }
 
     override fun <T> execute(backgroundTask: () -> T, foregroundTask: ((T) -> Unit)?, errorTask: ((Throwable) -> Unit)?) {
         try {

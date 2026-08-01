@@ -26,11 +26,6 @@ interface Threading {
     }
 
     /**
-     * Run the given task on the ui thread
-     */
-    fun executeForeground(delayMs: Long = 0, body: () -> Unit) : Cancelable
-
-    /**
      * Run the given background task on a background thread. If a foreground task is specified, it will be
      * called on the UI thread with the successful result of the background task. If the background
      * task throws a Throwable and the error task is specified, the error task will be called with the
