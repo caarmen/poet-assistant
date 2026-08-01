@@ -49,6 +49,7 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.about.AboutActivity
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding
+import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
@@ -62,6 +63,7 @@ import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.widget.CABEditText
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -86,6 +88,8 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
     @Inject lateinit var mDictionary: Dictionary
     @Inject lateinit var mFavorites: Favorites
     @Inject lateinit var mThreading: Threading
+
+    @IODispatcher @Inject lateinit var ioDispatcher: CoroutineDispatcher
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: savedInstanceState = $savedInstanceState")
@@ -119,7 +123,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
         }
 
-        mSearch = Search(this, mBinding.viewPager, dictionary = mDictionary, threading = mThreading)
+        mSearch = Search(this, mBinding.viewPager, dictionary = mDictionary, ioDispatcher =  ioDispatcher)
         // Load our dictionaries when the activity starts, so that the first search can already be fast.
         mThreading.execute({ loadDatabase() },
                 {
@@ -220,8 +224,10 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             if (!userQuery.isNullOrEmpty()) query = userQuery.toString()
         }
         if (TextUtils.isEmpty(query)) return
-        mSearch.addSuggestions(query!!)
-        mSearch.search(query)
+        lifecycleScope.launch {
+            mSearch.addSuggestions(query!!)
+            mSearch.search(query)
+        }
     }
     private fun handleDeepLink(uri: Uri?) {
         Log.d(TAG, "handleDeepLink, uri=$uri")

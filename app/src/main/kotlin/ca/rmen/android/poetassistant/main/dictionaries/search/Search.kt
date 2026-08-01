@@ -23,13 +23,11 @@ import android.app.Activity
 import android.app.SearchManager
 import android.content.ContentValues
 import android.util.Log
-import androidx.annotation.MainThread
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.main.PagerAdapter
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
@@ -37,8 +35,10 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.widget.DebounceTextWatcher
 import ca.rmen.android.poetassistant.widget.ViewShownScheduler
 import com.google.android.material.search.SearchView
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Locale
 
 /**
@@ -55,7 +55,7 @@ class Search constructor(
     private val searchableActivity: Activity,
     private val viewPager: ViewPager,
     private val dictionary: Dictionary,
-    private val threading: Threading,
+    private val ioDispatcher: CoroutineDispatcher,
     ) {
     companion object {
         private val TAG = Constants.TAG + Search::class.java.simpleName
@@ -94,7 +94,7 @@ class Search constructor(
         }
 
         // Step 2: Listen for search events:
-        fun searchTermSelected(searchTerm: String) {
+        suspend fun searchTermSelected(searchTerm: String) {
             searchView.hide()
             if (searchTerm.isNotBlank()) {
                 addSuggestions(searchTerm)
@@ -104,12 +104,16 @@ class Search constructor(
 
         // Case 2a: Handle when the user taps enter from the search widget
         searchView.editText.setOnEditorActionListener { _, _, _ ->
-            searchTermSelected(searchView.editText.text.toString())
+            coroutineScope.launch {
+                searchTermSelected(searchView.editText.text.toString())
+            }
             false
         }
         // Case 2b: Handle when the user clicked on a search suggestion.
         adapter.listener = { value ->
-            searchTermSelected(value)
+            coroutineScope.launch {
+                searchTermSelected(value)
+            }
         }
     }
 
@@ -188,12 +192,11 @@ class Search constructor(
     /**
      * Adds the given suggestions to the search history, in a background thread.
      */
-    @MainThread
-    fun addSuggestions(suggestion: String) {
-        threading.execute({
+    suspend fun addSuggestions(suggestion: String) {
+        withContext(ioDispatcher) {
             val contentValues = ContentValues(1)
             contentValues.put(SearchManager.QUERY, suggestion)
             searchableActivity.contentResolver.insert(SuggestionsProvider.CONTENT_URI, contentValues)
-        })
+        }
     }
 }
