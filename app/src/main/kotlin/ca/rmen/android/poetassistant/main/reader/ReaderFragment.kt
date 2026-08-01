@@ -38,6 +38,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Threading
@@ -117,7 +118,10 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
                 AppBarLayoutHelper.forceExpandAppBarLayout(activity)
             }
         }
-        DebounceTextWatcher.debounce(mBinding.tvText) { mViewModel.updateWordCount() }
+        DebounceTextWatcher.debounce(
+            mBinding.tvText,
+            lifecycleScope
+        ) { mViewModel.updateWordCount() }
         TextPopupMenu.addSelectionPopupMenu(mBinding.root, mBinding.tvText, activity as OnWordClickListener)
         mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver)
         // Add padding to the bottom of the reader content when the keyboard is open.

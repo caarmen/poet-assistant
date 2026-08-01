@@ -41,6 +41,7 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.updatePadding
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorites
@@ -148,7 +149,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
         }
         val searchView = mBinding.searchView
         val suggestionsViewModel = ViewModelProvider(this).get(SuggestionsViewModel::class.java)
-        mSearch.setSearchView(searchView, suggestionsViewModel)
+        mSearch.setSearchView(searchView, suggestionsViewModel, lifecycleScope)
     }
 
     override fun onResume() {

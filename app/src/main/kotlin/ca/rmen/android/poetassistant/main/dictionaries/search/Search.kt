@@ -37,6 +37,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.widget.DebounceTextWatcher
 import ca.rmen.android.poetassistant.widget.ViewShownScheduler
 import com.google.android.material.search.SearchView
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -66,7 +67,11 @@ class Search constructor(
         mPagerAdapter = viewPager.adapter as PagerAdapter
     }
 
-    fun setSearchView(searchView: SearchView, suggestionsViewModel: SuggestionsViewModel) {
+    fun setSearchView(
+        searchView: SearchView,
+        suggestionsViewModel: SuggestionsViewModel,
+        coroutineScope: CoroutineScope
+    ) {
         searchView.hint =
             searchableActivity.getString(R.string.search_hint) // To hopefully prevent some crashes (!!) :(
         // Step 1: Setup suggestions
@@ -74,7 +79,7 @@ class Search constructor(
         val adapter = SuggestionsAdapter()
         suggestionsList.adapter = adapter
         // Step 1a: Fetch suggestions from the disk when the user stops typing.
-        DebounceTextWatcher.debounce(searchView.editText, {
+        DebounceTextWatcher.debounce(searchView.editText, coroutineScope, {
             val typedText = searchView.editText.text.toString()
             suggestionsViewModel.fetchSuggestions(typedText)
         })

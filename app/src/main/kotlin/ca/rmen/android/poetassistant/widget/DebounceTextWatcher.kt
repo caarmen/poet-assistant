@@ -22,23 +22,27 @@ package ca.rmen.android.poetassistant.widget
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.TextView
-import ca.rmen.android.poetassistant.Threading
-import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
-import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 object DebounceTextWatcher {
 
-    fun debounce(textView: TextView, body: () -> Unit) {
-        var cancelable : Threading.Cancelable? = null
-        val entryPoint = EntryPointAccessors.fromApplication(textView.context, NonAndroidEntryPoint::class.java)
-        val threading = entryPoint.threading()
+    fun debounce(textView: TextView, coroutineScope: CoroutineScope, body: () -> Unit) {
+        var job: Job? = null
         textView.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                cancelable?.cancel()
-                cancelable = threading.executeForeground(500, body)
+                job?.cancel()
+                job = coroutineScope.launch(Dispatchers.Main) {
+                    delay(500.milliseconds)
+                    body()
+                }
             }
 
             override fun afterTextChanged(p0: Editable?) {
