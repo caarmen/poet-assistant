@@ -27,6 +27,7 @@ import ca.rmen.android.poetassistant.Environment
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -92,7 +93,7 @@ class TestPoemFile {
 
     @Test
     @Config(sdk = [30]) // TODO investigate why this doesn't work starting from 31
-    fun testSave() {
+    fun testSave() = runTest {
         val text = "Roses are red\n"
         val callback = CountDownPoemFileCallback()
         PoemFile.save(Environment.getApplication(), mPoemUri, text, callback)
@@ -106,7 +107,7 @@ class TestPoemFile {
     }
 
     @Test
-    fun testSaveError() {
+    fun testSaveError() = runTest {
         val text = "Violets are blue\n"
         val callback = CountDownPoemFileCallback()
         val uri = Uri.parse("file:///invalid/folder/poem.txt")
@@ -117,7 +118,7 @@ class TestPoemFile {
     }
 
     @Test
-    fun testOpenNoFile() {
+    fun testOpenNoFile() = runTest {
         val callback = CountDownPoemFileCallback()
         Shadows.shadowOf(Environment.getApplication().contentResolver).registerInputStream(mPoemUri, object : InputStream() {
             override fun read() : Int {
@@ -131,7 +132,7 @@ class TestPoemFile {
     }
 
     @Test
-    fun testOpen() {
+    fun testOpen() = runTest {
         val text = "If you are a poet\n"
         val os = FileOutputStream(mPoemFile)
         os.write(text.toByteArray())

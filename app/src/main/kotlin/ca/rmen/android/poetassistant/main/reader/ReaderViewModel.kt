@@ -49,6 +49,7 @@ import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.dictionaries.Share
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -201,14 +202,18 @@ class ReaderViewModel @Inject constructor(
         val savedPoem = mPoemPrefs.getSavedPoem()
         if (savedPoem?.uri != null) {
             poem.get()?.let {
-                PoemFile.save(context, savedPoem.uri, it, mPoemFileCallback)
+                viewModelScope.launch {
+                    PoemFile.save(context, savedPoem.uri, it, mPoemFileCallback)
+                }
             }
         }
     }
 
     fun saveAs(context: Context, uri: Uri) {
         poem.get()?.let {
-            PoemFile.save(context, uri, it, mPoemFileCallback)
+            viewModelScope.launch {
+                PoemFile.save(context, uri, it, mPoemFileCallback)
+            }
         }
     }
 
@@ -235,7 +240,9 @@ class ReaderViewModel @Inject constructor(
     }
 
     fun open(context: Context, uri: Uri) {
-        PoemFile.open(context, uri, mPoemFileCallback)
+        viewModelScope.launch {
+            PoemFile.open(context, uri, mPoemFileCallback)
+        }
     }
 
     fun loadPoem() {
