@@ -30,12 +30,15 @@ import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.Tts
+import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider
 import ca.rmen.android.poetassistant.main.reader.PoemFile
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,7 +46,7 @@ class SettingsViewModel @Inject constructor(
     application: Application,
     private val mFavorites: Favorites,
     private val mTts: Tts,
-    private val mThreading: Threading,
+    @IODispatcher val ioDispatcher: CoroutineDispatcher,
     private val dictionary: Dictionary,
     private val settingsPrefs: SettingsPrefs,
 ) : AndroidViewModel(application) {
@@ -78,21 +81,37 @@ class SettingsViewModel @Inject constructor(
 
     fun exportFavorites(uri: Uri) {
         val fileDisplayName = PoemFile.readDisplayName(getApplication(), uri)
-        mThreading.execute({ mFavorites.exportFavorites(getApplication(), uri) },
-            { snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_success, fileDisplayName) },
-            { snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_error, fileDisplayName) })
+        viewModelScope.launch {
+            try {
+                mFavorites.exportFavorites(getApplication(), uri)
+                snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_success, fileDisplayName)
+            } catch(_: Exception) {
+                snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_error, fileDisplayName)
+            }
+        }
     }
 
     fun importFavorites(uri: Uri) {
         val fileDisplayName = PoemFile.readDisplayName(getApplication(), uri)
-        mThreading.execute({ mFavorites.importFavorites(getApplication(), uri) },
-            { snackbarText.value = getApplication<Application>().getString(R.string.import_favorites_success, fileDisplayName) },
-            { snackbarText.value = getApplication<Application>().getString(R.string.import_favorites_error, fileDisplayName) })
+        viewModelScope.launch {
+            try {
+                mFavorites.importFavorites(getApplication(), uri)
+            } catch (_: Exception) {
+                snackbarText.value = getApplication<Application>().getString(
+                    R.string.import_favorites_error,
+                    fileDisplayName
+                )
+            }
+        }
     }
 
     fun clearSearchHistory() {
-        mThreading.execute( { getApplication<Application>().contentResolver.delete(SuggestionsProvider.CONTENT_URI, null, null) },
-            { snackbarText.value = getApplication<Application>().getString(R.string.search_history_cleared) })
+        viewModelScope.launch {
+            withContext(ioDispatcher) {
+                getApplication<Application>().contentResolver.delete(SuggestionsProvider.CONTENT_URI, null, null)
+            }
+            snackbarText.value = getApplication<Application>().getString(R.string.search_history_cleared)
+        }
     }
 
     override fun onCleared() {

@@ -42,7 +42,7 @@ interface FavoriteDao {
     suspend fun insert(favorite: Favorite)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertAll(favorites: Array<Favorite>)
+    suspend fun insertAll(favorites: Array<Favorite>)
 
     @Delete
     suspend fun delete(word: Favorite)

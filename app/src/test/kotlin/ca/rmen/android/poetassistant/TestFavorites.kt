@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant
 
 import android.net.Uri
 import androidx.room.Room
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -46,7 +47,7 @@ class TestFavorites {
                 .allowMainThreadQueries()
                 .addMigrations(UserDb.MIGRATION_1_2)
                 .build()
-        val favorites = Favorites(this, db.favoriteDao())
+        val favorites = Favorites(this, StandardTestDispatcher(testScheduler), db.favoriteDao())
         var favoriteWords = favorites.getFavorites()
         assertEquals(0, favoriteWords.size)
         val uri = createFavoritesFile()
