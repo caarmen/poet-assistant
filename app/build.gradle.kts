@@ -154,7 +154,6 @@ android {
     }
     sourceSets.named("androidTest") {
         assets.directories.add("$projectDir/src/androidTest/schemas")
-        java.directories.add("$projectDir/src/sharedTest/java")
         kotlin.directories.addAll(listOf(
             "$projectDir/src/androidTest/kotlin",
             "$projectDir/src/sharedTest/kotlin",
@@ -162,7 +161,6 @@ android {
     }
     sourceSets.named("test") {
         manifest.srcFile("src/test/AndroidManifest.xml")
-        java.directories.add("$projectDir/src/sharedTest/java")
         kotlin.directories.addAll(listOf(
             "$projectDir/src/test/kotlin",
             "$projectDir/src/sharedTest/kotlin",
@@ -361,7 +359,6 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     )
     sourceDirectories.setFrom(
         files(
-            "${project.projectDir}/src/main/java",
             "${project.projectDir}/src/main/kotlin"
         )
     )
