@@ -76,7 +76,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesFavorites(threading: Threading, userDb: UserDb) = Favorites(threading, userDb.favoriteDao())
+    fun providesFavorites(userDb: UserDb) = Favorites(CoroutineScope(SupervisorJob()), userDb.favoriteDao())
 
     @Provides
     @Singleton

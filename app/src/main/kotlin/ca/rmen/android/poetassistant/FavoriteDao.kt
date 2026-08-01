@@ -39,14 +39,14 @@ interface FavoriteDao {
     fun getCountLiveData(word: String): LiveData<Int>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(favorite: Favorite)
+    suspend fun insert(favorite: Favorite)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAll(favorites: Array<Favorite>)
 
     @Delete
-    fun delete(word: Favorite)
+    suspend fun delete(word: Favorite)
 
     @Query("DELETE FROM FAVORITE")
-    fun deleteAll()
+    suspend fun deleteAll()
 }

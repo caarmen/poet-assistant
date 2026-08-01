@@ -26,6 +26,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
+import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
@@ -34,6 +35,7 @@ import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 import ca.rmen.android.poetassistant.databinding.LiveDataMapping
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.launch
 
 class ResultListHeaderViewModel(application: Application) : AndroidViewModel(application) {
     val query = ObservableField<String>()
@@ -78,7 +80,9 @@ class ResultListHeaderViewModel(application: Application) : AndroidViewModel(app
     fun webSearch() = query.get()?.let { WebSearch.search(getApplication(), it) }
 
     fun clearFavorites() {
-        mFavorites.clear()
+        viewModelScope.launch {
+            mFavorites.clear()
+        }
         snackbarText.value = getApplication<Application>().getString(R.string.favorites_cleared)
     }
 }

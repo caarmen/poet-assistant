@@ -23,10 +23,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import android.content.Context
 import android.net.Uri
-import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import android.text.TextUtils
 import android.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.IOException
@@ -34,7 +35,7 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.util.Locale
 
-class Favorites (private val threading: Threading, private val favoriteDao: FavoriteDao) {
+class Favorites (private val scope: CoroutineScope, private val favoriteDao: FavoriteDao) {
     companion object {
         private val TAG = Constants.TAG + Favorites::class.java.simpleName
     }
@@ -63,10 +64,11 @@ class Favorites (private val threading: Threading, private val favoriteDao: Favo
         }
     }
 
-    @MainThread
     fun saveFavorite(word: String, isFavorite: Boolean) {
-        if (isFavorite) threading.execute({ favoriteDao.insert(Favorite(word)) })
-        else removeFavorite(word)
+        scope.launch {
+            if (isFavorite) favoriteDao.insert(Favorite(word))
+            else removeFavorite(word)
+        }
     }
 
     @WorkerThread
@@ -89,14 +91,12 @@ class Favorites (private val threading: Threading, private val favoriteDao: Favo
         }
     }
 
-    @MainThread
-    private fun removeFavorite(favorite: String) {
+    private suspend fun removeFavorite(favorite: String) {
         Log.v(TAG, "removeFavorite $favorite")
-        threading.execute({ favoriteDao.delete(Favorite(favorite)) })
+        favoriteDao.delete(Favorite(favorite))
     }
 
-    @MainThread
-    fun clear() {
-        threading.execute({ favoriteDao.deleteAll() })
+    suspend fun clear() {
+        favoriteDao.deleteAll()
     }
 }
