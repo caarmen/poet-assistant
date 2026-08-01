@@ -100,7 +100,7 @@ class TestPoemFile {
         assertTrue(mPoemFile.exists())
         val poemFile = callback.poemFile
         assertNotNull(poemFile)
-        assertEquals(text, poemFile.text)
+        assertEquals(text, poemFile!!.text)
         assertEquals(mPoemUri, poemFile.uri)
         assertNull(poemFile.name)
     }
@@ -143,7 +143,7 @@ class TestPoemFile {
         callback.await()
         val poemFile = callback.poemFile
         assertNotNull(poemFile)
-        assertEquals(text, poemFile.text)
+        assertEquals(text, poemFile!!.text)
         assertEquals(mPoemUri, poemFile.uri)
         assertNull(poemFile.name)
     }
@@ -163,8 +163,8 @@ class TestPoemFile {
         shadowWebView.webViewClient.onPageFinished(webView, "http://example.com")
 
         callback.await()
-        poemFile = callback.poemFile
-        assertNotNull(poemFile)
+        assertNotNull(callback.poemFile)
+        poemFile = callback.poemFile!!
         assertEquals(text, poemFile.text)
         assertEquals(title, poemFile.name)
         assertNull(poemFile.uri)

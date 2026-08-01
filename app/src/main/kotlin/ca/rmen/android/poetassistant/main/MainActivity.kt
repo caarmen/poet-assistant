@@ -185,22 +185,25 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
         super.onNewIntent(intent)
         Log.d(TAG, "onNewIntent: intent=$intent")
         setIntent(intent)
+        handleNewIntent(intent)
+    }
+
+    internal fun handleNewIntent(intent: Intent) {
         when (intent.action) {
-        // The user entered a search term either by typing or by voice
+            // The user entered a search term either by typing or by voice
             Intent.ACTION_SEARCH -> {
                 handleSearchIntent(intent)
             }
-        // We got here from a deep link
+            // We got here from a deep link
             Intent.ACTION_VIEW -> {
                 handleDeepLink(intent.data)
             }
-        // Load some shared text into the reader tab
+            // Load some shared text into the reader tab
             Intent.ACTION_SEND -> {
                 mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
                 val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
                 val readerFragment = mPagerAdapter.getFragment(mBinding.viewPager, Tab.READER) as ReaderFragment
                 readerFragment.setText(sharedText)
-
             }
         }
     }

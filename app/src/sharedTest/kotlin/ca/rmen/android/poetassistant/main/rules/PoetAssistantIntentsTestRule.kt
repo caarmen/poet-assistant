@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Carmen Alvarez
+ * Copyright (c) 2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,13 +17,21 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant
+package ca.rmen.android.poetassistant.main.rules
 
-import android.app.Application
-import org.robolectric.RuntimeEnvironment
+import android.app.Activity
+import androidx.test.espresso.intent.rule.IntentsTestRule
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 
-object Environment {
-    fun getApplication() : Application {
-        return RuntimeEnvironment.application
+class PoetAssistantIntentsTestRule<T : Activity>(clazz: Class<T>) : IntentsTestRule<T>(clazz, false, true) {
+
+    override fun beforeActivityLaunched() {
+        super.beforeActivityLaunched()
+        ActivityTestRules.beforeActivityLaunched(getInstrumentation().targetContext)
+    }
+
+    override fun afterActivityFinished() {
+        ActivityTestRules.afterActivityFinished(getInstrumentation().targetContext)
+        super.afterActivityFinished()
     }
 }

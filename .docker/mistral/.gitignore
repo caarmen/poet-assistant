@@ -1,0 +1,6 @@
+.env
+cache.toml
+connector_bootstrap_cache.json
+logs/
+trusted_folders.toml
+vibehistory
