@@ -2,5 +2,6 @@
 cache.toml
 connector_bootstrap_cache.json
 logs/
+plans/
 trusted_folders.toml
 vibehistory

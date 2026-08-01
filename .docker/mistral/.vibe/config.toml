@@ -15,6 +15,8 @@ applied_migrations = [
 [tools.bash]
 allowlist = [
     "./gradlew",
+    "/home/vibeuser/.vibe/*",
+    "/home/vibeuser/.vibe/plans/*",
     "adb",
     "basename",
     "cat",
@@ -25,6 +27,7 @@ allowlist = [
     "diff",
     "dirname",
     "du",
+    "echo",
     "file",
     "find",
     "fmt",
@@ -36,6 +39,7 @@ allowlist = [
     "less",
     "ls",
     "md5sum",
+    "mkdir",
     "more",
     "nl",
     "od",
