@@ -140,6 +140,7 @@ open class ResultListFragment<out T: Any> : Fragment() {
             if (tab != null) {
                 @Suppress("UNCHECKED_CAST")
                 val adapter = ResultListFactory.createAdapter(it, tab) as ResultListAdapter<T>
+                adapter.onFavoriteWordToggle = mViewModel::onFavoriteToggle
                 mBinding.recyclerView.adapter = adapter
             }
         }

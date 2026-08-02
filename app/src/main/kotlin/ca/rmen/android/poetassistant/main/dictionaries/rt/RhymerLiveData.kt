@@ -39,7 +39,6 @@ class RhymerLiveData(
     coroutineScope: CoroutineScope,
     val query: String,
     val filter: String?,
-    private val onFavoriteToggle: (String, Boolean) -> Unit,
 ) :
     ResultListLiveData<ResultListData<RTListItem>>(context, coroutineScope) {
 
@@ -109,7 +108,7 @@ class RhymerLiveData(
             // Add the word variant, if there are multiple pronunciations.
             if (rhymeResults.size > 1) {
                 val heading = query + " (" + (it.variantNumber + 1) + ")"
-                data.add(RTListItem(RTListItem.Type.HEADING, heading, onFavoriteToggle = onFavoriteToggle))
+                data.add(RTListItem(RTListItem.Type.HEADING, heading))
             }
             addResultSection(favorites, data, R.string.rhyme_section_stress_syllables, it.strictRhymes, layout)
             addResultSection(favorites, data, R.string.rhyme_section_three_syllables, it.threeSyllableRhymes, layout)
@@ -140,7 +139,7 @@ class RhymerLiveData(
     private fun addResultSection(favorites: Set<String>, results: MutableList<RTListItem>, sectionHeadingResId: Int, rhymes: Array<String>, layout: ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout) {
         if (rhymes.isNotEmpty()) {
             val wordsWithDefinitions = if (mPrefs.isAllRhymesEnabled) mRhymer.getWordsWithDefinitions(rhymes) else null
-            results.add(RTListItem(RTListItem.Type.SUBHEADING, context.getString(sectionHeadingResId), onFavoriteToggle))
+            results.add(RTListItem(RTListItem.Type.SUBHEADING, context.getString(sectionHeadingResId)))
             rhymes.forEach { rhyme ->
                 val hasDefinition = wordsWithDefinitions == null || wordsWithDefinitions.contains(rhyme)
                 results.add(RTListItem(
@@ -149,15 +148,13 @@ class RhymerLiveData(
                         favorites.contains(rhyme),
                         hasDefinition,
                         layout == SettingsPrefs.Layout.EFFICIENT,
-                        onFavoriteToggle),
-                    )
+                ))
             }
             if (results.size >= Constants.MAX_RESULTS) {
                 results.add(RTListItem(
                         RTListItem.Type.SUBHEADING,
-                        context.getString(R.string.max_results, Constants.MAX_RESULTS),
-                        onFavoriteToggle
-                    ))
+                        context.getString(R.string.max_results, Constants.MAX_RESULTS)
+                ))
             }
         }
     }

@@ -27,17 +27,11 @@ class WotdListItem(
     val date: String,
     isFavoriteInitialValue: Boolean,
     val showButtons: Boolean,
-    val onFavoriteToggle: (String, Boolean) -> Unit
 ) {
     val isFavorite = ObservableBoolean()
 
     init {
         isFavorite.set(isFavoriteInitialValue)
-        isFavorite.addOnPropertyChangedCallback(BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
-            override fun onChanged() {
-                onFavoriteToggle(text, isFavorite.get())
-            }
-        }))
     }
 
     override fun equals(other: Any?): Boolean {

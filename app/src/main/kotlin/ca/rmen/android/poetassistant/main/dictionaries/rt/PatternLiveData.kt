@@ -38,7 +38,6 @@ class PatternLiveData(
     context: Context,
     coroutineScope: CoroutineScope,
     private val query: String,
-    private val onFavoriteToggle: (String, Boolean) -> Unit,
 ) :
     ResultListLiveData<ResultListData<RTListItem>>(context, coroutineScope) {
     companion object {
@@ -78,7 +77,6 @@ class PatternLiveData(
                     match,
                     favorites.contains(match),
                     layout == SettingsPrefs.Layout.EFFICIENT,
-                    onFavoriteToggle,
                 ))
         }
 
@@ -86,8 +84,7 @@ class PatternLiveData(
             data.add(RTListItem(
                     RTListItem.Type.SUBHEADING,
                     context.getString(R.string.max_results, Constants.MAX_RESULTS),
-                    onFavoriteToggle,
-                ))
+            ))
         }
         return ResultListData(query, data)
     }

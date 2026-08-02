@@ -20,12 +20,10 @@
 package ca.rmen.android.poetassistant.main.dictionaries.rt
 
 import androidx.databinding.ObservableBoolean
-import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 
 class RTListItem(
     val type: Type, val text: String,
     isFavoriteInitialValue: Boolean, val hasDefinition: Boolean, val showButtons: Boolean,
-    onFavoriteToggle: (String, Boolean) -> Unit,
     ) {
     enum class Type {
         HEADING,
@@ -35,19 +33,14 @@ class RTListItem(
 
     val isFavorite = ObservableBoolean()
 
-    constructor(type: Type, text: String, onFavoriteToggle: (String, Boolean) -> Unit) :
-            this(type, text,  false, false, onFavoriteToggle)
+    constructor(type: Type, text: String) :
+            this(type, text,  false, false)
 
-    constructor(type: Type, text: String, isFavoriteInitialValue: Boolean, showButtons: Boolean, onFavoriteToggle: (String, Boolean) -> Unit) :
-            this(type, text, isFavoriteInitialValue, true, showButtons, onFavoriteToggle)
+    constructor(type: Type, text: String, isFavoriteInitialValue: Boolean, showButtons: Boolean) :
+            this(type, text, isFavoriteInitialValue, true, showButtons)
 
     init {
         isFavorite.set(isFavoriteInitialValue)
-        isFavorite.addOnPropertyChangedCallback(BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
-            override fun onChanged() {
-                onFavoriteToggle(text, isFavorite.get())
-            }
-        }))
     }
 
     override fun toString(): String {

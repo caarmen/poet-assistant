@@ -35,7 +35,6 @@ import java.util.TreeSet
 class FavoritesLiveData(
     context: Context,
     coroutineScope: CoroutineScope,
-    private val onFavoriteToggle: (String, Boolean) -> Unit,
 ) :
     ResultListLiveData<ResultListData<RTListItem>>(context, coroutineScope) {
     companion object {
@@ -66,7 +65,6 @@ class FavoritesLiveData(
                     favorite,
                     true,
                     layout == SettingsPrefs.Layout.EFFICIENT,
-                    onFavoriteToggle,
             ))
         }
         return ResultListData(context.getString(R.string.favorites_list_header), data)

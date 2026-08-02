@@ -43,7 +43,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-open class RTListViewModel(application: Application, tab: Tab, favorites: Favorites, settingsPrefs: SettingsPrefs): ResultListViewModel<RTListItem>(application, tab, favorites, settingsPrefs)
+open class RTListViewModel(application: Application, tab: Tab, favorites: Favorites, settingsPrefs: SettingsPrefs): ResultListViewModel<RTListItem>(application, tab,
+    favorites, settingsPrefs)
 @HiltViewModel
 class PatternListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.PATTERN, favorites, settingsPrefs)
 @HiltViewModel
@@ -93,12 +94,11 @@ open class ResultListViewModel<T: Any> (
                 viewModelScope,
                 queryParams.word,
                 queryParams.filter,
-                onFavoriteToggle = ::onFavoriteToggle,
             ) as LiveData<ResultListData<T>>
         }
     }
 
-    private fun onFavoriteToggle(word: String, isFavorite: Boolean) {
+    fun onFavoriteToggle(word: String, isFavorite: Boolean) {
         viewModelScope.launch {
             favorites.saveFavorite(word, isFavorite)
         }

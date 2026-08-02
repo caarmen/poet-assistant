@@ -39,8 +39,7 @@ class ThesaurusLiveData(
     context: Context,
     coroutineScope: CoroutineScope,
     private val query: String,
-    private val filter: String?,
-    private val onFavoriteToggle: (String, Boolean) -> Unit
+    private val filter: String?
 ) : ResultListLiveData<ResultListData<RTListItem>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + ThesaurusLiveData::class.java.simpleName
@@ -98,7 +97,7 @@ class ThesaurusLiveData(
         val layout = SettingsPrefs.getLayout(mPrefs)
         val favorites = mFavorites.getFavorites()
         entries.forEach {
-            data.add(RTListItem(RTListItem.Type.HEADING, it.wordType.name.lowercase(Locale.US), onFavoriteToggle = onFavoriteToggle))
+            data.add(RTListItem(RTListItem.Type.HEADING, it.wordType.name.lowercase(Locale.US)))
             addResultSection(favorites, data, R.string.thesaurus_section_synonyms, it.synonyms, layout)
             addResultSection(favorites, data, R.string.thesaurus_section_antonyms, it.antonyms, layout)
         }
@@ -111,14 +110,13 @@ class ThesaurusLiveData(
 
     private fun addResultSection(favorites: Set<String>, results: MutableList<RTListItem>, @StringRes sectionHeadingResId: Int, words: List<String>, layout: ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout) {
         if (words.isNotEmpty()) {
-            results.add(RTListItem(RTListItem.Type.SUBHEADING, context.getString(sectionHeadingResId), onFavoriteToggle = onFavoriteToggle))
+            results.add(RTListItem(RTListItem.Type.SUBHEADING, context.getString(sectionHeadingResId)))
             words.forEach { word ->
                 results.add(RTListItem(
                         RTListItem.Type.WORD,
                         word,
                         favorites.contains(word),
                         layout == SettingsPrefs.Layout.EFFICIENT,
-                        onFavoriteToggle = onFavoriteToggle,
                 ))
             }
         }

@@ -69,6 +69,9 @@ open class RTListAdapter(val tab: Tab, private val activity: Activity) : ResultL
             RTListItem.Type.SUBHEADING -> (holder.binding as ListItemSubheadingBinding).viewModel = listItem
             else -> {
                 val wordBinding = holder.binding as ListItemWordBinding
+                wordBinding.btnStarResult.setOnCheckedChangeListener { _, bool ->
+                    onFavoriteWordToggle?.invoke(listItem.text, bool)
+                }
                 wordBinding.listItem = listItem
                 wordBinding.root.setBackgroundColor(getRowBackgroundColor(position))
                 wordBinding.entryIconClickListener = mEntryIconClickListener

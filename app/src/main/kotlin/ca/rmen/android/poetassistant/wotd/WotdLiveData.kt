@@ -38,8 +38,7 @@ import java.util.TimeZone
 
 class WotdLiveData(
     context: Context,
-    coroutineScope: CoroutineScope,
-    private val onFavoriteToggle: (String, Boolean) -> Unit
+    coroutineScope: CoroutineScope
 ) : ResultListLiveData<ResultListData<WotdListItem>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + WotdLiveData::class.java.simpleName
@@ -82,7 +81,6 @@ class WotdLiveData(
                             date,
                             favorites.contains(word),
                             layout == SettingsPrefs.Layout.EFFICIENT,
-                            onFavoriteToggle = onFavoriteToggle,
                         ))
                 }
                 calendar.add(Calendar.DAY_OF_YEAR, -1)

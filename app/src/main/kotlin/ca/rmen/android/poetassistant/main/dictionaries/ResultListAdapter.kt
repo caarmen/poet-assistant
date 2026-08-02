@@ -36,6 +36,8 @@ abstract class ResultListAdapter<T: Any>(itemCallback: DiffUtilItemCallback<T>) 
         return result
     }
 
+    var onFavoriteWordToggle: ((String, Boolean) -> Unit)? = null
+
     class ResultListEntryViewHolder(val parentView: View, val binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root)
 
     abstract class DiffUtilItemCallback<U: Any> : DiffUtil.ItemCallback<U>() {

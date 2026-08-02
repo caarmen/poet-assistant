@@ -52,6 +52,9 @@ open class WotdAdapter(activity: Activity) : ResultListAdapter<WotdListItem>(Ite
         val listItem = getItem(position)
         val binding = holder.binding as ListItemWotdBinding
         binding.listItem = listItem
+        binding.btnStarResult.setOnCheckedChangeListener { _, bool ->
+            onFavoriteWordToggle?.invoke(listItem.text, bool)
+        }
         binding.entryIconClickListener = mEntryIconClickListener
         TextPopupMenu.addPopupMenu(
                 if (listItem.showButtons) TextPopupMenu.Style.SYSTEM else TextPopupMenu.Style.FULL,

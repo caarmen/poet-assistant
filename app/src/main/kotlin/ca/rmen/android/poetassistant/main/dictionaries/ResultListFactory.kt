@@ -98,14 +98,13 @@ object ResultListFactory {
         scope: CoroutineScope,
         query: String?,
         filter: String?,
-        onFavoriteToggle: (String, Boolean) -> Unit,
     ): ResultListLiveData<out ResultListData<Any>> {
         return when (tab) {
-            Tab.PATTERN -> PatternLiveData(context, scope, query!!, onFavoriteToggle)
-            Tab.FAVORITES -> FavoritesLiveData(context, scope, onFavoriteToggle)
-            Tab.WOTD -> WotdLiveData(context, scope, onFavoriteToggle = onFavoriteToggle)
-            Tab.RHYMER -> RhymerLiveData(context, scope, query!!, filter, onFavoriteToggle)
-            Tab.THESAURUS -> ThesaurusLiveData(context, scope, query!!, filter, onFavoriteToggle)
+            Tab.PATTERN -> PatternLiveData(context, scope, query!!)
+            Tab.FAVORITES -> FavoritesLiveData(context, scope)
+            Tab.WOTD -> WotdLiveData(context, scope)
+            Tab.RHYMER -> RhymerLiveData(context, scope, query!!, filter)
+            Tab.THESAURUS -> ThesaurusLiveData(context, scope, query!!, filter)
             else -> DictionaryLiveData(context, scope, query!!)
         }
     }
