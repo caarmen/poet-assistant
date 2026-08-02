@@ -31,16 +31,6 @@ class CountDownPoemFileCallback : PoemFileCallback {
     var poemFile: PoemFile? = null
     var printJob: PrintJob? = null
 
-    override fun onPoemLoaded(poemFile: PoemFile?) {
-        latch.countDown()
-        this.poemFile = poemFile
-    }
-
-    override fun onPoemSaved(poemFile: PoemFile?) {
-        latch.countDown()
-        this.poemFile = poemFile
-    }
-
     override fun onPrintJobCreated(@NonNull poemFile: PoemFile, printJob: PrintJob?) {
         latch.countDown()
         this.poemFile = poemFile
@@ -53,9 +43,5 @@ class CountDownPoemFileCallback : PoemFileCallback {
         } catch (_: InterruptedException) {
             fail("Timeout waiting for callback")
         }
-    }
-
-    fun wasCalled(): Boolean {
-        return latch.count == 0L
     }
 }

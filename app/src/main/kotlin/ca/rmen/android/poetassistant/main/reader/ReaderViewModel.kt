@@ -203,7 +203,8 @@ class ReaderViewModel @Inject constructor(
         if (savedPoem?.uri != null) {
             poem.get()?.let {
                 viewModelScope.launch {
-                    PoemFile.save(context, savedPoem.uri, it, mPoemFileCallback)
+                    val savedPoem = PoemFile.save(context, savedPoem.uri, it)
+                    onPoemSaved(savedPoem)
                 }
             }
         }
@@ -212,7 +213,8 @@ class ReaderViewModel @Inject constructor(
     fun saveAs(context: Context, uri: Uri) {
         poem.get()?.let {
             viewModelScope.launch {
-                PoemFile.save(context, uri, it, mPoemFileCallback)
+                val savedPoem = PoemFile.save(context, uri, it)
+                onPoemSaved(savedPoem)
             }
         }
     }
@@ -241,7 +243,8 @@ class ReaderViewModel @Inject constructor(
 
     fun open(context: Context, uri: Uri) {
         viewModelScope.launch {
-            PoemFile.open(context, uri, mPoemFileCallback)
+            val loadedPoem = PoemFile.open(context, uri)
+            onPoemLoaded(loadedPoem)
         }
     }
 
@@ -273,26 +276,6 @@ class ReaderViewModel @Inject constructor(
     }
 
     private val mPoemFileCallback = object : PoemFileCallback {
-        override fun onPoemLoaded(poemFile: PoemFile?) {
-            Log.d(TAG, "onPoemLoaded, loadedPoem = $poemFile")
-            if (poemFile == null) {
-                clearPoem()
-                snackbarText.value = SnackbarText(R.string.file_opened_error)
-            } else {
-                setSavedPoem(poemFile)
-                snackbarText.value = SnackbarText(R.string.file_opened, poemFile.name ?: "")
-            }
-        }
-
-        override fun onPoemSaved(poemFile: PoemFile?) {
-            if (poemFile == null) {
-                snackbarText.value = SnackbarText(R.string.file_saved_error)
-            } else {
-                Log.d(TAG, "onPoemSaved, savedPoem = $poemFile")
-                setSavedPoem(poemFile)
-                snackbarText.value = SnackbarText(R.string.file_saved, poemFile.name ?: "")
-            }
-        }
 
         @TargetApi(Build.VERSION_CODES.KITKAT)
         override fun onPrintJobCreated(poemFile: PoemFile, printJob: PrintJob?) {
@@ -300,6 +283,27 @@ class ReaderViewModel @Inject constructor(
             if (printJob != null) {
                 Log.d(TAG, "Print job id = ${printJob.id}, info = ${printJob.info}")
             }
+        }
+    }
+
+    fun onPoemLoaded(poemFile: PoemFile?) {
+        Log.d(TAG, "onPoemLoaded, loadedPoem = $poemFile")
+        if (poemFile == null) {
+            clearPoem()
+            snackbarText.value = SnackbarText(R.string.file_opened_error)
+        } else {
+            setSavedPoem(poemFile)
+            snackbarText.value = SnackbarText(R.string.file_opened, poemFile.name ?: "")
+        }
+    }
+
+    fun onPoemSaved(poemFile: PoemFile?) {
+        if (poemFile == null) {
+            snackbarText.value = SnackbarText(R.string.file_saved_error)
+        } else {
+            Log.d(TAG, "onPoemSaved, savedPoem = $poemFile")
+            setSavedPoem(poemFile)
+            snackbarText.value = SnackbarText(R.string.file_saved, poemFile.name ?: "")
         }
     }
 

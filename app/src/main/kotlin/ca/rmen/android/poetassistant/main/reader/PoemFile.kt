@@ -47,17 +47,16 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
     companion object {
         private val TAG = Constants.TAG + PoemFile::class.java.simpleName
 
-        suspend fun open(context: Context, uri: Uri, callback: PoemFileCallback) {
-            Log.d(TAG, "open(uri=$uri, callback=$callback")
+        suspend fun open(context: Context, uri: Uri) : PoemFile? {
+            Log.d(TAG, "open(uri=$uri")
             val ioDispatcher = EntryPointAccessors.fromApplication(context, NonAndroidEntryPoint::class.java).ioDispatcher()
             try {
-                val poemFile = withContext(ioDispatcher) {
+                return withContext(ioDispatcher) {
                     readPoemFile(context, uri)
                 }
-                callback.onPoemLoaded(poemFile)
             } catch(throwable: Throwable) {
                 Log.w(TAG, "Couldn't open file", throwable)
-                callback.onPoemLoaded(null)
+                return null
             }
         }
 
@@ -69,17 +68,16 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
             return PoemFile(uri, displayName, text)
         }
 
-        suspend fun save(context: Context, uri: Uri, text: String, callback: PoemFileCallback) {
-            Log.d(TAG, "save: uri=$uri, text=$text, callback=$callback")
+        suspend fun save(context: Context, uri: Uri, text: String) : PoemFile ?{
+            Log.d(TAG, "save: uri=$uri, text=$text")
             val ioDispatcher = EntryPointAccessors.fromApplication(context, NonAndroidEntryPoint::class.java).ioDispatcher()
             try {
-                val poemFile = withContext(ioDispatcher) {
+                return withContext(ioDispatcher) {
                     savePoemFile(context, uri, text)
                 }
-                callback.onPoemSaved(poemFile)
             } catch(throwable: Throwable) {
                 Log.v(TAG, "Couldn't save file", throwable)
-                callback.onPoemSaved(null)
+                return null
             }
         }
 
