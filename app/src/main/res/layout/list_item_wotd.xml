@@ -31,7 +31,7 @@
 
         <variable
             name="viewModel"
-            type="ca.rmen.android.poetassistant.wotd.WotdEntryViewModel" />
+            type="ca.rmen.android.poetassistant.wotd.WotdListItem" />
     </data>
 
 

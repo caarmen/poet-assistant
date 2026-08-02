@@ -36,7 +36,7 @@ import java.util.Calendar
 import java.util.Random
 import java.util.TimeZone
 
-class WotdLiveData(context: Context, coroutineScope: CoroutineScope) : ResultListLiveData<ResultListData<WotdEntryViewModel>>(context, coroutineScope) {
+class WotdLiveData(context: Context, coroutineScope: CoroutineScope) : ResultListLiveData<ResultListData<WotdListItem>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + WotdLiveData::class.java.simpleName
     }
@@ -52,9 +52,9 @@ class WotdLiveData(context: Context, coroutineScope: CoroutineScope) : ResultLis
         mFavorites = entryPoint.favorites()
     }
 
-    override fun loadInBackground(): ResultListData<WotdEntryViewModel> {
+    override fun loadInBackground(): ResultListData<WotdListItem> {
         Log.d(TAG, "loadInBackground")
-        val data = ArrayList<WotdEntryViewModel>(100)
+        val data = ArrayList<WotdListItem>(100)
         val cursor = mDictionary.getRandomWordCursor() ?: return emptyResult()
 
         cursor.use {
@@ -73,7 +73,7 @@ class WotdLiveData(context: Context, coroutineScope: CoroutineScope) : ResultLis
                 val position = random.nextInt(cursor.count)
                 if (cursor.moveToPosition(position)) {
                     val word = cursor.getString(0)
-                    data.add(WotdEntryViewModel(
+                    data.add(WotdListItem(
                             mFavorites,
                             word,
                             date,
@@ -87,6 +87,6 @@ class WotdLiveData(context: Context, coroutineScope: CoroutineScope) : ResultLis
         return ResultListData(context.getString(R.string.wotd_list_header), data)
     }
 
-    private fun emptyResult(): ResultListData<WotdEntryViewModel> = ResultListData(context.getString(R.string.wotd_list_header), emptyList())
+    private fun emptyResult(): ResultListData<WotdListItem> = ResultListData(context.getString(R.string.wotd_list_header), emptyList())
 
 }

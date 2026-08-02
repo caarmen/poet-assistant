@@ -23,7 +23,7 @@ import androidx.databinding.ObservableBoolean
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 
-class WotdEntryViewModel(private val favorites: Favorites, val text: String, val date: String, isFavoriteInitialValue: Boolean, val showButtons: Boolean) {
+class WotdListItem(private val favorites: Favorites, val text: String, val date: String, isFavoriteInitialValue: Boolean, val showButtons: Boolean) {
     val isFavorite = ObservableBoolean()
 
     init {
@@ -39,7 +39,7 @@ class WotdEntryViewModel(private val favorites: Favorites, val text: String, val
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as WotdEntryViewModel
+        other as WotdListItem
 
         if (text != other.text) return false
         if (date != other.date) return false

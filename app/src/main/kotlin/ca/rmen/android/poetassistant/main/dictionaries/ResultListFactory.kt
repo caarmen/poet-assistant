@@ -47,7 +47,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLiveData
-import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
+import ca.rmen.android.poetassistant.wotd.WotdListItem
 import ca.rmen.android.poetassistant.wotd.WotdListExporter
 import ca.rmen.android.poetassistant.wotd.WotdLiveData
 import dagger.hilt.android.EntryPointAccessors
@@ -60,7 +60,7 @@ object ResultListFactory {
         Log.d(TAG, "createListFragment: tab=$tab, initialQuery = $initialQuery")
         val fragment = when (tab) {
             Tab.PATTERN, Tab.FAVORITES, Tab.RHYMER, Tab.THESAURUS -> ResultListFragment<RTEntryViewModel>()
-            Tab.WOTD -> ResultListFragment<WotdEntryViewModel>()
+            Tab.WOTD -> ResultListFragment<WotdListItem>()
             else -> ResultListFragment<DictionaryEntry.DictionaryEntryDetails>()
         }
         val bundle = Bundle(2)
@@ -92,7 +92,7 @@ object ResultListFactory {
                 @Suppress("UNCHECKED_CAST")
                 return when (tab) {
                     Tab.PATTERN, Tab.FAVORITES, Tab.RHYMER, Tab.THESAURUS -> ResultListViewModel<RTEntryViewModel>(application, tab)
-                    Tab.WOTD -> ResultListViewModel<WotdEntryViewModel>(application, tab)
+                    Tab.WOTD -> ResultListViewModel<WotdListItem>(application, tab)
                     else -> ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, tab)
                 } as (T)
             }
