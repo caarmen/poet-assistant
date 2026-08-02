@@ -35,10 +35,10 @@ import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.TextPopupMenu
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
 
-open class RTListAdapter(val tab: Tab, private val activity: Activity) : ResultListAdapter<RTEntryViewModel>(ItemCallback()) {
+open class RTListAdapter(val tab: Tab, private val activity: Activity) : ResultListAdapter<RTListItem>(ItemCallback()) {
 
-    class ItemCallback : DiffUtilItemCallback<RTEntryViewModel>() {
-        override fun areContentsTheSame(oldItem: RTEntryViewModel, newItem: RTEntryViewModel) = oldItem == newItem
+    class ItemCallback : DiffUtilItemCallback<RTListItem>() {
+        override fun areContentsTheSame(oldItem: RTListItem, newItem: RTListItem) = oldItem == newItem
     }
 
     private val mWordClickedListener: OnWordClickListener = activity as OnWordClickListener
@@ -51,8 +51,8 @@ open class RTListAdapter(val tab: Tab, private val activity: Activity) : ResultL
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultListEntryViewHolder {
         val layoutId = when (viewType) {
-            RTEntryViewModel.Type.HEADING.ordinal -> R.layout.list_item_heading
-            RTEntryViewModel.Type.SUBHEADING.ordinal -> R.layout.list_item_subheading
+            RTListItem.Type.HEADING.ordinal -> R.layout.list_item_heading
+            RTListItem.Type.SUBHEADING.ordinal -> R.layout.list_item_subheading
             else -> R.layout.list_item_word
         }
         val binding = DataBindingUtil.inflate<ViewDataBinding>(LayoutInflater.from(parent.context),
@@ -63,17 +63,17 @@ open class RTListAdapter(val tab: Tab, private val activity: Activity) : ResultL
     }
 
     override fun onBindViewHolder(holder: ResultListEntryViewHolder, position: Int) {
-        val viewModel = getItem(position)
-        when (viewModel.type) {
-            RTEntryViewModel.Type.HEADING -> (holder.binding as ListItemHeadingBinding).viewModel = viewModel
-            RTEntryViewModel.Type.SUBHEADING -> (holder.binding as ListItemSubheadingBinding).viewModel = viewModel
+        val listItem = getItem(position)
+        when (listItem.type) {
+            RTListItem.Type.HEADING -> (holder.binding as ListItemHeadingBinding).viewModel = listItem
+            RTListItem.Type.SUBHEADING -> (holder.binding as ListItemSubheadingBinding).viewModel = listItem
             else -> {
                 val wordBinding = holder.binding as ListItemWordBinding
-                wordBinding.viewModel = viewModel
+                wordBinding.listItem = listItem
                 wordBinding.root.setBackgroundColor(getRowBackgroundColor(position))
                 wordBinding.entryIconClickListener = mEntryIconClickListener
                 TextPopupMenu.addPopupMenu(
-                        if (viewModel.showButtons) TextPopupMenu.Style.SYSTEM else TextPopupMenu.Style.FULL,
+                        if (listItem.showButtons) TextPopupMenu.Style.SYSTEM else TextPopupMenu.Style.FULL,
                         holder.parentView,
                         wordBinding.text1,
                         mWordClickedListener

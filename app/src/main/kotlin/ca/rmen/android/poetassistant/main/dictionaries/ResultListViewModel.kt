@@ -36,7 +36,7 @@ import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.wotd.WotdListItem
 import dagger.hilt.android.EntryPointAccessors
@@ -45,7 +45,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-open class RTListViewModel(application: Application, tab: Tab, favorites: Favorites): ResultListViewModel<RTEntryViewModel>(application, tab, favorites)
+open class RTListViewModel(application: Application, tab: Tab, favorites: Favorites): ResultListViewModel<RTListItem>(application, tab, favorites)
 @HiltViewModel
 class PatternListViewModel @Inject constructor(application: Application, favorites: Favorites): RTListViewModel(application, Tab.PATTERN, favorites)
 @HiltViewModel

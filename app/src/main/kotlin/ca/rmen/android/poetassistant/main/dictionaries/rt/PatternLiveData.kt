@@ -40,7 +40,7 @@ class PatternLiveData(
     private val query: String,
     private val onFavoriteToggle: (String, Boolean) -> Unit,
 ) :
-    ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
+    ResultListLiveData<ResultListData<RTListItem>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + PatternLiveData::class.java.simpleName
     }
@@ -56,10 +56,10 @@ class PatternLiveData(
         mFavorites = entryPoint.favorites()
     }
 
-    override fun loadInBackground(): ResultListData<RTEntryViewModel> {
+    override fun loadInBackground(): ResultListData<RTListItem> {
         Log.d(TAG, "loadInBackground, query=$query")
 
-        val data = ArrayList<RTEntryViewModel>()
+        val data = ArrayList<RTListItem>()
         if (TextUtils.isEmpty(query)) return emptyResult()
         val matches = mDictionary.findWordsByPattern(Patterns.convertForSqlite(query))
         if (matches.isEmpty()) {
@@ -73,8 +73,8 @@ class PatternLiveData(
 
         val layout = SettingsPrefs.getLayout(mPrefs)
         matches.forEach { match ->
-            data.add(RTEntryViewModel(
-                    RTEntryViewModel.Type.WORD,
+            data.add(RTListItem(
+                    RTListItem.Type.WORD,
                     match,
                     favorites.contains(match),
                     layout == SettingsPrefs.Layout.EFFICIENT,
@@ -83,8 +83,8 @@ class PatternLiveData(
         }
 
         if (matches.size == Constants.MAX_RESULTS) {
-            data.add(RTEntryViewModel(
-                    RTEntryViewModel.Type.SUBHEADING,
+            data.add(RTListItem(
+                    RTListItem.Type.SUBHEADING,
                     context.getString(R.string.max_results, Constants.MAX_RESULTS),
                     onFavoriteToggle,
                 ))
@@ -104,6 +104,6 @@ class PatternLiveData(
         }
     }
 
-    private fun emptyResult(): ResultListData<RTEntryViewModel> = ResultListData(query, emptyList())
+    private fun emptyResult(): ResultListData<RTListItem> = ResultListData(query, emptyList())
 
 }

@@ -22,7 +22,7 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt
 import androidx.databinding.ObservableBoolean
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 
-class RTEntryViewModel(
+class RTListItem(
     val type: Type, val text: String,
     isFavoriteInitialValue: Boolean, val hasDefinition: Boolean, val showButtons: Boolean,
     onFavoriteToggle: (String, Boolean) -> Unit,
@@ -58,7 +58,7 @@ class RTEntryViewModel(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as RTEntryViewModel
+        other as RTListItem
 
         if (type != other.type) return false
         if (text != other.text) return false

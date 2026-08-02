@@ -29,8 +29,8 @@
             type="ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter.EntryIconClickListener" />
 
         <variable
-            name="viewModel"
-            type="ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel" />
+            name="listItem"
+            type="ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem" />
     </data>
 
     <LinearLayout
@@ -42,7 +42,7 @@
         <CheckBox
             android:background="?selectableItemBackgroundBorderless"
             android:button="@drawable/ic_star"
-            android:checked="@={viewModel.isFavorite}"
+            android:checked="@={listItem.isFavorite}"
             android:clickable="true"
             android:id="@+id/btn_star_result"
             android:layout_marginStart="8dp"
@@ -60,7 +60,7 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:text="@{viewModel.text}"
+            android:text="@{listItem.text}"
             tools:text="happy"
             android:focusable="true"/>
 
@@ -83,7 +83,7 @@
             android:paddingRight="@dimen/list_rtd_icon_padding"
             android:paddingStart="@dimen/list_rtd_icon_padding"
             android:paddingEnd="@dimen/list_rtd_icon_padding"
-            android:visibility="@{viewModel.showButtons? View.VISIBLE:View.GONE}"
+            android:visibility="@{listItem.showButtons? View.VISIBLE:View.GONE}"
             app:srcCompat="@drawable/ic_rhymer"
             android:focusable="true"/>
 
@@ -92,15 +92,15 @@
             android:layout_width="@dimen/list_rtd_icon_size"
             android:layout_height="@dimen/list_rtd_icon_size"
             android:background="?selectableItemBackgroundBorderless"
-            android:clickable="@{viewModel.hasDefinition}"
+            android:clickable="@{listItem.hasDefinition}"
             android:contentDescription="@string/tab_thesaurus"
             android:onClick="@{entryIconClickListener::onThesaurusIconClicked}"
             android:paddingLeft="@dimen/list_rtd_icon_padding"
             android:paddingRight="@dimen/list_rtd_icon_padding"
             android:paddingStart="@dimen/list_rtd_icon_padding"
             android:paddingEnd="@dimen/list_rtd_icon_padding"
-            android:alpha="@{viewModel.hasDefinition ? 0xff: 0x44}"
-            android:visibility="@{viewModel.showButtons? View.VISIBLE:View.GONE}"
+            android:alpha="@{listItem.hasDefinition ? 0xff: 0x44}"
+            android:visibility="@{listItem.showButtons? View.VISIBLE:View.GONE}"
             app:srcCompat="@drawable/ic_thesaurus" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -109,15 +109,15 @@
             android:layout_height="@dimen/list_rtd_icon_size"
             android:layout_marginEnd="16dp"
             android:background="?selectableItemBackgroundBorderless"
-            android:clickable="@{viewModel.hasDefinition}"
+            android:clickable="@{listItem.hasDefinition}"
             android:paddingLeft="@dimen/list_rtd_icon_padding"
             android:paddingRight="@dimen/list_rtd_icon_padding"
             android:paddingStart="@dimen/list_rtd_icon_padding"
             android:paddingEnd="@dimen/list_rtd_icon_padding"
             android:contentDescription="@string/tab_dictionary"
             android:onClick="@{entryIconClickListener::onDictionaryIconClicked}"
-            android:alpha="@{viewModel.hasDefinition ? 0xff: 0x44}"
-            android:visibility="@{viewModel.showButtons? View.VISIBLE:View.GONE}"
+            android:alpha="@{listItem.hasDefinition ? 0xff: 0x44}"
+            android:visibility="@{listItem.showButtons? View.VISIBLE:View.GONE}"
             app:srcCompat="@drawable/ic_dictionary" />
 
     </LinearLayout>

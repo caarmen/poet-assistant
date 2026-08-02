@@ -47,12 +47,12 @@ import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.wotd.WotdListItem
 import dagger.hilt.android.AndroidEntryPoint
 
-open class RTListFragment: ResultListFragment<RTEntryViewModel>()
+open class RTListFragment: ResultListFragment<RTListItem>()
 @AndroidEntryPoint
 class PatternListFragment: RTListFragment()
 @AndroidEntryPoint

@@ -41,7 +41,7 @@ class ThesaurusLiveData(
     private val query: String,
     private val filter: String?,
     private val onFavoriteToggle: (String, Boolean) -> Unit
-) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
+) : ResultListLiveData<ResultListData<RTListItem>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + ThesaurusLiveData::class.java.simpleName
         @VisibleForTesting
@@ -81,10 +81,10 @@ class ThesaurusLiveData(
         mFavorites = entryPoint.favorites()
     }
 
-    override fun loadInBackground(): ResultListData<RTEntryViewModel> {
+    override fun loadInBackground(): ResultListData<RTListItem> {
         Log.d(TAG, "loadInBackground: query=$query, filter=$filter")
 
-        val data = ArrayList<RTEntryViewModel>()
+        val data = ArrayList<RTListItem>()
         if (TextUtils.isEmpty(query)) return emptyResult()
         val result = mThesaurus.lookup(query, mPrefs.isThesaurusReverseLookupEnabled)
         var entries = result.entries
@@ -98,23 +98,23 @@ class ThesaurusLiveData(
         val layout = SettingsPrefs.getLayout(mPrefs)
         val favorites = mFavorites.getFavorites()
         entries.forEach {
-            data.add(RTEntryViewModel(RTEntryViewModel.Type.HEADING, it.wordType.name.lowercase(Locale.US), onFavoriteToggle = onFavoriteToggle))
+            data.add(RTListItem(RTListItem.Type.HEADING, it.wordType.name.lowercase(Locale.US), onFavoriteToggle = onFavoriteToggle))
             addResultSection(favorites, data, R.string.thesaurus_section_synonyms, it.synonyms, layout)
             addResultSection(favorites, data, R.string.thesaurus_section_antonyms, it.antonyms, layout)
         }
         return ResultListData(result.word, data)
     }
 
-    private fun emptyResult(): ResultListData<RTEntryViewModel> {
+    private fun emptyResult(): ResultListData<RTListItem> {
         return ResultListData(query, emptyList())
     }
 
-    private fun addResultSection(favorites: Set<String>, results: MutableList<RTEntryViewModel>, @StringRes sectionHeadingResId: Int, words: List<String>, layout: ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout) {
+    private fun addResultSection(favorites: Set<String>, results: MutableList<RTListItem>, @StringRes sectionHeadingResId: Int, words: List<String>, layout: ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout) {
         if (words.isNotEmpty()) {
-            results.add(RTEntryViewModel(RTEntryViewModel.Type.SUBHEADING, context.getString(sectionHeadingResId), onFavoriteToggle = onFavoriteToggle))
+            results.add(RTListItem(RTListItem.Type.SUBHEADING, context.getString(sectionHeadingResId), onFavoriteToggle = onFavoriteToggle))
             words.forEach { word ->
-                results.add(RTEntryViewModel(
-                        RTEntryViewModel.Type.WORD,
+                results.add(RTListItem(
+                        RTListItem.Type.WORD,
                         word,
                         favorites.contains(word),
                         layout == SettingsPrefs.Layout.EFFICIENT,

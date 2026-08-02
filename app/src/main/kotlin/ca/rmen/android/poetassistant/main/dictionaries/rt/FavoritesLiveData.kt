@@ -37,7 +37,7 @@ class FavoritesLiveData(
     coroutineScope: CoroutineScope,
     private val onFavoriteToggle: (String, Boolean) -> Unit,
 ) :
-    ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
+    ResultListLiveData<ResultListData<RTListItem>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + FavoritesLiveData::class.java.simpleName
     }
@@ -51,9 +51,9 @@ class FavoritesLiveData(
         mFavorites = entryPoint.favorites()
     }
 
-    override fun loadInBackground(): ResultListData<RTEntryViewModel> {
+    override fun loadInBackground(): ResultListData<RTListItem> {
         Log.d(TAG, "loadInBackground")
-        val data = ArrayList<RTEntryViewModel>()
+        val data = ArrayList<RTListItem>()
         val favorites = mFavorites.getFavorites()
         if (favorites.isEmpty()) return emptyResult()
 
@@ -61,8 +61,8 @@ class FavoritesLiveData(
         val layout = SettingsPrefs.getLayout(mPrefs)
         sortedFavorites.forEach { favorite ->
             /*@ColorRes*/
-            data.add(RTEntryViewModel(
-                    RTEntryViewModel.Type.WORD,
+            data.add(RTListItem(
+                    RTListItem.Type.WORD,
                     favorite,
                     true,
                     layout == SettingsPrefs.Layout.EFFICIENT,
@@ -72,6 +72,6 @@ class FavoritesLiveData(
         return ResultListData(context.getString(R.string.favorites_list_header), data)
     }
 
-    private fun emptyResult(): ResultListData<RTEntryViewModel> = ResultListData(context.getString(R.string.favorites_list_header), emptyList())
+    private fun emptyResult(): ResultListData<RTListItem> = ResultListData(context.getString(R.string.favorites_list_header), emptyList())
 
 }
