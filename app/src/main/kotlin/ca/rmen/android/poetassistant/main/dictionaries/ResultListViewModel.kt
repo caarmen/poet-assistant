@@ -32,6 +32,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorite
+import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
@@ -39,19 +40,28 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
 import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 
-open class RTListViewModel(application: Application, tab: Tab): ResultListViewModel<RTEntryViewModel>(application, tab)
-class PatternListViewModel(application: Application): RTListViewModel(application, Tab.PATTERN)
-class FavoritesListViewModel(application: Application): RTListViewModel(application, Tab.FAVORITES)
-class RhymerListViewModel(application: Application): RTListViewModel(application, Tab.RHYMER)
-class ThesaurusListViewModel(application: Application): RTListViewModel(application, Tab.THESAURUS)
-class WotdListViewModel(application: Application): ResultListViewModel<WotdEntryViewModel>(application, Tab.WOTD)
-class DictionaryListViewModel(application: Application): ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, Tab.DICTIONARY)
+open class RTListViewModel(application: Application, tab: Tab, favorites: Favorites): ResultListViewModel<RTEntryViewModel>(application, tab, favorites)
+@HiltViewModel
+class PatternListViewModel @Inject constructor(application: Application, favorites: Favorites): RTListViewModel(application, Tab.PATTERN, favorites)
+@HiltViewModel
+class FavoritesListViewModel @Inject constructor(application: Application, favorites: Favorites): RTListViewModel(application, Tab.FAVORITES, favorites)
+@HiltViewModel
+class RhymerListViewModel @Inject constructor(application: Application, favorites: Favorites): RTListViewModel(application, Tab.RHYMER, favorites)
+@HiltViewModel
+class ThesaurusListViewModel @Inject constructor(application: Application, favorites: Favorites): RTListViewModel(application, Tab.THESAURUS, favorites)
+@HiltViewModel
+class WotdListViewModel @Inject constructor(application: Application, favorites: Favorites): ResultListViewModel<WotdEntryViewModel>(application, Tab.WOTD, favorites)
+@HiltViewModel
+class DictionaryListViewModel @Inject constructor(application: Application, favorites: Favorites): ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, Tab.DICTIONARY, favorites)
 
-open class ResultListViewModel<T: Any> constructor(
+open class ResultListViewModel<T: Any> (
     application: Application,
     private val tab: Tab,
+    private val favorites: Favorites,
     ) : AndroidViewModel(application) {
     companion object {
         private val TAG = Constants.TAG + ResultListViewModel::class.java.simpleName
@@ -78,7 +88,7 @@ open class ResultListViewModel<T: Any> constructor(
         emptyText.value = EmptyTextNoQuery
         mPrefsListener = PrefsListener()
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mPrefsListener)
-        favoritesLiveData = entryPoint.favorites().getFavoritesLiveData()
+        favoritesLiveData = favorites.getFavoritesLiveData()
         resultListDataLiveData = mQueryParams.switchMap { queryParams ->
             @Suppress("UNCHECKED_CAST")
             ResultListFactory.createLiveData(tab, application, viewModelScope, queryParams.word, queryParams.filter) as LiveData<ResultListData<T>>
