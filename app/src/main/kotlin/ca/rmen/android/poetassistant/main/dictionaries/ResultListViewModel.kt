@@ -34,10 +34,22 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorite
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.Tab
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
 import dagger.hilt.android.EntryPointAccessors
 
-class ResultListViewModel<T: Any> constructor(
+
+open class RTListViewModel(application: Application, tab: Tab): ResultListViewModel<RTEntryViewModel>(application, tab)
+class PatternListViewModel(application: Application): RTListViewModel(application, Tab.PATTERN)
+class FavoritesListViewModel(application: Application): RTListViewModel(application, Tab.FAVORITES)
+class RhymerListViewModel(application: Application): RTListViewModel(application, Tab.RHYMER)
+class ThesaurusListViewModel(application: Application): RTListViewModel(application, Tab.THESAURUS)
+class WotdListViewModel(application: Application): ResultListViewModel<WotdEntryViewModel>(application, Tab.WOTD)
+class DictionaryListViewModel(application: Application): ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, Tab.DICTIONARY)
+
+open class ResultListViewModel<T: Any> constructor(
     application: Application,
     private val tab: Tab,
     ) : AndroidViewModel(application) {

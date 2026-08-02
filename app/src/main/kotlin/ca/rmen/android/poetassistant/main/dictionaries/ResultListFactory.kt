@@ -91,9 +91,12 @@ object ResultListFactory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 @Suppress("UNCHECKED_CAST")
                 return when (tab) {
-                    Tab.PATTERN, Tab.FAVORITES, Tab.RHYMER, Tab.THESAURUS -> ResultListViewModel<RTEntryViewModel>(application, tab)
-                    Tab.WOTD -> ResultListViewModel<WotdEntryViewModel>(application, tab)
-                    else -> ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, tab)
+                    Tab.PATTERN -> PatternListViewModel(application)
+                    Tab.FAVORITES -> FavoritesListViewModel(application)
+                    Tab.RHYMER -> RhymerListViewModel(application)
+                    Tab.THESAURUS -> ThesaurusListViewModel(application)
+                    Tab.WOTD -> WotdListViewModel(application)
+                    else -> DictionaryListViewModel(application)
                 } as (T)
             }
         }
