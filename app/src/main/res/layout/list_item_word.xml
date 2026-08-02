@@ -42,7 +42,7 @@
         <CheckBox
             android:background="?selectableItemBackgroundBorderless"
             android:button="@drawable/ic_star"
-            android:checked="@={listItem.isFavorite}"
+            android:checked="@{listItem.isFavorite}"
             android:clickable="true"
             android:id="@+id/btn_star_result"
             android:layout_marginStart="8dp"

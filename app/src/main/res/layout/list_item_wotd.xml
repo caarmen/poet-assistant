@@ -50,7 +50,7 @@
             android:layout_marginStart="8dp"
             android:background="?selectableItemBackgroundBorderless"
             android:button="@drawable/ic_star"
-            android:checked="@={listItem.isFavorite}"
+            android:checked="@{listItem.isFavorite}"
             android:clickable="true"
             android:paddingEnd="8dp"
             android:paddingStart="4dp"
