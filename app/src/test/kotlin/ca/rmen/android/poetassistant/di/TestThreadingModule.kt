@@ -19,8 +19,6 @@
 
 package ca.rmen.android.poetassistant.di
 
-import ca.rmen.android.poetassistant.InstrumentationThreading
-import ca.rmen.android.poetassistant.Threading
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
@@ -37,9 +35,6 @@ import javax.inject.Singleton
 @Module
 class TestThreadingModule {
 
-    @Provides
-    @Singleton
-    fun providesThreading(): Threading = InstrumentationThreading()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Provides

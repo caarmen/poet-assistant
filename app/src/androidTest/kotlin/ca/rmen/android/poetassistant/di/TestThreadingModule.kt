@@ -19,15 +19,18 @@
 
 package ca.rmen.android.poetassistant.di
 
-import ca.rmen.android.poetassistant.InstrumentationThreading
-import ca.rmen.android.poetassistant.Threading
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.IdlingResource
+import androidx.test.espresso.idling.CountingIdlingResource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Singleton
+import kotlin.coroutines.CoroutineContext
 
 @TestInstallIn(
     components = [SingletonComponent::class],
@@ -36,13 +39,35 @@ import javax.inject.Singleton
 @Module
 class TestThreadingModule {
 
-    @Provides
-    @Singleton
-    fun providesThreading(): Threading = InstrumentationThreading()
+    private val testDispatcher = TrackingTestDispatcher()
 
+    init {
+        IdlingRegistry.getInstance().register(testDispatcher.getIdlingResource())
+    }
+
+    class TrackingTestDispatcher(
+        private val delegate: CoroutineDispatcher = Dispatchers.IO
+    ) : CoroutineDispatcher() {
+
+        private val idlingResource = CountingIdlingResource("TrackingTestDispatcher", true)
+
+        override fun dispatch(context: CoroutineContext, block: Runnable) {
+            idlingResource.increment()
+            delegate.dispatch(context) {
+                try {
+                    block.run()
+                } finally {
+                    idlingResource.decrement()
+                }
+            }
+        }
+
+        fun getIdlingResource(): IdlingResource = idlingResource
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Provides
     @Singleton
     @IODispatcher
-    fun providesIODispatcher(): CoroutineDispatcher = Dispatchers.IO
-
+    fun providesIODispatcher(): CoroutineDispatcher = testDispatcher
 }

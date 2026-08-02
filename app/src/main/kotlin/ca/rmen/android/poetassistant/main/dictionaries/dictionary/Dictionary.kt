@@ -22,12 +22,18 @@ package ca.rmen.android.poetassistant.main.dictionaries.dictionary
 import android.database.Cursor
 import android.text.TextUtils
 import ca.rmen.android.poetassistant.Constants
+import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
 import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import java.util.Random
 import javax.inject.Inject
 
-class Dictionary @Inject constructor(private val embeddedDb: EmbeddedDb) {
+class Dictionary @Inject constructor(
+    private val embeddedDb: EmbeddedDb,
+    @IODispatcher private val ioDispatcher: CoroutineDispatcher,
+) {
     companion object {
         // When looking up random words, their "frequency" is a factor in the selection.
         // Words which are too frequent (a, the, why) are not interesting words.
@@ -111,24 +117,26 @@ class Dictionary @Inject constructor(private val embeddedDb: EmbeddedDb) {
         return emptyArray()
     }
 
-    fun getRandomEntry(): DictionaryEntry? {
+    suspend fun getRandomEntry(): DictionaryEntry? {
         return getRandomEntry(0)
     }
 
     /**
      * @param seed used for the random selection
      */
-    fun getRandomEntry(seed: Long): DictionaryEntry? {
-        return getRandomWordCursor()?.use { cursor ->
-            var word: String? = null
-            val random = Random()
-            if (seed > 0) random.setSeed(seed)
-            val position = random.nextInt(cursor.count)
-            if (cursor.moveToPosition(position)) {
-                word = cursor.getString(0)
+    suspend fun getRandomEntry(seed: Long): DictionaryEntry? {
+        return withContext(ioDispatcher) {
+            getRandomWordCursor()?.use { cursor ->
+                var word: String? = null
+                val random = Random()
+                if (seed > 0) random.setSeed(seed)
+                val position = random.nextInt(cursor.count)
+                if (cursor.moveToPosition(position)) {
+                    word = cursor.getString(0)
+                }
+                if (TextUtils.isEmpty(word)) null
+                else lookup(word!!)
             }
-            if (TextUtils.isEmpty(word)) null
-            else lookup(word!!)
         }
     }
 

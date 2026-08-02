@@ -51,6 +51,7 @@ import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
 import ca.rmen.android.poetassistant.wotd.WotdListExporter
 import ca.rmen.android.poetassistant.wotd.WotdLiveData
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.CoroutineScope
 
 object ResultListFactory {
     private val TAG = Constants.TAG + ResultListFactory::class.java.simpleName
@@ -98,14 +99,14 @@ object ResultListFactory {
         }
     }
 
-    fun createLiveData(tab: Tab, context: Context, query: String?, filter: String?): ResultListLiveData<out ResultListData<Any>> {
+    fun createLiveData(tab: Tab, context: Context, scope: CoroutineScope, query: String?, filter: String?): ResultListLiveData<out ResultListData<Any>> {
         return when (tab) {
-            Tab.PATTERN -> PatternLiveData(context, query!!)
-            Tab.FAVORITES -> FavoritesLiveData(context)
-            Tab.WOTD -> WotdLiveData(context)
-            Tab.RHYMER -> RhymerLiveData(context, query!!, filter)
-            Tab.THESAURUS -> ThesaurusLiveData(context, query!!, filter)
-            else -> DictionaryLiveData(context, query!!)
+            Tab.PATTERN -> PatternLiveData(context, scope, query!!)
+            Tab.FAVORITES -> FavoritesLiveData(context, scope)
+            Tab.WOTD -> WotdLiveData(context, scope)
+            Tab.RHYMER -> RhymerLiveData(context, scope, query!!, filter)
+            Tab.THESAURUS -> ThesaurusLiveData(context, scope, query!!, filter)
+            else -> DictionaryLiveData(context, scope, query!!)
         }
     }
 

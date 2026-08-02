@@ -22,9 +22,11 @@ import android.text.Selection
 import android.text.SpannableStringBuilder
 import androidx.test.core.app.ApplicationProvider
 import ca.rmen.android.poetassistant.Tts
+import ca.rmen.android.poetassistant.di.IODispatcher
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.CoroutineDispatcher
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -45,12 +47,15 @@ class TestReaderViewModel {
 
     @Inject lateinit var tts: Tts
 
+    @IODispatcher
+    @Inject lateinit var ioDispatcher: CoroutineDispatcher
+
     private lateinit var viewModel: ReaderViewModel
 
     @Before
     fun setUp() {
         hiltTestRule.inject()
-        viewModel = ReaderViewModel(ApplicationProvider.getApplicationContext(), tts)
+        viewModel = ReaderViewModel(ApplicationProvider.getApplicationContext(), tts, ioDispatcher)
     }
 
     @After

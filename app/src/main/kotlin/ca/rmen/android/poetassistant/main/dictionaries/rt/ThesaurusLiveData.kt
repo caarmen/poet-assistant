@@ -32,9 +32,10 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListLiveData
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.CoroutineScope
 import java.util.Locale
 
-class ThesaurusLiveData constructor(context: Context, private val query: String, private val filter: String?) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context) {
+class ThesaurusLiveData(context: Context, coroutineScope: CoroutineScope, private val query: String, private val filter: String?) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + ThesaurusLiveData::class.java.simpleName
         @VisibleForTesting

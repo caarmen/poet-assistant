@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2017 Carmen Alvarez
+ * Copyright (c) 2016-present Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -28,11 +28,16 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.text.TextUtils
 import android.util.Log
+import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs, private val threading: Threading) {
+class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs, private val coroutineScope: CoroutineScope) {
     companion object {
         private var TAG = Constants.TAG + Tts::class.java.simpleName
         private const val PAUSE_DURATION_MS = 500L
@@ -74,6 +79,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
      * Force a reinitialization of the TextToSpeech.
      * One use case: if the user changed the default engine, a restart is required to get the new list of voices.
      */
+    @MainThread
     fun restart() {
         Log.v(TAG, "restart")
         shutdown()
@@ -115,16 +121,17 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
         }
     }
 
-    fun speakToFile(text: String) {
+    fun speakToFile(text: String, coroutineScope: CoroutineScope, ioDispatcher: CoroutineDispatcher) {
         if (!isReady()) return
-        val poemAudioExport = PoemAudioExport(context, threading, this)
-        poemAudioExport.speakToFile(mTextToSpeech!!, text)
+        val poemAudioExport = PoemAudioExport(context, this)
+        poemAudioExport.speakToFile(mTextToSpeech!!, text, coroutineScope, ioDispatcher)
     }
 
     fun stop() {
         mTextToSpeech?.stop()
     }
 
+    @MainThread
     fun shutdown() {
         mTextToSpeech?.let {
             it.setOnUtteranceProgressListener(null)
@@ -132,7 +139,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
             it.setOnUtteranceCompletedListener(null)
             it.shutdown()
             mTtsStatus = TextToSpeech.ERROR
-            threading.executeForeground { mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null) }
+            mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null)
             mTextToSpeech = null
         }
         PreferenceManager.getDefaultSharedPreferences(context).unregisterOnSharedPreferenceChangeListener(mTtsPrefsListener)
@@ -185,15 +192,10 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
             if (status == TextToSpeech.SUCCESS) {
                 setVoiceSpeedFromSettings()
                 setVoicePitchFromSettings()
-                threading.executeForeground {
-                    mTtsLiveData.value = TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.INITIALIZED, null)
-                    mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.INITIALIZED, null)
-
-                }
+                mTtsLiveData.value = TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.INITIALIZED, null)
+                mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.INITIALIZED, null)
             } else {
-                threading.executeForeground {
-                    mTtsLiveData.value = TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null)
-                }
+                mTtsLiveData.value = TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null)
             }
         }
     }
@@ -212,7 +214,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
     private inner class UtteranceListener : UtteranceProgressListener() {
         override fun onStart(utteranceId: String) {
-            threading.executeForeground {
+            coroutineScope.launch(Dispatchers.Main) {
                 mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.SPEAKING, utteranceId)
             }
         }
@@ -233,14 +235,14 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
         }
 
         private fun onUtteranceCompleted(utteranceId: String) {
-            threading.executeForeground {
+            coroutineScope.launch(Dispatchers.Main) {
                 mTtsLiveData.value = TtsState(TtsState.TtsStatus.SPEAKING, TtsState.TtsStatus.UTTERANCE_COMPLETE, utteranceId)
                 mTtsLiveData.value = TtsState(TtsState.TtsStatus.UTTERANCE_COMPLETE, TtsState.TtsStatus.INITIALIZED, null)
             }
         }
 
         private fun onUtteranceError(utteranceId: String) {
-            threading.executeForeground {
+            coroutineScope.launch(Dispatchers.Main) {
                 mTtsLiveData.value = TtsState(TtsState.TtsStatus.SPEAKING, TtsState.TtsStatus.UTTERANCE_ERROR, utteranceId)
                 mTtsLiveData.value = TtsState(TtsState.TtsStatus.UTTERANCE_ERROR, TtsState.TtsStatus.INITIALIZED, utteranceId)
             }

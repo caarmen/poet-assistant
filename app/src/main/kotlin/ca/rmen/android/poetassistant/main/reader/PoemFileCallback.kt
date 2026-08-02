@@ -24,10 +24,6 @@ import android.os.Build
 import android.print.PrintJob
 
 interface PoemFileCallback {
-    fun onPoemLoaded(poemFile: PoemFile?)
-
-    fun onPoemSaved(poemFile: PoemFile?)
-
     @TargetApi(Build.VERSION_CODES.KITKAT)
     fun onPrintJobCreated(poemFile: PoemFile, printJob: PrintJob?)
 }

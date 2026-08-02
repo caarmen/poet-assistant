@@ -29,6 +29,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorite
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
@@ -68,7 +69,7 @@ class ResultListViewModel<T: Any> constructor(
         favoritesLiveData = entryPoint.favorites().getFavoritesLiveData()
         resultListDataLiveData = mQueryParams.switchMap { queryParams ->
             @Suppress("UNCHECKED_CAST")
-            ResultListFactory.createLiveData(tab, application, queryParams.word, queryParams.filter) as LiveData<ResultListData<T>>
+            ResultListFactory.createLiveData(tab, application, viewModelScope, queryParams.word, queryParams.filter) as LiveData<ResultListData<T>>
         }
     }
 

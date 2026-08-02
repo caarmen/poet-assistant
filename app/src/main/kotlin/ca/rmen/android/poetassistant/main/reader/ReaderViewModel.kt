@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017-2018 Carmen Alvarez
+ * Copyright (c) 2017-present Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -39,19 +39,24 @@ import androidx.annotation.StringRes
 import android.text.Selection
 import android.text.TextUtils
 import android.util.Log
+import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.databinding.LiveDataMapping
+import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.dictionaries.Share
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ReaderViewModel @Inject constructor(
     application: Application,
     private val mTts: Tts,
+    @IODispatcher private val ioDispatcher: CoroutineDispatcher,
     ) : AndroidViewModel(application) {
     companion object {
         private val TAG = Constants.TAG + ReaderViewModel::class.java.simpleName
@@ -160,7 +165,7 @@ class ReaderViewModel @Inject constructor(
 
     fun speakToFile() {
         poem.get()?.let {
-            mTts.speakToFile(it)
+            mTts.speakToFile(it, viewModelScope, ioDispatcher)
             snackbarText.value = SnackbarText(R.string.share_poem_audio_snackbar)
         }
     }
@@ -197,14 +202,20 @@ class ReaderViewModel @Inject constructor(
         val savedPoem = mPoemPrefs.getSavedPoem()
         if (savedPoem?.uri != null) {
             poem.get()?.let {
-                PoemFile.save(context, savedPoem.uri, it, mPoemFileCallback)
+                viewModelScope.launch {
+                    val savedPoem = PoemFile.save(context, savedPoem.uri, it)
+                    onPoemSaved(savedPoem)
+                }
             }
         }
     }
 
     fun saveAs(context: Context, uri: Uri) {
         poem.get()?.let {
-            PoemFile.save(context, uri, it, mPoemFileCallback)
+            viewModelScope.launch {
+                val savedPoem = PoemFile.save(context, uri, it)
+                onPoemSaved(savedPoem)
+            }
         }
     }
 
@@ -231,7 +242,10 @@ class ReaderViewModel @Inject constructor(
     }
 
     fun open(context: Context, uri: Uri) {
-        PoemFile.open(context, uri, mPoemFileCallback)
+        viewModelScope.launch {
+            val loadedPoem = PoemFile.open(context, uri)
+            onPoemLoaded(loadedPoem)
+        }
     }
 
     fun loadPoem() {
@@ -262,26 +276,6 @@ class ReaderViewModel @Inject constructor(
     }
 
     private val mPoemFileCallback = object : PoemFileCallback {
-        override fun onPoemLoaded(poemFile: PoemFile?) {
-            Log.d(TAG, "onPoemLoaded, loadedPoem = $poemFile")
-            if (poemFile == null) {
-                clearPoem()
-                snackbarText.value = SnackbarText(R.string.file_opened_error)
-            } else {
-                setSavedPoem(poemFile)
-                snackbarText.value = SnackbarText(R.string.file_opened, poemFile.name ?: "")
-            }
-        }
-
-        override fun onPoemSaved(poemFile: PoemFile?) {
-            if (poemFile == null) {
-                snackbarText.value = SnackbarText(R.string.file_saved_error)
-            } else {
-                Log.d(TAG, "onPoemSaved, savedPoem = $poemFile")
-                setSavedPoem(poemFile)
-                snackbarText.value = SnackbarText(R.string.file_saved, poemFile.name ?: "")
-            }
-        }
 
         @TargetApi(Build.VERSION_CODES.KITKAT)
         override fun onPrintJobCreated(poemFile: PoemFile, printJob: PrintJob?) {
@@ -289,6 +283,27 @@ class ReaderViewModel @Inject constructor(
             if (printJob != null) {
                 Log.d(TAG, "Print job id = ${printJob.id}, info = ${printJob.info}")
             }
+        }
+    }
+
+    fun onPoemLoaded(poemFile: PoemFile?) {
+        Log.d(TAG, "onPoemLoaded, loadedPoem = $poemFile")
+        if (poemFile == null) {
+            clearPoem()
+            snackbarText.value = SnackbarText(R.string.file_opened_error)
+        } else {
+            setSavedPoem(poemFile)
+            snackbarText.value = SnackbarText(R.string.file_opened, poemFile.name ?: "")
+        }
+    }
+
+    fun onPoemSaved(poemFile: PoemFile?) {
+        if (poemFile == null) {
+            snackbarText.value = SnackbarText(R.string.file_saved_error)
+        } else {
+            Log.d(TAG, "onPoemSaved, savedPoem = $poemFile")
+            setSavedPoem(poemFile)
+            snackbarText.value = SnackbarText(R.string.file_saved, poemFile.name ?: "")
         }
     }
 

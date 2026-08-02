@@ -23,8 +23,14 @@ import androidx.lifecycle.LiveData
 import android.content.Context
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-abstract class ResultListLiveData<T> protected constructor(protected val context: Context) : LiveData<T>() {
+abstract class ResultListLiveData<T> protected constructor(
+    protected val context: Context,
+    private val coroutineScope: CoroutineScope,
+) : LiveData<T>() {
     private var mIsLoading = false
 
     protected abstract fun loadInBackground(): T
@@ -35,14 +41,15 @@ abstract class ResultListLiveData<T> protected constructor(protected val context
                 context.applicationContext,
                 NonAndroidEntryPoint::class.java
             )
-            val threading = entryPoint.threading()
-            threading.execute(
-                { loadInBackground() },
-                {
-                    value = it
-                    mIsLoading = false
+            val ioDispatcher = entryPoint.ioDispatcher()
+            coroutineScope.launch {
+                val result = withContext(ioDispatcher) {
+                    loadInBackground()
                 }
-            )
+                value = result
+                mIsLoading = false
+
+            }
         }
     }
 }

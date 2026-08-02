@@ -36,6 +36,7 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.withContext
 import java.io.BufferedWriter
 import java.io.IOException
 import java.io.OutputStreamWriter
@@ -46,15 +47,17 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
     companion object {
         private val TAG = Constants.TAG + PoemFile::class.java.simpleName
 
-        fun open(context: Context, uri: Uri, callback: PoemFileCallback) {
-            Log.d(TAG, "open(uri=$uri, callback=$callback")
-            val threading = EntryPointAccessors.fromApplication(context, NonAndroidEntryPoint::class.java).threading()
-            threading.execute({ readPoemFile(context, uri) },
-                    { poemFile -> callback.onPoemLoaded(poemFile) },
-                    { throwable ->
-                        Log.w(TAG, "Couldn't open file", throwable)
-                        callback.onPoemLoaded(null)
-                    })
+        suspend fun open(context: Context, uri: Uri) : PoemFile? {
+            Log.d(TAG, "open(uri=$uri")
+            val ioDispatcher = EntryPointAccessors.fromApplication(context, NonAndroidEntryPoint::class.java).ioDispatcher()
+            try {
+                return withContext(ioDispatcher) {
+                    readPoemFile(context, uri)
+                }
+            } catch(throwable: Throwable) {
+                Log.w(TAG, "Couldn't open file", throwable)
+                return null
+            }
         }
 
         @WorkerThread
@@ -65,20 +68,22 @@ data class PoemFile(val uri: Uri?, val name: String?, val text: String?) {
             return PoemFile(uri, displayName, text)
         }
 
-        fun save(context: Context, uri: Uri, text: String, callback: PoemFileCallback) {
-            Log.d(TAG, "save: uri=$uri, text=$text, callback=$callback")
-            val threading = EntryPointAccessors.fromApplication(context, NonAndroidEntryPoint::class.java).threading()
-            threading.execute(
-                    { savePoemFile(context, uri, text) },
-                    { poemFile -> callback.onPoemSaved(poemFile) },
-                    { throwable ->
-                        Log.v(TAG, "Couldn't save file", throwable)
-                        callback.onPoemSaved(null)
-                    })
+        suspend fun save(context: Context, uri: Uri, text: String) : PoemFile ?{
+            Log.d(TAG, "save: uri=$uri, text=$text")
+            val ioDispatcher = EntryPointAccessors.fromApplication(context, NonAndroidEntryPoint::class.java).ioDispatcher()
+            try {
+                return withContext(ioDispatcher) {
+                    savePoemFile(context, uri, text)
+                }
+            } catch(throwable: Throwable) {
+                Log.v(TAG, "Couldn't save file", throwable)
+                return null
+            }
         }
 
         @WorkerThread
         private fun savePoemFile(context: Context, uri: Uri, text: String): PoemFile {
+            // TODO need to close the outputStream?
             val outputStream = context.contentResolver.openOutputStream(uri, "w") ?: throw IOException("Couldn't open OutputStream to uri $uri")
             val writer = BufferedWriter(OutputStreamWriter(outputStream))
             writer.use {

@@ -27,6 +27,7 @@ import ca.rmen.android.poetassistant.Environment
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -92,56 +93,44 @@ class TestPoemFile {
 
     @Test
     @Config(sdk = [30]) // TODO investigate why this doesn't work starting from 31
-    fun testSave() {
+    fun testSave() = runTest {
         val text = "Roses are red\n"
-        val callback = CountDownPoemFileCallback()
-        PoemFile.save(Environment.getApplication(), mPoemUri, text, callback)
-        callback.await()
+        val savedPoem = PoemFile.save(Environment.getApplication(), mPoemUri, text)
         assertTrue(mPoemFile.exists())
-        val poemFile = callback.poemFile
-        assertNotNull(poemFile)
-        assertEquals(text, poemFile!!.text)
-        assertEquals(mPoemUri, poemFile.uri)
-        assertNull(poemFile.name)
+        assertNotNull(savedPoem)
+        assertEquals(text, savedPoem!!.text)
+        assertEquals(mPoemUri, savedPoem.uri)
+        assertNull(savedPoem.name)
     }
 
     @Test
-    fun testSaveError() {
+    fun testSaveError() = runTest {
         val text = "Violets are blue\n"
-        val callback = CountDownPoemFileCallback()
         val uri = Uri.parse("file:///invalid/folder/poem.txt")
-        PoemFile.save(Environment.getApplication(), uri, text, callback)
-        callback.await()
-        assertTrue(callback.wasCalled())
-        assertNull(callback.poemFile)
+        val savedPoem = PoemFile.save(Environment.getApplication(), uri, text)
+        assertNull(savedPoem)
     }
 
     @Test
-    fun testOpenNoFile() {
-        val callback = CountDownPoemFileCallback()
+    fun testOpenNoFile() = runTest {
         Shadows.shadowOf(Environment.getApplication().contentResolver).registerInputStream(mPoemUri, object : InputStream() {
             override fun read() : Int {
                 throw IOException("nothing here")
             }
         })
-        PoemFile.open(Environment.getApplication(), mPoemUri, callback)
-        callback.await()
-        assertTrue(callback.wasCalled())
-        assertNull(callback.poemFile)
+        val poemFile = PoemFile.open(Environment.getApplication(), mPoemUri)
+        assertNull(poemFile)
     }
 
     @Test
-    fun testOpen() {
+    fun testOpen() = runTest {
         val text = "If you are a poet\n"
         val os = FileOutputStream(mPoemFile)
         os.write(text.toByteArray())
         os.close()
 
-        val callback = CountDownPoemFileCallback()
         Shadows.shadowOf(Environment.getApplication().contentResolver).registerInputStream(mPoemUri, FileInputStream(mPoemFile))
-        PoemFile.open(Environment.getApplication(), mPoemUri, callback)
-        callback.await()
-        val poemFile = callback.poemFile
+        val poemFile = PoemFile.open(Environment.getApplication(), mPoemUri)
         assertNotNull(poemFile)
         assertEquals(text, poemFile!!.text)
         assertEquals(mPoemUri, poemFile.uri)

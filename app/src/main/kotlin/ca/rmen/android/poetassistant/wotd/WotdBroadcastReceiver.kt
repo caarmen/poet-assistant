@@ -24,9 +24,14 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.Threading
+import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 // Split into separate impl and base class to get full code coverage stats:
@@ -41,10 +46,19 @@ open class WotdBroadcastReceiverImpl : BroadcastReceiver() {
     }
 
     @Inject lateinit var dictionary: Dictionary
-    @Inject lateinit var threading: Threading
+    @IODispatcher @Inject lateinit var ioDispatcher: CoroutineDispatcher
+    private val scope = CoroutineScope(SupervisorJob())
 
     override fun onReceive(context: Context, intent: Intent) {
         Log.v(TAG, "onReceive: intent=$intent")
-        threading.execute({Wotd.notifyWotd(context, dictionary)})
+        val pendingResult = goAsync()
+        scope.launch {
+            try {
+                Wotd.notifyWotd(context, dictionary)
+            } finally {
+                pendingResult.finish()
+                scope.cancel()
+            }
+        }
     }
 }

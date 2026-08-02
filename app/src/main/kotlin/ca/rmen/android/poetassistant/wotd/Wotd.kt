@@ -50,20 +50,19 @@ object Wotd {
 
     const val NOTIFICATION_FREQUENCY_MS = (24 * 60 * 60 * 1000).toLong()
 
-    fun setWotdEnabled(context: Context, dictionary: Dictionary, enabled: Boolean) {
+    suspend fun setWotdEnabled(context: Context, dictionary: Dictionary, enabled: Boolean) {
         Log.v(TAG, "setWotdEnabled $enabled")
         if (enabled) enableWotd(context, dictionary)
         else disableWotd(context)
     }
 
-    private fun enableWotd(context: Context, dictionary: Dictionary) {
+    private suspend fun enableWotd(context: Context, dictionary: Dictionary) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             WotdJob.schedule(context)
         } else {
             WotdAlarm.schedule(context)
         }
-        val threading = EntryPointAccessors.fromApplication(context, NonAndroidEntryPoint::class.java).threading()
-        threading.execute({ notifyWotd(context, dictionary) })
+        notifyWotd(context, dictionary)
     }
 
     private fun disableWotd(context: Context) {
@@ -84,7 +83,7 @@ object Wotd {
         return now
     }
 
-    fun notifyWotd(context: Context, dictionary: Dictionary) {
+    suspend fun notifyWotd(context: Context, dictionary: Dictionary) {
         Log.v(TAG, "notifyWotd")
         val entry = dictionary.getRandomEntry(getTodayUTC().timeInMillis) ?: return
         val title = context.getString(R.string.wotd_notification_title, entry.word)

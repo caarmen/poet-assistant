@@ -15,6 +15,7 @@ applied_migrations = [
 [tools.bash]
 allowlist = [
     "./gradlew",
+    "/*",
     "/home/vibeuser/.vibe/*",
     "/home/vibeuser/.vibe/plans/*",
     "adb",

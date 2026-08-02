@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2016-present Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -29,7 +29,6 @@ import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
 import androidx.annotation.MainThread
-import androidx.annotation.WorkerThread
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import android.text.TextUtils
@@ -41,13 +40,14 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.updatePadding
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.about.AboutActivity
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding
+import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
@@ -61,6 +61,9 @@ import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.widget.CABEditText
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 // Split into separate impl and base class to get full code coverage stats:
@@ -83,7 +86,8 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
     @Inject lateinit var mThesaurus: Thesaurus
     @Inject lateinit var mDictionary: Dictionary
     @Inject lateinit var mFavorites: Favorites
-    @Inject lateinit var mThreading: Threading
+
+    @IODispatcher @Inject lateinit var ioDispatcher: CoroutineDispatcher
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: savedInstanceState = $savedInstanceState")
@@ -117,15 +121,15 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
         }
 
-        mSearch = Search(this, mBinding.viewPager, dictionary = mDictionary, threading = mThreading)
+        mSearch = Search(this, mBinding.viewPager, dictionary = mDictionary, ioDispatcher =  ioDispatcher)
         // Load our dictionaries when the activity starts, so that the first search can already be fast.
-        mThreading.execute({ loadDatabase() },
-                {
-                    onDatabaseLoadResult(it)
-                    if (Intent.ACTION_SEARCH == intent.action) {
-                        handleSearchIntent(intent)
-                    }
-                })
+        lifecycleScope.launch {
+            val dbLoaded = loadDatabase()
+            onDatabaseLoadResult(dbLoaded)
+            if (Intent.ACTION_SEARCH == intent.action) {
+                handleSearchIntent(intent)
+            }
+        }
         volumeControlStream = AudioManager.STREAM_MUSIC
         getInsets(mBinding.toolbar) { view, insets ->
             view.updatePadding(
@@ -148,7 +152,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
         }
         val searchView = mBinding.searchView
         val suggestionsViewModel = ViewModelProvider(this).get(SuggestionsViewModel::class.java)
-        mSearch.setSearchView(searchView, suggestionsViewModel)
+        mSearch.setSearchView(searchView, suggestionsViewModel, lifecycleScope)
     }
 
     override fun onResume() {
@@ -166,9 +170,10 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
         super.onPause()
     }
 
-    @WorkerThread
-    private fun loadDatabase(): Boolean {
-        return mRhymer.isLoaded() && mThesaurus.isLoaded() && mDictionary.isLoaded()
+    private suspend fun loadDatabase(): Boolean {
+        return withContext(ioDispatcher) {
+            mRhymer.isLoaded() && mThesaurus.isLoaded() && mDictionary.isLoaded()
+        }
     }
 
     @MainThread
@@ -218,8 +223,10 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             if (!userQuery.isNullOrEmpty()) query = userQuery.toString()
         }
         if (TextUtils.isEmpty(query)) return
-        mSearch.addSuggestions(query!!)
-        mSearch.search(query)
+        lifecycleScope.launch {
+            mSearch.addSuggestions(query!!)
+            mSearch.search(query)
+        }
     }
     private fun handleDeepLink(uri: Uri?) {
         Log.d(TAG, "handleDeepLink, uri=$uri")
@@ -247,7 +254,9 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
                 return true
             }
             R.id.action_random_word -> {
-                mSearch.lookupRandom()
+                lifecycleScope.launch {
+                    mSearch.lookupRandom()
+                }
                 return true
             }
             R.id.action_settings -> {

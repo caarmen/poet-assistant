@@ -21,7 +21,6 @@ package ca.rmen.android.poetassistant.di
 import android.app.Application
 import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.Theme
-import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.UserDb
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
@@ -34,6 +33,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
 @Module
@@ -42,8 +45,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesTts(application: Application, settingsPrefs: SettingsPrefs, threading: Threading): Tts =
-        Tts(application, settingsPrefs, threading)
+    fun providesTts(application: Application, settingsPrefs: SettingsPrefs): Tts =
+        Tts(application, settingsPrefs, CoroutineScope(SupervisorJob() + Dispatchers.Main))
 
     @Provides
     @Singleton
@@ -59,7 +62,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesDictionary(embeddedDb: EmbeddedDb) = Dictionary(embeddedDb)
+    fun providesDictionary(embeddedDb: EmbeddedDb, @IODispatcher ioDispatcher: CoroutineDispatcher) = Dictionary(embeddedDb, ioDispatcher)
 
     @Provides
     @Singleton
@@ -72,7 +75,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesFavorites(threading: Threading, userDb: UserDb) = Favorites(threading, userDb.favoriteDao())
+    fun providesFavorites(userDb: UserDb, @IODispatcher ioDispatcher: CoroutineDispatcher) = Favorites(CoroutineScope(SupervisorJob()), ioDispatcher, userDb.favoriteDao())
 
     @Provides
     @Singleton

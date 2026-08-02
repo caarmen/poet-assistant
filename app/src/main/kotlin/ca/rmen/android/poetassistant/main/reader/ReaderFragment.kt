@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017 Carmen Alvarez
+ * Copyright (c) 2016-present Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -38,9 +38,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.Threading
 import ca.rmen.android.poetassistant.compat.HtmlCompat
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding
@@ -54,7 +54,9 @@ import ca.rmen.android.poetassistant.widget.CABEditText
 import ca.rmen.android.poetassistant.widget.DebounceTextWatcher
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 // Split into separate impl and base class to get full code coverage stats:
 // https://medium.com/livefront/dagger-hilt-testing-injected-android-components-with-code-coverage-30089a1f6872
@@ -86,8 +88,6 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
     }
 
     private lateinit var mViewModel: ReaderViewModel
-    @Inject
-    lateinit var mThreading: Threading
     private lateinit var mBinding: FragmentReaderBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,7 +117,10 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
                 AppBarLayoutHelper.forceExpandAppBarLayout(activity)
             }
         }
-        DebounceTextWatcher.debounce(mBinding.tvText) { mViewModel.updateWordCount() }
+        DebounceTextWatcher.debounce(
+            mBinding.tvText,
+            lifecycleScope
+        ) { mViewModel.updateWordCount() }
         TextPopupMenu.addSelectionPopupMenu(mBinding.root, mBinding.tvText, activity as OnWordClickListener)
         mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver)
         // Add padding to the bottom of the reader content when the keyboard is open.
@@ -299,7 +302,10 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         // will show a "stop" button instead of a "play" button.  We workaround this by updating
         // the button again after a brief moment, hoping that isSpeaking() will correctly
         // return false, allowing us to display a "play" button.
-        mThreading.executeForeground(5000, this::updatePlayButton)
+        lifecycleScope.launch {
+            delay(5000.milliseconds)
+            updatePlayButton()
+        }
     }
 
     private val mPlayButtonDrawableObserver = BindingCallbackAdapter(object: BindingCallbackAdapter.Callback {
