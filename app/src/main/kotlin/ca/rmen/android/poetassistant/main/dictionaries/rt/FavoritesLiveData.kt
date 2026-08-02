@@ -32,7 +32,12 @@ import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import java.util.TreeSet
 
-class FavoritesLiveData(context: Context, coroutineScope: CoroutineScope) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
+class FavoritesLiveData(
+    context: Context,
+    coroutineScope: CoroutineScope,
+    private val onFavoriteToggle: (String, Boolean) -> Unit,
+) :
+    ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + FavoritesLiveData::class.java.simpleName
     }
@@ -57,11 +62,11 @@ class FavoritesLiveData(context: Context, coroutineScope: CoroutineScope) : Resu
         sortedFavorites.forEach { favorite ->
             /*@ColorRes*/
             data.add(RTEntryViewModel(
-                    context,
                     RTEntryViewModel.Type.WORD,
                     favorite,
                     true,
-                    layout == SettingsPrefs.Layout.EFFICIENT
+                    layout == SettingsPrefs.Layout.EFFICIENT,
+                    onFavoriteToggle,
             ))
         }
         return ResultListData(context.getString(R.string.favorites_list_header), data)

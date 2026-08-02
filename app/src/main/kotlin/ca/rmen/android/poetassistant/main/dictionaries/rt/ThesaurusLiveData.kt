@@ -35,7 +35,13 @@ import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import java.util.Locale
 
-class ThesaurusLiveData(context: Context, coroutineScope: CoroutineScope, private val query: String, private val filter: String?) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
+class ThesaurusLiveData(
+    context: Context,
+    coroutineScope: CoroutineScope,
+    private val query: String,
+    private val filter: String?,
+    private val onFavoriteToggle: (String, Boolean) -> Unit
+) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + ThesaurusLiveData::class.java.simpleName
         @VisibleForTesting
@@ -92,7 +98,7 @@ class ThesaurusLiveData(context: Context, coroutineScope: CoroutineScope, privat
         val layout = SettingsPrefs.getLayout(mPrefs)
         val favorites = mFavorites.getFavorites()
         entries.forEach {
-            data.add(RTEntryViewModel(context, RTEntryViewModel.Type.HEADING, it.wordType.name.lowercase(Locale.US)))
+            data.add(RTEntryViewModel(RTEntryViewModel.Type.HEADING, it.wordType.name.lowercase(Locale.US), onFavoriteToggle = onFavoriteToggle))
             addResultSection(favorites, data, R.string.thesaurus_section_synonyms, it.synonyms, layout)
             addResultSection(favorites, data, R.string.thesaurus_section_antonyms, it.antonyms, layout)
         }
@@ -105,14 +111,14 @@ class ThesaurusLiveData(context: Context, coroutineScope: CoroutineScope, privat
 
     private fun addResultSection(favorites: Set<String>, results: MutableList<RTEntryViewModel>, @StringRes sectionHeadingResId: Int, words: List<String>, layout: ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout) {
         if (words.isNotEmpty()) {
-            results.add(RTEntryViewModel(context, RTEntryViewModel.Type.SUBHEADING, context.getString(sectionHeadingResId)))
+            results.add(RTEntryViewModel(RTEntryViewModel.Type.SUBHEADING, context.getString(sectionHeadingResId), onFavoriteToggle = onFavoriteToggle))
             words.forEach { word ->
                 results.add(RTEntryViewModel(
-                        context,
                         RTEntryViewModel.Type.WORD,
                         word,
                         favorites.contains(word),
-                        layout == SettingsPrefs.Layout.EFFICIENT
+                        layout == SettingsPrefs.Layout.EFFICIENT,
+                        onFavoriteToggle = onFavoriteToggle,
                 ))
             }
         }

@@ -19,14 +19,14 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.rt
 
-import android.content.Context
 import androidx.databinding.ObservableBoolean
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
-import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
-import dagger.hilt.android.EntryPointAccessors
 
-class RTEntryViewModel(context: Context, val type: Type, val text: String,
-                       isFavoriteInitialValue: Boolean, val hasDefinition: Boolean, val showButtons: Boolean) {
+class RTEntryViewModel(
+    val type: Type, val text: String,
+    isFavoriteInitialValue: Boolean, val hasDefinition: Boolean, val showButtons: Boolean,
+    onFavoriteToggle: (String, Boolean) -> Unit,
+    ) {
     enum class Type {
         HEADING,
         SUBHEADING,
@@ -35,18 +35,17 @@ class RTEntryViewModel(context: Context, val type: Type, val text: String,
 
     val isFavorite = ObservableBoolean()
 
-    constructor(context: Context, type: Type, text: String) :
-            this(context, type, text,  false, false)
+    constructor(type: Type, text: String, onFavoriteToggle: (String, Boolean) -> Unit) :
+            this(type, text,  false, false, onFavoriteToggle)
 
-    constructor(context: Context, type: Type, text: String, isFavoriteInitialValue: Boolean, showButtons: Boolean) :
-            this(context, type, text, isFavoriteInitialValue, true, showButtons)
+    constructor(type: Type, text: String, isFavoriteInitialValue: Boolean, showButtons: Boolean, onFavoriteToggle: (String, Boolean) -> Unit) :
+            this(type, text, isFavoriteInitialValue, true, showButtons, onFavoriteToggle)
 
     init {
-        val favorites = EntryPointAccessors.fromApplication(context, NonAndroidEntryPoint::class.java).favorites()
         isFavorite.set(isFavoriteInitialValue)
         isFavorite.addOnPropertyChangedCallback(BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
             override fun onChanged() {
-                favorites.saveFavorite(text, isFavorite.get())
+                onFavoriteToggle(text, isFavorite.get())
             }
         }))
     }

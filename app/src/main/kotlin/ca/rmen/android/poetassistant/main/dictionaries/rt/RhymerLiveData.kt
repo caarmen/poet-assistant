@@ -34,7 +34,14 @@ import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 import java.util.TreeSet
 
-class RhymerLiveData(context: Context, coroutineScope: CoroutineScope, val query: String, val filter: String?) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
+class RhymerLiveData(
+    context: Context,
+    coroutineScope: CoroutineScope,
+    val query: String,
+    val filter: String?,
+    private val onFavoriteToggle: (String, Boolean) -> Unit,
+) :
+    ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
 
     companion object {
         private val TAG = Constants.TAG + RhymerLiveData::class.java.simpleName
@@ -102,7 +109,7 @@ class RhymerLiveData(context: Context, coroutineScope: CoroutineScope, val query
             // Add the word variant, if there are multiple pronunciations.
             if (rhymeResults.size > 1) {
                 val heading = query + " (" + (it.variantNumber + 1) + ")"
-                data.add(RTEntryViewModel(context, RTEntryViewModel.Type.HEADING, heading))
+                data.add(RTEntryViewModel(RTEntryViewModel.Type.HEADING, heading, onFavoriteToggle = onFavoriteToggle))
             }
             addResultSection(favorites, data, R.string.rhyme_section_stress_syllables, it.strictRhymes, layout)
             addResultSection(favorites, data, R.string.rhyme_section_three_syllables, it.threeSyllableRhymes, layout)
@@ -133,22 +140,24 @@ class RhymerLiveData(context: Context, coroutineScope: CoroutineScope, val query
     private fun addResultSection(favorites: Set<String>, results: MutableList<RTEntryViewModel>, sectionHeadingResId: Int, rhymes: Array<String>, layout: ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout) {
         if (rhymes.isNotEmpty()) {
             val wordsWithDefinitions = if (mPrefs.isAllRhymesEnabled) mRhymer.getWordsWithDefinitions(rhymes) else null
-            results.add(RTEntryViewModel(context, RTEntryViewModel.Type.SUBHEADING, context.getString(sectionHeadingResId)))
+            results.add(RTEntryViewModel(RTEntryViewModel.Type.SUBHEADING, context.getString(sectionHeadingResId), onFavoriteToggle))
             rhymes.forEach { rhyme ->
                 val hasDefinition = wordsWithDefinitions == null || wordsWithDefinitions.contains(rhyme)
                 results.add(RTEntryViewModel(
-                        context,
                         RTEntryViewModel.Type.WORD,
                         rhyme,
                         favorites.contains(rhyme),
                         hasDefinition,
-                        layout == SettingsPrefs.Layout.EFFICIENT))
+                        layout == SettingsPrefs.Layout.EFFICIENT,
+                        onFavoriteToggle),
+                    )
             }
             if (results.size >= Constants.MAX_RESULTS) {
                 results.add(RTEntryViewModel(
-                        context,
                         RTEntryViewModel.Type.SUBHEADING,
-                        context.getString(R.string.max_results, Constants.MAX_RESULTS)))
+                        context.getString(R.string.max_results, Constants.MAX_RESULTS),
+                        onFavoriteToggle
+                    ))
             }
         }
     }

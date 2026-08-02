@@ -34,7 +34,13 @@ import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 
-class PatternLiveData(context: Context, coroutineScope: CoroutineScope, private val query: String) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
+class PatternLiveData(
+    context: Context,
+    coroutineScope: CoroutineScope,
+    private val query: String,
+    private val onFavoriteToggle: (String, Boolean) -> Unit,
+) :
+    ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + PatternLiveData::class.java.simpleName
     }
@@ -68,18 +74,20 @@ class PatternLiveData(context: Context, coroutineScope: CoroutineScope, private 
         val layout = SettingsPrefs.getLayout(mPrefs)
         matches.forEach { match ->
             data.add(RTEntryViewModel(
-                    context,
                     RTEntryViewModel.Type.WORD,
                     match,
                     favorites.contains(match),
-                    layout == SettingsPrefs.Layout.EFFICIENT))
+                    layout == SettingsPrefs.Layout.EFFICIENT,
+                    onFavoriteToggle,
+                ))
         }
 
         if (matches.size == Constants.MAX_RESULTS) {
             data.add(RTEntryViewModel(
-                    context,
                     RTEntryViewModel.Type.SUBHEADING,
-                    context.getString(R.string.max_results, Constants.MAX_RESULTS)))
+                    context.getString(R.string.max_results, Constants.MAX_RESULTS),
+                    onFavoriteToggle,
+                ))
         }
         return ResultListData(query, data)
     }
