@@ -337,8 +337,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     classDirectories.setFrom(
         fileTree(mapOf(
             "dir" to layout.buildDirectory,
-            "includes" to listOf("tmp/kotlin-classes/debug/ca/rmen/android/poetassistant/**/*.class",
-                "intermediates/javac/debug/compileDebugWithJavac/classes/ca/rmen/android/poetassistant/**/*.class"),
+            "includes" to listOf("intermediates/classes/debug/transformDebugClassesWithAsm/dirs/ca/rmen/android/poetassistant/**/*.class"),
             "excludes" to listOf("**/R.class", "**/R*.class", "**/Manifest.class", "**/Manifest*.class", "**/BuildConfig.class",
                 // ignore databinding generated code:
                 "**/ca/rmen/android/poetassistant/databinding/*.class",
@@ -346,11 +345,8 @@ tasks.register<JacocoReport>("jacocoTestReport") {
                 "**/ca/rmen/android/poetassistant/DataBinderMapperImpl.class",
                 "**/ca/rmen/android/poetassistant/DataBinderMapperImpl\$*.class",
                 "**/*_Impl*.class",
-                // ignore dagger generated code:
-                "**/ca/rmen/android/poetassistant/**/DaggerAppComponent*.class",
-                "**/ca/rmen/android/poetassistant/**/*_Factory.class",
-                "**/ca/rmen/android/poetassistant/**/*_Provides*.class",
-                "**/ca/rmen/android/poetassistant/**/*Injector.class",
+                // ignore hilt generated code:
+                "**/ca/rmen/android/poetassistant/**/*HiltComponents*.class",
                 // ignore generated code not in our package
                 "**/android/databinding/*.class",
                 "**/android/databinding/**/*.class",
@@ -373,6 +369,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     )
     reports {
         xml.required = true
+        html.required = true
     }
 }
 
