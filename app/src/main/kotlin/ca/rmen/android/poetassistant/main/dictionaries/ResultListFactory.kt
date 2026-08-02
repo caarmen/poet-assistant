@@ -92,11 +92,18 @@ object ResultListFactory {
         return ViewModelProvider(fragment)[viewModelClass]
     }
 
-    fun createLiveData(tab: Tab, context: Context, scope: CoroutineScope, query: String?, filter: String?): ResultListLiveData<out ResultListData<Any>> {
+    fun createLiveData(
+        tab: Tab,
+        context: Context,
+        scope: CoroutineScope,
+        query: String?,
+        filter: String?,
+        onFavoriteToggle: (String, Boolean) -> Unit,
+    ): ResultListLiveData<out ResultListData<Any>> {
         return when (tab) {
             Tab.PATTERN -> PatternLiveData(context, scope, query!!)
             Tab.FAVORITES -> FavoritesLiveData(context, scope)
-            Tab.WOTD -> WotdLiveData(context, scope)
+            Tab.WOTD -> WotdLiveData(context, scope, onFavoriteToggle = onFavoriteToggle)
             Tab.RHYMER -> RhymerLiveData(context, scope, query!!, filter)
             Tab.THESAURUS -> ThesaurusLiveData(context, scope, query!!, filter)
             else -> DictionaryLiveData(context, scope, query!!)

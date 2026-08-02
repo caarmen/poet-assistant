@@ -91,10 +91,20 @@ open class ResultListViewModel<T: Any> (
         favoritesLiveData = favorites.getFavoritesLiveData()
         resultListDataLiveData = mQueryParams.switchMap { queryParams ->
             @Suppress("UNCHECKED_CAST")
-            ResultListFactory.createLiveData(tab, application, viewModelScope, queryParams.word, queryParams.filter) as LiveData<ResultListData<T>>
+            ResultListFactory.createLiveData(
+                tab,
+                application,
+                viewModelScope,
+                queryParams.word,
+                queryParams.filter,
+                onFavoriteToggle = ::onFavoriteToggle,
+            ) as LiveData<ResultListData<T>>
         }
     }
 
+    private fun onFavoriteToggle(word: String, isFavorite: Boolean) {
+        favorites.saveFavorite(word, isFavorite)
+    }
     fun setQueryParams(queryParams: QueryParams) {
         Log.v(TAG, "$tab: setQueryParams $queryParams")
         if (!TextUtils.isEmpty(queryParams.word) || ResultListFactory.isLoadWithoutQuerySupported(tab)) {

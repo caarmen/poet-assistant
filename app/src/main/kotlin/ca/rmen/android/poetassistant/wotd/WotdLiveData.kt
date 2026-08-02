@@ -36,7 +36,11 @@ import java.util.Calendar
 import java.util.Random
 import java.util.TimeZone
 
-class WotdLiveData(context: Context, coroutineScope: CoroutineScope) : ResultListLiveData<ResultListData<WotdEntryViewModel>>(context, coroutineScope) {
+class WotdLiveData(
+    context: Context,
+    coroutineScope: CoroutineScope,
+    private val onFavoriteToggle: (String, Boolean) -> Unit
+) : ResultListLiveData<ResultListData<WotdEntryViewModel>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + WotdLiveData::class.java.simpleName
     }
@@ -74,11 +78,12 @@ class WotdLiveData(context: Context, coroutineScope: CoroutineScope) : ResultLis
                 if (cursor.moveToPosition(position)) {
                     val word = cursor.getString(0)
                     data.add(WotdEntryViewModel(
-                            mFavorites,
                             word,
                             date,
                             favorites.contains(word),
-                            layout == SettingsPrefs.Layout.EFFICIENT))
+                            layout == SettingsPrefs.Layout.EFFICIENT,
+                            onFavoriteToggle = onFavoriteToggle,
+                        ))
                 }
                 calendar.add(Calendar.DAY_OF_YEAR, -1)
                 calendarDisplay.add(Calendar.DAY_OF_YEAR, -1)
