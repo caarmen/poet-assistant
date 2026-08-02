@@ -33,42 +33,40 @@ import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorite
 import ca.rmen.android.poetassistant.Favorites
-import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.wotd.WotdListItem
-import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-open class RTListViewModel(application: Application, tab: Tab, favorites: Favorites): ResultListViewModel<RTListItem>(application, tab, favorites)
+open class RTListViewModel(application: Application, tab: Tab, favorites: Favorites, settingsPrefs: SettingsPrefs): ResultListViewModel<RTListItem>(application, tab, favorites, settingsPrefs)
 @HiltViewModel
-class PatternListViewModel @Inject constructor(application: Application, favorites: Favorites): RTListViewModel(application, Tab.PATTERN, favorites)
+class PatternListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.PATTERN, favorites, settingsPrefs)
 @HiltViewModel
-class FavoritesListViewModel @Inject constructor(application: Application, favorites: Favorites): RTListViewModel(application, Tab.FAVORITES, favorites)
+class FavoritesListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.FAVORITES, favorites, settingsPrefs)
 @HiltViewModel
-class RhymerListViewModel @Inject constructor(application: Application, favorites: Favorites): RTListViewModel(application, Tab.RHYMER, favorites)
+class RhymerListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.RHYMER, favorites, settingsPrefs)
 @HiltViewModel
-class ThesaurusListViewModel @Inject constructor(application: Application, favorites: Favorites): RTListViewModel(application, Tab.THESAURUS, favorites)
+class ThesaurusListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.THESAURUS, favorites, settingsPrefs)
 @HiltViewModel
-class WotdListViewModel @Inject constructor(application: Application, favorites: Favorites): ResultListViewModel<WotdListItem>(application, Tab.WOTD, favorites)
+class WotdListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): ResultListViewModel<WotdListItem>(application, Tab.WOTD, favorites, settingsPrefs)
 @HiltViewModel
-class DictionaryListViewModel @Inject constructor(application: Application, favorites: Favorites): ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, Tab.DICTIONARY, favorites)
+class DictionaryListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, Tab.DICTIONARY, favorites, settingsPrefs)
 
 open class ResultListViewModel<T: Any> (
     application: Application,
     private val tab: Tab,
     private val favorites: Favorites,
+    private val settingsPrefs: SettingsPrefs,
     ) : AndroidViewModel(application) {
     companion object {
         private val TAG = Constants.TAG + ResultListViewModel::class.java.simpleName
     }
 
-    val settingsPrefs: SettingsPrefs
     val isDataAvailable = ObservableBoolean()
     val emptyText = MutableLiveData<EmptyText>()
     val layout = MutableLiveData<ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout>()
@@ -84,8 +82,6 @@ open class ResultListViewModel<T: Any> (
     val favoritesLiveData: LiveData<List<Favorite>>
 
     init {
-        val entryPoint = EntryPointAccessors.fromApplication(application, NonAndroidEntryPoint::class.java)
-        settingsPrefs = entryPoint.prefs()
         emptyText.value = EmptyTextNoQuery
         mPrefsListener = PrefsListener()
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mPrefsListener)
