@@ -118,7 +118,14 @@ open class ResultListFragment<out T: Any> : Fragment() {
             }
             mViewModel.favoritesLiveData.observe(viewLifecycleOwner, mFavoritesObserver)
             mViewModel.resultListDataLiveData.observe(
-                viewLifecycleOwner, Observer { data -> mViewModel.setData(data) }
+                viewLifecycleOwner, Observer { data ->
+                    @Suppress("UNCHECKED_CAST")
+                    (mBinding.recyclerView.adapter as? ResultListAdapter<T>)?.let { adapter ->
+                        if (data != null) adapter.submitList(data.data)
+                        else adapter.submitList(emptyList())
+                    }
+                    mViewModel.setData(data)
+                }
             )
             return mBinding.root
         }
@@ -133,7 +140,6 @@ open class ResultListFragment<out T: Any> : Fragment() {
             if (tab != null) {
                 @Suppress("UNCHECKED_CAST")
                 val adapter = ResultListFactory.createAdapter(it, tab) as ResultListAdapter<T>
-                mViewModel.setAdapter(adapter)
                 mBinding.recyclerView.adapter = adapter
             }
         }
@@ -157,7 +163,10 @@ open class ResultListFragment<out T: Any> : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_share) {
             mHeaderViewModel.query.get()?.let {
-                mViewModel.share(it, mHeaderViewModel.filter.get())
+                @Suppress("UNCHECKED_CAST")
+                (mBinding.recyclerView.adapter as? ResultListAdapter<T>)?.let { adapter ->
+                    mViewModel.share(it, mHeaderViewModel.filter.get(), adapter.getAll())
+                }
             }
         }
         return super.onOptionsItemSelected(item)

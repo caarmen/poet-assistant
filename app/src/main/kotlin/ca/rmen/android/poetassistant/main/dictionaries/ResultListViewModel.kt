@@ -72,7 +72,6 @@ open class ResultListViewModel<T: Any> (
     val layout = MutableLiveData<ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout>()
     val showHeader = MutableLiveData<Boolean>()
     val usedQueryWord = MutableLiveData<String>()
-    private var mAdapter: ResultListAdapter<T>? = null
 
     data class QueryParams(val word: String?, val filter: String?)
 
@@ -111,22 +110,12 @@ open class ResultListViewModel<T: Any> (
         }
     }
 
-    fun setAdapter(adapter: ResultListAdapter<T>) {
-        mAdapter = adapter
-    }
-
-    fun share(query: String, filter: String?) {
-        mAdapter?.let {
-            Share.share(getApplication(), tab, query, filter, it.getAll())
-        }
+    fun share(query: String, filter: String?, entries: List<T>) {
+        Share.share(getApplication(), tab, query, filter, entries)
     }
 
     fun setData(loadedData: ResultListData<T>?) {
-        Log.v(TAG, "$tab: setData adapter=$mAdapter, data=$loadedData")
-        mAdapter?.let {
-            if (loadedData != null) it.submitList(loadedData.data)
-            else it.submitList(emptyList())
-        }
+        Log.v(TAG, "$tab: setData, data=$loadedData")
         val hasQuery = loadedData != null && !TextUtils.isEmpty(loadedData.matchedWord)
         if (!hasQuery) {
             emptyText.value = EmptyTextNoQuery
