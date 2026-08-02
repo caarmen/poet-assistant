@@ -41,6 +41,7 @@ import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -103,7 +104,9 @@ open class ResultListViewModel<T: Any> (
     }
 
     private fun onFavoriteToggle(word: String, isFavorite: Boolean) {
-        favorites.saveFavorite(word, isFavorite)
+        viewModelScope.launch {
+            favorites.saveFavorite(word, isFavorite)
+        }
     }
     fun setQueryParams(queryParams: QueryParams) {
         Log.v(TAG, "$tab: setQueryParams $queryParams")

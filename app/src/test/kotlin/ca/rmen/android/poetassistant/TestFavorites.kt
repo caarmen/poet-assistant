@@ -47,7 +47,7 @@ class TestFavorites {
                 .allowMainThreadQueries()
                 .addMigrations(UserDb.MIGRATION_1_2)
                 .build()
-        val favorites = Favorites(this, StandardTestDispatcher(testScheduler), db.favoriteDao())
+        val favorites = Favorites(StandardTestDispatcher(testScheduler), db.favoriteDao())
         var favoriteWords = favorites.getFavorites()
         assertEquals(0, favoriteWords.size)
         val uri = createFavoritesFile()

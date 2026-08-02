@@ -67,7 +67,9 @@ class ResultListHeaderViewModel(application: Application) : AndroidViewModel(app
         isFavorite.addOnPropertyChangedCallback(BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
             override fun onChanged() {
                 query.get()?.let {
-                    mFavorites.saveFavorite(it, isFavorite.get())
+                    viewModelScope.launch {
+                        mFavorites.saveFavorite(it, isFavorite.get())
+                    }
                 }
             }
         }))
