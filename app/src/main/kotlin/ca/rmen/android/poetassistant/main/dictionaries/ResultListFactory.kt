@@ -79,7 +79,7 @@ object ResultListFactory {
 
     fun createViewModel(tab: Tab, fragment: Fragment): ResultListViewModel<*>? {
         return if (fragment.context != null) {
-            val factory = createViewModelFactory(tab, fragment.context!!.applicationContext as Application)
+            val factory = createViewModelFactory(tab, fragment.requireContext().applicationContext as Application)
             ViewModelProvider(fragment, factory).get(ResultListViewModel::class.java)
         } else {
             null
