@@ -108,7 +108,7 @@ class RhymerLiveData(
             // Add the word variant, if there are multiple pronunciations.
             if (rhymeResults.size > 1) {
                 val heading = query + " (" + (it.variantNumber + 1) + ")"
-                data.add(RTListItem(RTListItem.Type.HEADING, heading))
+                data.add(RTListItem(type=RTListItem.Type.HEADING, text=heading))
             }
             addResultSection(favorites, data, R.string.rhyme_section_stress_syllables, it.strictRhymes, layout)
             addResultSection(favorites, data, R.string.rhyme_section_three_syllables, it.threeSyllableRhymes, layout)
@@ -143,17 +143,17 @@ class RhymerLiveData(
             rhymes.forEach { rhyme ->
                 val hasDefinition = wordsWithDefinitions == null || wordsWithDefinitions.contains(rhyme)
                 results.add(RTListItem(
-                        RTListItem.Type.WORD,
-                        rhyme,
-                        favorites.contains(rhyme),
-                        hasDefinition,
-                        layout == SettingsPrefs.Layout.EFFICIENT,
+                    type = RTListItem.Type.WORD,
+                    text = rhyme,
+                    isFavorite = favorites.contains(rhyme),
+                    hasDefinition = hasDefinition,
+                    showButtons = layout == SettingsPrefs.Layout.EFFICIENT,
                 ))
             }
             if (results.size >= Constants.MAX_RESULTS) {
                 results.add(RTListItem(
-                        RTListItem.Type.SUBHEADING,
-                        context.getString(R.string.max_results, Constants.MAX_RESULTS)
+                        type=RTListItem.Type.SUBHEADING,
+                        text=context.getString(R.string.max_results, Constants.MAX_RESULTS)
                 ))
             }
         }

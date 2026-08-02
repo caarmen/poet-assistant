@@ -60,12 +60,14 @@ class FavoritesLiveData(
         val layout = SettingsPrefs.getLayout(mPrefs)
         sortedFavorites.forEach { favorite ->
             /*@ColorRes*/
-            data.add(RTListItem(
-                    RTListItem.Type.WORD,
-                    favorite,
-                    true,
-                    layout == SettingsPrefs.Layout.EFFICIENT,
-            ))
+            data.add(
+                RTListItem(
+                    type = RTListItem.Type.WORD,
+                    text = favorite,
+                    isFavorite = true,
+                    showButtons = layout == SettingsPrefs.Layout.EFFICIENT,
+                )
+            )
         }
         return ResultListData(context.getString(R.string.favorites_list_header), data)
     }

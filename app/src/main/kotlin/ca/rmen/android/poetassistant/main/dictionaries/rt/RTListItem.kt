@@ -19,57 +19,16 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.rt
 
-import androidx.databinding.ObservableBoolean
-
-class RTListItem(
-    val type: Type, val text: String,
-    isFavoriteInitialValue: Boolean, val hasDefinition: Boolean, val showButtons: Boolean,
-    ) {
+data class RTListItem(
+    val type: Type,
+    val text: String,
+    val isFavorite: Boolean = false,
+    val hasDefinition: Boolean = true,
+    val showButtons: Boolean = false,
+) {
     enum class Type {
         HEADING,
         SUBHEADING,
         WORD
     }
-
-    val isFavorite = ObservableBoolean()
-
-    constructor(type: Type, text: String) :
-            this(type, text,  false, false)
-
-    constructor(type: Type, text: String, isFavoriteInitialValue: Boolean, showButtons: Boolean) :
-            this(type, text, isFavoriteInitialValue, true, showButtons)
-
-    init {
-        isFavorite.set(isFavoriteInitialValue)
-    }
-
-    override fun toString(): String {
-        return "RTEntryViewModel(text='$text')"
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as RTListItem
-
-        if (type != other.type) return false
-        if (text != other.text) return false
-        if (hasDefinition != other.hasDefinition) return false
-        if (showButtons != other.showButtons) return false
-        if (isFavorite != other.isFavorite) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = type.hashCode()
-        result = 31 * result + text.hashCode()
-        result = 31 * result + hasDefinition.hashCode()
-        result = 31 * result + showButtons.hashCode()
-        result = 31 * result + isFavorite.hashCode()
-        return result
-    }
-
-
 }

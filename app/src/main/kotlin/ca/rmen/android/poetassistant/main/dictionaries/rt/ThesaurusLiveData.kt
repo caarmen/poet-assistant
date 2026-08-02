@@ -97,7 +97,7 @@ class ThesaurusLiveData(
         val layout = SettingsPrefs.getLayout(mPrefs)
         val favorites = mFavorites.getFavorites()
         entries.forEach {
-            data.add(RTListItem(RTListItem.Type.HEADING, it.wordType.name.lowercase(Locale.US)))
+            data.add(RTListItem(type=RTListItem.Type.HEADING, text=it.wordType.name.lowercase(Locale.US)))
             addResultSection(favorites, data, R.string.thesaurus_section_synonyms, it.synonyms, layout)
             addResultSection(favorites, data, R.string.thesaurus_section_antonyms, it.antonyms, layout)
         }
@@ -112,12 +112,14 @@ class ThesaurusLiveData(
         if (words.isNotEmpty()) {
             results.add(RTListItem(RTListItem.Type.SUBHEADING, context.getString(sectionHeadingResId)))
             words.forEach { word ->
-                results.add(RTListItem(
-                        RTListItem.Type.WORD,
-                        word,
-                        favorites.contains(word),
-                        layout == SettingsPrefs.Layout.EFFICIENT,
-                ))
+                results.add(
+                    RTListItem(
+                        type = RTListItem.Type.WORD,
+                        text = word,
+                        isFavorite = favorites.contains(word),
+                        showButtons = layout == SettingsPrefs.Layout.EFFICIENT,
+                    )
+                )
             }
         }
     }

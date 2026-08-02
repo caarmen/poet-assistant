@@ -43,8 +43,15 @@ abstract class ResultListAdapter<T: Any>(itemCallback: DiffUtilItemCallback<T>) 
     abstract class DiffUtilItemCallback<U: Any> : DiffUtil.ItemCallback<U>() {
         override fun areItemsTheSame(
                 oldItem: U, newItem: U): Boolean {
-            // Normally this would check for ids, but we don't have ids in these lists.
-            return oldItem == newItem
+            // TODO this needs to be improved!
+            // But if I use oldItem == newItem (or even just comparing the text of two items as
+            // an "id"), this breaks since the item classes became data classes. Before the
+            // whole list scrolled to the top at each search, and it's no longer the case.
+            // Returning false for now just to keep ISO behavior with before. Maybe this will
+            // all be moot if we get far enough in the modernization to migrate to compose.
+            if (oldItem === newItem) return true
+            if (oldItem.javaClass != newItem.javaClass) return false
+            return false
         }
     }
 }

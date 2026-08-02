@@ -19,42 +19,9 @@
 
 package ca.rmen.android.poetassistant.wotd
 
-import androidx.databinding.ObservableBoolean
-import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
-
-class WotdListItem(
+data class WotdListItem(
     val text: String,
     val date: String,
-    isFavoriteInitialValue: Boolean,
+    val isFavorite: Boolean,
     val showButtons: Boolean,
-) {
-    val isFavorite = ObservableBoolean()
-
-    init {
-        isFavorite.set(isFavoriteInitialValue)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as WotdListItem
-
-        if (text != other.text) return false
-        if (date != other.date) return false
-        if (showButtons != other.showButtons) return false
-        if (isFavorite != other.isFavorite) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = text.hashCode()
-        result = 31 * result + date.hashCode()
-        result = 31 * result + showButtons.hashCode()
-        result = 31 * result + isFavorite.hashCode()
-        return result
-    }
-
-
-}
+)

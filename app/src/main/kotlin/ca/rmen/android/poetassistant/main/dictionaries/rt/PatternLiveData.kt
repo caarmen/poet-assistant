@@ -72,18 +72,20 @@ class PatternLiveData(
 
         val layout = SettingsPrefs.getLayout(mPrefs)
         matches.forEach { match ->
-            data.add(RTListItem(
-                    RTListItem.Type.WORD,
-                    match,
-                    favorites.contains(match),
-                    layout == SettingsPrefs.Layout.EFFICIENT,
-                ))
+            data.add(
+                RTListItem(
+                    type = RTListItem.Type.WORD,
+                    text = match,
+                    isFavorite = favorites.contains(match),
+                    showButtons = layout == SettingsPrefs.Layout.EFFICIENT,
+                )
+            )
         }
 
         if (matches.size == Constants.MAX_RESULTS) {
             data.add(RTListItem(
-                    RTListItem.Type.SUBHEADING,
-                    context.getString(R.string.max_results, Constants.MAX_RESULTS),
+                    type=RTListItem.Type.SUBHEADING,
+                    text=context.getString(R.string.max_results, Constants.MAX_RESULTS),
             ))
         }
         return ResultListData(query, data)
