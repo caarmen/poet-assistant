@@ -31,10 +31,10 @@ import ca.rmen.android.poetassistant.main.TextPopupMenu
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 
-open class WotdAdapter(activity: Activity) : ResultListAdapter<WotdEntryViewModel>(ItemCallback()) {
+open class WotdAdapter(activity: Activity) : ResultListAdapter<WotdListItem>(ItemCallback()) {
 
-    class ItemCallback : DiffUtilItemCallback<WotdEntryViewModel>() {
-        override fun areContentsTheSame(oldItem: WotdEntryViewModel, newItem: WotdEntryViewModel) = oldItem == newItem
+    class ItemCallback : DiffUtilItemCallback<WotdListItem>() {
+        override fun areContentsTheSame(oldItem: WotdListItem, newItem: WotdListItem) = oldItem == newItem
     }
 
     private val mWordClickedListener: OnWordClickListener = activity as OnWordClickListener
@@ -49,12 +49,12 @@ open class WotdAdapter(activity: Activity) : ResultListAdapter<WotdEntryViewMode
     }
 
     override fun onBindViewHolder(holder: ResultListEntryViewHolder, position: Int) {
-        val viewModel = getItem(position)
+        val listItem = getItem(position)
         val binding = holder.binding as ListItemWotdBinding
-        binding.viewModel = viewModel
+        binding.listItem = listItem
         binding.entryIconClickListener = mEntryIconClickListener
         TextPopupMenu.addPopupMenu(
-                if (viewModel.showButtons) TextPopupMenu.Style.SYSTEM else TextPopupMenu.Style.FULL,
+                if (listItem.showButtons) TextPopupMenu.Style.SYSTEM else TextPopupMenu.Style.FULL,
                 holder.parentView,
                 binding.text1,
                 mWordClickedListener)

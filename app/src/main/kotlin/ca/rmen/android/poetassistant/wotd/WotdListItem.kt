@@ -22,7 +22,7 @@ package ca.rmen.android.poetassistant.wotd
 import androidx.databinding.ObservableBoolean
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 
-class WotdEntryViewModel(
+class WotdListItem(
     val text: String,
     val date: String,
     isFavoriteInitialValue: Boolean,
@@ -44,7 +44,7 @@ class WotdEntryViewModel(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as WotdEntryViewModel
+        other as WotdListItem
 
         if (text != other.text) return false
         if (date != other.date) return false

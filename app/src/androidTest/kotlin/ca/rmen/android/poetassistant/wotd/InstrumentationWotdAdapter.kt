@@ -28,12 +28,12 @@ class InstrumentationWotdAdapter(activity: Activity)
     : WotdAdapter(activity) {
     private val countingIdlingResource: CountingIdlingResource = CountingIdlingResource("WotdDictionaryResultIdlingResource", true)
 
-    private var data : MutableList<WotdEntryViewModel>? = null
+    private var data : MutableList<WotdListItem>? = null
     init {
         IdlingRegistry.getInstance().register(countingIdlingResource)
     }
 
-    override fun submitList(list: MutableList<WotdEntryViewModel>?) {
+    override fun submitList(list: MutableList<WotdListItem>?) {
         ResultListIdlingHelper.setupIdlingResource(this, data, list, countingIdlingResource)
         data = list
         super.submitList(list)

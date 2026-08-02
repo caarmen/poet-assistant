@@ -49,7 +49,7 @@ import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
-import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
+import ca.rmen.android.poetassistant.wotd.WotdListItem
 import dagger.hilt.android.AndroidEntryPoint
 
 open class RTListFragment: ResultListFragment<RTEntryViewModel>()
@@ -62,7 +62,7 @@ class RhymerListFragment: RTListFragment()
 @AndroidEntryPoint
 class ThesaurusListFragment: RTListFragment()
 @AndroidEntryPoint
-class WotdListFragment: ResultListFragment<WotdEntryViewModel>()
+class WotdListFragment: ResultListFragment<WotdListItem>()
 @AndroidEntryPoint
 class DictionaryListFragment: ResultListFragment<DictionaryEntry.DictionaryEntryDetails>()
 

@@ -30,8 +30,8 @@
             type="ca.rmen.android.poetassistant.wotd.WotdAdapter.EntryIconClickListener" />
 
         <variable
-            name="viewModel"
-            type="ca.rmen.android.poetassistant.wotd.WotdEntryViewModel" />
+            name="listItem"
+            type="ca.rmen.android.poetassistant.wotd.WotdListItem" />
     </data>
 
 
@@ -50,7 +50,7 @@
             android:layout_marginStart="8dp"
             android:background="?selectableItemBackgroundBorderless"
             android:button="@drawable/ic_star"
-            android:checked="@={viewModel.isFavorite}"
+            android:checked="@={listItem.isFavorite}"
             android:clickable="true"
             android:paddingEnd="8dp"
             android:paddingStart="4dp"
@@ -68,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="2dp"
-                android:text="@{viewModel.date}"
+                android:text="@{listItem.date}"
                 android:textColor="@color/secondary_text"
                 android:textSize="12sp"
                 android:textStyle="italic"
@@ -81,7 +81,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.text}"
+                android:text="@{listItem.text}"
                 tools:text="happy" />
 
         </LinearLayout>
@@ -105,7 +105,7 @@
             android:paddingLeft="@dimen/list_rtd_icon_padding"
             android:paddingRight="@dimen/list_rtd_icon_padding"
             android:paddingStart="@dimen/list_rtd_icon_padding"
-            android:visibility="@{viewModel.showButtons? View.VISIBLE:View.GONE}"
+            android:visibility="@{listItem.showButtons? View.VISIBLE:View.GONE}"
             app:srcCompat="@drawable/ic_rhymer"
             android:focusable="true"/>
 
@@ -120,7 +120,7 @@
             android:paddingLeft="@dimen/list_rtd_icon_padding"
             android:paddingRight="@dimen/list_rtd_icon_padding"
             android:paddingStart="@dimen/list_rtd_icon_padding"
-            android:visibility="@{viewModel.showButtons? View.VISIBLE:View.GONE}"
+            android:visibility="@{listItem.showButtons? View.VISIBLE:View.GONE}"
             app:srcCompat="@drawable/ic_thesaurus" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -135,7 +135,7 @@
             android:paddingLeft="@dimen/list_rtd_icon_padding"
             android:paddingRight="@dimen/list_rtd_icon_padding"
             android:paddingStart="@dimen/list_rtd_icon_padding"
-            android:visibility="@{viewModel.showButtons? View.VISIBLE:View.GONE}"
+            android:visibility="@{listItem.showButtons? View.VISIBLE:View.GONE}"
             app:srcCompat="@drawable/ic_dictionary" />
 
     </LinearLayout>

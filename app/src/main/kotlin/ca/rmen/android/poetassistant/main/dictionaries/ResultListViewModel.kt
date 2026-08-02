@@ -38,7 +38,7 @@ import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
-import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
+import ca.rmen.android.poetassistant.wotd.WotdListItem
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -55,7 +55,7 @@ class RhymerListViewModel @Inject constructor(application: Application, favorite
 @HiltViewModel
 class ThesaurusListViewModel @Inject constructor(application: Application, favorites: Favorites): RTListViewModel(application, Tab.THESAURUS, favorites)
 @HiltViewModel
-class WotdListViewModel @Inject constructor(application: Application, favorites: Favorites): ResultListViewModel<WotdEntryViewModel>(application, Tab.WOTD, favorites)
+class WotdListViewModel @Inject constructor(application: Application, favorites: Favorites): ResultListViewModel<WotdListItem>(application, Tab.WOTD, favorites)
 @HiltViewModel
 class DictionaryListViewModel @Inject constructor(application: Application, favorites: Favorites): ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, Tab.DICTIONARY, favorites)
 
