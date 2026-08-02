@@ -20,8 +20,6 @@
 package ca.rmen.android.poetassistant.main.dictionaries
 
 import android.app.Activity
-import android.app.Application
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import android.content.Context
 import android.os.Bundle
@@ -78,28 +76,20 @@ object ResultListFactory {
     }
 
     fun createViewModel(tab: Tab, fragment: Fragment): ResultListViewModel<*>? {
-        return if (fragment.context != null) {
-            val factory = createViewModelFactory(tab, fragment.requireContext().applicationContext as Application)
-            ViewModelProvider(fragment, factory).get(ResultListViewModel::class.java)
-        } else {
-            null
-        }
-    }
+        if (fragment.context == null) return null
 
-    private fun createViewModelFactory(tab: Tab, application: Application): ViewModelProvider.Factory {
-        return object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                @Suppress("UNCHECKED_CAST")
-                return when (tab) {
-                    Tab.PATTERN -> PatternListViewModel(application)
-                    Tab.FAVORITES -> FavoritesListViewModel(application)
-                    Tab.RHYMER -> RhymerListViewModel(application)
-                    Tab.THESAURUS -> ThesaurusListViewModel(application)
-                    Tab.WOTD -> WotdListViewModel(application)
-                    else -> DictionaryListViewModel(application)
-                } as (T)
-            }
+        // Map the Tab to the corresponding ViewModel Class
+        val viewModelClass = when (tab) {
+            Tab.PATTERN -> PatternListViewModel::class.java
+            Tab.FAVORITES -> FavoritesListViewModel::class.java
+            Tab.RHYMER -> RhymerListViewModel::class.java
+            Tab.THESAURUS -> ThesaurusListViewModel::class.java
+            Tab.WOTD -> WotdListViewModel::class.java
+            else -> DictionaryListViewModel::class.java
         }
+
+        // Hilt integrates with Fragment's default ViewModelProvider when using @HiltViewModel
+        return ViewModelProvider(fragment)[viewModelClass]
     }
 
     fun createLiveData(tab: Tab, context: Context, scope: CoroutineScope, query: String?, filter: String?): ResultListLiveData<out ResultListData<Any>> {
