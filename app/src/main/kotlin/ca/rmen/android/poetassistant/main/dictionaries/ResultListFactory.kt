@@ -57,9 +57,12 @@ object ResultListFactory {
     fun createListFragment(tab: Tab, initialQuery: String?): ResultListFragment<Any> {
         Log.d(TAG, "createListFragment: tab=$tab, initialQuery = $initialQuery")
         val fragment = when (tab) {
-            Tab.PATTERN, Tab.FAVORITES, Tab.RHYMER, Tab.THESAURUS -> ResultListFragment<RTEntryViewModel>()
-            Tab.WOTD -> ResultListFragment<WotdEntryViewModel>()
-            else -> ResultListFragment<DictionaryEntry.DictionaryEntryDetails>()
+            Tab.PATTERN -> PatternListFragment()
+            Tab.FAVORITES -> FavoritesListFragment()
+            Tab.RHYMER -> RhymerListFragment()
+            Tab.THESAURUS -> ThesaurusListFragment()
+            Tab.WOTD -> WotdListFragment()
+            else -> DictionaryListFragment()
         }
         val bundle = Bundle(2)
         bundle.putSerializable(ResultListFragment.EXTRA_TAB, tab)

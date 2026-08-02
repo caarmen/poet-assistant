@@ -46,9 +46,27 @@ import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding
 import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.Tab
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-class ResultListFragment<out T: Any> : Fragment() {
+open class RTListFragment: ResultListFragment<RTEntryViewModel>()
+@AndroidEntryPoint
+class PatternListFragment: RTListFragment()
+@AndroidEntryPoint
+class FavoritesListFragment: RTListFragment()
+@AndroidEntryPoint
+class RhymerListFragment: RTListFragment()
+@AndroidEntryPoint
+class ThesaurusListFragment: RTListFragment()
+@AndroidEntryPoint
+class WotdListFragment: ResultListFragment<WotdEntryViewModel>()
+@AndroidEntryPoint
+class DictionaryListFragment: ResultListFragment<DictionaryEntry.DictionaryEntryDetails>()
+
+open class ResultListFragment<out T: Any> : Fragment() {
     companion object {
         private val TAG = Constants.TAG + ResultListFragment::class.java.simpleName
         const val EXTRA_TAB = "tab"
