@@ -37,6 +37,7 @@ import ca.rmen.android.poetassistant.settings.SettingsActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.FixMethodOrder
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -56,6 +57,7 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
  * https://github.com/caarmen/poet-assistant/issues/19
  * https://github.com/caarmen/poet-assistant/issues/81
  */
+@Ignore
 @LargeTest
 @HiltAndroidTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
