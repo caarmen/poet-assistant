@@ -27,8 +27,6 @@ import androidx.annotation.WorkerThread
 import android.text.TextUtils
 import android.util.Log
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -38,7 +36,6 @@ import java.io.OutputStreamWriter
 import java.util.Locale
 
 class Favorites(
-    private val scope: CoroutineScope,
     private val ioDispatcher: CoroutineDispatcher,
     val favoriteDao: FavoriteDao,
 ) {
@@ -72,11 +69,9 @@ class Favorites(
         }
     }
 
-    fun saveFavorite(word: String, isFavorite: Boolean) {
-        scope.launch {
-            if (isFavorite) favoriteDao.insert(Favorite(word))
-            else removeFavorite(word)
-        }
+    suspend fun saveFavorite(word: String, isFavorite: Boolean) {
+        if (isFavorite) favoriteDao.insert(Favorite(word))
+        else removeFavorite(word)
     }
 
     @WorkerThread

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 - 2017 Carmen Alvarez
+ * Copyright (c) 2016-2017 Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,17 +17,11 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.rt
+package ca.rmen.android.poetassistant.wotd
 
-import android.content.Context
-import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListExporter
-
-class FavoritesListExporter(private val context: Context) : ResultListExporter<List<RTListItem>> {
-    override fun export(word: String, filter: String?, entries: List<RTListItem>): String {
-        val title = context.getString(R.string.share_favorites_title)
-        val builder = StringBuilder(title)
-        entries.forEach { builder.append(context.getString(R.string.share_rt_entry, it.text)) }
-        return builder.toString()
-    }
-}
+data class WotdListItem(
+    val text: String,
+    val date: String,
+    val isFavorite: Boolean,
+    val showButtons: Boolean,
+)

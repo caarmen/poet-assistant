@@ -34,7 +34,12 @@ import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 
-class PatternLiveData(context: Context, coroutineScope: CoroutineScope, private val query: String) : ResultListLiveData<ResultListData<RTEntryViewModel>>(context, coroutineScope) {
+class PatternLiveData(
+    context: Context,
+    coroutineScope: CoroutineScope,
+    private val query: String,
+) :
+    ResultListLiveData<ResultListData<RTListItem>>(context, coroutineScope) {
     companion object {
         private val TAG = Constants.TAG + PatternLiveData::class.java.simpleName
     }
@@ -50,10 +55,10 @@ class PatternLiveData(context: Context, coroutineScope: CoroutineScope, private 
         mFavorites = entryPoint.favorites()
     }
 
-    override fun loadInBackground(): ResultListData<RTEntryViewModel> {
+    override fun loadInBackground(): ResultListData<RTListItem> {
         Log.d(TAG, "loadInBackground, query=$query")
 
-        val data = ArrayList<RTEntryViewModel>()
+        val data = ArrayList<RTListItem>()
         if (TextUtils.isEmpty(query)) return emptyResult()
         val matches = mDictionary.findWordsByPattern(Patterns.convertForSqlite(query))
         if (matches.isEmpty()) {
@@ -67,19 +72,21 @@ class PatternLiveData(context: Context, coroutineScope: CoroutineScope, private 
 
         val layout = SettingsPrefs.getLayout(mPrefs)
         matches.forEach { match ->
-            data.add(RTEntryViewModel(
-                    context,
-                    RTEntryViewModel.Type.WORD,
-                    match,
-                    favorites.contains(match),
-                    layout == SettingsPrefs.Layout.EFFICIENT))
+            data.add(
+                RTListItem(
+                    type = RTListItem.Type.WORD,
+                    text = match,
+                    isFavorite = favorites.contains(match),
+                    showButtons = layout == SettingsPrefs.Layout.EFFICIENT,
+                )
+            )
         }
 
         if (matches.size == Constants.MAX_RESULTS) {
-            data.add(RTEntryViewModel(
-                    context,
-                    RTEntryViewModel.Type.SUBHEADING,
-                    context.getString(R.string.max_results, Constants.MAX_RESULTS)))
+            data.add(RTListItem(
+                    type=RTListItem.Type.SUBHEADING,
+                    text=context.getString(R.string.max_results, Constants.MAX_RESULTS),
+            ))
         }
         return ResultListData(query, data)
     }
@@ -96,6 +103,6 @@ class PatternLiveData(context: Context, coroutineScope: CoroutineScope, private 
         }
     }
 
-    private fun emptyResult(): ResultListData<RTEntryViewModel> = ResultListData(query, emptyList())
+    private fun emptyResult(): ResultListData<RTListItem> = ResultListData(query, emptyList())
 
 }

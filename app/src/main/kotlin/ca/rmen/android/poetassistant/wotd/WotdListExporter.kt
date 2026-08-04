@@ -23,8 +23,8 @@ import android.content.Context
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListExporter
 
-class WotdListExporter(private val context: Context) : ResultListExporter<List<WotdEntryViewModel>> {
-    override fun export(word: String, filter: String?, entries: List<WotdEntryViewModel>): String {
+class WotdListExporter(private val context: Context) : ResultListExporter<List<WotdListItem>> {
+    override fun export(word: String, filter: String?, entries: List<WotdListItem>): String {
         val title = context.getString(R.string.share_wotd_title)
         val builder = StringBuilder(title)
         entries.forEach {

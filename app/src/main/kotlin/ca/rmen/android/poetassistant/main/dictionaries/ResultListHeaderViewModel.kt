@@ -33,11 +33,12 @@ import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 import ca.rmen.android.poetassistant.databinding.LiveDataMapping
-import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
-import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ResultListHeaderViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class ResultListHeaderViewModel @Inject constructor(application: Application, val mFavorites: Favorites, val mTts: Tts) : AndroidViewModel(application) {
     val query = ObservableField<String>()
     val isMatchedWordSelectable = ObservableField(false)
     val filter = ObservableField<String>()
@@ -48,13 +49,7 @@ class ResultListHeaderViewModel(application: Application) : AndroidViewModel(app
     val isFavoriteLiveData: LiveData<Boolean>
     val ttsStateLiveData: LiveData<TtsState>
 
-    private val mFavorites: Favorites
-    private val mTts: Tts
-
     init {
-        val entryPoint = EntryPointAccessors.fromApplication(application, NonAndroidEntryPoint::class.java)
-        mFavorites = entryPoint.favorites()
-        mTts = entryPoint.tts()
         ttsStateLiveData = mTts.getTtsLiveData()
         // Expose a LiveData to the fragment, so it can update the star icon when the favorite
         // value changes in the DB. This is relevant when the favorite value changes because the star
@@ -67,7 +62,9 @@ class ResultListHeaderViewModel(application: Application) : AndroidViewModel(app
         isFavorite.addOnPropertyChangedCallback(BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
             override fun onChanged() {
                 query.get()?.let {
-                    mFavorites.saveFavorite(it, isFavorite.get())
+                    viewModelScope.launch {
+                        mFavorites.saveFavorite(it, isFavorite.get())
+                    }
                 }
             }
         }))

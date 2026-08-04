@@ -46,9 +46,27 @@ import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding
 import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.Tab
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import ca.rmen.android.poetassistant.wotd.WotdListItem
+import dagger.hilt.android.AndroidEntryPoint
 
-class ResultListFragment<out T: Any> : Fragment() {
+open class RTListFragment: ResultListFragment<RTListItem>()
+@AndroidEntryPoint
+class PatternListFragment: RTListFragment()
+@AndroidEntryPoint
+class FavoritesListFragment: RTListFragment()
+@AndroidEntryPoint
+class RhymerListFragment: RTListFragment()
+@AndroidEntryPoint
+class ThesaurusListFragment: RTListFragment()
+@AndroidEntryPoint
+class WotdListFragment: ResultListFragment<WotdListItem>()
+@AndroidEntryPoint
+class DictionaryListFragment: ResultListFragment<DictionaryEntry.DictionaryEntryDetails>()
+
+open class ResultListFragment<out T: Any> : Fragment() {
     companion object {
         private val TAG = Constants.TAG + ResultListFragment::class.java.simpleName
         const val EXTRA_TAB = "tab"
@@ -100,7 +118,14 @@ class ResultListFragment<out T: Any> : Fragment() {
             }
             mViewModel.favoritesLiveData.observe(viewLifecycleOwner, mFavoritesObserver)
             mViewModel.resultListDataLiveData.observe(
-                viewLifecycleOwner, Observer { data -> mViewModel.setData(data) }
+                viewLifecycleOwner, Observer { data ->
+                    @Suppress("UNCHECKED_CAST")
+                    (mBinding.recyclerView.adapter as? ResultListAdapter<T>)?.let { adapter ->
+                        if (data != null) adapter.submitList(data.data)
+                        else adapter.submitList(emptyList())
+                    }
+                    mViewModel.setData(data)
+                }
             )
             return mBinding.root
         }
@@ -115,7 +140,7 @@ class ResultListFragment<out T: Any> : Fragment() {
             if (tab != null) {
                 @Suppress("UNCHECKED_CAST")
                 val adapter = ResultListFactory.createAdapter(it, tab) as ResultListAdapter<T>
-                mViewModel.setAdapter(adapter)
+                adapter.onFavoriteWordToggle = mViewModel::onFavoriteToggle
                 mBinding.recyclerView.adapter = adapter
             }
         }
@@ -139,7 +164,10 @@ class ResultListFragment<out T: Any> : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_share) {
             mHeaderViewModel.query.get()?.let {
-                mViewModel.share(it, mHeaderViewModel.filter.get())
+                @Suppress("UNCHECKED_CAST")
+                (mBinding.recyclerView.adapter as? ResultListAdapter<T>)?.let { adapter ->
+                    mViewModel.share(it, mHeaderViewModel.filter.get(), adapter.getAll())
+                }
             }
         }
         return super.onOptionsItemSelected(item)

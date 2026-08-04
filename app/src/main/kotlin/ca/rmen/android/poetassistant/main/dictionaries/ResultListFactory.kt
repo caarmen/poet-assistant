@@ -20,8 +20,6 @@
 package ca.rmen.android.poetassistant.main.dictionaries
 
 import android.app.Activity
-import android.app.Application
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import android.content.Context
 import android.os.Bundle
@@ -35,19 +33,16 @@ import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.Tab
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLiveData
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLiveData
-import ca.rmen.android.poetassistant.wotd.WotdEntryViewModel
 import ca.rmen.android.poetassistant.wotd.WotdListExporter
 import ca.rmen.android.poetassistant.wotd.WotdLiveData
 import dagger.hilt.android.EntryPointAccessors
@@ -59,9 +54,12 @@ object ResultListFactory {
     fun createListFragment(tab: Tab, initialQuery: String?): ResultListFragment<Any> {
         Log.d(TAG, "createListFragment: tab=$tab, initialQuery = $initialQuery")
         val fragment = when (tab) {
-            Tab.PATTERN, Tab.FAVORITES, Tab.RHYMER, Tab.THESAURUS -> ResultListFragment<RTEntryViewModel>()
-            Tab.WOTD -> ResultListFragment<WotdEntryViewModel>()
-            else -> ResultListFragment<DictionaryEntry.DictionaryEntryDetails>()
+            Tab.PATTERN -> PatternListFragment()
+            Tab.FAVORITES -> FavoritesListFragment()
+            Tab.RHYMER -> RhymerListFragment()
+            Tab.THESAURUS -> ThesaurusListFragment()
+            Tab.WOTD -> WotdListFragment()
+            else -> DictionaryListFragment()
         }
         val bundle = Bundle(2)
         bundle.putSerializable(ResultListFragment.EXTRA_TAB, tab)
@@ -78,28 +76,29 @@ object ResultListFactory {
     }
 
     fun createViewModel(tab: Tab, fragment: Fragment): ResultListViewModel<*>? {
-        return if (fragment.context != null) {
-            val factory = createViewModelFactory(tab, fragment.context!!.applicationContext as Application)
-            ViewModelProvider(fragment, factory).get(ResultListViewModel::class.java)
-        } else {
-            null
+        if (fragment.context == null) return null
+
+        // Map the Tab to the corresponding ViewModel Class
+        val viewModelClass = when (tab) {
+            Tab.PATTERN -> PatternListViewModel::class.java
+            Tab.FAVORITES -> FavoritesListViewModel::class.java
+            Tab.RHYMER -> RhymerListViewModel::class.java
+            Tab.THESAURUS -> ThesaurusListViewModel::class.java
+            Tab.WOTD -> WotdListViewModel::class.java
+            else -> DictionaryListViewModel::class.java
         }
+
+        // Hilt integrates with Fragment's default ViewModelProvider when using @HiltViewModel
+        return ViewModelProvider(fragment)[viewModelClass]
     }
 
-    private fun createViewModelFactory(tab: Tab, application: Application): ViewModelProvider.Factory {
-        return object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                @Suppress("UNCHECKED_CAST")
-                return when (tab) {
-                    Tab.PATTERN, Tab.FAVORITES, Tab.RHYMER, Tab.THESAURUS -> ResultListViewModel<RTEntryViewModel>(application, tab)
-                    Tab.WOTD -> ResultListViewModel<WotdEntryViewModel>(application, tab)
-                    else -> ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, tab)
-                } as (T)
-            }
-        }
-    }
-
-    fun createLiveData(tab: Tab, context: Context, scope: CoroutineScope, query: String?, filter: String?): ResultListLiveData<out ResultListData<Any>> {
+    fun createLiveData(
+        tab: Tab,
+        context: Context,
+        scope: CoroutineScope,
+        query: String?,
+        filter: String?,
+    ): ResultListLiveData<out ResultListData<Any>> {
         return when (tab) {
             Tab.PATTERN -> PatternLiveData(context, scope, query!!)
             Tab.FAVORITES -> FavoritesLiveData(context, scope)

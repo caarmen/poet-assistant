@@ -24,15 +24,15 @@ import android.text.TextUtils
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListExporter
 
-class ThesaurusListExporter(private val context: Context) : ResultListExporter<List<RTEntryViewModel>> {
-    override fun export(word: String, filter: String?, entries: List<RTEntryViewModel>): String {
+class ThesaurusListExporter(private val context: Context) : ResultListExporter<List<RTListItem>> {
+    override fun export(word: String, filter: String?, entries: List<RTListItem>): String {
         val title = if (TextUtils.isEmpty(filter)) context.getString(R.string.share_thesaurus_title, word)
         else context.getString(R.string.share_thesaurus_title_with_filter, word, filter)
         val builder = StringBuilder(title)
         entries.forEach { entry ->
             val entryResId = when (entry.type) {
-                RTEntryViewModel.Type.HEADING -> R.string.share_rt_heading
-                RTEntryViewModel.Type.SUBHEADING -> R.string.share_rt_subheading
+                RTListItem.Type.HEADING -> R.string.share_rt_heading
+                RTListItem.Type.SUBHEADING -> R.string.share_rt_subheading
                 else -> R.string.share_rt_entry
             }
             builder.append(context.getString(entryResId, entry.text))

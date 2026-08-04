@@ -32,26 +32,47 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorite
-import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
+import ca.rmen.android.poetassistant.Favorites
 import ca.rmen.android.poetassistant.main.Tab
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
-import dagger.hilt.android.EntryPointAccessors
+import ca.rmen.android.poetassistant.wotd.WotdListItem
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ResultListViewModel<T: Any> constructor(
+
+open class RTListViewModel(application: Application, tab: Tab, favorites: Favorites, settingsPrefs: SettingsPrefs): ResultListViewModel<RTListItem>(application, tab,
+    favorites, settingsPrefs)
+@HiltViewModel
+class PatternListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.PATTERN, favorites, settingsPrefs)
+@HiltViewModel
+class FavoritesListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.FAVORITES, favorites, settingsPrefs)
+@HiltViewModel
+class RhymerListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.RHYMER, favorites, settingsPrefs)
+@HiltViewModel
+class ThesaurusListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.THESAURUS, favorites, settingsPrefs)
+@HiltViewModel
+class WotdListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): ResultListViewModel<WotdListItem>(application, Tab.WOTD, favorites, settingsPrefs)
+@HiltViewModel
+class DictionaryListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, Tab.DICTIONARY, favorites, settingsPrefs)
+
+open class ResultListViewModel<T: Any> (
     application: Application,
     private val tab: Tab,
+    private val favorites: Favorites,
+    private val settingsPrefs: SettingsPrefs,
     ) : AndroidViewModel(application) {
     companion object {
         private val TAG = Constants.TAG + ResultListViewModel::class.java.simpleName
     }
 
-    val settingsPrefs: SettingsPrefs
     val isDataAvailable = ObservableBoolean()
     val emptyText = MutableLiveData<EmptyText>()
     val layout = MutableLiveData<ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout>()
     val showHeader = MutableLiveData<Boolean>()
     val usedQueryWord = MutableLiveData<String>()
-    private var mAdapter: ResultListAdapter<T>? = null
 
     data class QueryParams(val word: String?, val filter: String?)
 
@@ -61,18 +82,27 @@ class ResultListViewModel<T: Any> constructor(
     val favoritesLiveData: LiveData<List<Favorite>>
 
     init {
-        val entryPoint = EntryPointAccessors.fromApplication(application, NonAndroidEntryPoint::class.java)
-        settingsPrefs = entryPoint.prefs()
         emptyText.value = EmptyTextNoQuery
         mPrefsListener = PrefsListener()
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mPrefsListener)
-        favoritesLiveData = entryPoint.favorites().getFavoritesLiveData()
+        favoritesLiveData = favorites.getFavoritesLiveData()
         resultListDataLiveData = mQueryParams.switchMap { queryParams ->
             @Suppress("UNCHECKED_CAST")
-            ResultListFactory.createLiveData(tab, application, viewModelScope, queryParams.word, queryParams.filter) as LiveData<ResultListData<T>>
+            ResultListFactory.createLiveData(
+                tab,
+                application,
+                viewModelScope,
+                queryParams.word,
+                queryParams.filter,
+            ) as LiveData<ResultListData<T>>
         }
     }
 
+    fun onFavoriteToggle(word: String, isFavorite: Boolean) {
+        viewModelScope.launch {
+            favorites.saveFavorite(word, isFavorite)
+        }
+    }
     fun setQueryParams(queryParams: QueryParams) {
         Log.v(TAG, "$tab: setQueryParams $queryParams")
         if (!TextUtils.isEmpty(queryParams.word) || ResultListFactory.isLoadWithoutQuerySupported(tab)) {
@@ -80,22 +110,12 @@ class ResultListViewModel<T: Any> constructor(
         }
     }
 
-    fun setAdapter(adapter: ResultListAdapter<T>) {
-        mAdapter = adapter
-    }
-
-    fun share(query: String, filter: String?) {
-        mAdapter?.let {
-            Share.share(getApplication(), tab, query, filter, it.getAll())
-        }
+    fun share(query: String, filter: String?, entries: List<T>) {
+        Share.share(getApplication(), tab, query, filter, entries)
     }
 
     fun setData(loadedData: ResultListData<T>?) {
-        Log.v(TAG, "$tab: setData adapter=$mAdapter, data=$loadedData")
-        mAdapter?.let {
-            if (loadedData != null) it.submitList(loadedData.data)
-            else it.submitList(emptyList())
-        }
+        Log.v(TAG, "$tab: setData, data=$loadedData")
         val hasQuery = loadedData != null && !TextUtils.isEmpty(loadedData.matchedWord)
         if (!hasQuery) {
             emptyText.value = EmptyTextNoQuery

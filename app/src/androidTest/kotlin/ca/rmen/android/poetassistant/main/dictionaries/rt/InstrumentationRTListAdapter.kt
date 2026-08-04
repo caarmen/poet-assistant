@@ -29,13 +29,13 @@ class InstrumentationRTListAdapter(tab: Tab, activity: Activity)
     : RTListAdapter(tab, activity) {
 
     private val countingIdlingResource: CountingIdlingResource = CountingIdlingResource("${tab}ResultIdlingResource", true)
-    private var data: MutableList<RTEntryViewModel>? = null
+    private var data: MutableList<RTListItem>? = null
 
     init {
         IdlingRegistry.getInstance().register(countingIdlingResource)
     }
 
-    override fun submitList(list: MutableList<RTEntryViewModel>?) {
+    override fun submitList(list: MutableList<RTListItem>?) {
         ResultListIdlingHelper.setupIdlingResource(this, data, list, countingIdlingResource)
         data = list
         super.submitList(list)

@@ -23,7 +23,7 @@
 
         <variable
             name="viewModel"
-            type="ca.rmen.android.poetassistant.main.dictionaries.rt.RTEntryViewModel" />
+            type="ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem" />
     </data>
 
     <TextView
