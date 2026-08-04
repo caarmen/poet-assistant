@@ -66,10 +66,6 @@ object ActivityTestRules {
         }
         val tts = EntryPointAccessors.fromApplication(targetContext.applicationContext, ActivityTestRulesEntryPoint::class.java).tts()
         getInstrumentation().runOnMainSync { tts.shutdown() }
-
-        val entryPoint = EntryPointAccessors.fromApplication(targetContext.applicationContext, ActivityTestRulesEntryPoint::class.java)
-        val userDb = entryPoint.userDb()
-        userDb.close()
     }
 
     private fun cleanup(targetContext: Context) {
