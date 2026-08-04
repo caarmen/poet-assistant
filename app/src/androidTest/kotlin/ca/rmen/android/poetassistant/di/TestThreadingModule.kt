@@ -19,6 +19,8 @@
 
 package ca.rmen.android.poetassistant.di
 
+import android.os.Handler
+import android.os.Looper
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.idling.CountingIdlingResource
@@ -29,9 +31,12 @@ import dagger.hilt.testing.TestInstallIn
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.android.asCoroutineDispatcher
+import kotlinx.coroutines.test.setMain
 import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @TestInstallIn(
     components = [SingletonComponent::class],
     replaces = [ThreadingModule::class]
@@ -39,17 +44,23 @@ import kotlin.coroutines.CoroutineContext
 @Module
 class TestThreadingModule {
 
-    private val testDispatcher = TrackingTestDispatcher()
+    private val testDispatcher = TrackingTestDispatcher("IO")
+    private val testMainDispatcher = TrackingTestDispatcher("Main",
+        Handler(Looper.getMainLooper()).asCoroutineDispatcher()
+    )
 
     init {
         IdlingRegistry.getInstance().register(testDispatcher.getIdlingResource())
+        IdlingRegistry.getInstance().register(testMainDispatcher.getIdlingResource())
+        Dispatchers.setMain(testMainDispatcher)
     }
 
     class TrackingTestDispatcher(
+        label: String,
         private val delegate: CoroutineDispatcher = Dispatchers.IO
     ) : CoroutineDispatcher() {
 
-        private val idlingResource = CountingIdlingResource("TrackingTestDispatcher", true)
+        private val idlingResource = CountingIdlingResource("TrackingTestDispatcher-$label", true)
 
         override fun dispatch(context: CoroutineContext, block: Runnable) {
             idlingResource.increment()
