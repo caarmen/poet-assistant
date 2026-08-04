@@ -19,6 +19,7 @@
 
 package ca.rmen.android.poetassistant.shared.main
 
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -58,6 +59,7 @@ class RhymeSettingsTest {
         search("thorny")
         checkRhymes(activityTestRule.activity, "barany", "brawny")
         search("brawny")
+        Espresso.onIdle()
         checkRhymes(activityTestRule.activity, "barany", "cornie")
     }
 
