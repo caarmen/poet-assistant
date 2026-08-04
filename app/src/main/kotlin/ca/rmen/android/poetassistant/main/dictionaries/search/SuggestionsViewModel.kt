@@ -26,9 +26,10 @@ import androidx.annotation.DrawableRes
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
+import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -38,7 +39,8 @@ import javax.inject.Inject
 class SuggestionsViewModel @Inject constructor(
     private val application: Application,
     private val mSuggestions: Suggestions,
-    private val dictionary: Dictionary
+    private val dictionary: Dictionary,
+    @IODispatcher val ioDispatcher: CoroutineDispatcher,
     ) : AndroidViewModel(application) {
 
     data class SearchSuggestion(
@@ -54,7 +56,7 @@ class SuggestionsViewModel @Inject constructor(
     val suggestions: Flow<List<SearchSuggestion>> = _suggestions
 
     fun fetchSuggestions(typedText: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
 
             val foundSuggestions = mutableListOf<SearchSuggestion>()
             SuggestionsCursor(
