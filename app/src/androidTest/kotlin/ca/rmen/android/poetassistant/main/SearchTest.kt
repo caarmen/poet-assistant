@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.main
 
 import android.content.Context
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.ViewInteraction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import ca.rmen.android.poetassistant.R
@@ -38,6 +37,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
+import androidx.test.espresso.action.ViewActions.swipeDown
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
@@ -147,6 +147,9 @@ class SearchTest {
     fun patternSearchWithFavoriteTest() {
         search("hello")
         starQueryWord()
+        // For some reason, sometimes the view scrolls up, hiding the search field :(
+        // Scroll down so we can search again.
+        onView(withId(R.id.rhymer_recycler_view)).perform(swipeDown())
         search("he*o")
         checkPatterns(activityTestRule.activity, "he*o", "hello", "head honcho", "hector hugh munro",
                 "herero", "hereto", "hermosillo", "hero")
