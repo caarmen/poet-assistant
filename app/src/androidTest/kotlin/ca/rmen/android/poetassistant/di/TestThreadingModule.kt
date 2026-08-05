@@ -21,6 +21,8 @@ package ca.rmen.android.poetassistant.di
 
 import android.os.Handler
 import android.os.Looper
+import androidx.arch.core.executor.ArchTaskExecutor
+import androidx.arch.core.executor.DefaultTaskExecutor
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
 import androidx.test.espresso.idling.CountingIdlingResource
@@ -48,11 +50,32 @@ class TestThreadingModule {
     private val testMainDispatcher = TrackingTestDispatcher("Main",
         Handler(Looper.getMainLooper()).asCoroutineDispatcher()
     )
+    private val archIdlingResource = CountingIdlingResource("ArchIdlingResource", true)
 
     init {
         IdlingRegistry.getInstance().register(testDispatcher.getIdlingResource())
         IdlingRegistry.getInstance().register(testMainDispatcher.getIdlingResource())
+        IdlingRegistry.getInstance().register(archIdlingResource)
         Dispatchers.setMain(testMainDispatcher)
+        ArchTaskExecutor.getInstance().setDelegate(object : DefaultTaskExecutor() {
+            override fun executeOnDiskIO(runnable: Runnable) {
+                archIdlingResource.increment()
+                try {
+                    super.executeOnDiskIO(runnable)
+                } finally {
+                    archIdlingResource.decrementDelayed(200)
+                }
+            }
+
+            override fun postToMainThread(runnable: Runnable) {
+                archIdlingResource.increment()
+                try {
+                    super.postToMainThread(runnable)
+                } finally {
+                    archIdlingResource.decrementDelayed(200)
+                }
+            }
+        })
     }
 
     class TrackingTestDispatcher(
@@ -68,7 +91,7 @@ class TestThreadingModule {
                 try {
                     block.run()
                 } finally {
-                    idlingResource.decrement()
+                    idlingResource.decrementDelayed(200)
                 }
             }
         }
@@ -76,9 +99,13 @@ class TestThreadingModule {
         fun getIdlingResource(): IdlingResource = idlingResource
     }
 
+
     @OptIn(ExperimentalCoroutinesApi::class)
     @Provides
     @Singleton
     @IODispatcher
     fun providesIODispatcher(): CoroutineDispatcher = testDispatcher
+}
+private fun CountingIdlingResource.decrementDelayed(delay: Int) {
+    Handler(Looper.getMainLooper()).postDelayed({ decrement() }, 200)
 }
