@@ -23,10 +23,13 @@ import android.content.Context
 import android.os.SystemClock
 import android.util.Log
 import android.view.KeyEvent
+import android.view.View
 import androidx.annotation.StringRes
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.PerformException
+import androidx.test.espresso.UiController
+import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.pressKey
 import androidx.test.espresso.action.ViewActions.swipeDown
@@ -48,6 +51,7 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
+import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalToIgnoringCase
@@ -58,6 +62,16 @@ import org.hamcrest.Matchers.equalToIgnoringCase
 object TestUiUtils {
 
     private val TAG = Constants.TAG + TestUiUtils::class.simpleName
+
+    fun withCustomConstraints(action: ViewAction, constraint: Matcher<View>): ViewAction {
+        return object : ViewAction {
+            override fun getConstraints() = constraint
+            override fun getDescription() = action.description
+            override fun perform(uiController: UiController, view: View) {
+                action.perform(uiController, view)
+            }
+        }
+    }
 
     fun openMenuItem(@StringRes titleRes: Int) {
         getInstrumentation().waitForIdleSync()
