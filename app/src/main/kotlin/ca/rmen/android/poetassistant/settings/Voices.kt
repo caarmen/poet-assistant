@@ -28,7 +28,8 @@ import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.HtmlCompat
-import kotlinx.coroutines.Dispatchers
+import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
@@ -40,8 +41,9 @@ class Voices constructor(private val context: Context) {
 
     suspend fun getVoices(textToSpeech: TextToSpeech): List<TtsVoice> {
 
+        val entryPoint = EntryPointAccessors.fromApplication(context.applicationContext, NonAndroidEntryPoint::class.java)
 
-        val voices = withContext(Dispatchers.IO) {
+        val voices = withContext(entryPoint.ioDispatcher()) {
             try {
                 textToSpeech.voices
             } catch (t: Throwable) {

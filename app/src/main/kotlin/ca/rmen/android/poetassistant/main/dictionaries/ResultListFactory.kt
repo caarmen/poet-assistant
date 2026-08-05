@@ -31,21 +31,23 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding
-import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.Tab
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListAdapter
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLiveData
+import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLiveData
+import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLiveData
+import ca.rmen.android.poetassistant.wotd.WotdAdapter
 import ca.rmen.android.poetassistant.wotd.WotdListExporter
 import ca.rmen.android.poetassistant.wotd.WotdLiveData
-import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.CoroutineScope
 
 object ResultListFactory {
@@ -71,8 +73,11 @@ object ResultListFactory {
     }
 
     fun createAdapter(activity: Activity, tab: Tab): ResultListAdapter<out Any> {
-        return EntryPointAccessors.fromApplication(activity, NonAndroidEntryPoint::class.java)
-            .resultListAdapterFactory().createAdapter(activity, tab)
+        return when (tab) {
+            Tab.PATTERN, Tab.FAVORITES, Tab.RHYMER, Tab.THESAURUS -> RTListAdapter(tab, activity)
+            Tab.WOTD -> WotdAdapter(activity)
+            else -> DictionaryListAdapter(activity as OnWordClickListener)
+        }
     }
 
     fun createViewModel(tab: Tab, fragment: Fragment): ResultListViewModel<*>? {

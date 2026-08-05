@@ -22,30 +22,24 @@ package ca.rmen.android.poetassistant.main
 
 import android.content.Context
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.ViewInteraction
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.LargeTest
-import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
-import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
-
-import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
+import androidx.test.espresso.action.ViewActions.swipeDown
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
 import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayingAtLeast
+import androidx.test.espresso.matcher.ViewMatchers.withChild
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import org.hamcrest.Matchers.allOf
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.LargeTest
+import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.CustomChecks.checkPatterns
 import ca.rmen.android.poetassistant.main.CustomChecks.checkSearchSuggestions
 import ca.rmen.android.poetassistant.main.CustomChecks.checkSingleRootView
@@ -57,6 +51,14 @@ import ca.rmen.android.poetassistant.main.TestAppUtils.search
 import ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord
 import ca.rmen.android.poetassistant.main.TestAppUtils.typeQuery
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
+import ca.rmen.android.poetassistant.main.TestUiUtils.withCustomConstraints
+import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import org.hamcrest.Matchers.allOf
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
 
 @LargeTest
 @HiltAndroidTest
@@ -147,6 +149,10 @@ class SearchTest {
     fun patternSearchWithFavoriteTest() {
         search("hello")
         starQueryWord()
+        // For some reason, sometimes the view scrolls up, hiding the search field :(
+        // Scroll down so we can search again.
+        onView(withId(R.id.rhymer_recycler_view))
+            .perform(withCustomConstraints(swipeDown(), isDisplayingAtLeast(10)))
         search("he*o")
         checkPatterns(activityTestRule.activity, "he*o", "hello", "head honcho", "hector hugh munro",
                 "herero", "hereto", "hermosillo", "hero")

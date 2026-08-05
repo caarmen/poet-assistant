@@ -19,9 +19,12 @@
 
 package ca.rmen.android.poetassistant.di
 
+import android.os.Handler
+import android.os.Looper
+import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.test.espresso.IdlingRegistry
-import androidx.test.espresso.IdlingResource
-import androidx.test.espresso.idling.CountingIdlingResource
+import ca.rmen.android.poetassistant.testsupport.CountingIdlingResourceArchTaskExecutor
+import ca.rmen.android.poetassistant.testsupport.CountingIdlingResourceDispatcher
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
@@ -29,9 +32,11 @@ import dagger.hilt.testing.TestInstallIn
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.android.asCoroutineDispatcher
+import kotlinx.coroutines.test.setMain
 import javax.inject.Singleton
-import kotlin.coroutines.CoroutineContext
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @TestInstallIn(
     components = [SingletonComponent::class],
     replaces = [ThreadingModule::class]
@@ -39,35 +44,27 @@ import kotlin.coroutines.CoroutineContext
 @Module
 class TestThreadingModule {
 
-    private val testDispatcher = TrackingTestDispatcher()
+    private val testIODispatcher = CountingIdlingResourceDispatcher(
+        "IO",
+        Dispatchers.IO,
+    )
+    private val testMainDispatcher = CountingIdlingResourceDispatcher(
+        "Main",
+        Handler(Looper.getMainLooper()).asCoroutineDispatcher(),
+    )
+    private val archExecutor = CountingIdlingResourceArchTaskExecutor()
 
     init {
-        IdlingRegistry.getInstance().register(testDispatcher.getIdlingResource())
-    }
-
-    class TrackingTestDispatcher(
-        private val delegate: CoroutineDispatcher = Dispatchers.IO
-    ) : CoroutineDispatcher() {
-
-        private val idlingResource = CountingIdlingResource("TrackingTestDispatcher", true)
-
-        override fun dispatch(context: CoroutineContext, block: Runnable) {
-            idlingResource.increment()
-            delegate.dispatch(context) {
-                try {
-                    block.run()
-                } finally {
-                    idlingResource.decrement()
-                }
-            }
-        }
-
-        fun getIdlingResource(): IdlingResource = idlingResource
+        Dispatchers.setMain(testMainDispatcher)
+        IdlingRegistry.getInstance().register(testIODispatcher.getIdlingResource())
+        IdlingRegistry.getInstance().register(testMainDispatcher.getIdlingResource())
+        IdlingRegistry.getInstance().register(archExecutor.getIdlingResource())
+        ArchTaskExecutor.getInstance().setDelegate(archExecutor)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Provides
     @Singleton
     @IODispatcher
-    fun providesIODispatcher(): CoroutineDispatcher = testDispatcher
+    fun providesIODispatcher(): CoroutineDispatcher = testIODispatcher
 }
