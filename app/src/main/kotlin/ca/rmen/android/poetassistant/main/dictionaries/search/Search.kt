@@ -77,7 +77,7 @@ class Search(
         // Step 1a: Fetch suggestions from the disk when the user stops typing.
         DebounceTextWatcher.debounce(searchView.editText, coroutineScope, {
             val typedText = searchView.editText.text.toString()
-            suggestionsViewModel.fetchSuggestions(typedText)
+            suggestionsViewModel.setTypedText(typedText)
         })
         // Step 2a: When the suggestions list is updated, notify the recycler view adapter.
         suggestionsViewModel.viewModelScope.launch {
