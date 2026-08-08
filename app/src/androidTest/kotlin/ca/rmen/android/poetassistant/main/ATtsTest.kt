@@ -23,7 +23,6 @@ package ca.rmen.android.poetassistant.main
 import android.annotation.TargetApi
 import android.os.Build
 import androidx.annotation.StringRes
-import androidx.lifecycle.Observer
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.GeneralClickAction
@@ -52,10 +51,16 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
-import ca.rmen.android.poetassistant.main.rules.RetryTestRule
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.timeout
+import kotlinx.coroutines.launch
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.greaterThan
@@ -66,6 +71,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
+import kotlin.time.Duration.Companion.seconds
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
@@ -78,20 +84,8 @@ class ATtsTest {
     val hiltTestRule = HiltAndroidRule(this)
 
     @JvmField
-    @Rule(order = 1)
-    val retry = RetryTestRule()
-
-    @JvmField
     @Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(MainActivity::class.java, true)
-
-    private class TtsObserver : Observer<TtsState> {
-        var timeUtteranceCompleted: Long = 0
-
-        override fun onChanged(ttsState: TtsState) {
-            timeUtteranceCompleted = System.currentTimeMillis()
-        }
-    }
 
     @Test
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -123,17 +117,19 @@ class ATtsTest {
     fun voiceSpeedTest() {
         openMenuItem(R.string.action_settings)
 
-        val defaultSpeechTime = timeTtsPreview()
-        slideSeekbar(R.string.pref_voice_speed_title, GeneralLocation.CENTER_RIGHT)
+        val scope = CoroutineScope(SupervisorJob())
 
-        val fastSpeechTime = timeTtsPreview()
+        val defaultSpeechTime = timeTtsPreview(scope)
+
+        slideSeekbar(R.string.pref_voice_speed_title, GeneralLocation.CENTER_RIGHT)
+        val fastSpeechTime = timeTtsPreview(scope)
         assertThat("expected speech time to be faster after scrolling seekbar to the right",
                 fastSpeechTime,
                 lessThan(defaultSpeechTime))
 
-        slideSeekbar(R.string.pref_voice_speed_title, GeneralLocation.CENTER_LEFT)
 
-        val slowSpeechTime = timeTtsPreview()
+        slideSeekbar(R.string.pref_voice_speed_title, GeneralLocation.CENTER_LEFT)
+        val slowSpeechTime = timeTtsPreview(scope)
         assertThat("expected speech time to be slower after scrolling seekbar to the left",
                 slowSpeechTime,
                 greaterThan(defaultSpeechTime))
@@ -142,40 +138,56 @@ class ATtsTest {
     @Test
     fun pauseTest() {
         swipeViewPagerLeft(3)
-        val timeWithoutPause = timePoem("Hello. Bonjour")
+        val scope = CoroutineScope(SupervisorJob())
+        val timeWithoutPause = timePoem("Hello. Bonjour", scope)
         pressBack()
         clearPoem()
-        val timeWithPause = timePoem("Hello....... Bonjour")
+        val timeWithPause = timePoem("Hello....... Bonjour", scope)
         assertThat("expected paused poem to be longer than non-paused poem",
                 timeWithPause - timeWithoutPause,
                 greaterThan(2000L))
     }
 
     private fun getTts(): Tts {
-        return EntryPointAccessors.fromApplication(activityTestRule.activity, NonAndroidEntryPoint::class.java).tts()
+        lateinit var tts: Tts
+        getInstrumentation().runOnMainSync {
+            tts = EntryPointAccessors.fromApplication(activityTestRule.activity, NonAndroidEntryPoint::class.java).tts()
+        }
+        return tts
     }
 
-    private fun timePoem(poem: String): Long {
-        val receiver = TtsObserver()
-        getInstrumentation().runOnMainSync {
-            getTts().getTtsLiveData().removeObserver(receiver)
-            getTts().getTtsLiveData().observeForever(receiver)
-        }
+    private fun timePoem(poem: String, scope: CoroutineScope): Long {
+        var timeUtteranceCompleted: Long = 0
         typePoem(poem)
         val before = System.currentTimeMillis()
+
+        val tts = getTts()
+        val job = scope.launch {
+            tts.ttsFlow.filter { it?.currentStatus == TtsState.TtsStatus.UTTERANCE_COMPLETE  }
+                .timeout(30.seconds)
+                .first()
+            timeUtteranceCompleted = System.currentTimeMillis()
+        }
         speakPoem()
-        val poemSpeechTime = receiver.timeUtteranceCompleted - before
-        getInstrumentation().runOnMainSync { getTts().getTtsLiveData().removeObserver(receiver) }
+        job.cancel()
+        val poemSpeechTime = timeUtteranceCompleted - before
         return poemSpeechTime
     }
 
-    private fun timeTtsPreview(): Long {
-        val receiver = TtsObserver()
-        getInstrumentation().runOnMainSync { getTts().getTtsLiveData().observeForever(receiver) }
+    @OptIn(FlowPreview::class)
+    private fun timeTtsPreview(scope: CoroutineScope): Long {
         val before = System.currentTimeMillis()
+        var timeUtteranceCompleted: Long = 0
+        val tts = getTts()
+        val job = scope.launch {
+            tts.ttsFlow.filter { it?.currentStatus == TtsState.TtsStatus.UTTERANCE_COMPLETE  }
+                .timeout(30.seconds)
+                .first()
+            timeUtteranceCompleted = System.currentTimeMillis()
+        }
         clickPreference(R.string.pref_voice_preview_title)
-        val defaultSpeechTime = receiver.timeUtteranceCompleted - before
-        getInstrumentation().runOnMainSync { getTts().getTtsLiveData().removeObserver(receiver) }
+        job.cancel()
+        val defaultSpeechTime = timeUtteranceCompleted - before
         return defaultSpeechTime
     }
 
