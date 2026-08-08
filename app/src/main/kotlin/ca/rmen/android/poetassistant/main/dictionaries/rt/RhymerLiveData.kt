@@ -81,7 +81,7 @@ class RhymerLiveData(
         mRhymer = entryPoint.rhymer()
         mThesaurus = entryPoint.thesaurus()
         mPrefs = entryPoint.prefs()
-        mFavoritesRepository = entryPoint.favorites()
+        mFavoritesRepository = entryPoint.favoritesRepository()
     }
 
     override fun loadInBackground(): ResultListData<RTListItem> {

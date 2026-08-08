@@ -23,7 +23,7 @@ interface NonAndroidEntryPoint {
     fun rhymer(): Rhymer
     fun thesaurus(): Thesaurus
     fun dictionary(): Dictionary
-    fun favorites(): FavoritesRepository
+    fun favoritesRepository(): FavoritesRepository
     fun suggestions(): Suggestions
     fun prefs(): SettingsPrefs
     @IODispatcher fun ioDispatcher(): CoroutineDispatcher
