@@ -23,15 +23,14 @@ import android.app.SearchManager
 import android.content.ContentProvider
 import android.content.ContentResolver
 import android.content.ContentValues
-import android.content.Context
 import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import android.text.TextUtils
 import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.runBlocking
 
 class SuggestionsProvider : ContentProvider() {
     companion object {
@@ -55,8 +54,16 @@ class SuggestionsProvider : ContentProvider() {
 
     override fun query(uri: Uri, projection: Array<out String>?, sel: String?, selArgs: Array<out String>?, sortOrder: String?): Cursor? {
         return context?.let {
+            val entryPoint = EntryPointAccessors.fromApplication(
+                it.applicationContext,
+                NonAndroidEntryPoint::class.java
+            )
             val filter = if (!TextUtils.equals(uri.lastPathSegment, SearchManager.SUGGEST_URI_PATH_QUERY)) uri.lastPathSegment else null
-            SuggestionsCursor(it, getDictionary(it.applicationContext), getSuggestions(it.applicationContext), filter)
+            val cursor = SuggestionsCursor(entryPoint.suggestionsRepository(), filter)
+            runBlocking {
+                cursor.load()
+            }
+            cursor
         }
     }
 
@@ -68,39 +75,17 @@ class SuggestionsProvider : ContentProvider() {
     }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        val suggestion = values?.getAsString(SearchManager.QUERY)
-        if (suggestion != null) {
-            context?.let {
-                getSuggestions(it.applicationContext).addSuggestion(suggestion)
-            }
-        }
-        return null
+        throw UnsupportedOperationException("Use Suggestions Repository")
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
-        context?.let {
-            getSuggestions(it.applicationContext).clear()
-        }
-        return 0
+        throw UnsupportedOperationException("Use Suggestions Repository")
     }
 
     override fun update(p0: Uri, p1: ContentValues?, p2: String?, p3: Array<out String>?): Int {
         return 0
     }
 
-    private fun getSuggestions(appContext: Context): Suggestions {
-        val entryPoint = EntryPointAccessors.fromApplication(
-            appContext,
-            NonAndroidEntryPoint::class.java
-        )
-        return entryPoint.suggestions()
-    }
-    private fun getDictionary(appContext: Context): Dictionary{
-        val entryPoint = EntryPointAccessors.fromApplication(
-            appContext,
-            NonAndroidEntryPoint::class.java
-        )
-        return entryPoint.dictionary()
-    }
+
 
 }

@@ -41,7 +41,6 @@ class Dictionary @Inject constructor(
         private const val MIN_INTERESTING_FREQUENCY = 1500
         private const val MAX_INTERESTING_FREQUENCY = 25000
 
-        private const val MAX_PREFIX_MATCHES = 10
     }
 
     fun isLoaded(): Boolean = embeddedDb.isLoaded()
@@ -84,36 +83,16 @@ class Dictionary @Inject constructor(
         val selectionArgs = arrayOf(pattern)
         val orderBy = "word"
         val limit = Constants.MAX_RESULTS.toString()
-        embeddedDb.query(true, "dictionary", projection, selection, selectionArgs, orderBy, limit)?.use { cursor ->
-            if (cursor.count > 0) {
-                val result = Array(cursor.count) { "" }
-                while (cursor.moveToNext()) {
-                    result[cursor.position] = cursor.getString(0)
+        embeddedDb.query(true, "dictionary", projection, selection, selectionArgs, orderBy, limit)
+            ?.use { cursor ->
+                if (cursor.count > 0) {
+                    val result = Array(cursor.count) { "" }
+                    while (cursor.moveToNext()) {
+                        result[cursor.position] = cursor.getString(0)
+                    }
+                    return result
                 }
-                return result
             }
-        }
-        return emptyArray()
-    }
-
-    /**
-     * @return at most limit words starting with the given prefix
-     */
-    fun findWordsWithPrefix(prefix: String): Array<String> {
-        val projection = arrayOf("word")
-        val selection = "has_definition=1 AND word LIKE ?"
-        val selectionArgs = arrayOf("$prefix%")
-        val orderBy = "word"
-        embeddedDb.query(true, "word_variants", projection, selection, selectionArgs,
-                orderBy, MAX_PREFIX_MATCHES.toString())?.use { cursor ->
-            if (cursor.count > 0) {
-                val result = Array(cursor.count) { "" }
-                while (cursor.moveToNext()) {
-                    result[cursor.position] = cursor.getString(0)
-                }
-                return result
-            }
-        }
         return emptyArray()
     }
 

@@ -5,7 +5,7 @@ import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
-import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions
+import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -23,8 +23,8 @@ interface NonAndroidEntryPoint {
     fun rhymer(): Rhymer
     fun thesaurus(): Thesaurus
     fun dictionary(): Dictionary
-    fun favorites(): FavoritesRepository
-    fun suggestions(): Suggestions
+    fun favoritesRepository(): FavoritesRepository
+    fun suggestionsRepository(): SuggestionsRepository
     fun prefs(): SettingsPrefs
     @IODispatcher fun ioDispatcher(): CoroutineDispatcher
 }

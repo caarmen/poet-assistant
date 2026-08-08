@@ -20,14 +20,13 @@
 package ca.rmen.android.poetassistant.main.dictionaries.search
 
 import android.app.Application
-import android.app.SearchManager
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
+import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.di.IODispatcher
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -37,11 +36,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SuggestionsViewModel @Inject constructor(
-    private val application: Application,
-    private val mSuggestions: Suggestions,
-    private val dictionary: Dictionary,
+    application: Application,
+    private val mSuggestionsRepository: SuggestionsRepository,
     @IODispatcher val ioDispatcher: CoroutineDispatcher,
-    ) : AndroidViewModel(application) {
+) : AndroidViewModel(application) {
 
     data class SearchSuggestion(
         val word: String,
@@ -57,27 +55,16 @@ class SuggestionsViewModel @Inject constructor(
 
     fun fetchSuggestions(typedText: String) {
         viewModelScope.launch(ioDispatcher) {
-
-            val foundSuggestions = mutableListOf<SearchSuggestion>()
-            SuggestionsCursor(
-                application,
-                suggestions = mSuggestions,
-                dictionary = dictionary,
-                filter = typedText
-            ).use { cursor ->
-                val wordColumn = cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1)
-                val iconColumn = cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_ICON_1)
-                Log.d(TAG, "${cursor.count} results for $typedText")
-                while (cursor.moveToNext()) {
-                    foundSuggestions.add(
-                        SearchSuggestion(
-                            cursor.getString(wordColumn),
-                            cursor.getInt(iconColumn),
-                        )
-                    )
-                }
+            _suggestions.value = mSuggestionsRepository.getSuggestions(filter = typedText).map { entry ->
+                SearchSuggestion(
+                    word = entry.word,
+                    iconResource = when (entry.source) {
+                        Source.HISTORY -> R.drawable.ic_search_history
+                        Source.DICTIONARY -> R.drawable.ic_action_search
+                    }
+                )
             }
-            _suggestions.value = foundSuggestions
+            Log.d(TAG, "${_suggestions.value.size} results for $typedText")
         }
     }
 }

@@ -33,7 +33,7 @@ abstract class ResultListLiveData<T> protected constructor(
 ) : LiveData<T>() {
     private var mIsLoading = false
 
-    protected abstract fun loadInBackground(): T
+    protected abstract suspend fun loadInBackground(): T
     override fun onActive() {
         if (value == null && !mIsLoading) {
             mIsLoading = true

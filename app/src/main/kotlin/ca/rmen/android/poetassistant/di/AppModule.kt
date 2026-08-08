@@ -27,7 +27,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
-import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions
+import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.Module
 import dagger.Provides
@@ -79,6 +79,6 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesSuggestions(userDb: UserDb) = Suggestions(userDb.suggestionDao())
+    fun providesSuggestions(userDb: UserDb, embeddedDb: EmbeddedDb, @IODispatcher ioDispatcher: CoroutineDispatcher) = SuggestionsRepository(userDb.suggestionDao(), embeddedDb, ioDispatcher)
 
 }

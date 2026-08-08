@@ -30,7 +30,7 @@ import androidx.room.Query
 interface FavoriteDao {
 
     @Query("SELECT * FROM FAVORITE")
-    fun getFavorites(): Array<Favorite>
+    suspend fun getFavorites(): Array<Favorite>
 
     @Query("SELECT * FROM FAVORITE")
     fun getFavoritesLiveData(): LiveData<List<Favorite>>

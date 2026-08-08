@@ -23,7 +23,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.map
 import android.content.Context
 import android.net.Uri
-import androidx.annotation.WorkerThread
 import android.text.TextUtils
 import android.util.Log
 import kotlinx.coroutines.CoroutineDispatcher
@@ -49,12 +48,10 @@ class FavoritesRepository(
 
     fun getFavoritesLiveData(): LiveData<List<Favorite>> = favoriteDao.getFavoritesLiveData()
 
-    @WorkerThread
-    fun getFavorites(): Set<String> {
-        return favoriteDao.getFavorites().map(Favorite::getWord).toSet()
+    suspend fun getFavorites(): Set<String> = withContext(ioDispatcher) {
+        favoriteDao.getFavorites().map(Favorite::getWord).toSet()
     }
 
-    @WorkerThread
     @Throws(IOException::class)
     suspend fun exportFavorites(context: Context, uri: Uri) {
         withContext(ioDispatcher) {
@@ -74,7 +71,6 @@ class FavoritesRepository(
         else removeFavorite(word)
     }
 
-    @WorkerThread
     @Throws(IOException::class)
     suspend fun importFavorites(context: Context, uri: Uri) {
         withContext(ioDispatcher) {

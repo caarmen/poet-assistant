@@ -77,10 +77,10 @@ class ThesaurusLiveData(
         mRhymer = entryPoint.rhymer()
         mThesaurus = entryPoint.thesaurus()
         mPrefs = entryPoint.prefs()
-        mFavoritesRepository = entryPoint.favorites()
+        mFavoritesRepository = entryPoint.favoritesRepository()
     }
 
-    override fun loadInBackground(): ResultListData<RTListItem> {
+    override suspend fun loadInBackground(): ResultListData<RTListItem> {
         Log.d(TAG, "loadInBackground: query=$query, filter=$filter")
 
         val data = ArrayList<RTListItem>()

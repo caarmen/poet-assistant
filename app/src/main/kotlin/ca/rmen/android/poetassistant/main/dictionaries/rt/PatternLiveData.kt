@@ -52,10 +52,10 @@ class PatternLiveData(
         val entryPoint = EntryPointAccessors.fromApplication(context.applicationContext, NonAndroidEntryPoint::class.java)
         mDictionary = entryPoint.dictionary()
         mPrefs = entryPoint.prefs()
-        mFavoritesRepository = entryPoint.favorites()
+        mFavoritesRepository = entryPoint.favoritesRepository()
     }
 
-    override fun loadInBackground(): ResultListData<RTListItem> {
+    override suspend fun loadInBackground(): ResultListData<RTListItem> {
         Log.d(TAG, "loadInBackground, query=$query")
 
         val data = ArrayList<RTListItem>()

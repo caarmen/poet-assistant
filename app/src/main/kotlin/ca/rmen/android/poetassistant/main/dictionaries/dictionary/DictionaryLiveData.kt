@@ -34,7 +34,7 @@ class DictionaryLiveData(context: Context, coroutineScope: CoroutineScope, priva
         private val TAG = Constants.TAG + DictionaryLiveData::class.java.simpleName
     }
 
-    override fun loadInBackground(): ResultListData<DictionaryEntry.DictionaryEntryDetails> {
+    override suspend fun loadInBackground(): ResultListData<DictionaryEntry.DictionaryEntryDetails> {
         Log.v(TAG, "loadInBackground: query=$query")
         val result = ArrayList<DictionaryEntry.DictionaryEntryDetails>()
         if (TextUtils.isEmpty(query)) return ResultListData(query, result)
