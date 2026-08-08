@@ -39,6 +39,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.wotd.WotdListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -79,13 +80,13 @@ open class ResultListViewModel<T: Any> (
     private val mPrefsListener : PrefsListener
     private val mQueryParams = MutableLiveData<QueryParams>()
     val resultListDataLiveData: LiveData<ResultListData<T>>
-    val favoritesLiveData: LiveData<List<Favorite>>
+    val favoritesFlow: Flow<List<Favorite>>
 
     init {
         emptyText.value = EmptyTextNoQuery
         mPrefsListener = PrefsListener()
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mPrefsListener)
-        favoritesLiveData = favoritesRepository.getFavoritesLiveData()
+        favoritesFlow = favoritesRepository.getFavoritesFlow()
         resultListDataLiveData = mQueryParams.switchMap { queryParams ->
             @Suppress("UNCHECKED_CAST")
             ResultListFactory.createLiveData(
