@@ -26,6 +26,7 @@ import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -46,7 +47,7 @@ class FavoritesRepository(
         return favoriteDao.getCountLiveData(word).map { count -> count > 0 }
     }
 
-    fun getFavoritesLiveData(): LiveData<List<Favorite>> = favoriteDao.getFavoritesLiveData()
+    fun getFavoritesFlow(): Flow<List<Favorite>> = favoriteDao.getFavoritesFlow()
 
     suspend fun getFavorites(): Set<String> = withContext(ioDispatcher) {
         favoriteDao.getFavorites().map(Favorite::getWord).toSet()
