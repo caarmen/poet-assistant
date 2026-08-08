@@ -23,7 +23,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.Favorites
+import ca.rmen.android.poetassistant.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
@@ -46,13 +46,13 @@ class PatternLiveData(
 
     private val mDictionary: Dictionary
     private val mPrefs: SettingsPrefs
-    private val mFavorites: Favorites
+    private val mFavoritesRepository: FavoritesRepository
 
     init {
         val entryPoint = EntryPointAccessors.fromApplication(context.applicationContext, NonAndroidEntryPoint::class.java)
         mDictionary = entryPoint.dictionary()
         mPrefs = entryPoint.prefs()
-        mFavorites = entryPoint.favorites()
+        mFavoritesRepository = entryPoint.favorites()
     }
 
     override fun loadInBackground(): ResultListData<RTListItem> {
@@ -65,7 +65,7 @@ class PatternLiveData(
             return emptyResult()
         }
 
-        val favorites = mFavorites.getFavorites()
+        val favorites = mFavoritesRepository.getFavorites()
         if (favorites.isNotEmpty()) {
             matches.sortWith(MatchComparator(favorites))
         }

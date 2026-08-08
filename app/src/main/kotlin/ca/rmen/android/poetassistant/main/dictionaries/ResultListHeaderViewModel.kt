@@ -27,7 +27,7 @@ import androidx.lifecycle.switchMap
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
-import ca.rmen.android.poetassistant.Favorites
+import ca.rmen.android.poetassistant.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.TtsState
@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ResultListHeaderViewModel @Inject constructor(application: Application, val mFavorites: Favorites, val mTts: Tts) : AndroidViewModel(application) {
+class ResultListHeaderViewModel @Inject constructor(application: Application, val mFavoritesRepository: FavoritesRepository, val mTts: Tts) : AndroidViewModel(application) {
     val query = ObservableField<String>()
     val isMatchedWordSelectable = ObservableField(false)
     val filter = ObservableField<String>()
@@ -57,13 +57,13 @@ class ResultListHeaderViewModel @Inject constructor(application: Application, va
         // the favorites, a simple databinding between the star checkbox and this ViewModel would
         // suffice to sync the db and the UI.
         isFavoriteLiveData =
-            LiveDataMapping.fromObservableField(query).switchMap { query -> mFavorites.getIsFavoriteLiveData(query) }
+            LiveDataMapping.fromObservableField(query).switchMap { query -> mFavoritesRepository.getIsFavoriteLiveData(query) }
         // When the user taps on the star icon, update the favorite in the DB
         isFavorite.addOnPropertyChangedCallback(BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
             override fun onChanged() {
                 query.get()?.let {
                     viewModelScope.launch {
-                        mFavorites.saveFavorite(it, isFavorite.get())
+                        mFavoritesRepository.saveFavorite(it, isFavorite.get())
                     }
                 }
             }
@@ -78,7 +78,7 @@ class ResultListHeaderViewModel @Inject constructor(application: Application, va
 
     fun clearFavorites() {
         viewModelScope.launch {
-            mFavorites.clear()
+            mFavoritesRepository.clear()
         }
         snackbarText.value = getApplication<Application>().getString(R.string.favorites_cleared)
     }

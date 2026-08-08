@@ -25,7 +25,7 @@ import android.util.Log
 import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.Favorites
+import ca.rmen.android.poetassistant.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
@@ -70,14 +70,14 @@ class ThesaurusLiveData(
     private val mRhymer: Rhymer
     private val mThesaurus: Thesaurus
     private val mPrefs: SettingsPrefs
-    private val mFavorites: Favorites
+    private val mFavoritesRepository: FavoritesRepository
 
     init {
         val entryPoint = EntryPointAccessors.fromApplication(context.applicationContext, NonAndroidEntryPoint::class.java)
         mRhymer = entryPoint.rhymer()
         mThesaurus = entryPoint.thesaurus()
         mPrefs = entryPoint.prefs()
-        mFavorites = entryPoint.favorites()
+        mFavoritesRepository = entryPoint.favorites()
     }
 
     override fun loadInBackground(): ResultListData<RTListItem> {
@@ -95,7 +95,7 @@ class ThesaurusLiveData(
         }
 
         val layout = SettingsPrefs.getLayout(mPrefs)
-        val favorites = mFavorites.getFavorites()
+        val favorites = mFavoritesRepository.getFavorites()
         entries.forEach {
             data.add(RTListItem(type=RTListItem.Type.HEADING, text=it.wordType.name.lowercase(Locale.US)))
             addResultSection(favorites, data, R.string.thesaurus_section_synonyms, it.synonyms, layout)

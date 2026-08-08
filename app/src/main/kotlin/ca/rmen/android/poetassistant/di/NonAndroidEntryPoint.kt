@@ -1,6 +1,6 @@
 package ca.rmen.android.poetassistant.di
 
-import ca.rmen.android.poetassistant.Favorites
+import ca.rmen.android.poetassistant.FavoritesRepository
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
@@ -23,7 +23,7 @@ interface NonAndroidEntryPoint {
     fun rhymer(): Rhymer
     fun thesaurus(): Thesaurus
     fun dictionary(): Dictionary
-    fun favorites(): Favorites
+    fun favorites(): FavoritesRepository
     fun suggestions(): Suggestions
     fun prefs(): SettingsPrefs
     @IODispatcher fun ioDispatcher(): CoroutineDispatcher

@@ -43,7 +43,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.Favorites
+import ca.rmen.android.poetassistant.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.about.AboutActivity
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding
@@ -85,7 +85,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
     @Inject lateinit var mRhymer: Rhymer
     @Inject lateinit var mThesaurus: Thesaurus
     @Inject lateinit var mDictionary: Dictionary
-    @Inject lateinit var mFavorites: Favorites
+    @Inject lateinit var mFavoritesRepository: FavoritesRepository
 
     @IODispatcher @Inject lateinit var ioDispatcher: CoroutineDispatcher
 

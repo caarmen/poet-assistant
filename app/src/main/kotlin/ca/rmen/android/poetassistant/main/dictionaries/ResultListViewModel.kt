@@ -32,7 +32,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.Favorite
-import ca.rmen.android.poetassistant.Favorites
+import ca.rmen.android.poetassistant.FavoritesRepository
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem
@@ -43,25 +43,25 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-open class RTListViewModel(application: Application, tab: Tab, favorites: Favorites, settingsPrefs: SettingsPrefs): ResultListViewModel<RTListItem>(application, tab,
-    favorites, settingsPrefs)
+open class RTListViewModel(application: Application, tab: Tab, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): ResultListViewModel<RTListItem>(application, tab,
+    favoritesRepository, settingsPrefs)
 @HiltViewModel
-class PatternListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.PATTERN, favorites, settingsPrefs)
+class PatternListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.PATTERN, favoritesRepository, settingsPrefs)
 @HiltViewModel
-class FavoritesListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.FAVORITES, favorites, settingsPrefs)
+class FavoritesListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.FAVORITES, favoritesRepository, settingsPrefs)
 @HiltViewModel
-class RhymerListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.RHYMER, favorites, settingsPrefs)
+class RhymerListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.RHYMER, favoritesRepository, settingsPrefs)
 @HiltViewModel
-class ThesaurusListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.THESAURUS, favorites, settingsPrefs)
+class ThesaurusListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.THESAURUS, favoritesRepository, settingsPrefs)
 @HiltViewModel
-class WotdListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): ResultListViewModel<WotdListItem>(application, Tab.WOTD, favorites, settingsPrefs)
+class WotdListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): ResultListViewModel<WotdListItem>(application, Tab.WOTD, favoritesRepository, settingsPrefs)
 @HiltViewModel
-class DictionaryListViewModel @Inject constructor(application: Application, favorites: Favorites, settingsPrefs: SettingsPrefs): ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, Tab.DICTIONARY, favorites, settingsPrefs)
+class DictionaryListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, Tab.DICTIONARY, favoritesRepository, settingsPrefs)
 
 open class ResultListViewModel<T: Any> (
     application: Application,
     private val tab: Tab,
-    private val favorites: Favorites,
+    private val favoritesRepository: FavoritesRepository,
     private val settingsPrefs: SettingsPrefs,
     ) : AndroidViewModel(application) {
     companion object {
@@ -85,7 +85,7 @@ open class ResultListViewModel<T: Any> (
         emptyText.value = EmptyTextNoQuery
         mPrefsListener = PrefsListener()
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mPrefsListener)
-        favoritesLiveData = favorites.getFavoritesLiveData()
+        favoritesLiveData = favoritesRepository.getFavoritesLiveData()
         resultListDataLiveData = mQueryParams.switchMap { queryParams ->
             @Suppress("UNCHECKED_CAST")
             ResultListFactory.createLiveData(
@@ -100,7 +100,7 @@ open class ResultListViewModel<T: Any> (
 
     fun onFavoriteToggle(word: String, isFavorite: Boolean) {
         viewModelScope.launch {
-            favorites.saveFavorite(word, isFavorite)
+            favoritesRepository.saveFavorite(word, isFavorite)
         }
     }
     fun setQueryParams(queryParams: QueryParams) {
