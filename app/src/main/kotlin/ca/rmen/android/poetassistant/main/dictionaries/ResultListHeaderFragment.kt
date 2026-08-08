@@ -19,22 +19,23 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries
 
-import androidx.lifecycle.Observer
 import androidx.databinding.DataBindingUtil
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.fragment.app.Fragment
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding
 import ca.rmen.android.poetassistant.main.Tab
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogListener, ConfirmDialogFragment.ConfirmDialogListener {
@@ -74,12 +75,52 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
         parentFragment?.let {
             mViewModel = ViewModelProvider(it).get(ResultListHeaderViewModel::class.java)
             mBinding.viewModel = mViewModel
-            mViewModel.snackbarText.observe(this, mSnackbarTextChanged)
-            mViewModel.isFavoriteLiveData.observe(this, mFavoriteObserver)
-            mViewModel.ttsStateLiveData.observe(this, mTtsObserver)
+            mBinding.btnStarQuery.setOnCheckedChangeListener { _, bool ->
+                mViewModel.setIsFavorite(bool)
+            }
         }
         return mBinding.root
 
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.lifecycleScope.launch {
+            // Without this check, instrumentation tests fail (themeTest) with an error
+            // Can't access the Fragment View's LifecycleOwner for
+            // ResultListHeaderFragment when getView() is null i.e., before onCreateView() or after onDestroyView()
+            if (!lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                return@launch
+            }
+            viewLifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                launch {
+                    mViewModel.snackbarText.collect { snackbarText ->
+                        if (snackbarText.isNotBlank()) {
+                            Snackbar.make(mBinding.root, snackbarText, Snackbar.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                launch {
+                    mViewModel.isFavoriteFlow.collect { isFavorite ->
+                        if (mBinding.btnStarQuery.isChecked != isFavorite) {
+                            mBinding.btnStarQuery.isChecked = isFavorite
+                        }
+                    }
+                }
+                launch {
+                    mViewModel.query.collect {
+                        if (mBinding.tvListHeader.text != it) {
+                            mBinding.tvListHeader.text = it
+                        }
+                    }
+                }
+                launch {
+                    mViewModel.ttsFlow.collect { ttsState ->
+                        ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, ttsState.currentStatus)
+                    }
+                }
+            }
+        }
     }
 
     override fun onFilterSubmitted(input: String) {
@@ -90,19 +131,6 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
         if (actionId == ACTION_CLEAR_FAVORITES) {
             mViewModel.clearFavorites()
         }
-    }
-
-    private val mSnackbarTextChanged = Observer<String> { text ->
-        if (!TextUtils.isEmpty(text)) {
-            Snackbar.make(mBinding.root, text!!, Snackbar.LENGTH_SHORT).show()
-        }
-    }
-
-    private val mFavoriteObserver = Observer<Boolean> { isFavorite -> mBinding.btnStarQuery.isChecked = isFavorite == true }
-
-    private val mTtsObserver = Observer<TtsState> { ttsState ->
-        Log.d(TAG, "$mTab: ttsState = $ttsState")
-        if (ttsState != null) ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, ttsState.currentStatus)
     }
 
     inner class ButtonListener {

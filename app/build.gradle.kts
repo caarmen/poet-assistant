@@ -186,6 +186,7 @@ jacoco {
 kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.fromTarget("11")
+        freeCompilerArgs.add("-Xexplicit-backing-fields")
     }
 }
 

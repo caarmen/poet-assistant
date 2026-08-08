@@ -22,8 +22,6 @@ package ca.rmen.android.poetassistant.main.dictionaries
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.switchMap
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
@@ -31,50 +29,64 @@ import ca.rmen.android.poetassistant.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.TtsState
-import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
-import ca.rmen.android.poetassistant.databinding.LiveDataMapping
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ResultListHeaderViewModel @Inject constructor(application: Application, val mFavoritesRepository: FavoritesRepository, val mTts: Tts) : AndroidViewModel(application) {
-    val query = ObservableField<String>()
+    val query : StateFlow<String?>
+    field = MutableStateFlow<String?>(null)
+
+    val isFavorite: StateFlow<Boolean>
+    field = MutableStateFlow(false)
+
     val isMatchedWordSelectable = ObservableField(false)
     val filter = ObservableField<String>()
-    val isFavorite = ObservableBoolean()
     val showHeader = ObservableBoolean()
 
-    val snackbarText = MutableLiveData<String>()
-    val isFavoriteLiveData: LiveData<Boolean>
-    val ttsStateLiveData: LiveData<TtsState>
+    val snackbarText: StateFlow<String>
+    field = MutableStateFlow("")
+    // Expose a Flow to the fragment, so it can update the star icon when the favorite
+    // value changes in the DB. This is relevant when the favorite value changes because the star
+    // was clicked in *another* fragment. If we only had one screen where the user could change
+    // the favorites, a simple databinding between the star checkbox and this ViewModel would
+    // suffice to sync the db and the UI.
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val isFavoriteFlow: StateFlow<Boolean> = query.flatMapLatest { queryWord ->
+        mFavoritesRepository.getIsFavoriteFlow(queryWord ?: "")
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(),
+        initialValue = false,
+    )
 
-    init {
-        ttsStateLiveData = mTts.getTtsLiveData()
-        // Expose a LiveData to the fragment, so it can update the star icon when the favorite
-        // value changes in the DB. This is relevant when the favorite value changes because the star
-        // was clicked in *another* fragment. If we only had one screen where the user could change
-        // the favorites, a simple databinding between the star checkbox and this ViewModel would
-        // suffice to sync the db and the UI.
-        isFavoriteLiveData =
-            LiveDataMapping.fromObservableField(query).switchMap { query -> mFavoritesRepository.getIsFavoriteLiveData(query) }
-        // When the user taps on the star icon, update the favorite in the DB
-        isFavorite.addOnPropertyChangedCallback(BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
-            override fun onChanged() {
-                query.get()?.let {
-                    viewModelScope.launch {
-                        mFavoritesRepository.saveFavorite(it, isFavorite.get())
-                    }
-                }
-            }
-        }))
+    val ttsFlow = mTts.ttsFlow
+
+    fun setQuery(query: String?) {
+        this.query.value = query
     }
 
-    fun speak() = query.get()?.let { mTts.speak(it) }
+    fun setIsFavorite(isFavorite: Boolean) {
+        // When the user taps on the star icon, update the favorite in the DB
+        query.value?.let { word ->
+            viewModelScope.launch {
+                mFavoritesRepository.saveFavorite(word, isFavorite)
+            }
+        }
+    }
+
+    fun speak() = query.value?.let { mTts.speak(it) }
 
     fun clearFilter() = filter.set(null)
 
-    fun webSearch() = query.get()?.let { WebSearch.search(getApplication(), it) }
+    fun webSearch() = query.value?.let { WebSearch.search(getApplication(), it) }
 
     fun clearFavorites() {
         viewModelScope.launch {

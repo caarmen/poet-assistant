@@ -33,8 +33,11 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.rmen.android.poetassistant.Constants
@@ -51,6 +54,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.wotd.WotdListItem
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 open class RTListFragment: ResultListFragment<RTListItem>()
 @AndroidEntryPoint
@@ -116,7 +120,13 @@ open class ResultListFragment<out T: Any> : Fragment() {
                 headerFragment = ResultListHeaderFragment.newInstance(it)
                 childFragmentManager.beginTransaction().replace(R.id.result_list_header, headerFragment).commit()
             }
-            mViewModel.favoritesLiveData.observe(viewLifecycleOwner, mFavoritesObserver)
+            lifecycleScope.launch {
+                repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                    mViewModel.favoritesFlow.collect {
+                        reload()
+                    }
+                }
+            }
             mViewModel.resultListDataLiveData.observe(
                 viewLifecycleOwner, Observer { data ->
                     @Suppress("UNCHECKED_CAST")
@@ -163,7 +173,7 @@ open class ResultListFragment<out T: Any> : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_share) {
-            mHeaderViewModel.query.get()?.let {
+            mHeaderViewModel.query.value?.let {
                 @Suppress("UNCHECKED_CAST")
                 (mBinding.recyclerView.adapter as? ResultListAdapter<T>)?.let { adapter ->
                     mViewModel.share(it, mHeaderViewModel.filter.get(), adapter.getAll())
@@ -250,10 +260,8 @@ open class ResultListFragment<out T: Any> : Fragment() {
 
     private val mLayoutSettingChanged = Observer<SettingsPrefs.Layout> { reload() }
 
-    private val mFavoritesObserver = Observer<List<Favorite>> { reload() }
-
     private val mUsedQueryWordChanged = Observer<String> { usedQueryWord ->
-        mHeaderViewModel.query.set(usedQueryWord)
+        mHeaderViewModel.setQuery(usedQueryWord)
         mTab?.let {
             mHeaderViewModel.isMatchedWordSelectable.set(ResultListFactory.getMatchedWordSelectability(it, usedQueryWord))
         }
@@ -268,8 +276,8 @@ open class ResultListFragment<out T: Any> : Fragment() {
     }
 
     private fun reload() {
-        Log.v(TAG, "$mTab: reload: query=${mHeaderViewModel.query.get()}, filter=${mHeaderViewModel.filter.get()}")
-        mViewModel.setQueryParams(ResultListViewModel.QueryParams(mHeaderViewModel.query.get(), mHeaderViewModel.filter.get()))
+        Log.v(TAG, "$mTab: reload: query=${mHeaderViewModel.query.value}, filter=${mHeaderViewModel.filter.get()}")
+        mViewModel.setQueryParams(ResultListViewModel.QueryParams(mHeaderViewModel.query.value, mHeaderViewModel.filter.get()))
     }
 
     // If we have an empty list because the user didn't enter any search term,
