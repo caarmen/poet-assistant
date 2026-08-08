@@ -51,7 +51,7 @@ class Search(
     private val searchableActivity: Activity,
     private val viewPager: ViewPager,
     private val dictionary: Dictionary,
-    private val suggestions: Suggestions,
+    private val suggestionsRepository: SuggestionsRepository,
     ) {
     companion object {
         private val TAG = Constants.TAG + Search::class.java.simpleName
@@ -189,6 +189,6 @@ class Search(
      * Adds the given suggestions to the search history, in a background thread.
      */
     suspend fun addSuggestions(suggestion: String) {
-        suggestions.addSuggestion(suggestion)
+        suggestionsRepository.addSuggestion(suggestion)
     }
 }

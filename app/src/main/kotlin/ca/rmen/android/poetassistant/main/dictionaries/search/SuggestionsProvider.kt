@@ -23,7 +23,6 @@ import android.app.SearchManager
 import android.content.ContentProvider
 import android.content.ContentResolver
 import android.content.ContentValues
-import android.content.Context
 import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
@@ -31,9 +30,6 @@ import android.text.TextUtils
 import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class SuggestionsProvider : ContentProvider() {
@@ -63,7 +59,7 @@ class SuggestionsProvider : ContentProvider() {
                 NonAndroidEntryPoint::class.java
             )
             val filter = if (!TextUtils.equals(uri.lastPathSegment, SearchManager.SUGGEST_URI_PATH_QUERY)) uri.lastPathSegment else null
-            val cursor = SuggestionsCursor(entryPoint.suggestions(), filter)
+            val cursor = SuggestionsCursor(entryPoint.suggestionsRepository(), filter)
             runBlocking {
                 cursor.load()
             }

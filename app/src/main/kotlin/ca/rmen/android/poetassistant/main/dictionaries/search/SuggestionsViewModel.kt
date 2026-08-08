@@ -37,7 +37,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SuggestionsViewModel @Inject constructor(
     application: Application,
-    private val mSuggestions: Suggestions,
+    private val mSuggestionsRepository: SuggestionsRepository,
     @IODispatcher val ioDispatcher: CoroutineDispatcher,
 ) : AndroidViewModel(application) {
 
@@ -55,7 +55,7 @@ class SuggestionsViewModel @Inject constructor(
 
     fun fetchSuggestions(typedText: String) {
         viewModelScope.launch(ioDispatcher) {
-            _suggestions.value = mSuggestions.getSuggestions(filter = typedText).map { entry ->
+            _suggestions.value = mSuggestionsRepository.getSuggestions(filter = typedText).map { entry ->
                 SearchSuggestion(
                     word = entry.word,
                     iconResource = when (entry.source) {

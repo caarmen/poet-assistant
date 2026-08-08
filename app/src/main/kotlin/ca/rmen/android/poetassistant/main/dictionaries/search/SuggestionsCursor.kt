@@ -30,7 +30,7 @@ import ca.rmen.android.poetassistant.R
  * words which have been looked up before, as well as similar words in the database.
  */
 class SuggestionsCursor(
-    private val suggestions: Suggestions,
+    private val suggestionsRepository: SuggestionsRepository,
     private val filter: String?,
 ) : MatrixCursor(COLUMNS) {
 
@@ -44,7 +44,7 @@ class SuggestionsCursor(
     }
 
     suspend fun load() {
-        suggestions.getSuggestions(filter).forEach { entry ->
+        suggestionsRepository.getSuggestions(filter).forEach { entry ->
             addSuggestion(
                 word = entry.word,
                 iconId = when (entry.source) {

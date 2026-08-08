@@ -33,7 +33,7 @@ enum class Source {
 
 data class Entry(val source: Source, val word: String)
 
-class Suggestions(
+class SuggestionsRepository(
     private val suggestionDao: SuggestionDao,
     private val embeddedDb: EmbeddedDb,
     private val ioDispatcher: CoroutineDispatcher,

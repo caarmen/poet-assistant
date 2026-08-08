@@ -55,7 +55,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search
-import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions
+import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsViewModel
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment
 import ca.rmen.android.poetassistant.settings.SettingsActivity
@@ -87,7 +87,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
     @Inject lateinit var mThesaurus: Thesaurus
     @Inject lateinit var mDictionary: Dictionary
     @Inject lateinit var mFavoritesRepository: FavoritesRepository
-    @Inject lateinit var suggestions: Suggestions
+    @Inject lateinit var suggestionsRepository: SuggestionsRepository
 
     @IODispatcher @Inject lateinit var ioDispatcher: CoroutineDispatcher
 
@@ -123,7 +123,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
         }
 
-        mSearch = Search(this, mBinding.viewPager, dictionary = mDictionary, suggestions = suggestions)
+        mSearch = Search(this, mBinding.viewPager, dictionary = mDictionary, suggestionsRepository = suggestionsRepository)
         // Load our dictionaries when the activity starts, so that the first search can already be fast.
         lifecycleScope.launch {
             val dbLoaded = loadDatabase()
