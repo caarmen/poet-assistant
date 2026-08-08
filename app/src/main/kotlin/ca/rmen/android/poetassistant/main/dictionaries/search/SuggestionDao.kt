@@ -27,7 +27,7 @@ import androidx.room.Query
 @Dao
 interface SuggestionDao {
     @Query("SELECT * FROM SUGGESTION")
-    fun getSuggestions(): Array<Suggestion>
+    suspend fun getSuggestions(): Array<Suggestion>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(suggestion: Suggestion)
