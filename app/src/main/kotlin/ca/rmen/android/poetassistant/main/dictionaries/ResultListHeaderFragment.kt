@@ -80,26 +80,37 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
             mBinding.btnStarQuery.setOnCheckedChangeListener { _, bool ->
                 mViewModel.setIsFavorite(bool)
             }
-            lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+            mViewModel.ttsStateLiveData.observe(this, mTtsObserver)
+        }
+        return mBinding.root
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.lifecycleScope.launch {
+            // Without this check, instrumentation tests fail (themeTest) with an error
+            // Can't access the Fragment View's LifecycleOwner for
+            // ResultListHeaderFragment when getView() is null i.e., before onCreateView() or after onDestroyView()
+            if (!lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                return@launch
+            }
+            viewLifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                launch {
                     mViewModel.snackbarText.collect { snackbarText ->
                         if (snackbarText.isNotBlank()) {
                             Snackbar.make(mBinding.root, snackbarText, Snackbar.LENGTH_SHORT).show()
                         }
                     }
                 }
-            }
-            lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                launch {
                     mViewModel.isFavoriteFlow.collect { isFavorite ->
                         if (mBinding.btnStarQuery.isChecked != isFavorite) {
                             mBinding.btnStarQuery.isChecked = isFavorite
                         }
                     }
                 }
-            }
-            lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                launch {
                     mViewModel.query.collect {
                         if (mBinding.tvListHeader.text != it) {
                             mBinding.tvListHeader.text = it
@@ -107,10 +118,7 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
                     }
                 }
             }
-            mViewModel.ttsStateLiveData.observe(this, mTtsObserver)
         }
-        return mBinding.root
-
     }
 
     override fun onFilterSubmitted(input: String) {
