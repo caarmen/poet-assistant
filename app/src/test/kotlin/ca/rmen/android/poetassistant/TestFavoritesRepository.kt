@@ -37,7 +37,7 @@ import java.io.InputStream
 import java.io.OutputStreamWriter
 
 @RunWith(RobolectricTestRunner::class)
-class TestFavorites {
+class TestFavoritesRepository {
 
     @Test
     @Throws(Exception::class)
@@ -47,13 +47,13 @@ class TestFavorites {
                 .allowMainThreadQueries()
                 .addMigrations(UserDb.MIGRATION_1_2)
                 .build()
-        val favorites = Favorites(StandardTestDispatcher(testScheduler), db.favoriteDao())
-        var favoriteWords = favorites.getFavorites()
+        val favoritesRepository = FavoritesRepository(StandardTestDispatcher(testScheduler), db.favoriteDao())
+        var favoriteWords = favoritesRepository.getFavorites()
         assertEquals(0, favoriteWords.size)
         val uri = createFavoritesFile()
         shadowOf(Environment.getApplication().contentResolver).registerInputStream(uri, openInputStream(uri))
-        favorites.importFavorites(Environment.getApplication(), uri)
-        favoriteWords = favorites.getFavorites()
+        favoritesRepository.importFavorites(Environment.getApplication(), uri)
+        favoriteWords = favoritesRepository.getFavorites()
         assertEquals(2, favoriteWords.size)
         db.close()
     }

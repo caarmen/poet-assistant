@@ -35,12 +35,12 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.util.Locale
 
-class Favorites(
+class FavoritesRepository(
     private val ioDispatcher: CoroutineDispatcher,
     val favoriteDao: FavoriteDao,
 ) {
     companion object {
-        private val TAG = Constants.TAG + Favorites::class.java.simpleName
+        private val TAG = Constants.TAG + FavoritesRepository::class.java.simpleName
     }
 
     fun getIsFavoriteLiveData(word: String): LiveData<Boolean> {

@@ -19,7 +19,7 @@
 package ca.rmen.android.poetassistant.di
 
 import android.app.Application
-import ca.rmen.android.poetassistant.Favorites
+import ca.rmen.android.poetassistant.FavoritesRepository
 import ca.rmen.android.poetassistant.Theme
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.UserDb
@@ -75,7 +75,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesFavorites(userDb: UserDb, @IODispatcher ioDispatcher: CoroutineDispatcher) = Favorites(ioDispatcher, userDb.favoriteDao())
+    fun providesFavoritesRepository(userDb: UserDb, @IODispatcher ioDispatcher: CoroutineDispatcher) = FavoritesRepository(ioDispatcher, userDb.favoriteDao())
 
     @Provides
     @Singleton

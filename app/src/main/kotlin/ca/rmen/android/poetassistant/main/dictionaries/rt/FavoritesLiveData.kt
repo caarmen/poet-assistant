@@ -22,7 +22,7 @@ package ca.rmen.android.poetassistant.main.dictionaries.rt
 import android.content.Context
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.Favorites
+import ca.rmen.android.poetassistant.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
@@ -42,18 +42,18 @@ class FavoritesLiveData(
     }
 
     private val mPrefs: SettingsPrefs
-    private val mFavorites: Favorites
+    private val mFavoritesRepository: FavoritesRepository
 
     init {
         val entryPoint = EntryPointAccessors.fromApplication(context.applicationContext, NonAndroidEntryPoint::class.java)
         mPrefs = entryPoint.prefs()
-        mFavorites = entryPoint.favorites()
+        mFavoritesRepository = entryPoint.favorites()
     }
 
     override fun loadInBackground(): ResultListData<RTListItem> {
         Log.d(TAG, "loadInBackground")
         val data = ArrayList<RTListItem>()
-        val favorites = mFavorites.getFavorites()
+        val favorites = mFavoritesRepository.getFavorites()
         if (favorites.isEmpty()) return emptyResult()
 
         val sortedFavorites = TreeSet<String>(favorites)

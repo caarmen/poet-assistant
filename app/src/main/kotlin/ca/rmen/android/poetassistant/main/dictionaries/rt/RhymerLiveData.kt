@@ -23,7 +23,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.Favorites
+import ca.rmen.android.poetassistant.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData
@@ -74,14 +74,14 @@ class RhymerLiveData(
     private val mPrefs: SettingsPrefs
     private val mRhymer: Rhymer
     private val mThesaurus: Thesaurus
-    private val mFavorites: Favorites
+    private val mFavoritesRepository: FavoritesRepository
 
     init {
         val entryPoint = EntryPointAccessors.fromApplication(context.applicationContext, NonAndroidEntryPoint::class.java)
         mRhymer = entryPoint.rhymer()
         mThesaurus = entryPoint.thesaurus()
         mPrefs = entryPoint.prefs()
-        mFavorites = entryPoint.favorites()
+        mFavoritesRepository = entryPoint.favorites()
     }
 
     override fun loadInBackground(): ResultListData<RTListItem> {
@@ -100,7 +100,7 @@ class RhymerLiveData(
         }
 
         val layout = SettingsPrefs.getLayout(mPrefs)
-        val favorites = mFavorites.getFavorites()
+        val favorites = mFavoritesRepository.getFavorites()
         if (favorites.isNotEmpty()) {
             addResultSection(favorites, data, R.string.rhyme_section_favorites, getMatchingFavorites(rhymeResults, favorites), layout)
         }

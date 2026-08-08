@@ -28,7 +28,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
-import ca.rmen.android.poetassistant.Favorites
+import ca.rmen.android.poetassistant.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.di.IODispatcher
@@ -44,7 +44,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     application: Application,
-    private val mFavorites: Favorites,
+    private val mFavoritesRepository: FavoritesRepository,
     private val mTts: Tts,
     @IODispatcher val ioDispatcher: CoroutineDispatcher,
     private val dictionary: Dictionary,
@@ -83,7 +83,7 @@ class SettingsViewModel @Inject constructor(
         val fileDisplayName = PoemFile.readDisplayName(getApplication(), uri)
         viewModelScope.launch {
             try {
-                mFavorites.exportFavorites(getApplication(), uri)
+                mFavoritesRepository.exportFavorites(getApplication(), uri)
                 snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_success, fileDisplayName)
             } catch(_: Exception) {
                 snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_error, fileDisplayName)
@@ -95,7 +95,7 @@ class SettingsViewModel @Inject constructor(
         val fileDisplayName = PoemFile.readDisplayName(getApplication(), uri)
         viewModelScope.launch {
             try {
-                mFavorites.importFavorites(getApplication(), uri)
+                mFavoritesRepository.importFavorites(getApplication(), uri)
             } catch (_: Exception) {
                 snackbarText.value = getApplication<Application>().getString(
                     R.string.import_favorites_error,
