@@ -30,8 +30,11 @@ import android.net.Uri
 import android.text.TextUtils
 import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class SuggestionsProvider : ContentProvider() {
     companion object {
@@ -55,8 +58,16 @@ class SuggestionsProvider : ContentProvider() {
 
     override fun query(uri: Uri, projection: Array<out String>?, sel: String?, selArgs: Array<out String>?, sortOrder: String?): Cursor? {
         return context?.let {
+            val entryPoint = EntryPointAccessors.fromApplication(
+                it.applicationContext,
+                NonAndroidEntryPoint::class.java
+            )
             val filter = if (!TextUtils.equals(uri.lastPathSegment, SearchManager.SUGGEST_URI_PATH_QUERY)) uri.lastPathSegment else null
-            SuggestionsCursor(it, getDictionary(it.applicationContext), getSuggestions(it.applicationContext), filter)
+            val cursor = SuggestionsCursor(entryPoint.suggestions(), filter)
+            runBlocking {
+                cursor.load()
+            }
+            cursor
         }
     }
 
@@ -79,19 +90,6 @@ class SuggestionsProvider : ContentProvider() {
         return 0
     }
 
-    private fun getSuggestions(appContext: Context): Suggestions {
-        val entryPoint = EntryPointAccessors.fromApplication(
-            appContext,
-            NonAndroidEntryPoint::class.java
-        )
-        return entryPoint.suggestions()
-    }
-    private fun getDictionary(appContext: Context): Dictionary{
-        val entryPoint = EntryPointAccessors.fromApplication(
-            appContext,
-            NonAndroidEntryPoint::class.java
-        )
-        return entryPoint.dictionary()
-    }
+
 
 }
