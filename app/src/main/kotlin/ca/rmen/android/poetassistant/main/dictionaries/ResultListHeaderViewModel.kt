@@ -67,11 +67,7 @@ class ResultListHeaderViewModel @Inject constructor(application: Application, va
         initialValue = false,
     )
 
-    val ttsStateLiveData: LiveData<TtsState>
-
-    init {
-        ttsStateLiveData = mTts.getTtsLiveData()
-    }
+    val ttsFlow = mTts.ttsFlow
 
     fun setQuery(query: String?) {
         this.query.value = query

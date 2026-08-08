@@ -19,7 +19,6 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries
 
-import androidx.lifecycle.Observer
 import androidx.databinding.DataBindingUtil
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
@@ -34,7 +33,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding
 import ca.rmen.android.poetassistant.main.Tab
 import kotlinx.coroutines.launch
@@ -80,7 +78,6 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
             mBinding.btnStarQuery.setOnCheckedChangeListener { _, bool ->
                 mViewModel.setIsFavorite(bool)
             }
-            mViewModel.ttsStateLiveData.observe(this, mTtsObserver)
         }
         return mBinding.root
 
@@ -117,6 +114,11 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
                         }
                     }
                 }
+                launch {
+                    mViewModel.ttsFlow.collect { ttsState ->
+                        ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, ttsState.currentStatus)
+                    }
+                }
             }
         }
     }
@@ -129,11 +131,6 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
         if (actionId == ACTION_CLEAR_FAVORITES) {
             mViewModel.clearFavorites()
         }
-    }
-
-    private val mTtsObserver = Observer<TtsState> { ttsState ->
-        Log.d(TAG, "$mTab: ttsState = $ttsState")
-        if (ttsState != null) ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, ttsState.currentStatus)
     }
 
     inner class ButtonListener {
