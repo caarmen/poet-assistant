@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main.dictionaries.search
 
 import android.text.TextUtils
-import androidx.annotation.WorkerThread
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -43,7 +42,6 @@ class SuggestionsRepository(
         private const val MAX_PREFIX_MATCHES = 10
     }
 
-    @WorkerThread
     suspend fun getSuggestions(filter: String?): List<Entry> {
         return withContext(ioDispatcher) {
             val history = suggestionDao.getSuggestions().map { Entry(Source.HISTORY, it.getWord()) }
@@ -59,12 +57,10 @@ class SuggestionsRepository(
         }
     }
 
-    @WorkerThread
     suspend fun addSuggestion(suggestion: String) = withContext(ioDispatcher) {
         suggestionDao.insertAll(Suggestion(suggestion))
     }
 
-    @WorkerThread
     suspend fun clear() = withContext(ioDispatcher) {
         suggestionDao.deleteAll()
     }
