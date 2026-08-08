@@ -28,12 +28,15 @@ import ca.rmen.android.poetassistant.di.IODispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class SuggestionsViewModel @Inject constructor(
@@ -52,20 +55,21 @@ class SuggestionsViewModel @Inject constructor(
         this.typedText.value = typedText
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val suggestions: StateFlow<List<SearchSuggestion>> = typedText.map {
-        mSuggestionsRepository.getSuggestions(it).map { entry ->
-            SearchSuggestion(
-                word = entry.word,
-                iconResource = when (entry.source) {
-                    Source.HISTORY -> R.drawable.ic_search_history
-                    Source.DICTIONARY -> R.drawable.ic_action_search
-                }
-            )
-        }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = emptyList(),
-    )
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    val suggestions: StateFlow<List<SearchSuggestion>> = typedText
+        .debounce(500.milliseconds).map {
+            mSuggestionsRepository.getSuggestions(it).map { entry ->
+                SearchSuggestion(
+                    word = entry.word,
+                    iconResource = when (entry.source) {
+                        Source.HISTORY -> R.drawable.ic_search_history
+                        Source.DICTIONARY -> R.drawable.ic_action_search
+                    }
+                )
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = emptyList(),
+        )
 }
