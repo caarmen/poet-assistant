@@ -75,6 +75,7 @@ porter-stemmer = { group = "ca.rmen", name = "porter-stemmer", version.ref = "po
 rhymer = { group = "ca.rmen", name = "rhymer", version.ref = "rhymer" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 robolectric-annotations = { group = "org.robolectric", name = "annotations", version.ref = "robolectric" }
+robolectric-simulator = { group = "org.robolectric", name = "simulator", version.ref = "robolectric" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
