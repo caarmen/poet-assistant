@@ -30,7 +30,7 @@ import ca.rmen.android.poetassistant.main.PagerAdapter
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
-import ca.rmen.android.poetassistant.widget.DebounceTextWatcher
+import ca.rmen.android.poetassistant.widget.BaseTextWatcher
 import ca.rmen.android.poetassistant.widget.ViewShownScheduler
 import com.google.android.material.search.SearchView
 import kotlinx.coroutines.CoroutineScope
@@ -75,9 +75,10 @@ class Search(
         val adapter = SuggestionsAdapter()
         suggestionsList.adapter = adapter
         // Step 1a: Fetch suggestions from the disk when the user stops typing.
-        DebounceTextWatcher.debounce(searchView.editText, coroutineScope, {
-            val typedText = searchView.editText.text.toString()
-            suggestionsViewModel.fetchSuggestions(typedText)
+        searchView.editText.addTextChangedListener(object: BaseTextWatcher() {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                suggestionsViewModel.setTypedText(searchView.editText.text.toString())
+            }
         })
         // Step 2a: When the suggestions list is updated, notify the recycler view adapter.
         suggestionsViewModel.viewModelScope.launch {
