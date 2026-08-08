@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.main.dictionaries
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
@@ -52,7 +51,8 @@ class ResultListHeaderViewModel @Inject constructor(application: Application, va
     val filter = ObservableField<String>()
     val showHeader = ObservableBoolean()
 
-    val snackbarText = MutableLiveData<String>()
+    val snackbarText: StateFlow<String>
+    field = MutableStateFlow("")
     // Expose a Flow to the fragment, so it can update the star icon when the favorite
     // value changes in the DB. This is relevant when the favorite value changes because the star
     // was clicked in *another* fragment. If we only had one screen where the user could change

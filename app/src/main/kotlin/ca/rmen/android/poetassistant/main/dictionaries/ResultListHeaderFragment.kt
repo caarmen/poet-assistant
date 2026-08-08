@@ -24,7 +24,6 @@ import androidx.databinding.DataBindingUtil
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.fragment.app.Fragment
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -78,9 +77,17 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
         parentFragment?.let {
             mViewModel = ViewModelProvider(it).get(ResultListHeaderViewModel::class.java)
             mBinding.viewModel = mViewModel
-            mViewModel.snackbarText.observe(this, mSnackbarTextChanged)
             mBinding.btnStarQuery.setOnCheckedChangeListener { _, bool ->
                 mViewModel.setIsFavorite(bool)
+            }
+            lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                    mViewModel.snackbarText.collect { snackbarText ->
+                        if (snackbarText.isNotBlank()) {
+                            Snackbar.make(mBinding.root, snackbarText, Snackbar.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
             lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
@@ -113,12 +120,6 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
     override fun onOk(actionId: Int) {
         if (actionId == ACTION_CLEAR_FAVORITES) {
             mViewModel.clearFavorites()
-        }
-    }
-
-    private val mSnackbarTextChanged = Observer<String> { text ->
-        if (!TextUtils.isEmpty(text)) {
-            Snackbar.make(mBinding.root, text!!, Snackbar.LENGTH_SHORT).show()
         }
     }
 
