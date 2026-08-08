@@ -26,6 +26,8 @@ import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -42,11 +44,11 @@ class FavoritesRepository(
         private val TAG = Constants.TAG + FavoritesRepository::class.java.simpleName
     }
 
-    fun getIsFavoriteLiveData(word: String): LiveData<Boolean> {
-        return favoriteDao.getCountLiveData(word).map { count -> count > 0 }
+    fun getIsFavoriteFlow(word: String): Flow<Boolean> {
+        return favoriteDao.getCountFlow(word).map { count -> count > 0 }
     }
 
-    fun getFavoritesLiveData(): LiveData<List<Favorite>> = favoriteDao.getFavoritesLiveData()
+    fun getFavoritesFlow(): Flow<List<Favorite>> = favoriteDao.getFavoritesFlow()
 
     suspend fun getFavorites(): Set<String> = withContext(ioDispatcher) {
         favoriteDao.getFavorites().map(Favorite::getWord).toSet()

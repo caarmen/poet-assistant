@@ -7,7 +7,7 @@ enabled_tools = [
     "task",
 ]
 active_model = "devstral-small"
-theme = "auto"
+theme = "monokai"
 applied_migrations = [
     "bash_read_only_defaults_v1",
 ]
@@ -33,6 +33,7 @@ allowlist = [
     "find",
     "fmt",
     "fold",
+    "git log",
     "git show",
     "grep",
     "head",
