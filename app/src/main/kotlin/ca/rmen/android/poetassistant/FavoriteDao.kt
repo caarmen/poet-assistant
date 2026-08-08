@@ -19,7 +19,6 @@
 
 package ca.rmen.android.poetassistant
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -37,7 +36,7 @@ interface FavoriteDao {
     fun getFavoritesFlow(): Flow<List<Favorite>>
 
     @Query("SELECT COUNT(*) FROM FAVORITE WHERE WORD = :word")
-    fun getCountLiveData(word: String): LiveData<Int>
+    fun getCountFlow(word: String): Flow<Int>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(favorite: Favorite)

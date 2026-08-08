@@ -173,7 +173,7 @@ open class ResultListFragment<out T: Any> : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_share) {
-            mHeaderViewModel.query.get()?.let {
+            mHeaderViewModel.query.value?.let {
                 @Suppress("UNCHECKED_CAST")
                 (mBinding.recyclerView.adapter as? ResultListAdapter<T>)?.let { adapter ->
                     mViewModel.share(it, mHeaderViewModel.filter.get(), adapter.getAll())
@@ -261,7 +261,7 @@ open class ResultListFragment<out T: Any> : Fragment() {
     private val mLayoutSettingChanged = Observer<SettingsPrefs.Layout> { reload() }
 
     private val mUsedQueryWordChanged = Observer<String> { usedQueryWord ->
-        mHeaderViewModel.query.set(usedQueryWord)
+        mHeaderViewModel.setQuery(usedQueryWord)
         mTab?.let {
             mHeaderViewModel.isMatchedWordSelectable.set(ResultListFactory.getMatchedWordSelectability(it, usedQueryWord))
         }
@@ -276,8 +276,8 @@ open class ResultListFragment<out T: Any> : Fragment() {
     }
 
     private fun reload() {
-        Log.v(TAG, "$mTab: reload: query=${mHeaderViewModel.query.get()}, filter=${mHeaderViewModel.filter.get()}")
-        mViewModel.setQueryParams(ResultListViewModel.QueryParams(mHeaderViewModel.query.get(), mHeaderViewModel.filter.get()))
+        Log.v(TAG, "$mTab: reload: query=${mHeaderViewModel.query.value}, filter=${mHeaderViewModel.filter.get()}")
+        mViewModel.setQueryParams(ResultListViewModel.QueryParams(mHeaderViewModel.query.value, mHeaderViewModel.filter.get()))
     }
 
     // If we have an empty list because the user didn't enter any search term,

@@ -29,12 +29,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding
 import ca.rmen.android.poetassistant.main.Tab
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogListener, ConfirmDialogFragment.ConfirmDialogListener {
@@ -75,7 +79,27 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
             mViewModel = ViewModelProvider(it).get(ResultListHeaderViewModel::class.java)
             mBinding.viewModel = mViewModel
             mViewModel.snackbarText.observe(this, mSnackbarTextChanged)
-            mViewModel.isFavoriteLiveData.observe(this, mFavoriteObserver)
+            mBinding.btnStarQuery.setOnCheckedChangeListener { _, bool ->
+                mViewModel.setIsFavorite(bool)
+            }
+            lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                    mViewModel.isFavoriteFlow.collect { isFavorite ->
+                        if (mBinding.btnStarQuery.isChecked != isFavorite) {
+                            mBinding.btnStarQuery.isChecked = isFavorite
+                        }
+                    }
+                }
+            }
+            lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                    mViewModel.query.collect {
+                        if (mBinding.tvListHeader.text != it) {
+                            mBinding.tvListHeader.text = it
+                        }
+                    }
+                }
+            }
             mViewModel.ttsStateLiveData.observe(this, mTtsObserver)
         }
         return mBinding.root
@@ -97,8 +121,6 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
             Snackbar.make(mBinding.root, text!!, Snackbar.LENGTH_SHORT).show()
         }
     }
-
-    private val mFavoriteObserver = Observer<Boolean> { isFavorite -> mBinding.btnStarQuery.isChecked = isFavorite == true }
 
     private val mTtsObserver = Observer<TtsState> { ttsState ->
         Log.d(TAG, "$mTab: ttsState = $ttsState")
