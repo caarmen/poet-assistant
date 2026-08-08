@@ -68,20 +68,11 @@ class SuggestionsProvider : ContentProvider() {
     }
 
     override fun insert(uri: Uri, values: ContentValues?): Uri? {
-        val suggestion = values?.getAsString(SearchManager.QUERY)
-        if (suggestion != null) {
-            context?.let {
-                getSuggestions(it.applicationContext).addSuggestion(suggestion)
-            }
-        }
-        return null
+        throw UnsupportedOperationException("Use Suggestions Repository")
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<out String>?): Int {
-        context?.let {
-            getSuggestions(it.applicationContext).clear()
-        }
-        return 0
+        throw UnsupportedOperationException("Use Suggestions Repository")
     }
 
     override fun update(p0: Uri, p1: ContentValues?, p2: String?, p3: Array<out String>?): Int {

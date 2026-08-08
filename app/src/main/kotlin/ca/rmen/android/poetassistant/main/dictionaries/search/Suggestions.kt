@@ -20,15 +20,24 @@
 package ca.rmen.android.poetassistant.main.dictionaries.search
 
 import androidx.annotation.WorkerThread
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
-class Suggestions(private val suggestionDao: SuggestionDao) {
+class Suggestions(
+    private val suggestionDao: SuggestionDao,
+    private val ioDispatcher: CoroutineDispatcher,
+) {
 
     @WorkerThread
     fun getSuggestions(): List<String> = suggestionDao.getSuggestions().map(Suggestion::getWord)
 
     @WorkerThread
-    fun addSuggestion(suggestion: String) = suggestionDao.insertAll(Suggestion(suggestion))
+    suspend fun addSuggestion(suggestion: String) = withContext(ioDispatcher) {
+        suggestionDao.insertAll(Suggestion(suggestion))
+    }
 
     @WorkerThread
-    fun clear() = suggestionDao.deleteAll()
+    suspend fun clear() = withContext(ioDispatcher) {
+        suggestionDao.deleteAll()
+    }
 }

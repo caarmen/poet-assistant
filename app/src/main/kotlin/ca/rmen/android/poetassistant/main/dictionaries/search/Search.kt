@@ -20,8 +20,6 @@
 package ca.rmen.android.poetassistant.main.dictionaries.search
 
 import android.app.Activity
-import android.app.SearchManager
-import android.content.ContentValues
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
@@ -35,10 +33,8 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.widget.DebounceTextWatcher
 import ca.rmen.android.poetassistant.widget.ViewShownScheduler
 import com.google.android.material.search.SearchView
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Locale
 
 /**
@@ -51,11 +47,11 @@ import java.util.Locale
  * This class also configures the SearchView widget, and intercepts searches to add them to
  * the list of suggested words.
  */
-class Search constructor(
+class Search(
     private val searchableActivity: Activity,
     private val viewPager: ViewPager,
     private val dictionary: Dictionary,
-    private val ioDispatcher: CoroutineDispatcher,
+    private val suggestions: Suggestions,
     ) {
     companion object {
         private val TAG = Constants.TAG + Search::class.java.simpleName
@@ -193,10 +189,6 @@ class Search constructor(
      * Adds the given suggestions to the search history, in a background thread.
      */
     suspend fun addSuggestions(suggestion: String) {
-        withContext(ioDispatcher) {
-            val contentValues = ContentValues(1)
-            contentValues.put(SearchManager.QUERY, suggestion)
-            searchableActivity.contentResolver.insert(SuggestionsProvider.CONTENT_URI, contentValues)
-        }
+        suggestions.addSuggestion(suggestion)
     }
 }

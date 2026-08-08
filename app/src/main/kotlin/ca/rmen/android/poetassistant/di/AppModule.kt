@@ -79,6 +79,6 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesSuggestions(userDb: UserDb) = Suggestions(userDb.suggestionDao())
+    fun providesSuggestions(userDb: UserDb, @IODispatcher ioDispatcher: CoroutineDispatcher) = Suggestions(userDb.suggestionDao(), ioDispatcher)
 
 }

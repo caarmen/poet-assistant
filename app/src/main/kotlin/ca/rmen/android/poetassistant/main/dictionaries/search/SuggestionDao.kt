@@ -30,8 +30,8 @@ interface SuggestionDao {
     fun getSuggestions(): Array<Suggestion>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertAll(suggestion: Suggestion)
+    suspend fun insertAll(suggestion: Suggestion)
 
     @Query("DELETE FROM SUGGESTION")
-    fun deleteAll()
+    suspend fun deleteAll()
 }

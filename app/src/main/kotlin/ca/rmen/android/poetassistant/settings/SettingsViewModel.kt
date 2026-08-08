@@ -33,18 +33,18 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
-import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider
+import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestions
 import ca.rmen.android.poetassistant.main.reader.PoemFile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     application: Application,
     private val mFavoritesRepository: FavoritesRepository,
+    private val suggestions: Suggestions,
     private val mTts: Tts,
     @IODispatcher val ioDispatcher: CoroutineDispatcher,
     private val dictionary: Dictionary,
@@ -107,9 +107,7 @@ class SettingsViewModel @Inject constructor(
 
     fun clearSearchHistory() {
         viewModelScope.launch {
-            withContext(ioDispatcher) {
-                getApplication<Application>().contentResolver.delete(SuggestionsProvider.CONTENT_URI, null, null)
-            }
+            suggestions.clear()
             snackbarText.value = getApplication<Application>().getString(R.string.search_history_cleared)
         }
     }
