@@ -49,9 +49,8 @@ class FavoritesRepository(
 
     fun getFavoritesLiveData(): LiveData<List<Favorite>> = favoriteDao.getFavoritesLiveData()
 
-    @WorkerThread
-    fun getFavorites(): Set<String> {
-        return favoriteDao.getFavorites().map(Favorite::getWord).toSet()
+    suspend fun getFavorites(): Set<String> = withContext(ioDispatcher) {
+        favoriteDao.getFavorites().map(Favorite::getWord).toSet()
     }
 
     @WorkerThread

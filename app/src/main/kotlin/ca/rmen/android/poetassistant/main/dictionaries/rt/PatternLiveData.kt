@@ -55,7 +55,7 @@ class PatternLiveData(
         mFavoritesRepository = entryPoint.favoritesRepository()
     }
 
-    override fun loadInBackground(): ResultListData<RTListItem> {
+    override suspend fun loadInBackground(): ResultListData<RTListItem> {
         Log.d(TAG, "loadInBackground, query=$query")
 
         val data = ArrayList<RTListItem>()

@@ -55,7 +55,7 @@ class WotdLiveData(
         mFavoritesRepository = entryPoint.favoritesRepository()
     }
 
-    override fun loadInBackground(): ResultListData<WotdListItem> {
+    override suspend fun loadInBackground(): ResultListData<WotdListItem> {
         Log.d(TAG, "loadInBackground")
         val data = ArrayList<WotdListItem>(100)
         val cursor = mDictionary.getRandomWordCursor() ?: return emptyResult()

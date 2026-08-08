@@ -84,7 +84,7 @@ class RhymerLiveData(
         mFavoritesRepository = entryPoint.favoritesRepository()
     }
 
-    override fun loadInBackground(): ResultListData<RTListItem> {
+    override suspend fun loadInBackground(): ResultListData<RTListItem> {
         Log.d(TAG, "loadInBackground: query=$query, filter=$filter")
         val before = System.currentTimeMillis()
 

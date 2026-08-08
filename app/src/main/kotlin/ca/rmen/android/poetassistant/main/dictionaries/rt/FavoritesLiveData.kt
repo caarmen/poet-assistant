@@ -50,7 +50,7 @@ class FavoritesLiveData(
         mFavoritesRepository = entryPoint.favoritesRepository()
     }
 
-    override fun loadInBackground(): ResultListData<RTListItem> {
+    override suspend fun loadInBackground(): ResultListData<RTListItem> {
         Log.d(TAG, "loadInBackground")
         val data = ArrayList<RTListItem>()
         val favorites = mFavoritesRepository.getFavorites()
