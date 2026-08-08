@@ -29,7 +29,6 @@ ksp = "2.3.10"
 porterStemmer = "1.0.0"
 rhymer = "1.2.0"
 robolectric = "4.16.1"
-robolectricSimulator = "1.0.3"
 uiTestJunit4Android = "1.11.4"
 
 [libraries]
@@ -86,5 +85,4 @@ hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-robolectric-simulator = { id="org.robolectric.simulator", version.ref = "robolectricSimulator" }
 room = { id = "androidx.room", version.ref = "androidxRoom" }
