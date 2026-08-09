@@ -110,7 +110,6 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         mBinding.buttonListener = ButtonListener()
         mViewModel = ViewModelProvider(this).get(ReaderViewModel::class.java)
         mBinding.viewModel = mViewModel
-        mViewModel.snackbarText.observe(this, mSnackbarCallback)
         mViewModel.ttsError.observe(this, mTtsErrorCallback)
         mViewModel.poemFile.observe(this, mPoemFileCallback)
         mViewModel.playButtonDrawable.addOnPropertyChangedCallback(mPlayButtonDrawableObserver)
@@ -171,6 +170,17 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
                     mViewModel.poem.collect {
                         if (mBinding.tvText.text.toString() != it) {
                             mBinding.tvText.setText(it)
+                        }
+                    }
+                }
+                launch {
+                    mViewModel.snackbarText.collect { text ->
+                        if (text != null) {
+                            val root = view
+                            if (root != null) {
+                                val message = getString(text.stringResId, *text.params)
+                                Snackbar.make(root, message, Snackbar.LENGTH_LONG).show()
+                            }
                         }
                     }
                 }
@@ -298,13 +308,6 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         }
     }
 
-    private val mSnackbarCallback = Observer<ReaderViewModel.SnackbarText> { text ->
-        val root = view
-        if (root != null && text != null) {
-            val message = getString(text.stringResId, *text.params)
-            Snackbar.make(root, message, Snackbar.LENGTH_LONG).show()
-        }
-    }
 
     private val mTtsErrorCallback = Observer<Boolean> { hasTtsError ->
         if (hasTtsError == true) {

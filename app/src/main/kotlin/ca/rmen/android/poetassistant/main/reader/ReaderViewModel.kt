@@ -110,7 +110,8 @@ class ReaderViewModel @Inject constructor(
     val playButtonEnabled = ObservableBoolean()
     val wordCountText = ObservableField<String>()
 
-    val snackbarText = MutableLiveData<SnackbarText>()
+    val snackbarText: StateFlow<SnackbarText?>
+        field = MutableStateFlow<SnackbarText?>(null)
 
     val ttsError = MutableLiveData<Boolean>()
 
