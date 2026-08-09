@@ -171,7 +171,16 @@ android {
         // execution "ANDROIDX_TEST_ORCHESTRATOR"
         unitTests {
             all {
-                it.jvmArgs("-noverify", "-ea")
+                it.jvmArgs("-noverify", "-ea",
+                    // Add the following to use the robolectric simulator:
+                    /*
+                    "--add-exports=java.desktop/sun.awt=ALL-UNNAMED",
+                    "--add-exports=java.base/sun.reflect.misc=ALL-UNNAMED",
+                    "--add-exports=java.base/sun.security.action=ALL-UNNAMED",
+                    "--add-exports=java.desktop/sun.swing=ALL-UNNAMED",
+                    "--add-exports=java.desktop/sun.lwawt.macosx=ALL-UNNAMED",
+                     */
+                )
             }
             isIncludeAndroidResources = true
         }
@@ -279,6 +288,7 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
+    testImplementation(libs.robolectric.simulator)
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.room.testing)

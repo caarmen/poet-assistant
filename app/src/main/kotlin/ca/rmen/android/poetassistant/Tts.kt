@@ -30,14 +30,18 @@ import android.text.TextUtils
 import android.util.Log
 import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.decrementAndFetch
 
-class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs, private val coroutineScope: CoroutineScope) {
+class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs) {
     companion object {
         private var TAG = Constants.TAG + Tts::class.java.simpleName
         private const val PAUSE_DURATION_MS = 500L
@@ -49,14 +53,19 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
     private var mTextToSpeech: TextToSpeech? = null
     private var mTtsStatus = TextToSpeech.ERROR
 
-    private val mTtsLiveData = MutableLiveData<TtsState>()
     private val mUtteranceListener = UtteranceListener()
     private val mInitListener = TtsInitListener()
     // This can't be local or it will be removed from the shared prefs manager!
     private val mTtsPrefsListener = TtsPreferenceListener()
 
 
-    fun getTtsLiveData(): LiveData<TtsState> = mTtsLiveData
+    fun getTtsLiveData(): LiveData<TtsState> = ttsFlow.filterNotNull().asLiveData()
+
+    val ttsFlow: Flow<TtsState?>
+    field = MutableSharedFlow<TtsState?>(replay=1, extraBufferCapacity = 10)
+
+    @OptIn(ExperimentalAtomicApi::class)
+    private val utteranceCount = AtomicInt(0)
 
     init {
         PreferenceManager.getDefaultSharedPreferences(context).registerOnSharedPreferenceChangeListener(mTtsPrefsListener)
@@ -65,7 +74,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
     private fun init() {
         Log.v(TAG, "init: initListener = $mInitListener")
-        mTtsLiveData.value = TtsState(null, TtsState.TtsStatus.INITIALIZED, null)
+        ttsFlow.tryEmit(TtsState(previousStatus = null, currentStatus = TtsState.TtsStatus.INITIALIZED, utteranceId = null))
         mTextToSpeech = TextToSpeech(context, mInitListener)
         mTextToSpeech?.setOnUtteranceProgressListener(mUtteranceListener)
     }
@@ -86,7 +95,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
         init()
     }
 
-    fun getTtsState(): TtsState? = mTtsLiveData.value
+    fun getTtsState(): TtsState? = ttsFlow.replayCache.last()
 
     fun isSpeaking(): Boolean = isReady() && mTextToSpeech!!.isSpeaking
 
@@ -97,10 +106,12 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
         else speak4(splitText)
     }
 
+    @OptIn(ExperimentalAtomicApi::class)
     @Suppress("DEPRECATION")
     private fun speak4(text: List<String>) {
         val map = HashMap<String, String>()
         map[TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID] = TAG
+        utteranceCount.store(text.size)
         text.forEach {
             if (TextUtils.isEmpty(it)) {
                 mTextToSpeech?.playSilence(PAUSE_DURATION_MS, TextToSpeech.QUEUE_ADD, map)
@@ -110,8 +121,10 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
         }
     }
 
+    @OptIn(ExperimentalAtomicApi::class)
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun speak21(text: List<String>) {
+        utteranceCount.store(text.size)
         text.forEach {
             if (TextUtils.isEmpty(it)) {
                 mTextToSpeech?.playSilentUtterance(PAUSE_DURATION_MS, TextToSpeech.QUEUE_ADD, TAG)
@@ -139,7 +152,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
             it.setOnUtteranceCompletedListener(null)
             it.shutdown()
             mTtsStatus = TextToSpeech.ERROR
-            mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null)
+            ttsFlow.tryEmit(TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null))
             mTextToSpeech = null
         }
         PreferenceManager.getDefaultSharedPreferences(context).unregisterOnSharedPreferenceChangeListener(mTtsPrefsListener)
@@ -189,13 +202,14 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 useVoiceFromSettings()
             }
+
             if (status == TextToSpeech.SUCCESS) {
                 setVoiceSpeedFromSettings()
                 setVoicePitchFromSettings()
-                mTtsLiveData.value = TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.INITIALIZED, null)
-                mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.INITIALIZED, null)
+                ttsFlow.tryEmit(TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.INITIALIZED, null))
+                ttsFlow.tryEmit(TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.INITIALIZED, null))
             } else {
-                mTtsLiveData.value = TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null)
+                ttsFlow.tryEmit(TtsState(TtsState.TtsStatus.UNINITIALIZED, TtsState.TtsStatus.UNINITIALIZED, null))
             }
         }
     }
@@ -214,9 +228,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
     private inner class UtteranceListener : UtteranceProgressListener() {
         override fun onStart(utteranceId: String) {
-            coroutineScope.launch(Dispatchers.Main) {
-                mTtsLiveData.value = TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.SPEAKING, utteranceId)
-            }
+            ttsFlow.tryEmit(TtsState(TtsState.TtsStatus.INITIALIZED, TtsState.TtsStatus.SPEAKING, utteranceId))
         }
 
         override fun onDone(utteranceId: String) = onUtteranceCompleted(utteranceId)
@@ -234,18 +246,23 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
             onUtteranceCompleted(utteranceId)
         }
 
+        @OptIn(ExperimentalAtomicApi::class)
         private fun onUtteranceCompleted(utteranceId: String) {
-            coroutineScope.launch(Dispatchers.Main) {
-                mTtsLiveData.value = TtsState(TtsState.TtsStatus.SPEAKING, TtsState.TtsStatus.UTTERANCE_COMPLETE, utteranceId)
-                mTtsLiveData.value = TtsState(TtsState.TtsStatus.UTTERANCE_COMPLETE, TtsState.TtsStatus.INITIALIZED, null)
+            Log.d("CARM", "onUtteranceCompleted $utteranceId $utteranceCount")
+            val newUtteranceCount = utteranceCount.decrementAndFetch()
+            if (newUtteranceCount <= 0) {
+                Log.v("CARM", "emit now")
+                utteranceCount.store(0)
+                ttsFlow.tryEmit(TtsState(TtsState.TtsStatus.SPEAKING, TtsState.TtsStatus.UTTERANCE_COMPLETE, utteranceId))
+                ttsFlow.tryEmit(TtsState(TtsState.TtsStatus.UTTERANCE_COMPLETE, TtsState.TtsStatus.INITIALIZED, null))
             }
         }
 
+        @OptIn(ExperimentalAtomicApi::class)
         private fun onUtteranceError(utteranceId: String) {
-            coroutineScope.launch(Dispatchers.Main) {
-                mTtsLiveData.value = TtsState(TtsState.TtsStatus.SPEAKING, TtsState.TtsStatus.UTTERANCE_ERROR, utteranceId)
-                mTtsLiveData.value = TtsState(TtsState.TtsStatus.UTTERANCE_ERROR, TtsState.TtsStatus.INITIALIZED, utteranceId)
-            }
+            utteranceCount.store(0)
+            ttsFlow.tryEmit(TtsState(TtsState.TtsStatus.SPEAKING, TtsState.TtsStatus.UTTERANCE_ERROR, utteranceId))
+            ttsFlow.tryEmit(TtsState(TtsState.TtsStatus.UTTERANCE_ERROR, TtsState.TtsStatus.INITIALIZED, utteranceId))
         }
     }
 }
