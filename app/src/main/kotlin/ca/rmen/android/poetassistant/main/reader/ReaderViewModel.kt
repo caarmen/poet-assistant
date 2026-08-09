@@ -25,7 +25,6 @@ import androidx.lifecycle.AndroidViewModel
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.databinding.ObservableField
 import android.net.Uri
 import android.os.Build
 import androidx.preference.PreferenceManager
@@ -94,7 +93,8 @@ class ReaderViewModel @Inject constructor(
 
     private val mPrefsListener : PrefsListener
 
-    val wordCountText = ObservableField<String>()
+    val wordCountText: StateFlow<String?>
+        field = MutableStateFlow(null)
 
     val snackbarText: StateFlow<SnackbarText?>
         field = MutableStateFlow<SnackbarText?>(null)
@@ -141,7 +141,7 @@ class ReaderViewModel @Inject constructor(
     }
 
     fun updateWordCount() {
-        wordCountText.set(WordCounter.getWordCountText(getApplication(), poem.value))
+        wordCountText.value = WordCounter.getWordCountText(getApplication(), poem.value)
     }
 
     // begin TTS

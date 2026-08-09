@@ -33,6 +33,7 @@ import android.view.ViewGroup
 import androidx.annotation.IdRes
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -43,7 +44,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.HtmlCompat
-import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.TextPopupMenu
@@ -201,8 +201,13 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
                         }
                     }
                 }
+                launch {
+                    mViewModel.wordCountText.collect {
+                        mBinding.readerWordCount.text = it
+                        mBinding.readerWordCount.isVisible = !it.isNullOrBlank()
+                    }
+                }
             }
-
         }
     }
 
