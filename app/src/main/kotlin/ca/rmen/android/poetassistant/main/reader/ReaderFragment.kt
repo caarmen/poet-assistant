@@ -37,7 +37,6 @@ import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -108,7 +107,6 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         mBinding.buttonListener = ButtonListener()
         mViewModel = ViewModelProvider(this).get(ReaderViewModel::class.java)
         mBinding.viewModel = mViewModel
-        mViewModel.ttsError.observe(this, mTtsErrorCallback)
         mViewModel.playButtonDrawable.addOnPropertyChangedCallback(mPlayButtonDrawableObserver)
         mBinding.tvText.imeListener = object : CABEditText.ImeListener {
             override fun onImeClosed() {
@@ -183,6 +181,23 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
                             if (root != null) {
                                 val message = getString(text.stringResId, *text.params)
                                 Snackbar.make(root, message, Snackbar.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                }
+                launch {
+                    mViewModel.ttsError.collect { hasTtsError ->
+                        if (hasTtsError == true) {
+                            val root = view
+                            if (root != null) {
+                                val snackBar = Snackbar.make(root, HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG)
+                                val intent = Intent("com.android.settings.TTS_SETTINGS")
+                                if (intent.resolveActivity(root.context.packageManager) != null) {
+                                    snackBar.setAction(R.string.tts_error_open_system_settings) { startActivity(intent) }
+                                } else {
+                                    snackBar.setAction(R.string.tts_error_open_app_settings) { startActivity(Intent(context, SettingsActivity::class.java)) }
+                                }
+                                snackBar.show()
                             }
                         }
                     }
@@ -312,21 +327,6 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
     }
 
 
-    private val mTtsErrorCallback = Observer<Boolean> { hasTtsError ->
-        if (hasTtsError == true) {
-            val root = view
-            if (root != null) {
-                val snackBar = Snackbar.make(root, HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG)
-                val intent = Intent("com.android.settings.TTS_SETTINGS")
-                if (intent.resolveActivity(root.context.packageManager) != null) {
-                    snackBar.setAction(R.string.tts_error_open_system_settings) { startActivity(intent) }
-                } else {
-                    snackBar.setAction(R.string.tts_error_open_app_settings) { startActivity(Intent(context, SettingsActivity::class.java)) }
-                }
-                snackBar.show()
-            }
-        }
-    }
 
 
     private val mPlayButtonDrawableObserver = BindingCallbackAdapter(object: BindingCallbackAdapter.Callback {
