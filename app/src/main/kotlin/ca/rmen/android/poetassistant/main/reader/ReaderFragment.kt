@@ -56,9 +56,7 @@ import ca.rmen.android.poetassistant.widget.BaseTextWatcher
 import ca.rmen.android.poetassistant.widget.CABEditText
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 
 // Split into separate impl and base class to get full code coverage stats:
 // https://medium.com/livefront/dagger-hilt-testing-injected-android-components-with-code-coverage-30089a1f6872
