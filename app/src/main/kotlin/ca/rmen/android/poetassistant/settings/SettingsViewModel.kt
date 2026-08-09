@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.settings
 import android.annotation.TargetApi
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -37,6 +36,8 @@ import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsReposit
 import ca.rmen.android.poetassistant.main.reader.PoemFile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -51,7 +52,7 @@ class SettingsViewModel @Inject constructor(
     private val settingsPrefs: SettingsPrefs,
 ) : AndroidViewModel(application) {
 
-    val snackbarText = MutableLiveData<String>()
+    val snackbarText: StateFlow<String> field = MutableStateFlow<String>("")
     private val mListener: SettingsChangeListener = SettingsChangeListener(application, dictionary, settingsPrefs, viewModelScope)
 
     init {

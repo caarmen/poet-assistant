@@ -28,7 +28,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
@@ -38,7 +37,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -130,7 +128,6 @@ open class GeneralPreferenceFragmentImpl : PreferenceFragmentCompat(), ConfirmDi
         super.onCreate(savedInstanceState)
         context?.let {
             mViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
-            mViewModel.snackbarText.observe(this, mSnackbarCallback)
         }
     }
 
@@ -214,7 +211,16 @@ open class GeneralPreferenceFragmentImpl : PreferenceFragmentCompat(), ConfirmDi
                 return@launch
             }
             viewLifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-                mTts.ttsFlow.collect(::onTtsState)
+                launch {
+                    mTts.ttsFlow.collect(::onTtsState)
+                }
+                launch {
+                    mViewModel.snackbarText.collect { snackbarText ->
+                        if (snackbarText.isNotBlank()) {
+                            Snackbar.make(view, snackbarText, Snackbar.LENGTH_LONG).show()
+                        }
+                    }
+                }
             }
         }
     }
@@ -279,14 +285,6 @@ open class GeneralPreferenceFragmentImpl : PreferenceFragmentCompat(), ConfirmDi
         preference.setOnPreferenceClickListener {
             runnable.run()
             false
-        }
-    }
-
-    private val mSnackbarCallback = Observer<String> { snackbarText ->
-        view?.let {
-            if (!TextUtils.isEmpty(snackbarText)) {
-                Snackbar.make(it, snackbarText!!, Snackbar.LENGTH_LONG).show()
-            }
         }
     }
 
