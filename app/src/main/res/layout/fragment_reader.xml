@@ -68,7 +68,6 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/tts_play"
                 android:onClick="@{v -> buttonListener.onPlayButtonClicked()}"
-                android:enabled="@{viewModel.playButtonEnabled}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
