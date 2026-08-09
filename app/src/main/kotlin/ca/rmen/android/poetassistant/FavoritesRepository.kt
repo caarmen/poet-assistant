@@ -19,8 +19,6 @@
 
 package ca.rmen.android.poetassistant
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
 import android.content.Context
 import android.net.Uri
 import android.text.TextUtils

@@ -68,7 +68,6 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/tts_play"
                 android:onClick="@{v -> buttonListener.onPlayButtonClicked()}"
-                android:enabled="@{viewModel.playButtonEnabled}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -93,10 +92,8 @@
                 android:onClick="@{v -> buttonListener.onWordCountClicked()}"
                 android:paddingBottom="8dp"
                 android:paddingTop="8dp"
-                android:text="@{viewModel.wordCountText}"
                 android:textColor="?android:attr/textColorSecondary"
                 android:textSize="12sp"
-                android:visibility="@{viewModel.wordCountText != null? View.VISIBLE: View.GONE}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="45 words, 300 characters"/>

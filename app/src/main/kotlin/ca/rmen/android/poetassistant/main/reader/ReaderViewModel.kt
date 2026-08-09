@@ -22,14 +22,9 @@ package ca.rmen.android.poetassistant.main.reader
 import android.annotation.TargetApi
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
-import androidx.databinding.ObservableInt
 import android.net.Uri
 import android.os.Build
 import androidx.preference.PreferenceManager
@@ -39,29 +34,21 @@ import androidx.annotation.StringRes
 import android.text.Selection
 import android.text.TextUtils
 import android.util.Log
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.TtsState
-import ca.rmen.android.poetassistant.databinding.LiveDataMapping
 import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.dictionaries.Share
-import ca.rmen.android.poetassistant.main.dictionaries.search.Source
-import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsViewModel.SearchSuggestion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -106,15 +93,17 @@ class ReaderViewModel @Inject constructor(
 
     private val mPrefsListener : PrefsListener
 
-    val playButtonDrawable = ObservableInt(R.drawable.ic_play_disabled)
-    val playButtonEnabled = ObservableBoolean()
-    val wordCountText = ObservableField<String>()
+    val wordCountText: StateFlow<String?>
+        field = MutableStateFlow(null)
 
-    val snackbarText = MutableLiveData<SnackbarText>()
+    val snackbarText: StateFlow<SnackbarText?>
+        field = MutableStateFlow<SnackbarText?>(null)
 
-    val ttsError = MutableLiveData<Boolean>()
+    val ttsError: StateFlow<Boolean>
+        field = MutableStateFlow(false)
 
-    val poemFile = MutableLiveData<PoemFile>()
+    val poemFile: StateFlow<PoemFile?>
+        field = MutableStateFlow<PoemFile?>(null)
 
     val poem: StateFlow<String?> field= MutableStateFlow(null)
 
@@ -152,7 +141,7 @@ class ReaderViewModel @Inject constructor(
     }
 
     fun updateWordCount() {
-        wordCountText.set(WordCounter.getWordCountText(getApplication(), poem.value))
+        wordCountText.value = WordCounter.getWordCountText(getApplication(), poem.value)
     }
 
     // begin TTS

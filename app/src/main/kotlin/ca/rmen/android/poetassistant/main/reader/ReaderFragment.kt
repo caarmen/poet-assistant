@@ -33,18 +33,17 @@ import android.view.ViewGroup
 import androidx.annotation.IdRes
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.HtmlCompat
-import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 import ca.rmen.android.poetassistant.databinding.FragmentReaderBinding
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.TextPopupMenu
@@ -56,9 +55,7 @@ import ca.rmen.android.poetassistant.widget.BaseTextWatcher
 import ca.rmen.android.poetassistant.widget.CABEditText
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 
 // Split into separate impl and base class to get full code coverage stats:
 // https://medium.com/livefront/dagger-hilt-testing-injected-android-components-with-code-coverage-30089a1f6872
@@ -110,10 +107,6 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         mBinding.buttonListener = ButtonListener()
         mViewModel = ViewModelProvider(this).get(ReaderViewModel::class.java)
         mBinding.viewModel = mViewModel
-        mViewModel.snackbarText.observe(this, mSnackbarCallback)
-        mViewModel.ttsError.observe(this, mTtsErrorCallback)
-        mViewModel.poemFile.observe(this, mPoemFileCallback)
-        mViewModel.playButtonDrawable.addOnPropertyChangedCallback(mPlayButtonDrawableObserver)
         mBinding.tvText.imeListener = object : CABEditText.ImeListener {
             override fun onImeClosed() {
                 AppBarLayoutHelper.forceExpandAppBarLayout(activity)
@@ -174,13 +167,48 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
                         }
                     }
                 }
+                launch {
+                    mViewModel.poemFile.collect { _ ->
+                        Log.v(TAG, "poemFileCallback: invalidateOptionsMenu")
+                        activity?.invalidateOptionsMenu()
+                    }
+                }
+                launch {
+                    mViewModel.snackbarText.collect { text ->
+                        if (text != null) {
+                            val root = view
+                            if (root != null) {
+                                val message = getString(text.stringResId, *text.params)
+                                Snackbar.make(root, message, Snackbar.LENGTH_LONG).show()
+                            }
+                        }
+                    }
+                }
+                launch {
+                    mViewModel.ttsError.collect { hasTtsError ->
+                        if (hasTtsError == true) {
+                            val root = view
+                            if (root != null) {
+                                val snackBar = Snackbar.make(root, HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG)
+                                val intent = Intent("com.android.settings.TTS_SETTINGS")
+                                if (intent.resolveActivity(root.context.packageManager) != null) {
+                                    snackBar.setAction(R.string.tts_error_open_system_settings) { startActivity(intent) }
+                                } else {
+                                    snackBar.setAction(R.string.tts_error_open_app_settings) { startActivity(Intent(context, SettingsActivity::class.java)) }
+                                }
+                                snackBar.show()
+                            }
+                        }
+                    }
+                }
+                launch {
+                    mViewModel.wordCountText.collect {
+                        mBinding.readerWordCount.text = it
+                        mBinding.readerWordCount.isVisible = !it.isNullOrBlank()
+                    }
+                }
             }
-
         }
-    }
-    override fun onDestroyView() {
-        mViewModel.playButtonDrawable.removeOnPropertyChangedCallback(mPlayButtonDrawableObserver)
-        super.onDestroyView()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -198,7 +226,7 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         if (menuItem == null) {
             Log.d(TAG, "Unexpected: save menu item missing from reader fragment. Monkey?")
         } else {
-            menuItem.isEnabled = mViewModel.poemFile.value != null
+            menuItem.isEnabled = mViewModel.poemFile != null
         }
     }
 
@@ -298,40 +326,6 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         }
     }
 
-    private val mSnackbarCallback = Observer<ReaderViewModel.SnackbarText> { text ->
-        val root = view
-        if (root != null && text != null) {
-            val message = getString(text.stringResId, *text.params)
-            Snackbar.make(root, message, Snackbar.LENGTH_LONG).show()
-        }
-    }
-
-    private val mTtsErrorCallback = Observer<Boolean> { hasTtsError ->
-        if (hasTtsError == true) {
-            val root = view
-            if (root != null) {
-                val snackBar = Snackbar.make(root, HtmlCompat.fromHtml(getString(R.string.tts_error)), Snackbar.LENGTH_LONG)
-                val intent = Intent("com.android.settings.TTS_SETTINGS")
-                if (intent.resolveActivity(root.context.packageManager) != null) {
-                    snackBar.setAction(R.string.tts_error_open_system_settings) { startActivity(intent) }
-                } else {
-                    snackBar.setAction(R.string.tts_error_open_app_settings) { startActivity(Intent(context, SettingsActivity::class.java)) }
-                }
-                snackBar.show()
-            }
-        }
-    }
-
-    private val mPoemFileCallback = Observer<PoemFile?> {
-        Log.v(TAG, "poemFileCallback: invalidateOptionsMenu")
-        activity?.invalidateOptionsMenu()
-    }
-
-    private val mPlayButtonDrawableObserver = BindingCallbackAdapter(object: BindingCallbackAdapter.Callback {
-        override fun onChanged() {
-            mBinding.btnPlay.setIconResource(mViewModel.playButtonDrawable.get())
-        }
-    })
 
     inner class ButtonListener {
         fun onPlayButtonClicked() {
