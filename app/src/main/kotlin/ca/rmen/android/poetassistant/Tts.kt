@@ -29,14 +29,11 @@ import android.speech.tts.UtteranceProgressListener
 import android.text.TextUtils
 import android.util.Log
 import androidx.annotation.MainThread
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.decrementAndFetch
@@ -57,9 +54,6 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
     private val mInitListener = TtsInitListener()
     // This can't be local or it will be removed from the shared prefs manager!
     private val mTtsPrefsListener = TtsPreferenceListener()
-
-
-    fun getTtsLiveData(): LiveData<TtsState> = ttsFlow.filterNotNull().asLiveData()
 
     val ttsFlow: Flow<TtsState?>
     field = MutableSharedFlow<TtsState?>(replay=1, extraBufferCapacity = 10)

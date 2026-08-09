@@ -33,13 +33,14 @@ import androidx.annotation.WorkerThread
 import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ProcessLifecycleOwner
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.Share
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -63,9 +64,18 @@ class PoemAudioExport(val context: Context, val mTts: Tts) {
         if (audioFile == null) {
             notifyPoemAudioFailed()
         } else {
-            mTts.getTtsLiveData().observeForever(mTtsObserver)
             notifyPoemAudioInProgress()
             val textToRead = text.substring(0, Math.min(text.length, TextToSpeech.getMaxSpeechInputLength()))
+            coroutineScope.launch {
+                val ttsState = mTts.ttsFlow.filter {
+                    (it?.currentStatus == TtsState.TtsStatus.UTTERANCE_COMPLETE
+                            || it?.currentStatus == TtsState.TtsStatus.UTTERANCE_ERROR)
+                            && it.utteranceId == TEMP_AUDIO_FILE
+                }.first()
+                val audioFile = getAudioFile()
+                if (ttsState?.currentStatus == TtsState.TtsStatus.UTTERANCE_COMPLETE && audioFile != null && audioFile.exists()) notifyPoemAudioReady()
+                else notifyPoemAudioFailed()
+            }
             coroutineScope.launch {
                 withContext(ioDispatcher) {
                     deleteExistingAudioFile(audioFile)
@@ -201,16 +211,4 @@ class PoemAudioExport(val context: Context, val mTts: Tts) {
         }
     }
 
-    private val mTtsObserver = object : Observer<TtsState?> {
-        override fun onChanged(ttsState: TtsState?) {
-            if (ttsState != null
-                    && (ttsState.currentStatus == TtsState.TtsStatus.UTTERANCE_COMPLETE || ttsState.currentStatus == TtsState.TtsStatus.UTTERANCE_ERROR)
-                    && TEMP_AUDIO_FILE == ttsState.utteranceId) {
-                mTts.getTtsLiveData().removeObserver(this)
-                val audioFile = getAudioFile()
-                if (ttsState.currentStatus == TtsState.TtsStatus.UTTERANCE_COMPLETE && audioFile != null && audioFile.exists()) notifyPoemAudioReady()
-                else notifyPoemAudioFailed()
-            }
-        }
-    }
 }
