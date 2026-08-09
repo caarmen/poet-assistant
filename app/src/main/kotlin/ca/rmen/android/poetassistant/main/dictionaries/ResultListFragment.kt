@@ -41,7 +41,6 @@ import androidx.recyclerview.widget.RecyclerView
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.VectorCompat
-import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding
 import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
@@ -110,7 +109,6 @@ open class ResultListFragment<out T: Any> : Fragment() {
             mViewModel.usedQueryWord.observe(viewLifecycleOwner, mUsedQueryWordChanged)
             mViewModel.emptyText.observe(viewLifecycleOwner, mEmptyTextObserver)
             mHeaderViewModel = ViewModelProvider(this).get(ResultListHeaderViewModel::class.java)
-            mHeaderViewModel.filter.addOnPropertyChangedCallback(mFilterChanged)
             var headerFragment = childFragmentManager.findFragmentById(R.id.result_list_header)
             if (headerFragment == null) {
                 headerFragment = ResultListHeaderFragment.newInstance(it)
@@ -134,6 +132,12 @@ open class ResultListFragment<out T: Any> : Fragment() {
                             Log.v(TAG, "$mTab: dataAvailableChanged: invalidateOptionsMenu")
                             activity?.invalidateOptionsMenu()
                         }
+                    }
+                    launch {
+                        mHeaderViewModel.filter.collect {
+                            reload()
+                        }
+
                     }
                 }
             }
@@ -174,18 +178,12 @@ open class ResultListFragment<out T: Any> : Fragment() {
         activity?.invalidateOptionsMenu()
     }
 
-    override fun onDestroyView() {
-        mHeaderViewModel.filter.removeOnPropertyChangedCallback(mFilterChanged)
-        Log.v(TAG, "$mTab onDestroyView")
-        super.onDestroyView()
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_share) {
             mHeaderViewModel.query.value?.let {
                 @Suppress("UNCHECKED_CAST")
                 (mBinding.recyclerView.adapter as? ResultListAdapter<T>)?.let { adapter ->
-                    mViewModel.share(it, mHeaderViewModel.filter.get(), adapter.getAll())
+                    mViewModel.share(it, mHeaderViewModel.filter.value, adapter.getAll())
                 }
             }
         }
@@ -208,7 +206,7 @@ open class ResultListFragment<out T: Any> : Fragment() {
 
     fun query(query: String) {
         Log.d(TAG, "$mTab : query: $query")
-        mHeaderViewModel.filter.set(null)
+        mHeaderViewModel.setFilter(null)
         if (userVisibleHint) {
             AppBarLayoutHelper.disableAutoHide(activity)
             AppBarLayoutHelper.forceExpandAppBarLayout(activity)
@@ -246,20 +244,14 @@ open class ResultListFragment<out T: Any> : Fragment() {
         }
     }
 
-    private val mFilterChanged = BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
-        override fun onChanged() {
-            reload()
-        }
-    })
-
-    private val mShowHeaderChanged = Observer<Boolean> { showHeader -> mHeaderViewModel.showHeader.set(showHeader == true) }
+    private val mShowHeaderChanged = Observer<Boolean> { showHeader -> mHeaderViewModel.setShowHeader(showHeader) }
 
     private val mLayoutSettingChanged = Observer<SettingsPrefs.Layout> { reload() }
 
     private val mUsedQueryWordChanged = Observer<String> { usedQueryWord ->
         mHeaderViewModel.setQuery(usedQueryWord)
         mTab?.let {
-            mHeaderViewModel.isMatchedWordSelectable.set(ResultListFactory.getMatchedWordSelectability(it, usedQueryWord))
+            mHeaderViewModel.setIsMatchedWordSelectable(ResultListFactory.getMatchedWordSelectability(it, usedQueryWord))
         }
     }
 
@@ -272,8 +264,8 @@ open class ResultListFragment<out T: Any> : Fragment() {
     }
 
     private fun reload() {
-        Log.v(TAG, "$mTab: reload: query=${mHeaderViewModel.query.value}, filter=${mHeaderViewModel.filter.get()}")
-        mViewModel.setQueryParams(ResultListViewModel.QueryParams(mHeaderViewModel.query.value, mHeaderViewModel.filter.get()))
+        Log.v(TAG, "$mTab: reload: query=${mHeaderViewModel.query.value}, filter=${mHeaderViewModel.filter.value}")
+        mViewModel.setQueryParams(ResultListViewModel.QueryParams(mHeaderViewModel.query.value, mHeaderViewModel.filter.value))
     }
 
     // If we have an empty list because the user didn't enter any search term,
