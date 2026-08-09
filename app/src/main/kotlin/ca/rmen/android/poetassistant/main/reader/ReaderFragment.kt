@@ -36,9 +36,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.HtmlCompat
@@ -50,8 +52,8 @@ import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment
 import ca.rmen.android.poetassistant.main.dictionaries.HelpDialogFragment
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.settings.SettingsActivity
+import ca.rmen.android.poetassistant.widget.BaseTextWatcher
 import ca.rmen.android.poetassistant.widget.CABEditText
-import ca.rmen.android.poetassistant.widget.DebounceTextWatcher
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -117,12 +119,13 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
                 AppBarLayoutHelper.forceExpandAppBarLayout(activity)
             }
         }
-        DebounceTextWatcher.debounce(
-            mBinding.tvText,
-            lifecycleScope
-        ) { mViewModel.updateWordCount() }
+        mBinding.tvText.addTextChangedListener(object: BaseTextWatcher() {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                super.onTextChanged(s, start, before, count)
+                mViewModel.setTypedText(mBinding.tvText.text.toString())
+            }
+        })
         TextPopupMenu.addSelectionPopupMenu(mBinding.root, mBinding.tvText, activity as OnWordClickListener)
-        mViewModel.playButtonStateLiveData.observe(this, mPlayButtonStateObserver)
         // Add padding to the bottom of the reader content when the keyboard is open.
         // Without this, we have this problem:
         // 1. Have a long poem already entered.
@@ -145,6 +148,36 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         return mBinding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewLifecycleOwner.lifecycleScope.launch {
+            if (!lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                return@launch
+            }
+            viewLifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                launch {
+                    mViewModel.playButtonStateFlow.collect {
+                        updatePlayButton()
+                        // Sometimes when the tts engine is initialized, the "isSpeaking()" method returns true
+                        // if you call it immediately.  If we call updatePlayButton only once at this point, we
+                        // will show a "stop" button instead of a "play" button.  We workaround this by updating
+                        // the button again after a brief moment, hoping that isSpeaking() will correctly
+                        // return false, allowing us to display a "play" button.
+                        // TODO hope we don't need this...delay(5000.milliseconds)
+                        //updatePlayButton()
+                    }
+                }
+                launch {
+                    mViewModel.poem.collect {
+                        if (mBinding.tvText.text.toString() != it) {
+                            mBinding.tvText.setText(it)
+                        }
+                    }
+                }
+            }
+
+        }
+    }
     override fun onDestroyView() {
         mViewModel.playButtonDrawable.removeOnPropertyChangedCallback(mPlayButtonDrawableObserver)
         super.onDestroyView()
@@ -170,7 +203,7 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
     }
 
     private fun prepareMenuItemsRequiringEnteredText(menu: Menu, @IdRes vararg menuIds: Int) {
-        val hasEnteredText = !TextUtils.isEmpty(mViewModel.poem.get())
+        val hasEnteredText = !TextUtils.isEmpty(mViewModel.poem.value)
         menuIds.forEach {
             menu.findItem(it)?.isEnabled = hasEnteredText
         }
@@ -257,7 +290,7 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
     }
 
     private fun updatePlayButton() {
-        val playButtonState = mViewModel.playButtonStateLiveData.value
+        val playButtonState = mViewModel.playButtonStateFlow.value
         Log.v(TAG, "updatePlayButton: playButtonState $playButtonState")
         if (playButtonState != null) {
             mBinding.btnPlay.isEnabled = playButtonState.isEnabled
@@ -292,20 +325,6 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
     private val mPoemFileCallback = Observer<PoemFile?> {
         Log.v(TAG, "poemFileCallback: invalidateOptionsMenu")
         activity?.invalidateOptionsMenu()
-    }
-
-    private val mPlayButtonStateObserver = Observer<ReaderViewModel.PlayButtonState> { playButtonState ->
-        Log.v(TAG, "playButtonState $playButtonState")
-        updatePlayButton()
-        // Sometimes when the tts engine is initialized, the "isSpeaking()" method returns true
-        // if you call it immediately.  If we call updatePlayButton only once at this point, we
-        // will show a "stop" button instead of a "play" button.  We workaround this by updating
-        // the button again after a brief moment, hoping that isSpeaking() will correctly
-        // return false, allowing us to display a "play" button.
-        lifecycleScope.launch {
-            delay(5000.milliseconds)
-            updatePlayButton()
-        }
     }
 
     private val mPlayButtonDrawableObserver = BindingCallbackAdapter(object: BindingCallbackAdapter.Callback {

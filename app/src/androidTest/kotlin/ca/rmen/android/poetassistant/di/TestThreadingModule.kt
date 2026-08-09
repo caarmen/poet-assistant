@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.di
 import android.os.Handler
 import android.os.Looper
 import androidx.arch.core.executor.ArchTaskExecutor
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.IdlingRegistry
 import ca.rmen.android.poetassistant.testsupport.CountingIdlingResourceArchTaskExecutor
 import ca.rmen.android.poetassistant.testsupport.CountingIdlingResourceDispatcher
@@ -55,6 +56,8 @@ class TestThreadingModule {
     private val archExecutor = CountingIdlingResourceArchTaskExecutor()
 
     init {
+        // Wait for any tasks from the previous test run, before setting up dispatchers again.
+        Espresso.onIdle()
         Dispatchers.setMain(testMainDispatcher)
         IdlingRegistry.getInstance().register(testIODispatcher.getIdlingResource())
         IdlingRegistry.getInstance().register(testMainDispatcher.getIdlingResource())

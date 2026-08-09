@@ -37,9 +37,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
@@ -127,7 +129,6 @@ open class GeneralPreferenceFragmentImpl : PreferenceFragmentCompat(), ConfirmDi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         context?.let {
-            mTts.getTtsLiveData().observe(this, mTtsObserver)
             mViewModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
             mViewModel.snackbarText.observe(this, mSnackbarCallback)
         }
@@ -208,6 +209,14 @@ open class GeneralPreferenceFragmentImpl : PreferenceFragmentCompat(), ConfirmDi
                 }
             }
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            if (!lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                return@launch
+            }
+            viewLifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                mTts.ttsFlow.collect(::onTtsState)
+            }
+        }
     }
 
     override fun onResume() {
@@ -281,7 +290,7 @@ open class GeneralPreferenceFragmentImpl : PreferenceFragmentCompat(), ConfirmDi
         }
     }
 
-    private val mTtsObserver = Observer<TtsState?> { ttsState ->
+    private fun onTtsState(ttsState: TtsState?) {
         Log.v(TAG, "ttsState = $ttsState")
         if (ttsState != null
             && ttsState.previousStatus == TtsState.TtsStatus.UNINITIALIZED

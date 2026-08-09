@@ -80,7 +80,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="@string/tts_hint"
-                android:text="@={viewModel.poem}"
                 app:layout_constraintBottom_toTopOf="@+id/reader_word_count"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -39,6 +39,7 @@ import androidx.annotation.StringRes
 import android.text.Selection
 import android.text.TextUtils
 import android.util.Log
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
@@ -47,10 +48,24 @@ import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.databinding.LiveDataMapping
 import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.dictionaries.Share
+import ca.rmen.android.poetassistant.main.dictionaries.search.Source
+import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsViewModel.SearchSuggestion
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class ReaderViewModel @Inject constructor(
@@ -90,7 +105,7 @@ class ReaderViewModel @Inject constructor(
 
 
     private val mPrefsListener : PrefsListener
-    val poem = ObservableField<String>("")
+
     val playButtonDrawable = ObservableInt(R.drawable.ic_play_disabled)
     val playButtonEnabled = ObservableBoolean()
     val wordCountText = ObservableField<String>()
@@ -101,25 +116,43 @@ class ReaderViewModel @Inject constructor(
 
     val poemFile = MutableLiveData<PoemFile>()
 
-    val playButtonStateLiveData = MediatorLiveData<ReaderViewModel.PlayButtonState>()
+    val poem: StateFlow<String?> field= MutableStateFlow(null)
+
+    val playButtonStateFlow: StateFlow<PlayButtonState> =
+        mTts.ttsFlow
+            .combine(poem) { ttsState, poemText ->
+                // This block runs whenever either ttsFlow OR poem emits a new value
+                toPlayButtonState(ttsState, poemText)
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                // Provide an initial value based on the current states right now
+                initialValue = toPlayButtonState(
+                    mTts.getTtsState(),
+                    poem.value
+                )
+            )
 
     private val mPoemPrefs: PoemPrefs
     private val mSharedPreferences: SharedPreferences
 
     init {
+        viewModelScope.launch {
+            @OptIn(FlowPreview::class)
+            poem.debounce(500.milliseconds).collect {
+                updateWordCount()
+            }
+        }
         mPoemPrefs = PoemPrefs(application)
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
         mPrefsListener = PrefsListener()
         mSharedPreferences.registerOnSharedPreferenceChangeListener(mPrefsListener)
         poemFile.value = mPoemPrefs.getSavedPoem()
-        playButtonStateLiveData.addSource(mTts.getTtsLiveData()
-        ) { ttsState -> playButtonStateLiveData.value = toPlayButtonState(ttsState, poem.get()) }
-        playButtonStateLiveData.addSource(LiveDataMapping.fromObservableField(poem)
-        ) { poemText -> playButtonStateLiveData.value = toPlayButtonState(mTts.getTtsState(), poemText) }
     }
 
     fun updateWordCount() {
-        wordCountText.set(WordCounter.getWordCountText(getApplication(), poem.get()))
+        wordCountText.set(WordCounter.getWordCountText(getApplication(), poem.value))
     }
 
     // begin TTS
@@ -137,12 +170,17 @@ class ReaderViewModel @Inject constructor(
         }
     }
 
+    fun setTypedText(typedText: String) {
+        poem.value = typedText
+    }
+
+
     /**
      * Read the selected text in our text view.
      */
     private fun speakSelectedText(text: CharSequence) {
         if (TextUtils.isEmpty(text)) {
-            poem.get()?.let {mTts.speak(it)}
+            poem.value?.let {mTts.speak(it)}
         } else {
             mTts.speak(getTextToSpeak(text))
         }
@@ -164,7 +202,7 @@ class ReaderViewModel @Inject constructor(
     }
 
     fun speakToFile() {
-        poem.get()?.let {
+        poem.value?.let {
             mTts.speakToFile(it, viewModelScope, ioDispatcher)
             snackbarText.value = SnackbarText(R.string.share_poem_audio_snackbar)
         }
@@ -175,13 +213,13 @@ class ReaderViewModel @Inject constructor(
     // Begin saving/Opening files
     fun updatePoemText() {
         Log.d(TAG, "Update poem text")
-        poem.get()?.let { mPoemPrefs.updatePoemText(it)}
+        poem.value?.let { mPoemPrefs.updatePoemText(it)}
     }
 
     fun setSavedPoem(savedPoem: PoemFile) {
         Log.v(TAG, "setSavedPoem $savedPoem")
         mPoemPrefs.setSavedPoem(savedPoem)
-        poem.set(savedPoem.text)
+        poem.value = savedPoem.text
     }
 
     private fun getSaveAsFilename(): String? {
@@ -189,19 +227,19 @@ class ReaderViewModel @Inject constructor(
         return if (poemFile != null) {
             poemFile.name
         } else {
-            poem.get()?.let {PoemFile.generateFileName(it)}
+            poem.value?.let {PoemFile.generateFileName(it)}
         }
     }
 
     fun clearPoem() {
         mPoemPrefs.clear()
-        poem.set("")
+        poem.value = ""
     }
 
     fun save(context: Context) {
         val savedPoem = mPoemPrefs.getSavedPoem()
         if (savedPoem?.uri != null) {
-            poem.get()?.let {
+            poem.value?.let {
                 viewModelScope.launch {
                     val savedPoem = PoemFile.save(context, savedPoem.uri, it)
                     onPoemSaved(savedPoem)
@@ -211,7 +249,7 @@ class ReaderViewModel @Inject constructor(
     }
 
     fun saveAs(context: Context, uri: Uri) {
-        poem.get()?.let {
+        poem.value?.let {
             viewModelScope.launch {
                 val savedPoem = PoemFile.save(context, uri, it)
                 onPoemSaved(savedPoem)
@@ -253,23 +291,23 @@ class ReaderViewModel @Inject constructor(
         if (mPoemPrefs.hasSavedPoem()) {
             val savedPoem = mPoemPrefs.getSavedPoem()
             if (savedPoem != null) {
-                poem.set(savedPoem.text)
+                poem.value = savedPoem.text
             }
         } else if (mPoemPrefs.hasTempPoem()) {
             val tempPoemText = mPoemPrefs.getTempPoem()
-            poem.set(tempPoemText)
+            poem.value = tempPoemText
         }
     }
 
     fun sharePoem() {
-        poem.get()?.let { Share.share(getApplication(), it)}
+        poem.value?.let { Share.share(getApplication(), it)}
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     fun print(context: Context) {
         val poemFileValue = poemFile.value
         if (poemFileValue == null) {
-            poem.get()?.let {PoemFile.print(context, PoemFile(null, PoemFile.generateFileName(it), poem.get()), mPoemFileCallback)}
+            poem.value?.let {PoemFile.print(context, PoemFile(null, PoemFile.generateFileName(it), poem.value), mPoemFileCallback)}
         } else {
             PoemFile.print(context, poemFileValue, mPoemFileCallback)
         }
