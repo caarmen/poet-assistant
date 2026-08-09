@@ -25,9 +25,7 @@ import androidx.lifecycle.AndroidViewModel
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
-import androidx.databinding.ObservableInt
 import android.net.Uri
 import android.os.Build
 import androidx.preference.PreferenceManager
@@ -96,8 +94,6 @@ class ReaderViewModel @Inject constructor(
 
     private val mPrefsListener : PrefsListener
 
-    val playButtonDrawable = ObservableInt(R.drawable.ic_play_disabled)
-    val playButtonEnabled = ObservableBoolean()
     val wordCountText = ObservableField<String>()
 
     val snackbarText: StateFlow<SnackbarText?>

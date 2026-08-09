@@ -107,7 +107,6 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         mBinding.buttonListener = ButtonListener()
         mViewModel = ViewModelProvider(this).get(ReaderViewModel::class.java)
         mBinding.viewModel = mViewModel
-        mViewModel.playButtonDrawable.addOnPropertyChangedCallback(mPlayButtonDrawableObserver)
         mBinding.tvText.imeListener = object : CABEditText.ImeListener {
             override fun onImeClosed() {
                 AppBarLayoutHelper.forceExpandAppBarLayout(activity)
@@ -205,10 +204,6 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
             }
 
         }
-    }
-    override fun onDestroyView() {
-        mViewModel.playButtonDrawable.removeOnPropertyChangedCallback(mPlayButtonDrawableObserver)
-        super.onDestroyView()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -326,14 +321,6 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         }
     }
 
-
-
-
-    private val mPlayButtonDrawableObserver = BindingCallbackAdapter(object: BindingCallbackAdapter.Callback {
-        override fun onChanged() {
-            mBinding.btnPlay.setIconResource(mViewModel.playButtonDrawable.get())
-        }
-    })
 
     inner class ButtonListener {
         fun onPlayButtonClicked() {
