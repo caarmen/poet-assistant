@@ -19,17 +19,15 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -41,7 +39,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.Favorite
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.VectorCompat
 import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
@@ -112,7 +109,6 @@ open class ResultListFragment<out T: Any> : Fragment() {
             mViewModel.showHeader.observe(viewLifecycleOwner, mShowHeaderChanged)
             mViewModel.usedQueryWord.observe(viewLifecycleOwner, mUsedQueryWordChanged)
             mViewModel.emptyText.observe(viewLifecycleOwner, mEmptyTextObserver)
-            mViewModel.isDataAvailable.addOnPropertyChangedCallback(mDataAvailableChanged)
             mHeaderViewModel = ViewModelProvider(this).get(ResultListHeaderViewModel::class.java)
             mHeaderViewModel.filter.addOnPropertyChangedCallback(mFilterChanged)
             var headerFragment = childFragmentManager.findFragmentById(R.id.result_list_header)
@@ -120,10 +116,24 @@ open class ResultListFragment<out T: Any> : Fragment() {
                 headerFragment = ResultListHeaderFragment.newInstance(it)
                 childFragmentManager.beginTransaction().replace(R.id.result_list_header, headerFragment).commit()
             }
-            lifecycleScope.launch {
-                repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-                    mViewModel.favoritesFlow.collect {
-                        reload()
+            viewLifecycleOwner.lifecycleScope.launch {
+                if (!lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                    return@launch
+                }
+                viewLifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                    launch {
+                        mViewModel.favoritesFlow.collect {
+                            reload()
+                        }
+                    }
+                    launch {
+                        mViewModel.isDataAvailable.collect { isAvailable ->
+                            mBinding.empty.visibility = if (isAvailable) View.GONE else View.VISIBLE
+                            mBinding.recyclerView.visibility = if (isAvailable) View.VISIBLE else View.GONE
+                            mBinding.recyclerView.addOnLayoutChangeListener(mRecyclerViewLayoutListener)
+                            Log.v(TAG, "$mTab: dataAvailableChanged: invalidateOptionsMenu")
+                            activity?.invalidateOptionsMenu()
+                        }
                     }
                 }
             }
@@ -165,9 +175,8 @@ open class ResultListFragment<out T: Any> : Fragment() {
     }
 
     override fun onDestroyView() {
-        Log.v(TAG, "$mTab onDestroyView")
-        mViewModel.isDataAvailable.removeOnPropertyChangedCallback(mDataAvailableChanged)
         mHeaderViewModel.filter.removeOnPropertyChangedCallback(mFilterChanged)
+        Log.v(TAG, "$mTab onDestroyView")
         super.onDestroyView()
     }
 
@@ -185,7 +194,7 @@ open class ResultListFragment<out T: Any> : Fragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.action_share).isEnabled = mViewModel.isDataAvailable.get()
+        menu.findItem(R.id.action_share).isEnabled = mViewModel.isDataAvailable.value
     }
 
     private fun queryFromArguments() {
@@ -236,19 +245,6 @@ open class ResultListFragment<out T: Any> : Fragment() {
             mBinding.recyclerView.removeOnLayoutChangeListener(this)
         }
     }
-
-    private val mDataAvailableChanged = BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
-        override fun onChanged() {
-            mBinding.recyclerView.addOnLayoutChangeListener(mRecyclerViewLayoutListener)
-            Log.v(TAG, "$mTab: dataAvailableChanged: invalidateOptionsMenu")
-            activity?.invalidateOptionsMenu()
-
-            // Hide the keyboard
-            mBinding.recyclerView.requestFocus()
-            (activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?)?.
-                    hideSoftInputFromWindow(mBinding.recyclerView.windowToken, 0)
-        }
-    })
 
     private val mFilterChanged = BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
         override fun onChanged() {
