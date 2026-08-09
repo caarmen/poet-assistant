@@ -37,7 +37,7 @@ class RetryTestRule(private val retryCount: Int = 3) : TestRule {
                     Log.d(TAG, String.format(Locale.US, "Out of %d runs, %d failed", i + 1, numFails))
                     return
                 } catch (t: Throwable) {
-                    Log.e(TAG, String.format(Locale.US, "%s: run %d failed", description.displayName, i + 1))
+                    Log.e(TAG, String.format(Locale.US, "%s: run %d failed", description.displayName, i + 1), t)
                     testError = t
                     numFails++
                 }
