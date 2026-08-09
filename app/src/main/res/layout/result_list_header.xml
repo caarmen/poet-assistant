@@ -41,7 +41,7 @@
         android:orientation="vertical"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:visibility="@{viewModel.showHeader? View.VISIBLE : View.GONE}"
+        android:visibility="visible"
         tools:visibility="visible">
 
         <RelativeLayout
@@ -59,7 +59,7 @@
                 android:layout_centerVertical="true"
                 android:freezesText="true"
                 android:gravity="start|center_vertical"
-                android:textIsSelectable="@{viewModel.isMatchedWordSelectable}"
+                android:textIsSelectable="false"
                 android:textStyle="bold"
                 tools:text="Query" />
 
@@ -173,13 +173,14 @@
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/filter_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:background="@drawable/shape_rounded_rect"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:visibility="@{TextUtils.isEmpty(viewModel.filter)? View.GONE : View.VISIBLE}"
+            android:visibility="gone"
             tools:visibility="visible">
 
             <TextView
@@ -201,7 +202,7 @@
                 android:freezesText="true"
                 android:gravity="center_vertical"
                 android:textColor="?attr/colorOnPrimary"
-                android:text="@={viewModel.filter}"
+                android:text=""
                 tools:text="yesterday" />
 
             <androidx.appcompat.widget.AppCompatImageView

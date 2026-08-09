@@ -19,17 +19,15 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -41,10 +39,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.Favorite
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.VectorCompat
-import ca.rmen.android.poetassistant.databinding.BindingCallbackAdapter
 import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding
 import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
@@ -112,18 +108,36 @@ open class ResultListFragment<out T: Any> : Fragment() {
             mViewModel.showHeader.observe(viewLifecycleOwner, mShowHeaderChanged)
             mViewModel.usedQueryWord.observe(viewLifecycleOwner, mUsedQueryWordChanged)
             mViewModel.emptyText.observe(viewLifecycleOwner, mEmptyTextObserver)
-            mViewModel.isDataAvailable.addOnPropertyChangedCallback(mDataAvailableChanged)
             mHeaderViewModel = ViewModelProvider(this).get(ResultListHeaderViewModel::class.java)
-            mHeaderViewModel.filter.addOnPropertyChangedCallback(mFilterChanged)
             var headerFragment = childFragmentManager.findFragmentById(R.id.result_list_header)
             if (headerFragment == null) {
                 headerFragment = ResultListHeaderFragment.newInstance(it)
                 childFragmentManager.beginTransaction().replace(R.id.result_list_header, headerFragment).commit()
             }
-            lifecycleScope.launch {
-                repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-                    mViewModel.favoritesFlow.collect {
-                        reload()
+            viewLifecycleOwner.lifecycleScope.launch {
+                if (!lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+                    return@launch
+                }
+                viewLifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+                    launch {
+                        mViewModel.favoritesFlow.collect {
+                            reload()
+                        }
+                    }
+                    launch {
+                        mViewModel.isDataAvailable.collect { isAvailable ->
+                            mBinding.empty.visibility = if (isAvailable) View.GONE else View.VISIBLE
+                            mBinding.recyclerView.visibility = if (isAvailable) View.VISIBLE else View.GONE
+                            mBinding.recyclerView.addOnLayoutChangeListener(mRecyclerViewLayoutListener)
+                            Log.v(TAG, "$mTab: dataAvailableChanged: invalidateOptionsMenu")
+                            activity?.invalidateOptionsMenu()
+                        }
+                    }
+                    launch {
+                        mHeaderViewModel.filter.collect {
+                            reload()
+                        }
+
                     }
                 }
             }
@@ -164,19 +178,12 @@ open class ResultListFragment<out T: Any> : Fragment() {
         activity?.invalidateOptionsMenu()
     }
 
-    override fun onDestroyView() {
-        Log.v(TAG, "$mTab onDestroyView")
-        mViewModel.isDataAvailable.removeOnPropertyChangedCallback(mDataAvailableChanged)
-        mHeaderViewModel.filter.removeOnPropertyChangedCallback(mFilterChanged)
-        super.onDestroyView()
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_share) {
             mHeaderViewModel.query.value?.let {
                 @Suppress("UNCHECKED_CAST")
                 (mBinding.recyclerView.adapter as? ResultListAdapter<T>)?.let { adapter ->
-                    mViewModel.share(it, mHeaderViewModel.filter.get(), adapter.getAll())
+                    mViewModel.share(it, mHeaderViewModel.filter.value, adapter.getAll())
                 }
             }
         }
@@ -185,7 +192,7 @@ open class ResultListFragment<out T: Any> : Fragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.action_share).isEnabled = mViewModel.isDataAvailable.get()
+        menu.findItem(R.id.action_share).isEnabled = mViewModel.isDataAvailable.value
     }
 
     private fun queryFromArguments() {
@@ -199,7 +206,7 @@ open class ResultListFragment<out T: Any> : Fragment() {
 
     fun query(query: String) {
         Log.d(TAG, "$mTab : query: $query")
-        mHeaderViewModel.filter.set(null)
+        mHeaderViewModel.setFilter(null)
         if (userVisibleHint) {
             AppBarLayoutHelper.disableAutoHide(activity)
             AppBarLayoutHelper.forceExpandAppBarLayout(activity)
@@ -237,33 +244,14 @@ open class ResultListFragment<out T: Any> : Fragment() {
         }
     }
 
-    private val mDataAvailableChanged = BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
-        override fun onChanged() {
-            mBinding.recyclerView.addOnLayoutChangeListener(mRecyclerViewLayoutListener)
-            Log.v(TAG, "$mTab: dataAvailableChanged: invalidateOptionsMenu")
-            activity?.invalidateOptionsMenu()
-
-            // Hide the keyboard
-            mBinding.recyclerView.requestFocus()
-            (activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?)?.
-                    hideSoftInputFromWindow(mBinding.recyclerView.windowToken, 0)
-        }
-    })
-
-    private val mFilterChanged = BindingCallbackAdapter(object : BindingCallbackAdapter.Callback {
-        override fun onChanged() {
-            reload()
-        }
-    })
-
-    private val mShowHeaderChanged = Observer<Boolean> { showHeader -> mHeaderViewModel.showHeader.set(showHeader == true) }
+    private val mShowHeaderChanged = Observer<Boolean> { showHeader -> mHeaderViewModel.setShowHeader(showHeader) }
 
     private val mLayoutSettingChanged = Observer<SettingsPrefs.Layout> { reload() }
 
     private val mUsedQueryWordChanged = Observer<String> { usedQueryWord ->
         mHeaderViewModel.setQuery(usedQueryWord)
         mTab?.let {
-            mHeaderViewModel.isMatchedWordSelectable.set(ResultListFactory.getMatchedWordSelectability(it, usedQueryWord))
+            mHeaderViewModel.setIsMatchedWordSelectable(ResultListFactory.getMatchedWordSelectability(it, usedQueryWord))
         }
     }
 
@@ -276,8 +264,8 @@ open class ResultListFragment<out T: Any> : Fragment() {
     }
 
     private fun reload() {
-        Log.v(TAG, "$mTab: reload: query=${mHeaderViewModel.query.value}, filter=${mHeaderViewModel.filter.get()}")
-        mViewModel.setQueryParams(ResultListViewModel.QueryParams(mHeaderViewModel.query.value, mHeaderViewModel.filter.get()))
+        Log.v(TAG, "$mTab: reload: query=${mHeaderViewModel.query.value}, filter=${mHeaderViewModel.filter.value}")
+        mViewModel.setQueryParams(ResultListViewModel.QueryParams(mHeaderViewModel.query.value, mHeaderViewModel.filter.value))
     }
 
     // If we have an empty list because the user didn't enter any search term,

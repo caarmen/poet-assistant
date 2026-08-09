@@ -21,8 +21,6 @@ package ca.rmen.android.poetassistant.main.dictionaries
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.databinding.ObservableBoolean
-import androidx.databinding.ObservableField
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.FavoritesRepository
 import ca.rmen.android.poetassistant.R
@@ -45,9 +43,12 @@ class ResultListHeaderViewModel @Inject constructor(application: Application, va
     val isFavorite: StateFlow<Boolean>
     field = MutableStateFlow(false)
 
-    val isMatchedWordSelectable = ObservableField(false)
-    val filter = ObservableField<String>()
-    val showHeader = ObservableBoolean()
+    val isMatchedWordSelectable: StateFlow<Boolean>
+        field = MutableStateFlow(false)
+    val filter: StateFlow<String?>
+        field = MutableStateFlow<String?>(null)
+    val showHeader: StateFlow<Boolean>
+        field = MutableStateFlow(false)
 
     val snackbarText: StateFlow<String>
     field = MutableStateFlow("")
@@ -81,8 +82,11 @@ class ResultListHeaderViewModel @Inject constructor(application: Application, va
     }
 
     fun speak() = query.value?.let { mTts.speak(it) }
+    fun clearFilter() { filter.value = null }
 
-    fun clearFilter() = filter.set(null)
+    fun setFilter(filter: String?) { this.filter.value = filter }
+    fun setIsMatchedWordSelectable(selectable: Boolean) { isMatchedWordSelectable.value = selectable }
+    fun setShowHeader(show: Boolean) { showHeader.value = show }
 
     fun webSearch() = query.value?.let { WebSearch.search(getApplication(), it) }
 

@@ -119,12 +119,29 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
                         if (ttsState != null) ResultListFactory.updateListHeaderButtonsVisibility(mBinding, mTab, ttsState.currentStatus)
                     }
                 }
+                launch {
+                    mViewModel.isMatchedWordSelectable.collect { isSelectable ->
+                        mBinding.tvListHeader.setTextIsSelectable(isSelectable)
+                    }
+                }
+                launch {
+                    mViewModel.filter.collect { filterValue ->
+                        mBinding.tvFilter.text = filterValue
+                        val isFilterEmpty = filterValue.isNullOrEmpty()
+                        mBinding.filterLayout.visibility = if (isFilterEmpty) View.GONE else View.VISIBLE
+                    }
+                }
+                launch {
+                    mViewModel.showHeader.collect { show ->
+                        mBinding.listHeader.visibility = if (show) View.VISIBLE else View.GONE
+                    }
+                }
             }
         }
     }
 
     override fun onFilterSubmitted(input: String) {
-        mViewModel.filter.set(input.lowercase(Locale.getDefault()).trim())
+        mViewModel.setFilter(input.lowercase(Locale.getDefault()).trim())
     }
 
     override fun onOk(actionId: Int) {
@@ -145,7 +162,7 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
 
         fun onFilterButtonClicked(@Suppress("UNUSED_PARAMETER") v: View) {
             context?.let {
-                val fragment = ResultListFactory.createFilterDialog(it, mTab, mViewModel.filter.get())
+                val fragment = ResultListFactory.createFilterDialog(it, mTab, mViewModel.filter.value)
                 childFragmentManager.beginTransaction().add(fragment, DIALOG_TAG).commit()
             }
         }

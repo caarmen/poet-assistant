@@ -59,14 +59,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="@{viewModel.isDataAvailable? View.GONE : View.VISIBLE}"/>
+                android:visibility="visible"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 tools:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="@{viewModel.isDataAvailable? View.VISIBLE : View.GONE}"/>
+                android:visibility="gone"/>
 
         </FrameLayout>
     </LinearLayout>

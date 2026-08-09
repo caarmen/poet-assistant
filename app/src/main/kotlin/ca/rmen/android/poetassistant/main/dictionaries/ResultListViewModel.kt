@@ -24,7 +24,6 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import android.text.TextUtils
 import android.util.Log
-import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.switchMap
@@ -41,6 +40,8 @@ import ca.rmen.android.poetassistant.wotd.WotdListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 
@@ -69,7 +70,8 @@ open class ResultListViewModel<T: Any> (
         private val TAG = Constants.TAG + ResultListViewModel::class.java.simpleName
     }
 
-    val isDataAvailable = ObservableBoolean()
+    val isDataAvailable: StateFlow<Boolean>
+        field = MutableStateFlow(false)
     val emptyText = MutableLiveData<EmptyText>()
     val layout = MutableLiveData<ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout>()
     val showHeader = MutableLiveData<Boolean>()
@@ -129,8 +131,7 @@ open class ResultListViewModel<T: Any> (
         if (loadedData != null) {
             usedQueryWord.value = loadedData.matchedWord
         }
-        isDataAvailable.set(loadedData?.data?.isNotEmpty()!!)
-        isDataAvailable.notifyChange()
+        isDataAvailable.value = loadedData?.data?.isNotEmpty() == true
     }
 
     override fun onCleared() {
