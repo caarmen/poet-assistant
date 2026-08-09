@@ -115,7 +115,8 @@ class ReaderViewModel @Inject constructor(
 
     val ttsError = MutableLiveData<Boolean>()
 
-    val poemFile = MutableLiveData<PoemFile>()
+    val poemFile: StateFlow<PoemFile?>
+        field = MutableStateFlow<PoemFile?>(null)
 
     val poem: StateFlow<String?> field= MutableStateFlow(null)
 

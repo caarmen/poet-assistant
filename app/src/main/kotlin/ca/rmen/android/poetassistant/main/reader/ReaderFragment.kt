@@ -111,7 +111,6 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         mViewModel = ViewModelProvider(this).get(ReaderViewModel::class.java)
         mBinding.viewModel = mViewModel
         mViewModel.ttsError.observe(this, mTtsErrorCallback)
-        mViewModel.poemFile.observe(this, mPoemFileCallback)
         mViewModel.playButtonDrawable.addOnPropertyChangedCallback(mPlayButtonDrawableObserver)
         mBinding.tvText.imeListener = object : CABEditText.ImeListener {
             override fun onImeClosed() {
@@ -174,6 +173,12 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
                     }
                 }
                 launch {
+                    mViewModel.poemFile.collect { _ ->
+                        Log.v(TAG, "poemFileCallback: invalidateOptionsMenu")
+                        activity?.invalidateOptionsMenu()
+                    }
+                }
+                launch {
                     mViewModel.snackbarText.collect { text ->
                         if (text != null) {
                             val root = view
@@ -208,7 +213,7 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         if (menuItem == null) {
             Log.d(TAG, "Unexpected: save menu item missing from reader fragment. Monkey?")
         } else {
-            menuItem.isEnabled = mViewModel.poemFile.value != null
+            menuItem.isEnabled = mViewModel.poemFile != null
         }
     }
 
@@ -325,10 +330,6 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         }
     }
 
-    private val mPoemFileCallback = Observer<PoemFile?> {
-        Log.v(TAG, "poemFileCallback: invalidateOptionsMenu")
-        activity?.invalidateOptionsMenu()
-    }
 
     private val mPlayButtonDrawableObserver = BindingCallbackAdapter(object: BindingCallbackAdapter.Callback {
         override fun onChanged() {
