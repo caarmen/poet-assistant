@@ -71,4 +71,10 @@ allowlist = [
     "uniq",
     "wc",
     "which",
+    "xargs",
+]
+
+[tools.read_file]
+allowlist = [
+    "/home/vibeuser/.vibe/plans/*",
 ]
