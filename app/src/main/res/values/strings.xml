@@ -35,6 +35,7 @@
     <string name="confirm_clear_search_history">Clear the search history?</string>
     <string name="action_wotd_history">Words of the day</string>
     <string name="action_clear_favorites">Clear all favorite words?</string>
+    <string name="content_description_toggle_favorite">Toggle favorite</string>
     <string name="search_history_cleared">Search history cleared</string>
     <string name="favorites_cleared">Favorites cleared</string>
     <string name="action_export_favorites">Export favorites</string>
