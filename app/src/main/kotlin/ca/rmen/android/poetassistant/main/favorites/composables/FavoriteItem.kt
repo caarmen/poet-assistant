@@ -19,6 +19,13 @@
 
 package ca.rmen.android.poetassistant.main.favorites.composables
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import ca.rmen.android.poetassistant.main.Tab
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -45,13 +52,17 @@ fun FavoriteItem(
     word: String,
     layout: Layout,
     onToggleFavorite: () -> Unit,
+    onCopy: () -> Unit,
+    onSearchInTab: (Tab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showPopupMenu by remember { mutableStateOf(false) }
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(48.dp)
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .clickable(onClick = { showPopupMenu = true }),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Star icon on the left - clickable to remove from favorites
@@ -65,16 +76,35 @@ fun FavoriteItem(
                 tint = MaterialTheme.colorScheme.primary
             )
         }
-        
-        Text(
-            text = word,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
+
+        Box(
             modifier = Modifier
                 .weight(1f)
                 .padding(start = 8.dp)
-        )
+        ) {
+
+            Text(
+                text = word,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            // DropdownMenu anchored to the word Text
+            FavoritesPopupMenu(
+                expanded = showPopupMenu,
+                layout = layout,
+                onDismiss = { showPopupMenu = false },
+                onCopy = {
+                    onCopy()
+                    showPopupMenu = false
+                },
+                onSearchInTab = { tab ->
+                    onSearchInTab(tab)
+                    showPopupMenu = false
+                },
+            )
+        }
     }
+
 }
 
 @Preview(showBackground = true)
@@ -85,6 +115,8 @@ fun FavoriteItemPreview() {
             word = "Example",
             layout = Layout.CLEAN,
             onToggleFavorite = {},
+            onCopy = {},
+            onSearchInTab = {},
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -98,6 +130,8 @@ fun FavoriteItemEfficientPreview() {
             word = "Example",
             layout = Layout.EFFICIENT,
             onToggleFavorite = {},
+            onCopy = {},
+            onSearchInTab = {},
             modifier = Modifier.fillMaxWidth()
         )
     }

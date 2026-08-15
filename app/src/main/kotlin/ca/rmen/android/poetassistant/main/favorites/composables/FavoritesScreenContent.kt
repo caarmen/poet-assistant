@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.settings.Layout
+import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.theme.AppTheme
 
 @Composable
@@ -45,6 +46,8 @@ fun FavoritesScreenContent(
     favorites: List<String>,
     layout: Layout,
     onToggleFavorite: (String) -> Unit,
+    onCopy: (String) -> Unit,
+    onSearchInTab: (String, Tab) -> Unit,
     onDeleteAll: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -85,6 +88,8 @@ fun FavoritesScreenContent(
                         word = word,
                         layout = layout,
                         onToggleFavorite = { onToggleFavorite(word) },
+                        onCopy = { onCopy(word) },
+                        onSearchInTab = { tab -> onSearchInTab(word, tab) },
                         modifier = Modifier.fillMaxWidth().animateItem()
                     )
                 }
@@ -101,6 +106,8 @@ fun FavoritesScreenContentPreview() {
             favorites = listOf("apple", "banana", "cherry"),
             layout = Layout.CLEAN,
             onToggleFavorite = {},
+            onCopy = {},
+            onSearchInTab = { _, _ -> },
             onDeleteAll = {},
             modifier = Modifier.fillMaxSize()
         )
@@ -115,6 +122,8 @@ fun FavoritesScreenContentEmptyPreview() {
             favorites = emptyList(),
             layout = Layout.CLEAN,
             onToggleFavorite = {},
+            onCopy = {},
+            onSearchInTab = { _, _ -> },
             onDeleteAll = {},
             modifier = Modifier.fillMaxSize()
         )
