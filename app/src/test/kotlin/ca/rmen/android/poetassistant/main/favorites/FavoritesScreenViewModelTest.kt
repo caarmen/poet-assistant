@@ -2,6 +2,7 @@ package ca.rmen.android.poetassistant.main.favorites
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.settings.SettingsRepository
@@ -159,5 +160,33 @@ class FavoritesScreenViewModelTest {
         // Then all favorites are cleared
         val clearedFavorites = viewModel.favorites.first { it.isEmpty() }
         assertEquals(emptyList<String>(), clearedFavorites)
+    }
+
+    /**
+     * Given any favorites
+     * When onCopiedText is called
+     * And onSnackbarShown() is called
+     * Then the expected snackbar states are emitted.
+     */
+    @Test
+    fun testOnTextCopiedEmitsSnackbar() = runTest(testDispatcher) {
+        // Given any favorites
+        val emittedSnackbarResIds = mutableListOf<Int?>()
+        val observeSnackbarJob = launch {
+            viewModel.snackbarTextResId.collect {
+                emittedSnackbarResIds.add(it)
+            }
+        }
+
+        // When onCopiedText is called
+        viewModel.onCopiedText()
+
+        // And onSnackbarShown() is called
+        viewModel.onSnackbarShown()
+        observeSnackbarJob.cancel()
+
+        // Then the expected snackbar states are emitted.
+        val expectedSnackbarResIds = listOf(null, R.string.snackbar_copied_text, null)
+        assertEquals(expectedSnackbarResIds, emittedSnackbarResIds)
     }
 }

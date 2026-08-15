@@ -21,26 +21,44 @@ package ca.rmen.android.poetassistant.main.favorites.composables
 
 import android.content.ClipData
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.favorites.FavoritesScreenViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun FavoritesScreen(
     viewModel: FavoritesScreenViewModel,
     onSearchInTab: (String, Tab) -> Unit,
+    onSnackbarText: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val clipboard = LocalClipboard.current
     val favorites by viewModel.favorites.collectAsStateWithLifecycle(emptyList())
     val layout by viewModel.layout.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
+    val snackbarResId by viewModel.snackbarTextResId.collectAsStateWithLifecycle(null)
+    val snackbarText = snackbarResId?.let { stringResource(it) }
+
+    LaunchedEffect(snackbarResId) {
+        snackbarText?.let {
+            onSnackbarText(it)
+        }
+        // Hardcode this duration for now, while we have a mixed integration between views
+        // and compose for snackbar. This value comes from views SnackbarManager.LENGTH_LONG
+        delay(2750.milliseconds)
+        viewModel.onSnackbarShown()
+    }
+
 
     FavoritesScreenContent(
         favorites = favorites,
@@ -50,6 +68,7 @@ fun FavoritesScreen(
             coroutineScope.launch {
                 clipboard.setClipEntry(
                     ClipEntry(ClipData.newPlainText(word, word)))
+                viewModel.onCopiedText()
             }
         },
         onSearchInTab = onSearchInTab,
