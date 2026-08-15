@@ -17,6 +17,7 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.main.favorites.composables.FavoritesScreen
 import ca.rmen.android.poetassistant.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,7 +46,7 @@ class FavoritesFragment : Fragment() {
                     FavoritesScreen(
                         viewModel = viewModel,
                         shareUseCase = shareUseCase,
-                        onSearchInTab = { _, _ -> },
+                        onSearchInTab = (requireActivity() as OnWordClickListener)::onWordClick,
                         onSnackbarText = {
                             Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
                         },
