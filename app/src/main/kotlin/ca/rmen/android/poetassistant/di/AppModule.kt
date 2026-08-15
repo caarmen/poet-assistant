@@ -28,6 +28,8 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
+import ca.rmen.android.poetassistant.main.favorites.CreateFavoritesShareUseCase
+import ca.rmen.android.poetassistant.main.favorites.ShareUseCase
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.settings.SettingsRepository
 import dagger.Module
@@ -74,6 +76,13 @@ class AppModule {
     @Provides
     @Singleton
     fun providesFavoritesRepository(userDb: UserDb, @IODispatcher ioDispatcher: CoroutineDispatcher) = FavoritesRepository(ioDispatcher, userDb.favoriteDao())
+
+    @Provides
+    fun providesCreateFavoritesShareUseCase(application: Application, favoritesRepository: FavoritesRepository) =
+        CreateFavoritesShareUseCase(application, favoritesRepository)
+
+    @Provides
+    fun providesShareUseCase() = ShareUseCase()
 
     @Provides
     @Singleton

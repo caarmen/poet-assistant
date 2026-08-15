@@ -20,6 +20,7 @@ import javax.inject.Inject
 class FavoritesScreenViewModel @Inject constructor(
     settingsRepository: SettingsRepository,
     private val favoritesRepository: FavoritesRepository,
+    private val createFavoritesShareUseCase: CreateFavoritesShareUseCase,
 ) : ViewModel() {
 
     /**
@@ -51,6 +52,31 @@ class FavoritesScreenViewModel @Inject constructor(
      * Observed by the Fragment to show/hide snackbar in the legacy View system.
      */
     @StringRes val snackbarTextResId: StateFlow<Int?> field = MutableStateFlow(null)
+
+    /**
+     * Share data to be shared. Null means no share action is pending.
+     * Observed by the Fragment to trigger the share intent.
+     */
+    val share: StateFlow<Share?> field = MutableStateFlow(null)
+
+    /**
+     * Initiates sharing of the favorites list.
+     * Creates share content via CreateFavoritesShareUseCase and exposes it through the share StateFlow.
+     */
+    fun onShare() {
+        viewModelScope.launch {
+            share.value = createFavoritesShareUseCase.invoke()
+        }
+    }
+
+    /**
+     * The share content was shared.
+     *
+     * Reset the share to null.
+     */
+    fun onShareSent() {
+        share.value = null
+    }
 
     /**
      * Toggle a word's favorite status.

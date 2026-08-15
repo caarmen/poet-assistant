@@ -27,10 +27,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.favorites.FavoritesScreenViewModel
+import ca.rmen.android.poetassistant.main.favorites.ShareUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
@@ -38,16 +40,26 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun FavoritesScreen(
     viewModel: FavoritesScreenViewModel,
+    shareUseCase: ShareUseCase,
     onSearchInTab: (String, Tab) -> Unit,
     onSnackbarText: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     val clipboard = LocalClipboard.current
     val favorites by viewModel.favorites.collectAsStateWithLifecycle(emptyList())
     val layout by viewModel.layout.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
     val snackbarResId by viewModel.snackbarTextResId.collectAsStateWithLifecycle(null)
     val snackbarText = snackbarResId?.let { stringResource(it) }
+
+    val shareState by viewModel.share.collectAsStateWithLifecycle(null)
+    LaunchedEffect(shareState) {
+        shareState?.let {
+            shareUseCase( it, context)
+            viewModel.onShareSent()
+        }
+    }
 
     LaunchedEffect(snackbarResId) {
         snackbarText?.let {

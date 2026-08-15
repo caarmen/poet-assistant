@@ -37,6 +37,9 @@ class FavoritesScreenViewModelTest {
     lateinit var favoritesRepository: FavoritesRepository
 
     @Inject
+    lateinit var createFavoritesShareUseCase: CreateFavoritesShareUseCase
+
+    @Inject
     lateinit var settingsRepository: SettingsRepository
 
     @IODispatcher
@@ -51,6 +54,7 @@ class FavoritesScreenViewModelTest {
         viewModel = FavoritesScreenViewModel(
             settingsRepository = settingsRepository,
             favoritesRepository = favoritesRepository,
+            createFavoritesShareUseCase = createFavoritesShareUseCase
         )
     }
 
@@ -188,5 +192,42 @@ class FavoritesScreenViewModelTest {
         // Then the expected snackbar states are emitted.
         val expectedSnackbarResIds = listOf(null, R.string.snackbar_copied_text, null)
         assertEquals(expectedSnackbarResIds, emittedSnackbarResIds)
+    }
+
+    /**
+     * Given there are favorites in the repository,
+     * When onShare is called,
+     * Then a Share is emitted.
+     */
+    @Test
+    fun testOnShareEmitsShare() = runTest(testDispatcher) {
+        // Given there are favorites in the repository
+        favoritesRepository.saveFavorite("apple", true)
+        favoritesRepository.saveFavorite("cherry", true)
+        favoritesRepository.saveFavorite("banana", true)
+
+
+        val emittedShares = mutableListOf<Share?>()
+        val observeShareJob = launch {
+            viewModel.share.collect {
+                emittedShares.add(it)
+            }
+        }
+
+        // When onShare is called,
+        viewModel.onShare()
+        viewModel.onShareSent()
+        observeShareJob.cancel()
+
+        // Then a Share is emitted.
+        val expectedShares = listOf(
+            null,
+            Share(
+                title = "Share",
+                content = "My favorite words:\n    apple\n    banana\n    cherry\n",
+            ),
+            null,
+        )
+        assertEquals(expectedShares, emittedShares)
     }
 }
