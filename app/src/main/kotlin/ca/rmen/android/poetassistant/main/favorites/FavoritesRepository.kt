@@ -49,8 +49,8 @@ class FavoritesRepository(
 
     fun getFavoritesFlow(): Flow<List<Favorite>> = favoriteDao.getFavoritesFlow()
 
-    suspend fun getFavorites(): Set<String> = withContext(ioDispatcher) {
-        favoriteDao.getFavorites().map(Favorite::getWord).toSet()
+    suspend fun getFavorites(): Set<String>  {
+        return favoriteDao.getFavorites().map(Favorite::getWord).toSet()
     }
 
     @Throws(IOException::class)
