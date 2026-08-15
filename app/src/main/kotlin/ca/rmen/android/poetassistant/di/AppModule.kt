@@ -19,7 +19,7 @@
 package ca.rmen.android.poetassistant.di
 
 import android.app.Application
-import ca.rmen.android.poetassistant.FavoritesRepository
+import ca.rmen.android.poetassistant.main.favorites.FavoritesRepository
 import ca.rmen.android.poetassistant.Theme
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.UserDb
