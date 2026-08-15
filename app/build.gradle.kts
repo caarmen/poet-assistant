@@ -255,6 +255,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.google.material)
     implementation(libs.hilt.android)
+    implementation(libs.hilt.lifecycle.viewmodel.compose)
     implementation(libs.kotlin)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
