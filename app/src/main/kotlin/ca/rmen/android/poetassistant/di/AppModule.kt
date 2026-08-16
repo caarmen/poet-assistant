@@ -29,6 +29,8 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
 import ca.rmen.android.poetassistant.main.favorites.CreateFavoritesShareUseCase
+import ca.rmen.android.poetassistant.main.favorites.GetProcessTextMenuItemsUseCase
+import ca.rmen.android.poetassistant.main.favorites.OpenExternalAppUseCase
 import ca.rmen.android.poetassistant.main.favorites.ShareUseCase
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.settings.SettingsRepository
@@ -83,6 +85,13 @@ class AppModule {
 
     @Provides
     fun providesShareUseCase() = ShareUseCase()
+
+    @Provides
+    fun provideGetProcessTextMenuitemsUseCase(application: Application, @IODispatcher ioDispatcher: CoroutineDispatcher) =
+        GetProcessTextMenuItemsUseCase(application, ioDispatcher)
+
+    @Provides
+    fun provideOpenExternalAppUseCase() = OpenExternalAppUseCase()
 
     @Provides
     @Singleton

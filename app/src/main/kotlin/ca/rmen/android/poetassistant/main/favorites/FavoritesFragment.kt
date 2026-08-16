@@ -30,6 +30,10 @@ class FavoritesFragment : Fragment() {
 
     @Inject
     lateinit var shareUseCase: ShareUseCase
+
+    @Inject
+    lateinit var openExternalAppUseCase: OpenExternalAppUseCase
+
     private val viewModel: FavoritesScreenViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,6 +50,7 @@ class FavoritesFragment : Fragment() {
                     FavoritesScreen(
                         viewModel = viewModel,
                         shareUseCase = shareUseCase,
+                        openExternalAppUseCase = openExternalAppUseCase,
                         onSearchInTab = (requireActivity() as OnWordClickListener)::onWordClick,
                         onSnackbarText = {
                             Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()

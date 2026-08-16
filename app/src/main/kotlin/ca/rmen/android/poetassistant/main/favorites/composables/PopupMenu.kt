@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.Tab
+import ca.rmen.android.poetassistant.main.favorites.ExternalAppMenuItem
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.theme.AppTheme
 
@@ -44,9 +46,11 @@ import ca.rmen.android.poetassistant.theme.AppTheme
 fun FavoritesPopupMenu(
     expanded: Boolean,
     layout: Layout,
+    externalAppMenuItems: List<ExternalAppMenuItem>,
     onDismiss: () -> Unit,
     onCopy: () -> Unit,
     onSearchInTab: (Tab) -> Unit,
+    onExternalAppSelected: (ExternalAppMenuItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     DropdownMenu(
@@ -116,8 +120,28 @@ fun FavoritesPopupMenu(
                 onDismiss()
             }
         )
+        if (externalAppMenuItems.isNotEmpty()) {
+            HorizontalDivider()
+        }
+        externalAppMenuItems.forEach {
+            DropdownMenuItem(
+                leadingIcon = {
+                    Image(
+                        painter = DrawablePainter(it.icon),
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
+                    )
+                },
+                text = { Text(it.label) },
+                onClick = {
+                    onExternalAppSelected(it)
+                    onDismiss()
+                }
+            )
+        }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -126,9 +150,11 @@ fun FavoritesPopupMenuPreview() {
         FavoritesPopupMenu(
             expanded = true,
             layout = Layout.CLEAN,
+            externalAppMenuItems = emptyList(),
             onDismiss = {},
             onCopy = {},
             onSearchInTab = {},
+            onExternalAppSelected = {},
             modifier = Modifier.width(200.dp)
         )
     }
@@ -141,9 +167,11 @@ fun FavoritesPopupMenuEfficientPreview() {
         FavoritesPopupMenu(
             expanded = true,
             layout = Layout.EFFICIENT,
+            externalAppMenuItems = emptyList(),
             onDismiss = {},
             onCopy = {},
             onSearchInTab = {},
+            onExternalAppSelected = {},
             modifier = Modifier.width(200.dp)
         )
     }

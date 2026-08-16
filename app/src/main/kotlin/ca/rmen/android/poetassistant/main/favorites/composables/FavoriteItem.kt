@@ -37,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,24 +48,35 @@ import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.main.favorites.ExternalAppMenuItem
 import ca.rmen.android.poetassistant.theme.AppTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun FavoriteItem(
     word: String,
     layout: Layout,
+    externalAppMenuItemsProducer: suspend (String) -> List<ExternalAppMenuItem>,
     onToggleFavorite: () -> Unit,
     onCopy: () -> Unit,
     onSearchInTab: (Tab) -> Unit,
+    onExternalAppSelected: (String, ExternalAppMenuItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showPopupMenu by remember { mutableStateOf(false) }
+    var externalAppMenuItems by remember { mutableStateOf<List<ExternalAppMenuItem>>(emptyList()) }
+    val coroutineScope = rememberCoroutineScope()
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(48.dp)
             .padding(horizontal = 16.dp)
-            .clickable(onClick = { showPopupMenu = true }),
+            .clickable(onClick = {
+                coroutineScope.launch {
+                    externalAppMenuItems = externalAppMenuItemsProducer(word)
+                    showPopupMenu = true
+                }
+            }),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Star icon on the left - clickable to remove from favorites
@@ -94,6 +106,7 @@ fun FavoriteItem(
             FavoritesPopupMenu(
                 expanded = showPopupMenu,
                 layout = layout,
+                externalAppMenuItems = externalAppMenuItems,
                 onDismiss = { showPopupMenu = false },
                 onCopy = {
                     onCopy()
@@ -103,6 +116,7 @@ fun FavoriteItem(
                     onSearchInTab(tab)
                     showPopupMenu = false
                 },
+                onExternalAppSelected = {onExternalAppSelected(word, it)}
             )
         }
 
@@ -145,9 +159,11 @@ fun FavoriteItemPreview() {
         FavoriteItem(
             word = "Example",
             layout = Layout.CLEAN,
+            externalAppMenuItemsProducer = { emptyList() },
             onToggleFavorite = {},
             onCopy = {},
             onSearchInTab = {},
+            onExternalAppSelected = {_, _ -> },
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -160,9 +176,11 @@ fun FavoriteItemEfficientPreview() {
         FavoriteItem(
             word = "Example",
             layout = Layout.EFFICIENT,
+            externalAppMenuItemsProducer = { emptyList() },
             onToggleFavorite = {},
             onCopy = {},
             onSearchInTab = {},
+            onExternalAppSelected = {_, _ -> },
             modifier = Modifier.fillMaxWidth()
         )
     }

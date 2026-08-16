@@ -38,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.favorites.FavoritesScreenViewModel
+import ca.rmen.android.poetassistant.main.favorites.OpenExternalAppUseCase
 import ca.rmen.android.poetassistant.main.favorites.ShareUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,6 +48,7 @@ import kotlin.time.Duration.Companion.milliseconds
 fun FavoritesScreen(
     viewModel: FavoritesScreenViewModel,
     shareUseCase: ShareUseCase,
+    openExternalAppUseCase: OpenExternalAppUseCase,
     onSearchInTab: (String, Tab) -> Unit,
     onSnackbarText: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -83,6 +85,7 @@ fun FavoritesScreen(
     FavoritesScreenContent(
         favorites = favorites,
         layout = layout,
+        externalAppMenuItemsProducer = { word -> viewModel.getExternalAppMenuItems(word) },
         onToggleFavorite = { word -> viewModel.onToggleFavorite(word) },
         onCopy = { word ->
             coroutineScope.launch {
@@ -94,6 +97,9 @@ fun FavoritesScreen(
         onSearchInTab = onSearchInTab,
         onDeleteAll = {
             openConfirmDeleteDialog.value = true
+        },
+        onExternalAppSelected = { word, menuItem ->
+            openExternalAppUseCase(word, menuItem, context)
         },
         modifier = modifier
     )

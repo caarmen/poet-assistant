@@ -21,6 +21,7 @@ class FavoritesScreenViewModel @Inject constructor(
     settingsRepository: SettingsRepository,
     private val favoritesRepository: FavoritesRepository,
     private val createFavoritesShareUseCase: CreateFavoritesShareUseCase,
+    private val getProcessTextMenuItemsUseCase: GetProcessTextMenuItemsUseCase,
 ) : ViewModel() {
 
     /**
@@ -58,6 +59,14 @@ class FavoritesScreenViewModel @Inject constructor(
      * Observed by the Fragment to trigger the share intent.
      */
     val share: StateFlow<Share?> field = MutableStateFlow(null)
+
+    /**
+     * Retrieves external apps that support process text for the given word.
+     *
+     * @param word The word to process with external apps.
+     * @return List of external app menu items that can process the text.
+     */
+    suspend fun getExternalAppMenuItems(word: String) = getProcessTextMenuItemsUseCase(word)
 
     /**
      * Initiates sharing of the favorites list.

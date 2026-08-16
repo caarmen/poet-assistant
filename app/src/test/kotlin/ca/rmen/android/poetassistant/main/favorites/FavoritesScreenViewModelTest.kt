@@ -40,6 +40,9 @@ class FavoritesScreenViewModelTest {
     lateinit var createFavoritesShareUseCase: CreateFavoritesShareUseCase
 
     @Inject
+    lateinit var getProcessTextMenuItemsUseCase: GetProcessTextMenuItemsUseCase
+
+    @Inject
     lateinit var settingsRepository: SettingsRepository
 
     @IODispatcher
@@ -54,7 +57,8 @@ class FavoritesScreenViewModelTest {
         viewModel = FavoritesScreenViewModel(
             settingsRepository = settingsRepository,
             favoritesRepository = favoritesRepository,
-            createFavoritesShareUseCase = createFavoritesShareUseCase
+            createFavoritesShareUseCase = createFavoritesShareUseCase,
+            getProcessTextMenuItemsUseCase = getProcessTextMenuItemsUseCase
         )
     }
 

@@ -39,15 +39,18 @@ import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.main.Tab
+import ca.rmen.android.poetassistant.main.favorites.ExternalAppMenuItem
 import ca.rmen.android.poetassistant.theme.AppTheme
 
 @Composable
 fun FavoritesScreenContent(
     favorites: List<String>,
     layout: Layout,
+    externalAppMenuItemsProducer: suspend (String) -> List<ExternalAppMenuItem>,
     onToggleFavorite: (String) -> Unit,
     onCopy: (String) -> Unit,
     onSearchInTab: (String, Tab) -> Unit,
+    onExternalAppSelected: (String, ExternalAppMenuItem) -> Unit,
     onDeleteAll: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -87,9 +90,11 @@ fun FavoritesScreenContent(
                     FavoriteItem(
                         word = word,
                         layout = layout,
+                        externalAppMenuItemsProducer = externalAppMenuItemsProducer,
                         onToggleFavorite = { onToggleFavorite(word) },
                         onCopy = { onCopy(word) },
                         onSearchInTab = { tab -> onSearchInTab(word, tab) },
+                        onExternalAppSelected = onExternalAppSelected,
                         modifier = Modifier.fillMaxWidth().animateItem()
                     )
                 }
@@ -105,9 +110,11 @@ fun FavoritesScreenContentPreview() {
         FavoritesScreenContent(
             favorites = listOf("apple", "banana", "cherry"),
             layout = Layout.CLEAN,
+            externalAppMenuItemsProducer = { emptyList() },
             onToggleFavorite = {},
             onCopy = {},
             onSearchInTab = { _, _ -> },
+            onExternalAppSelected = {_, _ ->},
             onDeleteAll = {},
             modifier = Modifier.fillMaxSize()
         )
@@ -121,9 +128,11 @@ fun FavoritesScreenContentEmptyPreview() {
         FavoritesScreenContent(
             favorites = emptyList(),
             layout = Layout.CLEAN,
+            externalAppMenuItemsProducer = { emptyList() },
             onToggleFavorite = {},
             onCopy = {},
             onSearchInTab = { _, _ -> },
+            onExternalAppSelected = {_, _ ->},
             onDeleteAll = {},
             modifier = Modifier.fillMaxSize()
         )
