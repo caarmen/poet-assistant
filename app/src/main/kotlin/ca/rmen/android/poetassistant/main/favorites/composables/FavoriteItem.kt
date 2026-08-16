@@ -44,14 +44,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ca.rmen.android.poetassistant.ExcludeFromJacocoGeneratedReport
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.favorites.ExternalAppMenuItem
-import ca.rmen.android.poetassistant.theme.AppTheme
 import kotlinx.coroutines.launch
 
 const val FAVORITE_ITEM_STAR_TAG = "FavoriteItem_Star_"
@@ -155,38 +152,3 @@ fun FavoriteItem(
 
 }
 
-@Composable
-@ExcludeFromJacocoGeneratedReport
-@Preview(showBackground = true)
-fun FavoriteItemPreview() {
-    AppTheme {
-        FavoriteItem(
-            word = "Example",
-            layout = Layout.CLEAN,
-            externalAppMenuItemsProducer = { emptyList() },
-            onToggleFavorite = {},
-            onCopy = {},
-            onSearchInTab = {},
-            onExternalAppSelected = {_, _ -> },
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}
-
-@Composable
-@ExcludeFromJacocoGeneratedReport
-@Preview(showBackground = true)
-fun FavoriteItemEfficientPreview() {
-    AppTheme {
-        FavoriteItem(
-            word = "Example",
-            layout = Layout.EFFICIENT,
-            externalAppMenuItemsProducer = { emptyList() },
-            onToggleFavorite = {},
-            onCopy = {},
-            onSearchInTab = {},
-            onExternalAppSelected = {_, _ -> },
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}

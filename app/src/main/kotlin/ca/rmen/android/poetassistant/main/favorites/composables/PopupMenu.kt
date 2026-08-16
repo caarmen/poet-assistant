@@ -34,14 +34,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ca.rmen.android.poetassistant.ExcludeFromJacocoGeneratedReport
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.favorites.ExternalAppMenuItem
 import ca.rmen.android.poetassistant.settings.Layout
-import ca.rmen.android.poetassistant.theme.AppTheme
 
 @Composable
 fun FavoritesPopupMenu(
@@ -144,38 +141,3 @@ fun FavoritesPopupMenu(
 }
 
 
-@Composable
-@ExcludeFromJacocoGeneratedReport
-@Preview(showBackground = true)
-fun FavoritesPopupMenuPreview() {
-    AppTheme {
-        FavoritesPopupMenu(
-            expanded = true,
-            layout = Layout.CLEAN,
-            externalAppMenuItems = emptyList(),
-            onDismiss = {},
-            onCopy = {},
-            onSearchInTab = {},
-            onExternalAppSelected = {},
-            modifier = Modifier.width(200.dp)
-        )
-    }
-}
-
-@Composable
-@ExcludeFromJacocoGeneratedReport
-@Preview(showBackground = true)
-fun FavoritesPopupMenuEfficientPreview() {
-    AppTheme {
-        FavoritesPopupMenu(
-            expanded = true,
-            layout = Layout.EFFICIENT,
-            externalAppMenuItems = emptyList(),
-            onDismiss = {},
-            onCopy = {},
-            onSearchInTab = {},
-            onExternalAppSelected = {},
-            modifier = Modifier.width(200.dp)
-        )
-    }
-}

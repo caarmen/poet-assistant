@@ -37,11 +37,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ca.rmen.android.poetassistant.ExcludeFromJacocoGeneratedReport
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.theme.AppTheme
 
 const val FAVORITES_HEADER_DELETE_ALL_TAG = "FavoritesHeader_DeleteAll"
 @Composable
@@ -81,14 +78,3 @@ fun FavoritesHeader(
     }
 }
 
-@Composable
-@ExcludeFromJacocoGeneratedReport
-@Preview(showBackground = true)
-fun FavoritesHeaderPreview() {
-    AppTheme {
-        FavoritesHeader(
-            onDeleteAll = {},
-            modifier = Modifier.fillMaxWidth()
-        )
-    }
-}

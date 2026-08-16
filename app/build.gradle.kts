@@ -50,7 +50,7 @@ android {
     }
 
     testCoverage {
-        jacocoVersion = "0.8.12"
+        jacocoVersion = "0.8.15"
     }
     lint {
         abortOnError = true
@@ -357,6 +357,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
                 "**/ca/rmen/android/poetassistant/BR.class",
                 "**/ca/rmen/android/poetassistant/DataBinderMapperImpl.class",
                 "**/ca/rmen/android/poetassistant/DataBinderMapperImpl\$*.class",
+                "**/ca/rmen/android/poetassistant/**/previews/**/*.class",
                 "**/*_Impl*.class",
                 // ignore hilt generated code:
                 "**/ca/rmen/android/poetassistant/**/*HiltComponents*.class",
