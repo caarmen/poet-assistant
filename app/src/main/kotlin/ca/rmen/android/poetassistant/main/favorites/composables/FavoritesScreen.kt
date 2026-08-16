@@ -20,9 +20,14 @@
 package ca.rmen.android.poetassistant.main.favorites.composables
 
 import android.content.ClipData
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipEntry
@@ -30,6 +35,7 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.favorites.FavoritesScreenViewModel
 import ca.rmen.android.poetassistant.main.favorites.ShareUseCase
@@ -54,6 +60,8 @@ fun FavoritesScreen(
     val snackbarText = snackbarResId?.let { stringResource(it) }
 
     val shareState by viewModel.share.collectAsStateWithLifecycle(null)
+
+    val openConfirmDeleteDialog = remember { mutableStateOf(false) }
     LaunchedEffect(shareState) {
         shareState?.let {
             shareUseCase( it, context)
@@ -84,7 +92,35 @@ fun FavoritesScreen(
             }
         },
         onSearchInTab = onSearchInTab,
-        onDeleteAll = { viewModel.onDeleteAll() },
+        onDeleteAll = {
+            openConfirmDeleteDialog.value = true
+        },
         modifier = modifier
     )
+
+    if (openConfirmDeleteDialog.value) {
+        AlertDialog(
+            text = {
+                Text(stringResource(R.string.action_clear_favorites))
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.onDeleteAll()
+                    openConfirmDeleteDialog.value = false
+                }) {
+                    Text(stringResource(R.string.action_clear))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    openConfirmDeleteDialog.value = false
+                }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            },
+            onDismissRequest = {
+                openConfirmDeleteDialog.value = false
+            }
+        )
+    }
 }

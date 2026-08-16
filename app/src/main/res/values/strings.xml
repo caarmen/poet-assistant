@@ -28,6 +28,7 @@
     <string name="tab_dictionary">Dictionary</string>
     <string name="tab_reader">Composer</string>
 
+    <string name="action_cancel">Cancel</string>
     <string name="action_clear">Clear</string>
     <string name="action_search">Search</string>
     <string name="action_random_word">Random word</string>
