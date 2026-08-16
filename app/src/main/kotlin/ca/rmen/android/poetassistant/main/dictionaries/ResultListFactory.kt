@@ -35,8 +35,6 @@ import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListAdapter
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLiveData
-import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesListExporter
-import ca.rmen.android.poetassistant.main.dictionaries.rt.FavoritesLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLiveData
@@ -57,7 +55,6 @@ object ResultListFactory {
         Log.d(TAG, "createListFragment: tab=$tab, initialQuery = $initialQuery")
         val fragment = when (tab) {
             Tab.PATTERN -> PatternListFragment()
-            Tab.FAVORITES -> FavoritesListFragment()
             Tab.RHYMER -> RhymerListFragment()
             Tab.THESAURUS -> ThesaurusListFragment()
             Tab.WOTD -> WotdListFragment()
@@ -74,7 +71,7 @@ object ResultListFactory {
 
     fun createAdapter(activity: Activity, tab: Tab): ResultListAdapter<out Any> {
         return when (tab) {
-            Tab.PATTERN, Tab.FAVORITES, Tab.RHYMER, Tab.THESAURUS -> RTListAdapter(tab, activity)
+            Tab.PATTERN, Tab.RHYMER, Tab.THESAURUS -> RTListAdapter(tab, activity)
             Tab.WOTD -> WotdAdapter(activity)
             else -> DictionaryListAdapter(activity as OnWordClickListener)
         }
@@ -86,7 +83,6 @@ object ResultListFactory {
         // Map the Tab to the corresponding ViewModel Class
         val viewModelClass = when (tab) {
             Tab.PATTERN -> PatternListViewModel::class.java
-            Tab.FAVORITES -> FavoritesListViewModel::class.java
             Tab.RHYMER -> RhymerListViewModel::class.java
             Tab.THESAURUS -> ThesaurusListViewModel::class.java
             Tab.WOTD -> WotdListViewModel::class.java
@@ -106,7 +102,6 @@ object ResultListFactory {
     ): ResultListLiveData<out ResultListData<Any>> {
         return when (tab) {
             Tab.PATTERN -> PatternLiveData(context, scope, query!!)
-            Tab.FAVORITES -> FavoritesLiveData(context, scope)
             Tab.WOTD -> WotdLiveData(context, scope)
             Tab.RHYMER -> RhymerLiveData(context, scope, query!!, filter)
             Tab.THESAURUS -> ThesaurusLiveData(context, scope, query!!, filter)
@@ -117,7 +112,6 @@ object ResultListFactory {
     fun createExporter(context: Context, tab: Tab): ResultListExporter<*> {
         return when (tab) {
             Tab.PATTERN -> PatternListExporter(context)
-            Tab.FAVORITES -> FavoritesListExporter(context)
             Tab.WOTD -> WotdListExporter(context)
             Tab.RHYMER -> RhymerListExporter(context)
             Tab.THESAURUS -> ThesaurusListExporter(context)
@@ -142,7 +136,6 @@ object ResultListFactory {
 
     fun getEmptyListText(context: Context, tab: Tab, query: String): String {
         return when (tab) {
-            Tab.FAVORITES -> context.getString(R.string.empty_favorites_list)
             Tab.PATTERN -> context.getString(R.string.empty_pattern_list_with_query, query)
             Tab.RHYMER -> context.getString(R.string.empty_rhymer_list_with_query, query)
             Tab.THESAURUS -> context.getString(R.string.empty_thesaurus_list_with_query, query)
@@ -151,10 +144,7 @@ object ResultListFactory {
     }
 
     fun isLoadWithoutQuerySupported(tab: Tab): Boolean {
-        return when (tab) {
-            Tab.FAVORITES, Tab.WOTD -> true
-            else -> false
-        }
+        return tab == Tab.WOTD
     }
 
     /**
@@ -163,17 +153,10 @@ object ResultListFactory {
      */
     fun updateListHeaderButtonsVisibility(binding: ResultListHeaderBinding, tab: Tab, ttsStatus: TtsState.TtsStatus) {
         when (tab) {
-            Tab.FAVORITES -> {
-                binding.btnPlay.visibility = View.GONE
-                binding.btnWebSearch.visibility = View.GONE
-                binding.btnStarQuery.visibility = View.GONE
-                binding.btnDelete.visibility = View.VISIBLE
-            }
             Tab.WOTD -> {
                 binding.btnPlay.visibility = View.GONE
                 binding.btnWebSearch.visibility = View.GONE
                 binding.btnStarQuery.visibility = View.GONE
-                binding.btnDelete.visibility = View.GONE
             }
             Tab.PATTERN -> {
                 binding.btnHelp.visibility = View.VISIBLE
@@ -188,7 +171,7 @@ object ResultListFactory {
                 val playButtonVisibility = if (ttsStatus == TtsState.TtsStatus.UNINITIALIZED) View.GONE else View.VISIBLE
                 binding.btnPlay.visibility = playButtonVisibility
             }
-            Tab.READER -> Unit
+            else -> Unit
         }
     }
 
@@ -204,8 +187,8 @@ object ResultListFactory {
      * make sense for the text to be selectable if it's empty, or if it's just a "label"
      * as in the case of the favorites result list header.
      */
-    fun getMatchedWordSelectability(tab: Tab, matchedWord: String) =
-        matchedWord.isNotBlank() && tab != Tab.FAVORITES
+    fun getMatchedWordSelectability(matchedWord: String) =
+        matchedWord.isNotBlank()
 
     fun getTabName(context: Context, tab: Tab): String {
         return when (tab) {
@@ -221,7 +204,6 @@ object ResultListFactory {
     @IdRes
     fun getRecyclerViewId(tab: Tab): Int = when (tab) {
         Tab.PATTERN -> R.id.pattern_recycler_view
-        Tab.FAVORITES -> R.id.favorites_recycler_view
         Tab.WOTD -> R.id.wotd_recycler_view
         Tab.RHYMER -> R.id.rhymer_recycler_view
         Tab.THESAURUS -> R.id.thesaurus_recycler_view

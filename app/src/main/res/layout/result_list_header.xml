@@ -106,23 +106,6 @@
                 android:focusable="true"/>
 
             <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/btn_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignWithParentIfMissing="true"
-                android:layout_centerVertical="true"
-                android:layout_toStartOf="@id/btn_help"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:contentDescription="@string/action_clear_favorites"
-                android:onClick="@{buttonListener::onDeleteFavoritesButtonClicked}"
-                android:padding="8dp"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_delete"
-                tools:visibility="visible"
-                android:focusable="true"/>
-
-            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btn_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -160,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignWithParentIfMissing="true"
                 android:layout_centerVertical="true"
-                android:layout_toStartOf="@id/btn_delete"
+                android:layout_toStartOf="@id/btn_help"
                 android:background="?selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:contentDescription="@string/tts_play"
