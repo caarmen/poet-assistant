@@ -68,8 +68,7 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
         Log.v(TAG, "getItem $position")
         return when (getTabForPosition(position)) {
             Tab.PATTERN -> ResultListFactory.createListFragment(Tab.PATTERN, mInitialPatternQuery)
-            //Tab.FAVORITES -> FavoritesFragment()
-            Tab.FAVORITES -> ResultListFactory.createListFragment(Tab.FAVORITES, null)
+            Tab.FAVORITES -> FavoritesFragment()
             Tab.WOTD -> ResultListFactory.createListFragment(Tab.WOTD, null)
             Tab.RHYMER -> ResultListFactory.createListFragment(Tab.RHYMER, mInitialRhymeQuery)
             Tab.THESAURUS -> ResultListFactory.createListFragment(Tab.THESAURUS, mInitialThesaurusQuery)

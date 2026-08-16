@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.main
 
 
 import android.content.Context
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
@@ -72,7 +73,12 @@ class IntegrationTest {
 
     @JvmField
     @Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @JvmField
+    @Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(MainActivity::class.java, true)
+
 
     private data class IntegrationTestScenario(
         val query: String,
@@ -103,7 +109,7 @@ class IntegrationTest {
     private fun runIntegrationTest(data: IntegrationTestScenario) {
         val context: Context = activityTestRule.activity
         swipeViewPagerLeft(4)
-        checkAllStarredWords(context)
+        checkAllStarredWords(context, composeTestRule)
         swipeViewPagerRight(4)
         search(data.query)
         checkRhymes(context, data.firstRhyme, data.secondRhyme)
@@ -111,7 +117,7 @@ class IntegrationTest {
         openDictionary(context, data.secondSynonymForFirstRhyme, data.firstDefinitionForSecondSynonym)
         starQueryWord()
         swipeViewPagerLeft(2)
-        checkAllStarredWords(context, data.secondSynonymForFirstRhyme)
+        checkAllStarredWords(context, composeTestRule, data.secondSynonymForFirstRhyme)
         swipeViewPagerRight(3)
         checkStarredInList(data.secondSynonymForFirstRhyme)
         addFilter(Tab.THESAURUS, data.thesaurusFilter, data.thesaurusFilterMatch)
@@ -125,16 +131,16 @@ class IntegrationTest {
         // clearing the search history doesn't erase starred words
         clearSearchHistory()
         swipeViewPagerLeft(1)
-        checkAllStarredWords(context, data.secondSynonymForFirstRhyme)
-        clearStarredWords()
-        checkAllStarredWords(context)
+        checkAllStarredWords(context, composeTestRule, data.secondSynonymForFirstRhyme)
+        clearStarredWords(composeTestRule)
+        checkAllStarredWords(context, composeTestRule)
     }
 
     private fun runCleanLayoutIntegrationTest(data: IntegrationTestScenario) {
         val context: Context = activityTestRule.activity
         useCleanLayout()
         swipeViewPagerLeft(4)
-        checkAllStarredWords(context)
+        checkAllStarredWords(context, composeTestRule)
         swipeViewPagerRight(4)
         search(data.query)
         checkRhymes(context, data.firstRhyme, data.secondRhyme)
@@ -142,7 +148,7 @@ class IntegrationTest {
         openDictionaryCleanLayout(context, data.secondSynonymForFirstRhyme, data.firstDefinitionForSecondSynonym)
         starQueryWord()
         swipeViewPagerLeft(2)
-        checkAllStarredWords(context, data.secondSynonymForFirstRhyme)
+        checkAllStarredWords(context, composeTestRule, data.secondSynonymForFirstRhyme)
         swipeViewPagerRight(3)
         checkStarredInList(data.secondSynonymForFirstRhyme)
         addFilter(Tab.THESAURUS, data.thesaurusFilter, data.thesaurusFilterMatch)
@@ -156,9 +162,9 @@ class IntegrationTest {
         // clearing the search history doesn't erase starred words
         clearSearchHistory()
         swipeViewPagerLeft(1)
-        checkAllStarredWords(context, data.secondSynonymForFirstRhyme)
-        clearStarredWords()
-        checkAllStarredWords(context)
+        checkAllStarredWords(context, composeTestRule, data.secondSynonymForFirstRhyme)
+        clearStarredWords(composeTestRule)
+        checkAllStarredWords(context, composeTestRule)
     }
 
     @Test

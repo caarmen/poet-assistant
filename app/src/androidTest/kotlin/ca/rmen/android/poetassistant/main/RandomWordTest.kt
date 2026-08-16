@@ -24,8 +24,10 @@ import android.Manifest
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import android.service.notification.StatusBarNotification
-import android.view.View
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
@@ -35,7 +37,6 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import org.hamcrest.Matcher
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -47,18 +48,17 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.containsString
 import ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition
-import ca.rmen.android.poetassistant.main.CustomViewMatchers.withAdapterItemCount
 import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
+import ca.rmen.android.poetassistant.main.favorites.composables.FAVORITES_SCREEN_CONTENT_LIST_TAG
 
 @LargeTest
 @HiltAndroidTest
@@ -71,6 +71,10 @@ class RandomWordTest {
 
     @JvmField
     @Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @JvmField
+    @Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(MainActivity::class.java, true)
 
     @Test
@@ -94,7 +98,8 @@ class RandomWordTest {
         onView(allOf(withId(R.id.btn_star_result), isDescendantOfA(latestEntryViewMatcher)))
                 .perform(click())
         swipeViewPagerRight(1)
-        onView(allOf(withId(R.id.favorites_recycler_view), isDisplayed())).check(matches(withAdapterItemCount(1)))
+        val listNode = composeTestRule.onNodeWithTag(FAVORITES_SCREEN_CONTENT_LIST_TAG)
+        listNode.onChildren().assertCountEquals(1)
     }
 
     @Test
