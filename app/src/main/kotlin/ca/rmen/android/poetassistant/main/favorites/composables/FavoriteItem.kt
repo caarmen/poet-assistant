@@ -46,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ca.rmen.android.poetassistant.ExcludeFromJacocoGeneratedReport
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.R
@@ -154,8 +155,9 @@ fun FavoriteItem(
 
 }
 
-@Preview(showBackground = true)
 @Composable
+@ExcludeFromJacocoGeneratedReport
+@Preview(showBackground = true)
 fun FavoriteItemPreview() {
     AppTheme {
         FavoriteItem(
@@ -171,8 +173,9 @@ fun FavoriteItemPreview() {
     }
 }
 
-@Preview(showBackground = true)
 @Composable
+@ExcludeFromJacocoGeneratedReport
+@Preview(showBackground = true)
 fun FavoriteItemEfficientPreview() {
     AppTheme {
         FavoriteItem(

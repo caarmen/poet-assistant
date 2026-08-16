@@ -39,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ca.rmen.android.poetassistant.ExcludeFromJacocoGeneratedReport
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.theme.AppTheme
 
@@ -80,8 +81,9 @@ fun FavoritesHeader(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
+@ExcludeFromJacocoGeneratedReport
+@Preview(showBackground = true)
 fun FavoritesHeaderPreview() {
     AppTheme {
         FavoritesHeader(
