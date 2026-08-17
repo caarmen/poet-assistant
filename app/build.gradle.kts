@@ -263,6 +263,7 @@ dependencies {
     implementation(libs.rhymer)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // We need to explicitly add a couple of api dependencies here, otherwise alpha versions
     // of these libs will be pulled in transitively (by a non-alpha databinding dependency...)
