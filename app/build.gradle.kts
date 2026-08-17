@@ -360,6 +360,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
                 "**/*_Impl*.class",
                 // ignore hilt generated code:
                 "**/ca/rmen/android/poetassistant/**/*HiltComponents*.class",
+                "**/ca/rmen/android/poetassistant/**/Hilt_*.class",
                 // ignore generated code not in our package
                 "**/android/databinding/*.class",
                 "**/android/databinding/**/*.class",
