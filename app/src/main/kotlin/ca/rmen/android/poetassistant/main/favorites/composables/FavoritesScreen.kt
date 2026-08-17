@@ -46,6 +46,7 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 const val CONFIRM_DELETE_DIALOG_CONFIRM_BUTTON_TAG = "FavoritesScreen_ConfirmDeleteDialog_ConfirmButton"
+const val CONFIRM_DELETE_DIALOG_CANCEL_BUTTON_TAG = "FavoritesScreen_ConfirmDeleteDialog_CancelButton"
 @Composable
 fun FavoritesScreen(
     viewModel: FavoritesScreenViewModel,
@@ -122,7 +123,7 @@ fun FavoritesScreen(
             dismissButton = {
                 TextButton(onClick = {
                     openConfirmDeleteDialog.value = false
-                }) {
+                }, modifier=Modifier.testTag(CONFIRM_DELETE_DIALOG_CANCEL_BUTTON_TAG)) {
                     Text(stringResource(R.string.action_cancel))
                 }
             },

@@ -52,6 +52,11 @@ import ca.rmen.android.poetassistant.main.favorites.ExternalAppMenuItem
 import kotlinx.coroutines.launch
 
 const val FAVORITE_ITEM_STAR_TAG = "FavoriteItem_Star_"
+const val FAVORITE_ITEM_ROW_TAG = "FavoriteItem_Row_"
+const val FAVORITE_ITEM_RHYMER_TAG = "FavoriteItem_Rhymer_"
+const val FAVORITE_ITEM_THESAURUS_TAG = "FavoriteItem_Thesaurus_"
+const val FAVORITE_ITEM_DICTIONARY_TAG = "FavoriteItem_Dictionary_"
+
 @Composable
 fun FavoriteItem(
     word: String,
@@ -76,13 +81,16 @@ fun FavoriteItem(
                     externalAppMenuItems = externalAppMenuItemsProducer(word)
                     showPopupMenu = true
                 }
-            }),
+            })
+            .testTag("${FAVORITE_ITEM_ROW_TAG}$word"),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Star icon on the left - clickable to remove from favorites
         IconButton(
             onClick = onToggleFavorite,
-            modifier = Modifier.size(40.dp).testTag("$FAVORITE_ITEM_STAR_TAG$word")
+            modifier = Modifier
+                .size(40.dp)
+                .testTag("$FAVORITE_ITEM_STAR_TAG$word")
         ) {
             Icon(
                 imageVector = Icons.Filled.Star,
@@ -116,7 +124,7 @@ fun FavoriteItem(
                     onSearchInTab(tab)
                     showPopupMenu = false
                 },
-                onExternalAppSelected = {onExternalAppSelected(word, it)}
+                onExternalAppSelected = { onExternalAppSelected(word, it) }
             )
         }
 
@@ -128,7 +136,8 @@ fun FavoriteItem(
                 modifier = Modifier
                     .size(44.dp)
                     .padding(horizontal = 4.dp)
-                    .clickable(onClick = { onSearchInTab(Tab.RHYMER) }),
+                    .clickable(onClick = { onSearchInTab(Tab.RHYMER) })
+                    .testTag("$FAVORITE_ITEM_RHYMER_TAG$word"),
             )
             Image(
                 painter = painterResource(R.drawable.ic_thesaurus),
@@ -136,7 +145,8 @@ fun FavoriteItem(
                 modifier = Modifier
                     .size(44.dp)
                     .padding(horizontal = 4.dp)
-                    .clickable(onClick = { onSearchInTab(Tab.THESAURUS) }),
+                    .clickable(onClick = { onSearchInTab(Tab.THESAURUS) })
+                    .testTag("$FAVORITE_ITEM_THESAURUS_TAG$word"),
             )
             Image(
                 painter = painterResource(R.drawable.ic_dictionary),
@@ -144,7 +154,8 @@ fun FavoriteItem(
                 modifier = Modifier
                     .size(44.dp)
                     .padding(horizontal = 4.dp)
-                    .clickable(onClick = { onSearchInTab(Tab.DICTIONARY) }),
+                    .clickable(onClick = { onSearchInTab(Tab.DICTIONARY) })
+                    .testTag("$FAVORITE_ITEM_DICTIONARY_TAG$word"),
             )
         }
 
