@@ -41,6 +41,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,6 +53,7 @@ import ca.rmen.android.poetassistant.main.favorites.ExternalAppMenuItem
 import ca.rmen.android.poetassistant.theme.AppTheme
 import kotlinx.coroutines.launch
 
+const val FAVORITE_ITEM_STAR_TAG = "FavoriteItem_Star_"
 @Composable
 fun FavoriteItem(
     word: String,
@@ -82,7 +84,7 @@ fun FavoriteItem(
         // Star icon on the left - clickable to remove from favorites
         IconButton(
             onClick = onToggleFavorite,
-            modifier = Modifier.size(40.dp)
+            modifier = Modifier.size(40.dp).testTag("$FAVORITE_ITEM_STAR_TAG$word")
         ) {
             Icon(
                 imageVector = Icons.Filled.Star,

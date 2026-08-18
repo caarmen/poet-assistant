@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ca.rmen.android.poetassistant.R
@@ -44,6 +45,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
+const val CONFIRM_DELETE_DIALOG_CONFIRM_BUTTON_TAG = "FavoritesScreen_ConfirmDeleteDialog_ConfirmButton"
 @Composable
 fun FavoritesScreen(
     viewModel: FavoritesScreenViewModel,
@@ -113,7 +115,7 @@ fun FavoritesScreen(
                 TextButton(onClick = {
                     viewModel.onDeleteAll()
                     openConfirmDeleteDialog.value = false
-                }) {
+                }, modifier=Modifier.testTag(CONFIRM_DELETE_DIALOG_CONFIRM_BUTTON_TAG)) {
                     Text(stringResource(R.string.action_clear))
                 }
             },

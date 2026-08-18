@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,6 +43,8 @@ import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.favorites.ExternalAppMenuItem
 import ca.rmen.android.poetassistant.theme.AppTheme
 
+const val FAVORITES_SCREEN_CONTENT_EMPTY_TAG = "FavoritesScreen_Empty"
+const val FAVORITES_SCREEN_CONTENT_LIST_TAG = "FavoritesScreen_List"
 @Composable
 fun FavoritesScreenContent(
     favorites: List<String>,
@@ -73,7 +76,7 @@ fun FavoritesScreenContent(
         if (favorites.isEmpty()) {
             // Empty state
             Box(
-                modifier = Modifier.fillMaxSize().padding(bottom=56.dp),
+                modifier = Modifier.fillMaxSize().padding(bottom=56.dp).testTag(FAVORITES_SCREEN_CONTENT_EMPTY_TAG),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -84,7 +87,7 @@ fun FavoritesScreenContent(
             }
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize().testTag(FAVORITES_SCREEN_CONTENT_LIST_TAG)
             ) {
                 items(favorites, key = {it}) { word ->
                     FavoriteItem(
