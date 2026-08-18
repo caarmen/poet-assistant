@@ -25,6 +25,14 @@ import android.os.Build
 import android.os.SystemClock
 import android.view.View
 import android.view.WindowManager
+import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.NoMatchingRootException
@@ -48,6 +56,8 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
+import ca.rmen.android.poetassistant.main.favorites.composables.FAVORITES_SCREEN_CONTENT_EMPTY_TAG
+import ca.rmen.android.poetassistant.main.favorites.composables.FAVORITES_SCREEN_CONTENT_LIST_TAG
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -115,18 +125,20 @@ object CustomChecks {
         star.check(matches(isChecked()))
     }
 
-    fun checkAllStarredWords(context: Context, vararg expectedStarredWords: String) {
+    fun checkAllStarredWords(context: Context, composeTestRule: ComposeTestRule, vararg expectedStarredWords: String) {
         checkTitleStripOrTab(context, R.string.tab_favorites)
-        val emptyViewMatch: Matcher<View> = allOf(withId(R.id.empty), withText(R.string.empty_favorites_list))
-        val emptyView = onView(emptyViewMatch)
-        if (expectedStarredWords == null || expectedStarredWords.isEmpty()) {
-            emptyView.check(matches(isCompletelyDisplayed()))
+        val emptyNode = composeTestRule.onNodeWithTag(FAVORITES_SCREEN_CONTENT_EMPTY_TAG)
+        val listNode = composeTestRule.onNodeWithTag(FAVORITES_SCREEN_CONTENT_LIST_TAG)
+        if (expectedStarredWords.isEmpty()) {
+            emptyNode.assertIsDisplayed()
+            listNode.assertDoesNotExist()
         } else {
-            emptyView.check(matches(not(isDisplayed())))
-            val recyclerViewMatch: Matcher<View> = allOf(withId(R.id.favorites_recycler_view), hasSibling(emptyViewMatch))
-            onView(recyclerViewMatch).check(matches(withChildCount(expectedStarredWords.size)))
+            emptyNode.assertDoesNotExist()
+            listNode.assertIsDisplayed()
+            listNode.onChildren().assertCountEquals(expectedStarredWords.size)
             for (word in expectedStarredWords) {
-                onView(allOf(withId(R.id.text1), withParent(withParent(recyclerViewMatch)), withText(word))).check(matches(isDisplayed()))
+                composeTestRule.onNode(hasText(word) and hasAnyAncestor(hasTestTag(FAVORITES_SCREEN_CONTENT_LIST_TAG)), useUnmergedTree = true)
+                    .assertIsDisplayed()
             }
         }
     }

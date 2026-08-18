@@ -22,7 +22,7 @@ package ca.rmen.android.poetassistant.main.dictionaries
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import ca.rmen.android.poetassistant.FavoritesRepository
+import ca.rmen.android.poetassistant.main.favorites.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import dagger.hilt.android.lifecycle.HiltViewModel

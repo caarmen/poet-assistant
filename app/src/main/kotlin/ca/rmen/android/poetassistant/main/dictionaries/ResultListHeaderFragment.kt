@@ -38,10 +38,9 @@ import ca.rmen.android.poetassistant.main.Tab
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogListener, ConfirmDialogFragment.ConfirmDialogListener {
+class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogListener {
     companion object {
         private val TAG = Constants.TAG + ResultListHeaderFragment::class.java.simpleName
-        private const val ACTION_CLEAR_FAVORITES = 1
         private const val DIALOG_TAG = "dialog"
         private const val EXTRA_TAB = "tab"
 
@@ -144,21 +143,7 @@ class ResultListHeaderFragment : Fragment(), FilterDialogFragment.FilterDialogLi
         mViewModel.setFilter(input.lowercase(Locale.getDefault()).trim())
     }
 
-    override fun onOk(actionId: Int) {
-        if (actionId == ACTION_CLEAR_FAVORITES) {
-            mViewModel.clearFavorites()
-        }
-    }
-
     inner class ButtonListener {
-        fun onDeleteFavoritesButtonClicked(@Suppress("UNUSED_PARAMETER") v: View) {
-            ConfirmDialogFragment.show(
-                    ACTION_CLEAR_FAVORITES,
-                    getString(R.string.action_clear_favorites),
-                    getString(R.string.action_clear),
-                    childFragmentManager,
-                    DIALOG_TAG)
-        }
 
         fun onFilterButtonClicked(@Suppress("UNUSED_PARAMETER") v: View) {
             context?.let {

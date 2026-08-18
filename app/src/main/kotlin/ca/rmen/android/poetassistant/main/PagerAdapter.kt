@@ -33,6 +33,7 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
+import ca.rmen.android.poetassistant.main.favorites.FavoritesFragment
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment
 import java.util.Locale
 
@@ -67,7 +68,7 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
         Log.v(TAG, "getItem $position")
         return when (getTabForPosition(position)) {
             Tab.PATTERN -> ResultListFactory.createListFragment(Tab.PATTERN, mInitialPatternQuery)
-            Tab.FAVORITES -> ResultListFactory.createListFragment(Tab.FAVORITES, null)
+            Tab.FAVORITES -> FavoritesFragment()
             Tab.WOTD -> ResultListFactory.createListFragment(Tab.WOTD, null)
             Tab.RHYMER -> ResultListFactory.createListFragment(Tab.RHYMER, mInitialRhymeQuery)
             Tab.THESAURUS -> ResultListFactory.createListFragment(Tab.THESAURUS, mInitialThesaurusQuery)

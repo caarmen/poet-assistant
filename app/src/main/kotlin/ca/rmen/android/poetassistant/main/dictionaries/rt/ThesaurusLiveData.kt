@@ -25,7 +25,7 @@ import android.util.Log
 import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.FavoritesRepository
+import ca.rmen.android.poetassistant.main.favorites.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListData

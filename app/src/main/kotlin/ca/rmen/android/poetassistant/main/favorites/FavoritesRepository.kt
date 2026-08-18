@@ -17,12 +17,13 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant
+package ca.rmen.android.poetassistant.main.favorites
 
 import android.content.Context
 import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
+import ca.rmen.android.poetassistant.Constants
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -48,8 +49,8 @@ class FavoritesRepository(
 
     fun getFavoritesFlow(): Flow<List<Favorite>> = favoriteDao.getFavoritesFlow()
 
-    suspend fun getFavorites(): Set<String> = withContext(ioDispatcher) {
-        favoriteDao.getFavorites().map(Favorite::getWord).toSet()
+    suspend fun getFavorites(): Set<String>  {
+        return favoriteDao.getFavorites().map(Favorite::getWord).toSet()
     }
 
     @Throws(IOException::class)

@@ -25,6 +25,8 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import ca.rmen.android.poetassistant.main.dictionaries.search.Suggestion
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionDao
+import ca.rmen.android.poetassistant.main.favorites.Favorite
+import ca.rmen.android.poetassistant.main.favorites.FavoriteDao
 
 // https://medium.com/google-developers/7-steps-to-room-27a5fe5f99b2
 @Database(entities = [Favorite::class, Suggestion::class], version = 2)

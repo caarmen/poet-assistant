@@ -21,10 +21,12 @@ package ca.rmen.android.poetassistant.main
 
 
 import android.content.Context
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.hasSibling
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -37,6 +39,7 @@ import ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord
 import ca.rmen.android.poetassistant.main.TestAppUtils.unStarQueryWord
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
+import ca.rmen.android.poetassistant.main.favorites.composables.FAVORITE_ITEM_STAR_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -56,7 +59,12 @@ class FavoritesTest {
 
     @JvmField
     @Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @JvmField
+    @Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(MainActivity::class.java, true)
+
 
     @Test
     fun favoritesTest() {
@@ -65,18 +73,18 @@ class FavoritesTest {
         starQueryWord()
         onView(allOf(withId(R.id.btn_star_result), hasSibling(withText("ache")))).perform(click())
         swipeViewPagerLeft(4)
-        checkAllStarredWords(context, "cheesecake", "ache")
+        checkAllStarredWords(context, composeTestRule, "cheesecake", "ache")
         swipeViewPagerRight(3)
         unStarQueryWord()
         swipeViewPagerLeft(3)
-        checkAllStarredWords(context, "ache")
-        onView(allOf(withId(R.id.btn_star_result), hasSibling(withText("ache")), isDisplayed())).perform(click())
-        checkAllStarredWords(context)
+        checkAllStarredWords(context, composeTestRule, "ache")
+        composeTestRule.onNodeWithTag("${FAVORITE_ITEM_STAR_TAG}ache").performClick()
+        checkAllStarredWords(context, composeTestRule)
         swipeViewPagerRight(2)
         starQueryWord()
         swipeViewPagerLeft(2)
-        checkAllStarredWords(context, "cheesecake")
-        clearStarredWords()
-        checkAllStarredWords(context)
+        checkAllStarredWords(context, composeTestRule, "cheesecake")
+        clearStarredWords(composeTestRule)
+        checkAllStarredWords(context, composeTestRule)
     }
 }

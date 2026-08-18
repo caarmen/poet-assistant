@@ -251,7 +251,8 @@ open class ResultListFragment<out T: Any> : Fragment() {
     private val mUsedQueryWordChanged = Observer<String> { usedQueryWord ->
         mHeaderViewModel.setQuery(usedQueryWord)
         mTab?.let {
-            mHeaderViewModel.setIsMatchedWordSelectable(ResultListFactory.getMatchedWordSelectability(it, usedQueryWord))
+            mHeaderViewModel.setIsMatchedWordSelectable(ResultListFactory.getMatchedWordSelectability(
+                usedQueryWord))
         }
     }
 

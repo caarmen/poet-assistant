@@ -30,8 +30,8 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.Favorite
-import ca.rmen.android.poetassistant.FavoritesRepository
+import ca.rmen.android.poetassistant.main.favorites.Favorite
+import ca.rmen.android.poetassistant.main.favorites.FavoritesRepository
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem
@@ -49,8 +49,6 @@ open class RTListViewModel(application: Application, tab: Tab, favoritesReposito
     favoritesRepository, settingsPrefs)
 @HiltViewModel
 class PatternListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.PATTERN, favoritesRepository, settingsPrefs)
-@HiltViewModel
-class FavoritesListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.FAVORITES, favoritesRepository, settingsPrefs)
 @HiltViewModel
 class RhymerListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.RHYMER, favoritesRepository, settingsPrefs)
 @HiltViewModel

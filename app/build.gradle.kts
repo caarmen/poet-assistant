@@ -50,7 +50,7 @@ android {
     }
 
     testCoverage {
-        jacocoVersion = "0.8.12"
+        jacocoVersion = "0.8.15"
     }
     lint {
         abortOnError = true
@@ -255,6 +255,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.google.material)
     implementation(libs.hilt.android)
+    implementation(libs.hilt.lifecycle.viewmodel.compose)
     implementation(libs.kotlin)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
@@ -262,6 +263,7 @@ dependencies {
     implementation(libs.rhymer)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // We need to explicitly add a couple of api dependencies here, otherwise alpha versions
     // of these libs will be pulled in transitively (by a non-alpha databinding dependency...)
@@ -355,9 +357,11 @@ tasks.register<JacocoReport>("jacocoTestReport") {
                 "**/ca/rmen/android/poetassistant/BR.class",
                 "**/ca/rmen/android/poetassistant/DataBinderMapperImpl.class",
                 "**/ca/rmen/android/poetassistant/DataBinderMapperImpl\$*.class",
+                "**/ca/rmen/android/poetassistant/**/previews/**/*.class",
                 "**/*_Impl*.class",
                 // ignore hilt generated code:
                 "**/ca/rmen/android/poetassistant/**/*HiltComponents*.class",
+                "**/ca/rmen/android/poetassistant/**/Hilt_*.class",
                 // ignore generated code not in our package
                 "**/android/databinding/*.class",
                 "**/android/databinding/**/*.class",

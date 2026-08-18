@@ -1,6 +1,6 @@
 package ca.rmen.android.poetassistant.di
 
-import ca.rmen.android.poetassistant.FavoritesRepository
+import ca.rmen.android.poetassistant.main.favorites.FavoritesRepository
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer

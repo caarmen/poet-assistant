@@ -17,10 +17,12 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant
+package ca.rmen.android.poetassistant.main.favorites
 
 import android.net.Uri
 import androidx.room.Room
+import ca.rmen.android.poetassistant.Environment
+import ca.rmen.android.poetassistant.UserDb
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -47,7 +49,8 @@ class TestFavoritesRepository {
                 .allowMainThreadQueries()
                 .addMigrations(UserDb.MIGRATION_1_2)
                 .build()
-        val favoritesRepository = FavoritesRepository(StandardTestDispatcher(testScheduler), db.favoriteDao())
+        val favoritesRepository =
+            FavoritesRepository(StandardTestDispatcher(testScheduler), db.favoriteDao())
         var favoriteWords = favoritesRepository.getFavorites()
         assertEquals(0, favoriteWords.size)
         val uri = createFavoritesFile()

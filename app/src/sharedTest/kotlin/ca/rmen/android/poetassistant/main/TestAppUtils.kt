@@ -26,6 +26,9 @@ import android.os.SystemClock
 import android.text.TextUtils
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
+import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
@@ -49,6 +52,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory
+import ca.rmen.android.poetassistant.main.favorites.composables.CONFIRM_DELETE_DIALOG_CONFIRM_BUTTON_TAG
+import ca.rmen.android.poetassistant.main.favorites.composables.FAVORITES_HEADER_DELETE_ALL_TAG
 import com.google.android.material.button.MaterialButton
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.equalToIgnoringCase
@@ -198,9 +203,10 @@ object TestAppUtils {
                 .check(matches(withText(firstExpectedNonFilteredMatch)))
     }
 
-    fun clearStarredWords() {
-        onView(allOf(withId(R.id.btn_delete), withContentDescription(R.string.action_clear_favorites), isDisplayed())).perform(click())
-        clickDialogPositiveButton(R.string.action_clear)
+    fun clearStarredWords(composeTestRule: ComposeTestRule) {
+        composeTestRule.onNodeWithTag(FAVORITES_HEADER_DELETE_ALL_TAG).performClick()
+        SystemClock.sleep(200)
+        composeTestRule.onNodeWithTag(CONFIRM_DELETE_DIALOG_CONFIRM_BUTTON_TAG).performClick()
     }
 
     fun clickDialogPositiveButton(@StringRes labelRes: Int) {
