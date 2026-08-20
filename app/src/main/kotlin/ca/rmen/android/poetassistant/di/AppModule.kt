@@ -19,7 +19,7 @@
 package ca.rmen.android.poetassistant.di
 
 import android.app.Application
-import ca.rmen.android.poetassistant.main.favorites.FavoritesRepository
+import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import ca.rmen.android.poetassistant.Theme
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.UserDb
@@ -28,10 +28,10 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
-import ca.rmen.android.poetassistant.main.favorites.CreateFavoritesShareUseCase
-import ca.rmen.android.poetassistant.main.favorites.GetProcessTextMenuItemsUseCase
-import ca.rmen.android.poetassistant.main.favorites.OpenExternalAppUseCase
-import ca.rmen.android.poetassistant.main.favorites.ShareUseCase
+import ca.rmen.android.poetassistant.main.favorites.usecases.CreateFavoritesShareUseCase
+import ca.rmen.android.poetassistant.main.common.usecases.GetProcessTextMenuItemsUseCase
+import ca.rmen.android.poetassistant.main.common.usecases.OpenExternalAppUseCase
+import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.settings.SettingsRepository
 import dagger.Module

@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.favorites.composables
+package ca.rmen.android.poetassistant.main.favorites.ui.composables
 
 import android.content.ClipData
 import androidx.compose.material3.AlertDialog
@@ -39,8 +39,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.favorites.FavoritesScreenViewModel
-import ca.rmen.android.poetassistant.main.favorites.OpenExternalAppUseCase
-import ca.rmen.android.poetassistant.main.favorites.ShareUseCase
+import ca.rmen.android.poetassistant.main.common.usecases.OpenExternalAppUseCase
+import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds

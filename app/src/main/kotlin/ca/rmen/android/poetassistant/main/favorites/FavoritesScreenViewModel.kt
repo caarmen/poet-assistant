@@ -4,6 +4,10 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.main.common.models.Share
+import ca.rmen.android.poetassistant.main.common.usecases.GetProcessTextMenuItemsUseCase
+import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
+import ca.rmen.android.poetassistant.main.favorites.usecases.CreateFavoritesShareUseCase
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.settings.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

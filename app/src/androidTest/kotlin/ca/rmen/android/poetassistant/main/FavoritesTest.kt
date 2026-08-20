@@ -39,7 +39,7 @@ import ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord
 import ca.rmen.android.poetassistant.main.TestAppUtils.unStarQueryWord
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
-import ca.rmen.android.poetassistant.main.favorites.composables.FAVORITE_ITEM_STAR_TAG
+import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITE_ITEM_STAR_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest

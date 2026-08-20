@@ -3,7 +3,11 @@ package ca.rmen.android.poetassistant.main.favorites
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.main.common.models.Share
+import ca.rmen.android.poetassistant.main.common.usecases.GetProcessTextMenuItemsUseCase
 import ca.rmen.android.poetassistant.di.IODispatcher
+import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
+import ca.rmen.android.poetassistant.main.favorites.usecases.CreateFavoritesShareUseCase
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.settings.SettingsRepository
 import ca.rmen.android.poetassistant.settings.Theme

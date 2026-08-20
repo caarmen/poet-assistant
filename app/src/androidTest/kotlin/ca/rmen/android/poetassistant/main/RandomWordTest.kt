@@ -58,7 +58,7 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
-import ca.rmen.android.poetassistant.main.favorites.composables.FAVORITES_SCREEN_CONTENT_LIST_TAG
+import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_SCREEN_CONTENT_LIST_TAG
 
 @LargeTest
 @HiltAndroidTest

@@ -27,7 +27,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
-import ca.rmen.android.poetassistant.main.favorites.FavoritesRepository
+import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.di.IODispatcher

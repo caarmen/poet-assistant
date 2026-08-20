@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.favorites.composables
+package ca.rmen.android.poetassistant.main.favorites.ui.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -48,7 +48,8 @@ import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.main.favorites.ExternalAppMenuItem
+import ca.rmen.android.poetassistant.main.common.ui.composables.FavoritesPopupMenu
+import ca.rmen.android.poetassistant.main.common.models.ExternalAppMenuItem
 import kotlinx.coroutines.launch
 
 const val FAVORITE_ITEM_STAR_TAG = "FavoriteItem_Star_"

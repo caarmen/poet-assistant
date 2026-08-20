@@ -1,10 +1,10 @@
-package ca.rmen.android.poetassistant.main.favorites.composables.previews
+package ca.rmen.android.poetassistant.main.favorites.ui.composables.previews
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import ca.rmen.android.poetassistant.main.favorites.composables.FavoritesHeader
+import ca.rmen.android.poetassistant.main.favorites.ui.composables.FavoritesHeader
 import ca.rmen.android.poetassistant.theme.AppTheme
 
 @Composable

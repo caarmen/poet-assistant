@@ -1,7 +1,9 @@
-package ca.rmen.android.poetassistant.main.favorites
+package ca.rmen.android.poetassistant.main.favorites.usecases
 
 import android.app.Application
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.main.common.models.Share
+import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 
 /**
  * Use case for creating shareable content from the favorites list.

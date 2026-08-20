@@ -1,4 +1,4 @@
-package ca.rmen.android.poetassistant.main.favorites
+package ca.rmen.android.poetassistant.main.common.models
 
 import android.graphics.drawable.Drawable
 
