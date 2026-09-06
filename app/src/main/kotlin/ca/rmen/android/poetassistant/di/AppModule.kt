@@ -47,10 +47,6 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesEmbeddedDb(application: Application): EmbeddedDb = EmbeddedDb(application)
-
-    @Provides
-    @Singleton
     fun providesRhymer(embeddedDb: EmbeddedDb, settingsPrefs: SettingsPrefs) = Rhymer(embeddedDb, settingsPrefs)
 
     @Provides
