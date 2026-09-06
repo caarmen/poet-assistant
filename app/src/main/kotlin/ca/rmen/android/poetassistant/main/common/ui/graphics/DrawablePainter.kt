@@ -1,4 +1,4 @@
-package ca.rmen.android.poetassistant.main.favorites.composables
+package ca.rmen.android.poetassistant.main.common.ui.graphics
 
 import android.graphics.drawable.Drawable
 import androidx.compose.ui.geometry.Size

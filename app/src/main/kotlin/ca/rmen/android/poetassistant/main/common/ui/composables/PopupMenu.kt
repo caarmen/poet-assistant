@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.favorites.composables
+package ca.rmen.android.poetassistant.main.common.ui.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
@@ -37,7 +37,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.Tab
-import ca.rmen.android.poetassistant.main.favorites.ExternalAppMenuItem
+import ca.rmen.android.poetassistant.main.common.models.ExternalAppMenuItem
+import ca.rmen.android.poetassistant.main.common.ui.graphics.DrawablePainter
 import ca.rmen.android.poetassistant.settings.Layout
 
 @Composable

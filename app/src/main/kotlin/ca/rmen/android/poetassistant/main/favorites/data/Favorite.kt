@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.favorites
+package ca.rmen.android.poetassistant.main.favorites.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

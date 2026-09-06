@@ -52,8 +52,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory
-import ca.rmen.android.poetassistant.main.favorites.composables.CONFIRM_DELETE_DIALOG_CONFIRM_BUTTON_TAG
-import ca.rmen.android.poetassistant.main.favorites.composables.FAVORITES_HEADER_DELETE_ALL_TAG
+import ca.rmen.android.poetassistant.main.favorites.ui.composables.CONFIRM_DELETE_DIALOG_CONFIRM_BUTTON_TAG
+import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_HEADER_DELETE_ALL_TAG
 import com.google.android.material.button.MaterialButton
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.equalToIgnoringCase

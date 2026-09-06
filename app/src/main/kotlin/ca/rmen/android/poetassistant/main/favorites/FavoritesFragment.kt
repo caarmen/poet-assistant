@@ -19,8 +19,10 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.main.common.usecases.OpenExternalAppUseCase
+import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
-import ca.rmen.android.poetassistant.main.favorites.composables.FavoritesScreen
+import ca.rmen.android.poetassistant.main.favorites.ui.composables.FavoritesScreen
 import ca.rmen.android.poetassistant.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.material.snackbar.Snackbar

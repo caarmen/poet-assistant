@@ -23,6 +23,7 @@ import android.net.Uri
 import androidx.room.Room
 import ca.rmen.android.poetassistant.Environment
 import ca.rmen.android.poetassistant.UserDb
+import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals

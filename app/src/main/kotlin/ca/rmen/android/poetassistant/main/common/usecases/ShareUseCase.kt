@@ -1,7 +1,8 @@
-package ca.rmen.android.poetassistant.main.favorites
+package ca.rmen.android.poetassistant.main.common.usecases
 
 import android.content.Context
 import android.content.Intent
+import ca.rmen.android.poetassistant.main.common.models.Share
 
 /**
  * Starts an intent chooser to share the given share.

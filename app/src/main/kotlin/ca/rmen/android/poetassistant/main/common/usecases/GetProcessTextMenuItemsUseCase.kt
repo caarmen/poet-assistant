@@ -1,10 +1,11 @@
-package ca.rmen.android.poetassistant.main.favorites
+package ca.rmen.android.poetassistant.main.common.usecases
 
 import android.annotation.TargetApi
 import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import ca.rmen.android.poetassistant.main.common.models.ExternalAppMenuItem
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 

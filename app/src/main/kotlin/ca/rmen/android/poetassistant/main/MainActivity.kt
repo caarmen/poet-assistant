@@ -43,7 +43,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.main.favorites.FavoritesRepository
+import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.about.AboutActivity
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding

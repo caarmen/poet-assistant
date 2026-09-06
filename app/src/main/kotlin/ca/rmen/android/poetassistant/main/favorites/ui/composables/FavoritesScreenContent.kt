@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.favorites.composables
+package ca.rmen.android.poetassistant.main.favorites.ui.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.main.Tab
-import ca.rmen.android.poetassistant.main.favorites.ExternalAppMenuItem
+import ca.rmen.android.poetassistant.main.common.models.ExternalAppMenuItem
 
 const val FAVORITES_SCREEN_CONTENT_EMPTY_TAG = "FavoritesScreen_Empty"
 const val FAVORITES_SCREEN_CONTENT_LIST_TAG = "FavoritesScreen_List"

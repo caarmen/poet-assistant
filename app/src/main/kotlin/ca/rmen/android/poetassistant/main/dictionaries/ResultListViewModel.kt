@@ -30,8 +30,8 @@ import androidx.lifecycle.switchMap
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.main.favorites.Favorite
-import ca.rmen.android.poetassistant.main.favorites.FavoritesRepository
+import ca.rmen.android.poetassistant.main.favorites.data.Favorite
+import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem

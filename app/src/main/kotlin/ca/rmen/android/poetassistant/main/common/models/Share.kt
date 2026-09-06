@@ -1,4 +1,4 @@
-package ca.rmen.android.poetassistant.main.favorites
+package ca.rmen.android.poetassistant.main.common.models
 
 /**
  * Data class representing content to be shared.
