@@ -4,12 +4,13 @@ import android.app.Application
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.common.models.Share
 import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
+import javax.inject.Inject
 
 /**
  * Use case for creating shareable content from the favorites list.
  * Formats the favorites into a shareable string with proper formatting.
  */
-class CreateFavoritesShareUseCase(
+class CreateFavoritesShareUseCase @Inject constructor(
     private val application: Application,
     private val repository: FavoritesRepository,
 ) {
