@@ -5,9 +5,11 @@ import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.common.models.ExternalAppMenuItem
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 /**
  * Use case for querying the system for apps that support the ACTION_PROCESS_TEXT intent.
@@ -16,9 +18,9 @@ import kotlinx.coroutines.withContext
  * @param application The Android application context.
  * @param ioDispatcher The coroutine dispatcher for IO operations.
  */
-class GetProcessTextMenuItemsUseCase(
+class GetProcessTextMenuItemsUseCase @Inject constructor(
     private val application: Application,
-    private val ioDispatcher: CoroutineDispatcher,
+    @IODispatcher private val ioDispatcher: CoroutineDispatcher,
 ) {
     /**
      * Queries for apps that can process text and returns them as menu items.
