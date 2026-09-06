@@ -5,9 +5,12 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
 
-class SettingsRepository(application: Application) {
+@Singleton
+class SettingsRepository @Inject constructor(application: Application) {
 
     companion object {
         private const val PREF_LAYOUT = "PREF_LAYOUT"
