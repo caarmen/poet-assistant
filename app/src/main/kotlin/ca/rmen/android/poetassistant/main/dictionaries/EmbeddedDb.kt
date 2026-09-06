@@ -28,12 +28,16 @@ import android.database.sqlite.SQLiteException
 import android.util.Log
 import androidx.annotation.VisibleForTesting
 import ca.rmen.android.poetassistant.Constants
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class EmbeddedDb(val context: Context) {
+@Singleton
+class EmbeddedDb @Inject constructor(@param:ApplicationContext val context: Context) {
     companion object {
         private val TAG = Constants.TAG + EmbeddedDb::class.java.simpleName
         private const val MAX_QUERY_ARGUMENT_COUNT = 500

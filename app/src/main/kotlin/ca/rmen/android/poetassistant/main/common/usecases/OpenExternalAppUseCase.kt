@@ -3,12 +3,13 @@ package ca.rmen.android.poetassistant.main.common.usecases
 import android.content.Context
 import android.content.Intent
 import ca.rmen.android.poetassistant.main.common.models.ExternalAppMenuItem
+import javax.inject.Inject
 
 /**
  * Use case for opening an external app with text to process.
  * Launches the specified external app with the given text using ACTION_PROCESS_TEXT intent.
  */
-class OpenExternalAppUseCase {
+class OpenExternalAppUseCase @Inject constructor(){
     /**
      * Opens the specified external app with the given text.
      *

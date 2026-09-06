@@ -28,12 +28,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
 import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
-import ca.rmen.android.poetassistant.main.favorites.usecases.CreateFavoritesShareUseCase
-import ca.rmen.android.poetassistant.main.common.usecases.GetProcessTextMenuItemsUseCase
-import ca.rmen.android.poetassistant.main.common.usecases.OpenExternalAppUseCase
-import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
-import ca.rmen.android.poetassistant.settings.SettingsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -49,10 +44,6 @@ class AppModule {
     @Singleton
     fun providesTts(application: Application, settingsPrefs: SettingsPrefs): Tts =
         Tts(application, settingsPrefs)
-
-    @Provides
-    @Singleton
-    fun providesEmbeddedDb(application: Application): EmbeddedDb = EmbeddedDb(application)
 
     @Provides
     @Singleton
@@ -80,25 +71,7 @@ class AppModule {
     fun providesFavoritesRepository(userDb: UserDb, @IODispatcher ioDispatcher: CoroutineDispatcher) = FavoritesRepository(ioDispatcher, userDb.favoriteDao())
 
     @Provides
-    fun providesCreateFavoritesShareUseCase(application: Application, favoritesRepository: FavoritesRepository) =
-        CreateFavoritesShareUseCase(application, favoritesRepository)
-
-    @Provides
-    fun providesShareUseCase() = ShareUseCase()
-
-    @Provides
-    fun provideGetProcessTextMenuitemsUseCase(application: Application, @IODispatcher ioDispatcher: CoroutineDispatcher) =
-        GetProcessTextMenuItemsUseCase(application, ioDispatcher)
-
-    @Provides
-    fun provideOpenExternalAppUseCase() = OpenExternalAppUseCase()
-
-    @Provides
     @Singleton
     fun providesSuggestions(userDb: UserDb, embeddedDb: EmbeddedDb, @IODispatcher ioDispatcher: CoroutineDispatcher) = SuggestionsRepository(userDb.suggestionDao(), embeddedDb, ioDispatcher)
-
-    @Provides
-    @Singleton
-    fun provideSettingsRepository(application: Application) = SettingsRepository(application)
 
 }

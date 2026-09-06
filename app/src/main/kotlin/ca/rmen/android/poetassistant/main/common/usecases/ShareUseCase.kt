@@ -3,11 +3,12 @@ package ca.rmen.android.poetassistant.main.common.usecases
 import android.content.Context
 import android.content.Intent
 import ca.rmen.android.poetassistant.main.common.models.Share
+import javax.inject.Inject
 
 /**
  * Starts an intent chooser to share the given share.
  */
-class ShareUseCase {
+class ShareUseCase @Inject constructor(){
     operator fun invoke(share: Share, context: Context) {
         val intent = Intent(Intent.ACTION_SEND)
         intent.putExtra(Intent.EXTRA_TEXT, share.content)
