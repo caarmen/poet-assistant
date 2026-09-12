@@ -42,7 +42,7 @@ class CreateDictionaryShareUseCase @Inject constructor(
      * @param entry The dictionary entry to format and share.
      * @return Share object with title and formatted content ready for sharing.
      */
-    fun invoke(entry: DictionaryEntry): Share = Share(
+    operator fun invoke(entry: DictionaryEntry): Share = Share(
         title = context.getString(R.string.share),
         content = buildString {
             append(context.getString(R.string.share_dictionary_title, entry.word))

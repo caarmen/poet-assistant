@@ -17,27 +17,16 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.common.usecases
+package ca.rmen.android.poetassistant.main.dictionaries.dictionary
 
-import ca.rmen.android.poetassistant.Tts
-import javax.inject.Inject
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 
-/**
- * Use case for triggering text-to-speech.
- * Wraps the existing Tts class to provide a reusable use case across all tabs.
- *
- * @param tts The text-to-speech service.
- */
-class SpeakTextUseCase @Inject constructor(
-    private val tts: Tts,
-) {
-
-    /**
-     * Speaks the given text using text-to-speech.
-     *
-     * @param text The text to speak.
-     */
-    operator fun invoke(text: String) {
-        tts.speak(text)
-    }
+sealed class DictionaryScreenState {
+    object Idle : DictionaryScreenState()
+    data class Success(
+        val entries: List<DictionaryEntry>,
+        val displayedWord: String,
+        val isFavorite: Boolean
+    ) : DictionaryScreenState()
+    data class NotFound(val query: String) : DictionaryScreenState()
 }
