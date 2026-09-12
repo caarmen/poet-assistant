@@ -19,13 +19,11 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.dictionary
 
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 
 sealed class DictionaryScreenState {
     object Idle : DictionaryScreenState()
     data class Success(
-        val entries: List<DictionaryEntry>,
-        val displayedWord: String,
+        val entry: DictionaryEntry,
         val isFavorite: Boolean
     ) : DictionaryScreenState()
     data class NotFound(val query: String) : DictionaryScreenState()

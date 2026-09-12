@@ -28,12 +28,15 @@ import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.usecases.CreateDictionaryShareUseCase
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.usecases.LookupDictionaryEntryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.WordNotFoundException
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 /**
@@ -53,13 +56,33 @@ class DictionaryScreenViewModel @Inject constructor(
     private val favoritesRepository: FavoritesRepository,
 ) : ViewModel() {
 
-    val state: StateFlow<DictionaryScreenState>
-        field = MutableStateFlow<DictionaryScreenState>(DictionaryScreenState.Idle)
+    private val query = MutableStateFlow("")
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val state: StateFlow<DictionaryScreenState> = query.flatMapLatest { query ->
+        if (query.isBlank()) {
+            flowOf(DictionaryScreenState.Idle)
+        } else {
+            try {
+                val entry = lookupDictionaryEntryUseCase(query)
+                favoritesRepository.getIsFavoriteFlow(entry.word).map { isFav ->
+                    DictionaryScreenState.Success(
+                        entry = entry,
+                        isFavorite = isFav,
+                    )
+                }
+            } catch (_: WordNotFoundException) {
+                flowOf(DictionaryScreenState.NotFound(query))
+            }
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = DictionaryScreenState.Idle
+    )
 
     val share: StateFlow<Share?>
         field = MutableStateFlow<Share?>(null)
-
-    private var currentQueryJob: Job? = null
 
     /**
      * Searches for a word in the dictionary.
@@ -67,38 +90,21 @@ class DictionaryScreenViewModel @Inject constructor(
      * @param query The word to search for.
      */
     fun onWordSearched(query: String) {
-        currentQueryJob?.cancel()
-        currentQueryJob = viewModelScope.launch {
-            try {
-                val entry = lookupDictionaryEntryUseCase(query)
-                val displayedWord = entry.word
-                val isFavorite = favoritesRepository.getIsFavoriteFlow(displayedWord).first()
-                state.value = DictionaryScreenState.Success(
-                    entries = listOf(entry),
-                    displayedWord = displayedWord,
-                    isFavorite = isFavorite
-                )
-                favoritesRepository.getIsFavoriteFlow(displayedWord).collect { isFavorite ->
-                    val currentState = state.value
-                    if (currentState is DictionaryScreenState.Success &&
-                        currentState.displayedWord == displayedWord) {
-                        state.value = currentState.copy(isFavorite = isFavorite)
-                    }
-                }
-            } catch (_: WordNotFoundException) {
-                state.value = DictionaryScreenState.NotFound(query)
-            }
-        }
+        this.query.value = query
     }
 
     /**
-     * Toggles the favorite status of a word.
+     * Sets the favorite status of a word.
      *
-     * @param word The word to toggle.
+     * @param word The word to set favorite status for.
+     * @param isFavorite The new favorite status of the word.
      */
-    fun onToggleFavorite(word: String) {
+    fun onSetFavorite(word: String, isFavorite: Boolean) {
         viewModelScope.launch {
-            favoritesRepository.saveFavorite(word, !favoritesRepository.getIsFavoriteFlow(word).first())
+            favoritesRepository.saveFavorite(
+                word,
+                isFavorite,
+            )
         }
     }
 
@@ -117,11 +123,20 @@ class DictionaryScreenViewModel @Inject constructor(
     fun onShare() {
         viewModelScope.launch {
             val currentState = state.value
-            if (currentState is DictionaryScreenState.Success && currentState.entries.isNotEmpty()) {
-                val shareData = createDictionaryShareUseCase(currentState.entries.first())
+            if (currentState is DictionaryScreenState.Success) {
+                val shareData = createDictionaryShareUseCase(currentState.entry)
                 share.value = shareData
             }
         }
+    }
+
+    /**
+     * The share content was shared.
+     *
+     * Reset the share to null.
+     */
+    fun onShareSent() {
+        share.value = null
     }
 
     /**
