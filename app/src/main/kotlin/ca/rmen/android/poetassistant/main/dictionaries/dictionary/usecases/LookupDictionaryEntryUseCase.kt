@@ -44,7 +44,7 @@ class LookupDictionaryEntryUseCase @Inject constructor(
      * @return The DictionaryEntry for the word (exact match or fuzzy match).
      * @throws WordNotFoundException if the word is not found and no fuzzy match exists.
      */
-    suspend fun invoke(word: String): DictionaryEntry {
+    suspend operator fun invoke(word: String): DictionaryEntry {
         try {
             return repository.lookup(word)
         } catch (e: WordNotFoundException) {
