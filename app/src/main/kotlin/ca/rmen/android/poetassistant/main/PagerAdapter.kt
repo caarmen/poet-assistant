@@ -42,7 +42,7 @@ import java.util.Locale
  * one of the sections/tabs/pages.
  */
 class PagerAdapter// Text shared from another app:// Deep link to query in a specific tab
-(context: Context, fm: FragmentManager, intent: Intent) : FragmentPagerAdapter(fm) {
+(context: Context, private val fm: FragmentManager, intent: Intent) : FragmentPagerAdapter(fm) {
     companion object {
         private val TAG = Constants.TAG + PagerAdapter::class.java.simpleName
         private const val EXTRA_EXTRA_TAB = "extra_tab"
@@ -132,9 +132,12 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
         Log.v(TAG, "getFragment: tab=$tab")
         val position = getPositionForTab(tab)
         if (position < 0) return null
-        // Not intuitive: instantiateItem will actually return an existing Fragment, whereas getItem() will always instantiate a new Fragment.
-        // We want to retrieve the existing fragment.
-        return instantiateItem(viewGroup, position) as Fragment
+        // Use FragmentManager to find existing fragment by its tag.
+        // Tag format matches FragmentPagerAdapter's makeFragmentName().
+        // We must use the same container ID and item ID.
+        val itemId = getItemId(position)
+        val tag = "android:switcher:" + viewGroup.id + ":" + itemId
+        return fm.findFragmentByTag(tag)
     }
 
     override fun getItemId(position: Int): Long {
