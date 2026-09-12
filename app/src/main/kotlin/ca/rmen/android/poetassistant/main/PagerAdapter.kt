@@ -89,6 +89,9 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
         if (obj is ReaderFragment) {
             return getPositionForTab(Tab.READER)
         }
+        if (obj is FavoritesFragment) {
+            return getPositionForTab(Tab.FAVORITES)
+        }
         return androidx.viewpager.widget.PagerAdapter.POSITION_NONE
     }
 
