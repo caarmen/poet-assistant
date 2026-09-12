@@ -35,6 +35,7 @@ allowlist = [
     "echo",
     "file",
     "find",
+    "find . -name \"*.kt\" -exec grep -l \"provideGetProcessTextMenuItemsUseCase\\|provideOpenExternalAppUseCase\\|GetProcessTextMenuItemsUseCase\\|OpenExternalAppUseCase\" {} \\;",
     "fmt",
     "fold",
     "git add",
