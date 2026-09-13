@@ -45,7 +45,6 @@ import ca.rmen.android.poetassistant.databinding.FragmentResultListBinding
 import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.Tab
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.wotd.WotdListItem
@@ -63,8 +62,6 @@ class RhymerListFragment: RTListFragment()
 class ThesaurusListFragment: RTListFragment()
 @AndroidEntryPoint
 class WotdListFragment: ResultListFragment<WotdListItem>()
-@AndroidEntryPoint
-class DictionaryListFragment: ResultListFragment<DictionaryEntry.DictionaryEntryDetails>()
 
 open class ResultListFragment<out T: Any> : Fragment() {
     companion object {

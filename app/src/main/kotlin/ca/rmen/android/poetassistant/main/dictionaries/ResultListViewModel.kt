@@ -33,7 +33,6 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.main.favorites.data.Favorite
 import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import ca.rmen.android.poetassistant.main.Tab
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.wotd.WotdListItem
@@ -55,8 +54,6 @@ class RhymerListViewModel @Inject constructor(application: Application, favorite
 class ThesaurusListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.THESAURUS, favoritesRepository, settingsPrefs)
 @HiltViewModel
 class WotdListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): ResultListViewModel<WotdListItem>(application, Tab.WOTD, favoritesRepository, settingsPrefs)
-@HiltViewModel
-class DictionaryListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): ResultListViewModel<DictionaryEntry.DictionaryEntryDetails>(application, Tab.DICTIONARY, favoritesRepository, settingsPrefs)
 
 open class ResultListViewModel<T: Any> (
     application: Application,
