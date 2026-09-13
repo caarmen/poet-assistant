@@ -22,7 +22,7 @@ package ca.rmen.android.poetassistant.about
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.action.ViewActions
@@ -61,6 +61,7 @@ class AboutScreenTest {
 
     @Test
     fun openAboutScreenTest() {
+        composeTestRule.waitForIdle()
         TestUiUtils.openMenuItem(R.string.action_about)
         checkLicense(R.id.tv_poet_assistant_license, R.string.about_license_app, "GNU GENERAL")
         checkLicense(R.id.tv_rhymer_license, R.string.about_license_rhyming_dictionary, "Carnegie Mellon University")
