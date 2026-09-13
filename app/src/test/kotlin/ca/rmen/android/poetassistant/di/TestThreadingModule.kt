@@ -19,6 +19,8 @@
 
 package ca.rmen.android.poetassistant.di
 
+import androidx.arch.core.executor.ArchTaskExecutor
+import androidx.arch.core.executor.TaskExecutor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
@@ -35,6 +37,23 @@ import javax.inject.Singleton
 @Module
 class TestThreadingModule {
 
+    val instantTaskExecutor = object : TaskExecutor() {
+        override fun executeOnDiskIO(runnable: Runnable) {
+            runnable.run()
+        }
+
+        override fun postToMainThread(runnable: Runnable) {
+            runnable.run()
+        }
+
+        override fun isMainThread(): Boolean {
+            return true
+        }
+    }
+
+    init {
+        ArchTaskExecutor.getInstance().setDelegate(instantTaskExecutor)
+    }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Provides

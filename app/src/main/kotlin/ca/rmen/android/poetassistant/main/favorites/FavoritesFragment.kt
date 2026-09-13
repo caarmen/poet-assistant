@@ -2,8 +2,6 @@ package ca.rmen.android.poetassistant.main.favorites
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import ca.rmen.android.poetassistant.R
@@ -42,6 +38,11 @@ class FavoritesFragment : Fragment() {
     private val viewModel: FavoritesScreenViewModel by viewModels()
     private val isVisibleFlow = MutableStateFlow(false)
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onResume() {
         super.onResume()
         isVisibleFlow.value = true
@@ -51,6 +52,7 @@ class FavoritesFragment : Fragment() {
         super.onPause()
         isVisibleFlow.value = false
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -84,21 +86,12 @@ class FavoritesFragment : Fragment() {
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                if (menuItem.itemId == R.id.action_share) {
-                    viewModel.onShare()
-                    return true
-                }
-                return false
-            }
-        }, viewLifecycleOwner)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_share) {
+            viewModel.onShare()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 }
