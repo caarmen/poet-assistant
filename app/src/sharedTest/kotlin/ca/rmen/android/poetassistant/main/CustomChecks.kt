@@ -25,9 +25,13 @@ import android.os.Build
 import android.os.SystemClock
 import android.view.View
 import android.view.WindowManager
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasAnyDescendant
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
@@ -55,6 +59,7 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_ITEM_ROW_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_SCREEN_CONTENT_LIST_TAG
 import org.junit.Assert.assertEquals
@@ -191,16 +196,10 @@ object CustomChecks {
         assertEquals(clipboardContent, item.text)
     }
 
-    fun checkFirstDefinition(expectedFirstDefinition: String) {
-        val firstDefinition = onView(
-                allOf(withId(R.id.definition), withText(expectedFirstDefinition),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.dictionary_recycler_view),
-                                        0),
-                                1),
-                        isDisplayed()))
-        firstDefinition.check(matches(withText(expectedFirstDefinition)))
+    fun checkFirstDefinition(composeTestRule: ComposeTestRule, expectedFirstDefinition: String) {
+        composeTestRule
+            .onNode(hasTestTag("${DICTIONARY_ITEM_ROW_TAG}0") and hasAnyDescendant(hasText(expectedFirstDefinition)))
+            .assertExists()
     }
 
     fun checkFirstSynonym(expectedFirstSynonym: String) {
@@ -219,5 +218,10 @@ object CustomChecks {
         // Scroll to the item in case it's not visible
         onView(allOf(withId(R.id.thesaurus_recycler_view), isDisplayed()))
                 .perform(scrollTo<ResultListAdapter.ResultListEntryViewHolder>(withChild(withText(expectedSynonym))))
+    }
+
+    fun hasNonEmptyText(): SemanticsMatcher = SemanticsMatcher("has non-empty text") { node ->
+        node.config.getOrNull(SemanticsProperties.Text)
+            ?.any { it.text.isNotBlank() } == true
     }
 }
