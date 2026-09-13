@@ -32,10 +32,6 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding
 import ca.rmen.android.poetassistant.main.Tab
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListAdapter
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryListExporter
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryLiveData
-import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter
@@ -57,8 +53,7 @@ object ResultListFactory {
             Tab.PATTERN -> PatternListFragment()
             Tab.RHYMER -> RhymerListFragment()
             Tab.THESAURUS -> ThesaurusListFragment()
-            Tab.WOTD -> WotdListFragment()
-            else -> DictionaryListFragment()
+            else -> WotdListFragment()
         }
         val bundle = Bundle(2)
         bundle.putSerializable(ResultListFragment.EXTRA_TAB, tab)
@@ -72,8 +67,7 @@ object ResultListFactory {
     fun createAdapter(activity: Activity, tab: Tab): ResultListAdapter<out Any> {
         return when (tab) {
             Tab.PATTERN, Tab.RHYMER, Tab.THESAURUS -> RTListAdapter(tab, activity)
-            Tab.WOTD -> WotdAdapter(activity)
-            else -> DictionaryListAdapter(activity as OnWordClickListener)
+            else -> /* WOTD */ WotdAdapter(activity)
         }
     }
 
@@ -85,8 +79,7 @@ object ResultListFactory {
             Tab.PATTERN -> PatternListViewModel::class.java
             Tab.RHYMER -> RhymerListViewModel::class.java
             Tab.THESAURUS -> ThesaurusListViewModel::class.java
-            Tab.WOTD -> WotdListViewModel::class.java
-            else -> DictionaryListViewModel::class.java
+            else /*Tab.WOTD */-> WotdListViewModel::class.java
         }
 
         // Hilt integrates with Fragment's default ViewModelProvider when using @HiltViewModel
@@ -104,8 +97,7 @@ object ResultListFactory {
             Tab.PATTERN -> PatternLiveData(context, scope, query!!)
             Tab.WOTD -> WotdLiveData(context, scope)
             Tab.RHYMER -> RhymerLiveData(context, scope, query!!, filter)
-            Tab.THESAURUS -> ThesaurusLiveData(context, scope, query!!, filter)
-            else -> DictionaryLiveData(context, scope, query!!)
+            else /* THESAURUS */ -> ThesaurusLiveData(context, scope, query!!, filter)
         }
     }
 
@@ -114,8 +106,7 @@ object ResultListFactory {
             Tab.PATTERN -> PatternListExporter(context)
             Tab.WOTD -> WotdListExporter(context)
             Tab.RHYMER -> RhymerListExporter(context)
-            Tab.THESAURUS -> ThesaurusListExporter(context)
-            else -> DictionaryListExporter(context)
+            else /*Tab.THESAURUS*/ -> ThesaurusListExporter(context)
         }
     }
 
@@ -138,8 +129,7 @@ object ResultListFactory {
         return when (tab) {
             Tab.PATTERN -> context.getString(R.string.empty_pattern_list_with_query, query)
             Tab.RHYMER -> context.getString(R.string.empty_rhymer_list_with_query, query)
-            Tab.THESAURUS -> context.getString(R.string.empty_thesaurus_list_with_query, query)
-            else -> context.getString(R.string.empty_dictionary_list_with_query, query)
+            else -> /*Tab.THESAURUS */ context.getString(R.string.empty_thesaurus_list_with_query, query)
         }
     }
 
@@ -166,10 +156,6 @@ object ResultListFactory {
             }
             Tab.RHYMER, Tab.THESAURUS -> {
                 binding.btnFilter.visibility = View.VISIBLE
-            }
-            Tab.DICTIONARY -> {
-                val playButtonVisibility = if (ttsStatus == TtsState.TtsStatus.UNINITIALIZED) View.GONE else View.VISIBLE
-                binding.btnPlay.visibility = playButtonVisibility
             }
             else -> Unit
         }
@@ -207,7 +193,6 @@ object ResultListFactory {
         Tab.WOTD -> R.id.wotd_recycler_view
         Tab.RHYMER -> R.id.rhymer_recycler_view
         Tab.THESAURUS -> R.id.thesaurus_recycler_view
-        Tab.DICTIONARY -> R.id.dictionary_recycler_view
         else -> R.id.recycler_view
     }
 }
