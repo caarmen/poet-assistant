@@ -42,6 +42,8 @@ class FavoritesFragment : Fragment() {
     private val viewModel: FavoritesScreenViewModel by viewModels()
     private val isVisibleFlow = MutableStateFlow(false)
 
+    private var isFavoritesMenuVisible = false
+
     override fun onResume() {
         super.onResume()
         isVisibleFlow.value = true
@@ -50,6 +52,11 @@ class FavoritesFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         isVisibleFlow.value = false
+    }
+
+    override fun setMenuVisibility(menuVisible: Boolean) {
+        super.setMenuVisibility(menuVisible)
+        isFavoritesMenuVisible = menuVisible
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -92,7 +99,7 @@ class FavoritesFragment : Fragment() {
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                if (menuItem.itemId == R.id.action_share) {
+                if (menuItem.itemId == R.id.action_share && isFavoritesMenuVisible) {
                     viewModel.onShare()
                     return true
                 }
