@@ -173,13 +173,11 @@ android {
             all {
                 it.jvmArgs("-noverify", "-ea",
                     // Add the following to use the robolectric simulator:
-                    /*
                     "--add-exports=java.desktop/sun.awt=ALL-UNNAMED",
                     "--add-exports=java.base/sun.reflect.misc=ALL-UNNAMED",
                     "--add-exports=java.base/sun.security.action=ALL-UNNAMED",
                     "--add-exports=java.desktop/sun.swing=ALL-UNNAMED",
                     "--add-exports=java.desktop/sun.lwawt.macosx=ALL-UNNAMED",
-                     */
                 )
             }
             isIncludeAndroidResources = true

@@ -55,6 +55,7 @@ import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalToIgnoringCase
+import org.robolectric.simulator.Simulator
 
 /**
  * Generic utility functions for Ui operations like opening a menu or swiping the screen.

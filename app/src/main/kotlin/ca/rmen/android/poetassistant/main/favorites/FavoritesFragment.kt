@@ -42,8 +42,6 @@ class FavoritesFragment : Fragment() {
     private val viewModel: FavoritesScreenViewModel by viewModels()
     private val isVisibleFlow = MutableStateFlow(false)
 
-    private var isFavoritesMenuVisible = false
-
     override fun onResume() {
         super.onResume()
         isVisibleFlow.value = true
@@ -56,7 +54,14 @@ class FavoritesFragment : Fragment() {
 
     override fun setMenuVisibility(menuVisible: Boolean) {
         super.setMenuVisibility(menuVisible)
-        isFavoritesMenuVisible = menuVisible
+        activity?.let {
+            val menuHost: MenuHost = it
+            if(menuVisible) {
+                menuHost.addMenuProvider(menuProvider, viewLifecycleOwner)
+            } else {
+                menuHost.removeMenuProvider(menuProvider)
+            }
+        }
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -91,21 +96,18 @@ class FavoritesFragment : Fragment() {
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            }
+    private val menuProvider = object: MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_share, menu)
+        }
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                if (menuItem.itemId == R.id.action_share && isFavoritesMenuVisible) {
-                    viewModel.onShare()
-                    return true
-                }
-                return false
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            if (menuItem.itemId == R.id.action_share) {
+                viewModel.onShare()
+                return true
             }
-        }, viewLifecycleOwner)
+            return false
+        }
     }
 
 }

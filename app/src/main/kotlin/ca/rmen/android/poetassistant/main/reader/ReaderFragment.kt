@@ -215,13 +215,12 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         super.onCreateOptionsMenu(menu, inflater)
         Log.d(TAG, "onCreateOptionsMenu: menu=$menu, inflater=$inflater")
         inflater.inflate(R.menu.menu_tts, menu)
-        menu.findItem(R.id.action_share).isVisible = false
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         prepareMenuItemsRequiringEnteredText(menu, R.id.action_new, R.id.action_save_as,
-                R.id.action_share, R.id.action_share_poem_text, R.id.action_share_poem_audio, R.id.action_print)
+                R.id.action_share_poem_text, R.id.action_share_poem_audio, R.id.action_print)
         val menuItem = menu.findItem(R.id.action_save)
         if (menuItem == null) {
             Log.d(TAG, "Unexpected: save menu item missing from reader fragment. Monkey?")
@@ -244,7 +243,7 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
                     getString(R.string.action_clear),
                     childFragmentManager,
                     DIALOG_TAG)
-        } else if (item.itemId == R.id.action_share_poem_text || item.itemId == R.id.action_share) {
+        } else if (item.itemId == R.id.action_share_poem_text) {
             mViewModel.sharePoem()
         } else if (item.itemId == R.id.action_share_poem_audio) {
             mViewModel.speakToFile()

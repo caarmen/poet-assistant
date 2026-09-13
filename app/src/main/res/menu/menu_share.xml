@@ -22,23 +22,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".main.MainActivity">
     <item
-        android:id="@+id/action_random_word"
-        android:title="@string/action_random_word"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_wotd_history"
-        android:title="@string/action_wotd_history"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_about"
-        android:title="@string/action_about"
+        android:id="@+id/action_share"
+        android:title="@string/share"
         android:orderInCategory="100"
         app:showAsAction="never" />
 </menu>

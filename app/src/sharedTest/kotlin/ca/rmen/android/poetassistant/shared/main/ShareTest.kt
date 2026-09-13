@@ -21,6 +21,8 @@ package ca.rmen.android.poetassistant.shared.main
 
 import android.content.Context
 import android.content.Intent
+import android.os.SystemClock
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.intent.Intents.intended
@@ -35,6 +37,7 @@ import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.TestAppUtils.search
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
+import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantIntentsTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -47,6 +50,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
+import org.robolectric.simulator.Simulator
 
 @LargeTest
 @HiltAndroidTest
@@ -58,6 +63,9 @@ class ShareTest {
     val hiltTestRule: HiltAndroidRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @get:Rule(order = 2)
     val activityTestRule: PoetAssistantIntentsTestRule<MainActivity> =
         PoetAssistantIntentsTestRule(MainActivity::class.java)
 
@@ -69,10 +77,13 @@ class ShareTest {
     }
 
     @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
     fun shareDictionaryTest() {
         search("a")
         swipeViewPagerLeft(2)
+        composeTestRule.waitForIdle()
         openMenuItem(R.string.share)
+        composeTestRule.waitForIdle()
         checkShareIntentContains("the blood group whose red cells carry the A antigen")
     }
 

@@ -51,8 +51,6 @@ class DictionaryFragment : Fragment() {
     private val viewModel: DictionaryScreenViewModel by viewModels()
     private val isVisibleFlow = MutableStateFlow(false)
 
-    private var isDictionaryMenuVisible = false
-
     override fun onResume() {
         super.onResume()
         isVisibleFlow.value = true
@@ -65,8 +63,17 @@ class DictionaryFragment : Fragment() {
 
     override fun setMenuVisibility(menuVisible: Boolean) {
         super.setMenuVisibility(menuVisible)
-        isDictionaryMenuVisible = menuVisible
+
+        activity?.let {
+            val menuHost: MenuHost = it
+            if(menuVisible) {
+                menuHost.addMenuProvider(menuProvider, viewLifecycleOwner)
+            } else {
+                menuHost.removeMenuProvider(menuProvider)
+            }
+        }
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -101,24 +108,22 @@ class DictionaryFragment : Fragment() {
                 }
             }
         }
+        (requireActivity() as MenuHost).addMenuProvider(menuProvider, viewLifecycleOwner)
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            }
+    private val menuProvider = object: MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_share, menu)
+        }
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                if (menuItem.itemId == R.id.action_share && isDictionaryMenuVisible) {
-                    viewModel.onShare()
-                    return true
-                }
-                return false
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            if (menuItem.itemId == R.id.action_share) {
+                viewModel.onShare()
+                return true
             }
-        }, viewLifecycleOwner)
+            return false
+        }
     }
 
     fun query(word: String) {

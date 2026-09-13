@@ -26,8 +26,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.ViewGroup
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.core.view.updateLayoutParams
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -83,7 +86,18 @@ open class ResultListFragment<out T: Any> : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.v(TAG, "onCreate")
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+    }
+
+    override fun setMenuVisibility(menuVisible: Boolean) {
+        super.setMenuVisibility(menuVisible)
+        activity?.let {
+            val menuHost: MenuHost = it
+            if(menuVisible) {
+                menuHost.addMenuProvider(menuProvider, viewLifecycleOwner)
+            } else {
+                menuHost.removeMenuProvider(menuProvider)
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -178,22 +192,34 @@ open class ResultListFragment<out T: Any> : Fragment() {
         activity?.invalidateOptionsMenu()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_share) {
-            mHeaderViewModel.query.value?.let {
-                @Suppress("UNCHECKED_CAST")
-                (mBinding.recyclerView.adapter as? ResultListAdapter<T>)?.let { adapter ->
-                    mViewModel.share(it, mHeaderViewModel.filter.value, adapter.getAll())
-                }
-            }
+    private val menuProvider = object : MenuProvider {
+        override fun onCreateMenu(
+            menu: Menu,
+            menuInflater: MenuInflater
+        ) {
+            menuInflater.inflate(R.menu.menu_share, menu)
         }
-        return super.onOptionsItemSelected(item)
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            if (menuItem.itemId == R.id.action_share) {
+                mHeaderViewModel.query.value?.let {
+                    @Suppress("UNCHECKED_CAST")
+                    (mBinding.recyclerView.adapter as? ResultListAdapter<T>)?.let { adapter ->
+                        mViewModel.share(it, mHeaderViewModel.filter.value, adapter.getAll())
+                    }
+                }
+                return true
+            }
+            return false
+        }
+
+        override fun onPrepareMenu(menu: Menu) {
+            super.onPrepareMenu(menu)
+            //menu.findItem(R.id.action_share).isEnabled = mViewModel.isDataAvailable.value
+        }
+
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.action_share).isEnabled = mViewModel.isDataAvailable.value
-    }
 
     private fun queryFromArguments() {
         Log.v(TAG, "$mTab: queryFromArguments: $arguments")
