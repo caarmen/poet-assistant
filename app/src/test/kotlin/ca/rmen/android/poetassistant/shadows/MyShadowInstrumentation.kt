@@ -12,7 +12,7 @@ import org.robolectric.annotation.Implements
 import org.robolectric.shadow.api.Shadow
 import org.robolectric.shadows.ShadowInstrumentation
 
-@Implements(value = Instrumentation::class, looseSignatures = true)
+@Implements(value = Instrumentation::class)
 class MyShadowInstrumentation : ShadowInstrumentation() {
     @Implementation
     override fun execStartActivity(

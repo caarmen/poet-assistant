@@ -190,12 +190,11 @@ android {
 }
 
 jacoco {
-    toolVersion = "0.8.12"
+    toolVersion = "0.8.15"
 }
 kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.fromTarget("11")
-        freeCompilerArgs.add("-Xexplicit-backing-fields")
     }
 }
 
@@ -314,23 +313,11 @@ dependencies {
 
 // Only show real releases with the ben-manes plugin.
 tasks.named<DependencyUpdatesTask>("dependencyUpdates").configure {
-    resolutionStrategy {
-        componentSelection {
-            all { selection: ComponentSelection ->
-                var rejected = listOf("alpha", "alpha-preview", "beta", "rc", "cr", "m", "eap", "dev").any { qualifier ->
-                    selection.candidate.version.matches(Regex("(?i).*[.-]${qualifier}[.\\d-]*"))
-                }
-                if ("com.android.databinding" == selection.candidate.group) {
-                    rejected = true
-                }
-                if (rejected) {
-                    selection.reject("Release candidate")
-                }
-            }
-        }
-    }
+    checkConstraints = true
+    rejectPreReleases = true
 }
 tasks.withType<Test>().configureEach {
+    jvmArgs("--add-opens=java.base/jdk.internal.access=ALL-UNNAMED")
     // Copied from the now in android app config:
     // https://github.com/android/nowinandroid/blob/main/build-logic/convention/src/main/kotlin/com/google/samples/apps/nowinandroid/Jacoco.kt
     configure<JacocoTaskExtension> {
