@@ -23,6 +23,10 @@ import android.app.Activity
 import android.app.SearchManager
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -40,6 +44,7 @@ import ca.rmen.android.poetassistant.main.TestAppUtils
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -60,6 +65,9 @@ class IntentTest {
     val hiltTestRule: HiltAndroidRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @get:Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> =
         PoetAssistantActivityTestRule(MainActivity::class.java, false)
 
@@ -72,7 +80,7 @@ class IntentTest {
         swipeViewPagerLeft(1)
         checkFirstSynonym("quick bread")
         swipeViewPagerLeft(1)
-        checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan")
+        checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
     }
 
     @Test
@@ -84,7 +92,7 @@ class IntentTest {
         swipeViewPagerLeft(1)
         checkFirstSynonym("quick bread")
         swipeViewPagerLeft(1)
-        checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan")
+        checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
     }
 
     @Test
@@ -92,7 +100,7 @@ class IntentTest {
         val activity: MainActivity = activityTestRule.launchActivity(Intent())
         launchNewIntent(Intent.ACTION_VIEW, "poetassistant://query/muffin")
         checkTitleStripOrTab(activity, R.string.tab_dictionary)
-        checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan")
+        checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
         swipeViewPagerRight(1)
         checkFirstSynonym("quick bread")
         swipeViewPagerRight(1)
@@ -110,7 +118,7 @@ class IntentTest {
     fun onNewIntentViewThesaurusTest() {
         activityTestRule.launchActivity(Intent())
         launchNewIntent(Intent.ACTION_VIEW, "poetassistant://thesaurus/muffin")
-        checkThesaurusOnly("quick bread")
+        checkThesaurusOnly(composeTestRule, "quick bread")
     }
 
     @Test
@@ -147,7 +155,7 @@ class IntentTest {
             .setData(Uri.parse("poetassistant://query/muffin"))
         val activity: MainActivity = activityTestRule.launchActivity(intent)
         checkTitleStripOrTab(activity, R.string.tab_dictionary)
-        checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan")
+        checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
         swipeViewPagerRight(1)
         checkFirstSynonym("quick bread")
         swipeViewPagerRight(1)
@@ -168,7 +176,7 @@ class IntentTest {
         val intent = Intent(Intent.ACTION_VIEW)
             .setData(Uri.parse("poetassistant://thesaurus/muffin"))
         activityTestRule.launchActivity(intent)
-        checkThesaurusOnly("quick bread")
+        checkThesaurusOnly(composeTestRule, "quick bread")
     }
 
     @Test
@@ -200,21 +208,23 @@ class IntentTest {
         checkTitleStripOrTab(activity, R.string.tab_rhymer)
         checkRhymes(activity, expectedRhyme1, expectedRhyme2)
         swipeViewPagerLeft(1)
+        // Thesaurus
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
             .check(matches(isDisplayed()))
         swipeViewPagerLeft(1)
-        onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
-            .check(matches(isDisplayed()))
+        // Dictionary
+        composeTestRule.onNodeWithTag(DICTIONARY_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
     }
 
-    private fun checkThesaurusOnly(expectedFirstSynonym: String) {
+    private fun checkThesaurusOnly(composeTestRule: ComposeTestRule, expectedFirstSynonym: String) {
         val activity: Activity = activityTestRule.activity
         checkTitleStripOrTab(activity, R.string.tab_thesaurus)
         checkFirstSynonym(expectedFirstSynonym)
         swipeViewPagerLeft(1)
-        onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
-            .check(matches(isDisplayed()))
+        // Dictionary
+        composeTestRule.onNodeWithTag(DICTIONARY_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
         swipeViewPagerRight(2)
+        // Rhymer
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
             .check(matches(isDisplayed()))
     }
@@ -222,7 +232,7 @@ class IntentTest {
     private fun checkDictionaryOnly(expectedFirstDefinition: String) {
         val activity: Activity = activityTestRule.activity
         checkTitleStripOrTab(activity, R.string.tab_dictionary)
-        checkFirstDefinition(expectedFirstDefinition)
+        checkFirstDefinition(composeTestRule, expectedFirstDefinition)
         swipeViewPagerRight(1)
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
             .check(matches(isDisplayed()))

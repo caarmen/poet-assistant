@@ -24,6 +24,10 @@ import android.annotation.TargetApi
 import android.os.Build
 import android.os.SystemClock
 import androidx.appcompat.widget.ActionBarContextView
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
@@ -75,6 +79,7 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_HEADER_TEXT_TAG
 
 @LargeTest
 @HiltAndroidTest
@@ -85,8 +90,11 @@ class PoemTest {
     @Rule(order = 0)
     val hiltTestRule = HiltAndroidRule(this)
 
+    @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
     @JvmField
-    @Rule(order = 1)
+    @Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(MainActivity::class.java, true)
 
     @Test
@@ -143,7 +151,7 @@ class PoemTest {
         swipeViewPagerLeft(2)
         onView(withId(R.id.tv_text)).perform(longTap(1, 0))
         clickPopupView("dictionary")
-        onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)))
+        composeTestRule.onNode(hasTestTag(DICTIONARY_HEADER_TEXT_TAG) and hasText(firstWord)).assertIsDisplayed()
     }
 
     @Test

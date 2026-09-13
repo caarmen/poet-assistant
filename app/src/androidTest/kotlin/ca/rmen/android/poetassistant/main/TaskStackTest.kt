@@ -24,6 +24,7 @@ import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
 import android.os.Build
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -70,8 +71,11 @@ class TaskStackTest {
     @Rule(order = 1)
     val retry = RetryTestRule()
 
+    @get:Rule(order = 2)
+    val composeTestRule = createEmptyComposeRule()
+
     @JvmField
-    @Rule(order = 2)
+    @Rule(order = 3)
     val activityTestRule: PoetAssistantActivityTestRule<SettingsActivity> = PoetAssistantActivityTestRule(SettingsActivity::class.java, false)
 
     @Test
@@ -109,7 +113,7 @@ class TaskStackTest {
         // Check the results
         val activity: Activity = activityTestRule.activity
         checkTitleStripOrTab(activity, R.string.tab_dictionary)
-        checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan")
+        checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
         IdlingRegistry.getInstance().unregister(waitForMainActivity)
     }
 }
