@@ -23,6 +23,11 @@ import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
 import android.os.Build
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -34,6 +39,7 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.CustomChecks.checkFirstDefinition
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_HEADER_TEXT_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.search.DictionaryRouterActivity
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -55,6 +61,9 @@ class DictionaryRouterTest {
     val hiltTestRule: HiltAndroidRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @get:Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<DictionaryRouterActivity> =
         PoetAssistantActivityTestRule(DictionaryRouterActivity::class.java, false)
 
@@ -68,9 +77,8 @@ class DictionaryRouterTest {
         activityTestRule.launchActivity(intent)
         val activity: Activity = activityTestRule.activity
         checkTitleStripOrTab(activity, R.string.tab_dictionary)
-        onView(allOf(withId(R.id.tv_list_header), isDisplayed()))
-            .check(matches(withText("polyvalent")))
-        checkFirstDefinition("containing several antibodies each capable of counteracting a specific antigen")
+        composeTestRule.onNode(hasTestTag(DICTIONARY_HEADER_TEXT_TAG) and hasText("polyvalent")).assertIsDisplayed()
+        checkFirstDefinition(composeTestRule, "containing several antibodies each capable of counteracting a specific antigen")
         swipeViewPagerRight(1)
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
             .check(matches(isDisplayed()))

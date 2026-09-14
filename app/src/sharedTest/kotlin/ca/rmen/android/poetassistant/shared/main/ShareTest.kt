@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.shared.main
 
 import android.content.Context
 import android.content.Intent
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.intent.Intents.intended
@@ -58,6 +59,9 @@ class ShareTest {
     val hiltTestRule: HiltAndroidRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @get:Rule(order = 2)
     val activityTestRule: PoetAssistantIntentsTestRule<MainActivity> =
         PoetAssistantIntentsTestRule(MainActivity::class.java)
 
@@ -72,7 +76,9 @@ class ShareTest {
     fun shareDictionaryTest() {
         search("a")
         swipeViewPagerLeft(2)
+        composeTestRule.waitForIdle()
         openMenuItem(R.string.share)
+        composeTestRule.waitForIdle()
         checkShareIntentContains("the blood group whose red cells carry the A antigen")
     }
 
@@ -84,20 +90,20 @@ class ShareTest {
     }
 
     @Test
-    fun shareWotdTest() {
-        val context: Context = activityTestRule.activity
-        openMenuItem(R.string.action_wotd_history)
-        openMenuItem(R.string.share)
-        checkShareIntentContains(context.getString(R.string.share_wotd_title))
-    }
-
-    @Test
     fun sharePopupTest() {
         search("strawberry")
         val context: Context = activityTestRule.activity
         onView(allOf(withText("adversary"), isDisplayed())).perform(click())
         onView(allOf(withText(endsWith(context.getString(R.string.share))), isDisplayed())).perform(click())
         checkShareIntentEquals("adversary")
+    }
+
+    @Test
+    fun shareWotdTest() {
+        val context: Context = activityTestRule.activity
+        openMenuItem(R.string.action_wotd_history)
+        openMenuItem(R.string.share)
+        checkShareIntentContains(context.getString(R.string.share_wotd_title))
     }
 
     private fun checkShareIntentContains(expectedText: String) {

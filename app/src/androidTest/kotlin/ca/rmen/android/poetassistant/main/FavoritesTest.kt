@@ -81,7 +81,7 @@ class FavoritesTest {
         composeTestRule.onNodeWithTag("${FAVORITE_ITEM_STAR_TAG}ache").performClick()
         checkAllStarredWords(context, composeTestRule)
         swipeViewPagerRight(2)
-        starQueryWord()
+        starQueryWord(composeTestRule)
         swipeViewPagerLeft(2)
         checkAllStarredWords(context, composeTestRule, "cheesecake")
         clearStarredWords(composeTestRule)

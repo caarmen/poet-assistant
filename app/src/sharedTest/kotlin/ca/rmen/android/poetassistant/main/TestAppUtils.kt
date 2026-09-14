@@ -26,6 +26,10 @@ import android.os.SystemClock
 import android.text.TextUtils
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertIsToggleable
+import androidx.compose.ui.test.isOff
+import androidx.compose.ui.test.isOn
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -52,6 +56,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_FAVORITE_ICON_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.CONFIRM_DELETE_DIALOG_CONFIRM_BUTTON_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_HEADER_DELETE_ALL_TAG
 import com.google.android.material.button.MaterialButton
@@ -123,20 +128,20 @@ object TestAppUtils {
         TestUiUtils.checkTitleStripOrTab(context, R.string.tab_thesaurus)
     }
 
-    fun openDictionary(context: Context, entry: String, expectedFirstDefinition: String) {
+    fun openDictionary(composeTestRule: ComposeTestRule, context: Context, entry: String, expectedFirstDefinition: String) {
         onView(allOf(withId(R.id.btn_dictionary),
                 hasSibling(withText(entry)),
                 isDisplayed()))
                 .perform(click())
         TestUiUtils.checkTitleStripOrTab(context, R.string.tab_dictionary)
-        CustomChecks.checkFirstDefinition(expectedFirstDefinition)
+        CustomChecks.checkFirstDefinition(composeTestRule, expectedFirstDefinition)
     }
 
-    fun openDictionaryCleanLayout(context: Context, entry: String, expectedFirstDefinition: String) {
+    fun openDictionaryCleanLayout(composeTestRule: ComposeTestRule, context: Context, entry: String, expectedFirstDefinition: String) {
         onView(withText(entry)).perform(click())
         onView(withText(R.string.tab_dictionary)).perform(click())
         TestUiUtils.checkTitleStripOrTab(context, R.string.tab_dictionary)
-        CustomChecks.checkFirstDefinition(expectedFirstDefinition)
+        CustomChecks.checkFirstDefinition(composeTestRule, expectedFirstDefinition)
     }
 
     fun starQueryWord() {
@@ -145,6 +150,12 @@ object TestAppUtils {
         starIcon.check(matches(isNotChecked()))
         starIcon.perform(click())
         starIcon.check(matches(isChecked()))
+    }
+
+    fun starQueryWord(composeTestRule: ComposeTestRule) {
+        composeTestRule.onNodeWithTag(DICTIONARY_FAVORITE_ICON_TAG).assert(isOff())
+        composeTestRule.onNodeWithTag(DICTIONARY_FAVORITE_ICON_TAG).performClick()
+        composeTestRule.onNodeWithTag(DICTIONARY_FAVORITE_ICON_TAG).assert(isOn())
     }
 
     fun unStarQueryWord() {

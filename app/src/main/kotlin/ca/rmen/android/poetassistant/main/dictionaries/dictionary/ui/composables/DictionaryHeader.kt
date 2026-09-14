@@ -36,11 +36,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.R
+
+const val DICTIONARY_HEADER_TEXT_TAG = "Dictionary_Header_Text"
+const val DICTIONARY_FAVORITE_ICON_TAG = "DictionaryItem_Favorite"
 
 /**
  * Header composable for the Dictionary screen.
@@ -80,11 +84,13 @@ fun DictionaryHeader(
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.testTag(DICTIONARY_HEADER_TEXT_TAG)
                 )
             }
             IconToggleButton(
                 checked = isFavorite,
                 onCheckedChange = { onToggleFavorite(it) },
+                modifier = Modifier.testTag(DICTIONARY_FAVORITE_ICON_TAG)
             ) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.StarOutline,

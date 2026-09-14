@@ -23,6 +23,9 @@ import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
 import android.os.Build
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -33,6 +36,7 @@ import androidx.test.filters.LargeTest
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.search.RhymerRouterActivity
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -54,6 +58,9 @@ class RhymerRouterTest {
     val hiltTestRule: HiltAndroidRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @get:Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<RhymerRouterActivity> =
         PoetAssistantActivityTestRule(RhymerRouterActivity::class.java, false)
 
@@ -70,10 +77,11 @@ class RhymerRouterTest {
         onView(allOf(withId(R.id.empty), isDisplayed()))
             .check(matches(withText(activity.getString(R.string.empty_rhymer_list_with_query, "polyvalent"))))
         swipeViewPagerLeft(1)
+        // Thesaurus
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
             .check(matches(isDisplayed()))
         swipeViewPagerLeft(1)
-        onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
-            .check(matches(isDisplayed()))
+        // Dictionary
+        composeTestRule.onNodeWithTag(DICTIONARY_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
     }
 }

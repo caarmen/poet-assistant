@@ -21,6 +21,10 @@ package ca.rmen.android.poetassistant.shared.main
 
 import android.os.Build
 import android.view.View
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
@@ -36,12 +40,14 @@ import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.main.CustomChecks.hasNonEmptyText
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.scrollToPreference
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_HEADER_TEXT_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -65,6 +71,9 @@ class RandomWordTest {
     val hiltTestRule: HiltAndroidRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @get:Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> =
         PoetAssistantActivityTestRule(MainActivity::class.java, true)
 
@@ -72,7 +81,7 @@ class RandomWordTest {
     fun randomWordTest() {
         openMenuItem(R.string.action_random_word)
         checkTitleStripOrTab(activityTestRule.activity, R.string.tab_dictionary)
-        onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(not(isEmptyOrNullString()))))
+        composeTestRule.onNode(hasTestTag(DICTIONARY_HEADER_TEXT_TAG) and hasNonEmptyText()).assertIsDisplayed()
     }
 
     @Test

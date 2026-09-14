@@ -24,6 +24,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.SystemClock
 import androidx.annotation.StringRes
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -51,8 +52,11 @@ class SelectedTabTest {
     @Rule(order = 0)
     val hiltTestRule = HiltAndroidRule(this)
 
+    @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
     @JvmField
-    @Rule(order = 1)
+    @Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(MainActivity::class.java, false)
 
     @Test
@@ -72,7 +76,7 @@ class SelectedTabTest {
         val activity: Activity = activityTestRule.activity
         getInstrumentation().waitForIdleSync()
         checkTitleStripOrTab(activity, R.string.tab_dictionary)
-        checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan")
+        checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
     }
 
     @Test
@@ -92,7 +96,7 @@ class SelectedTabTest {
         val activity: Activity = activityTestRule.activity
         getInstrumentation().waitForIdleSync()
         checkTitleStripOrTab(activity, R.string.tab_dictionary)
-        checkFirstDefinition("a sweet quick bread baked in a cup-shaped pan")
+        checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
     }
 
 

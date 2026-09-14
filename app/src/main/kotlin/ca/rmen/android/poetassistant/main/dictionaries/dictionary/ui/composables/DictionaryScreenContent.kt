@@ -26,17 +26,22 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryScreenState
+
+const val DICTIONARY_SCREEN_CONTENT_EMPTY_TAG = "DictionaryScreen_Empty"
+
+const val DICTIONARY_ITEM_ROW_TAG = "DictionaryItem_Row_"
 
 /**
  * Content composable for the Dictionary screen.
@@ -60,7 +65,7 @@ fun DictionaryScreenContent(
     Column(modifier = modifier.fillMaxWidth()) {
         when (state) {
             DictionaryScreenState.Idle -> {
-                EmptyListWithoutQuery()
+                EmptyListWithoutQuery(modifier = Modifier.testTag(DICTIONARY_SCREEN_CONTENT_EMPTY_TAG))
             }
             is DictionaryScreenState.NotFound -> {
                 DictionaryHeader(
@@ -99,13 +104,14 @@ fun DictionaryScreenContent(
                         )
                         HorizontalDivider()
                     }
-                    items(state.entry.details) { detail ->
+                    itemsIndexed(state.entry.details) { index, detail ->
                         Definition(
                             partOfSpeech = detail.partOfSpeech,
                             definition = detail.definition,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp, horizontal = 16.dp)
+                                .testTag("${DICTIONARY_ITEM_ROW_TAG}$index")
                         )
                     }
                 }
