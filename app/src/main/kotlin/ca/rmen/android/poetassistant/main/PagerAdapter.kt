@@ -74,13 +74,7 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
             Tab.WOTD -> ResultListFactory.createListFragment(Tab.WOTD, null)
             Tab.RHYMER -> ResultListFactory.createListFragment(Tab.RHYMER, mInitialRhymeQuery)
             Tab.THESAURUS -> ResultListFactory.createListFragment(Tab.THESAURUS, mInitialThesaurusQuery)
-            Tab.DICTIONARY -> {
-                if (DictionaryFragment.TEMP_USE_ME) {
-                    DictionaryFragment.create(mInitialDictionaryQuery)
-                } else {
-                    ResultListFactory.createListFragment(Tab.DICTIONARY, mInitialDictionaryQuery)
-                }
-            }
+            Tab.DICTIONARY -> DictionaryFragment.create(mInitialDictionaryQuery)
             else -> ReaderFragment.newInstance(mInitialPoemText)
         }
     }

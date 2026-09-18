@@ -53,10 +53,6 @@ import kotlinx.coroutines.launch
 
 open class RTListFragment: ResultListFragment<RTListItem>()
 @AndroidEntryPoint
-class PatternListFragment: RTListFragment()
-@AndroidEntryPoint
-class FavoritesListFragment: RTListFragment()
-@AndroidEntryPoint
 class RhymerListFragment: RTListFragment()
 @AndroidEntryPoint
 class ThesaurusListFragment: RTListFragment()
