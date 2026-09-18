@@ -21,21 +21,19 @@ package ca.rmen.android.poetassistant.main
 
 
 import android.content.Context
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.clearText
-import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.action.ViewActions.swipeDown
 import androidx.test.espresso.action.ViewActions.typeText
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.hasSibling
-import androidx.test.espresso.matcher.ViewMatchers.isChecked
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayingAtLeast
-import androidx.test.espresso.matcher.ViewMatchers.withChild
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -43,19 +41,18 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.CustomChecks.checkPatterns
 import ca.rmen.android.poetassistant.main.CustomChecks.checkSearchSuggestions
 import ca.rmen.android.poetassistant.main.CustomChecks.checkSingleRootView
-import ca.rmen.android.poetassistant.main.CustomViewMatchers.withAdapterItemCount
 import ca.rmen.android.poetassistant.main.TestAppUtils.clearSearchHistory
-import ca.rmen.android.poetassistant.main.TestAppUtils.clickDialogPositiveButton
 import ca.rmen.android.poetassistant.main.TestAppUtils.openSearchView
 import ca.rmen.android.poetassistant.main.TestAppUtils.search
 import ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord
 import ca.rmen.android.poetassistant.main.TestAppUtils.typeQuery
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
-import ca.rmen.android.poetassistant.main.TestUiUtils.withCustomConstraints
+import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.composables.PATTERN_HEADER_HELP_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.composables.PATTERN_ITEM_STAR_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.composables.PATTERN_SCREEN_CONTENT_MAX_RESULTS_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -69,8 +66,11 @@ class SearchTest {
     @Rule(order = 0)
     val hiltTestRule = HiltAndroidRule(this)
 
+    @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
     @JvmField
-    @Rule(order = 1)
+    @Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(MainActivity::class.java, true)
 
     @Test
@@ -134,13 +134,13 @@ class SearchTest {
     fun patternSearchTest() {
         val context: Context = activityTestRule.activity
         search("h*llo")
-        checkPatterns(context, "h*llo", "hello", "hermosillo", "hollo", "hullo")
+        checkPatterns(context, composeTestRule, "h*llo", "hello", "hermosillo", "hollo", "hullo")
         search("h*llz")
-        checkPatterns(context, "h*llz")
-        onView(allOf(withId(R.id.btn_help), isDisplayed())).perform(click())
-        onView(withText(R.string.pattern_help_title))
-                .check(matches(isDisplayed()))
-        clickDialogPositiveButton(android.R.string.ok)
+        checkPatterns(context, composeTestRule, "h*llz")
+        composeTestRule.onNodeWithTag(PATTERN_HEADER_HELP_TAG).assertExists().performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.pattern_help_title)).assertIsDisplayed()
+        composeTestRule.onNodeWithText(context.getString(android.R.string.ok)).performClick()
+        onView(withId(android.R.id.content)).perform(swipeDown())
         search("hello")
         checkTitleStripOrTab(context, R.string.tab_rhymer)
     }
@@ -151,18 +151,16 @@ class SearchTest {
         starQueryWord()
         // For some reason, sometimes the view scrolls up, hiding the search field :(
         // Scroll down so we can search again.
-        onView(withId(R.id.rhymer_recycler_view))
-            .perform(withCustomConstraints(swipeDown(), isDisplayingAtLeast(10)))
+        onView(withId(android.R.id.content)).perform(swipeDown())
         search("he*o")
-        checkPatterns(activityTestRule.activity, "he*o", "hello", "head honcho", "hector hugh munro",
+        checkPatterns(activityTestRule.activity, composeTestRule, "he*o", "hello", "head honcho", "hector hugh munro",
                 "herero", "hereto", "hermosillo", "hero")
-        onView(allOf(withId(R.id.btn_star_result), hasSibling(withText("hello")), isDisplayed())).check(matches(isChecked()))
+        composeTestRule.onNodeWithTag("${PATTERN_ITEM_STAR_TAG}hello").assertIsOn()
     }
 
     @Test
     fun patternSearchTooManyResultsTest() {
         search("a*")
-        onView(allOf(withId(R.id.pattern_recycler_view), isDisplayed()))
-                .check(matches(withAdapterItemCount(501)))
+        composeTestRule.onNodeWithTag(PATTERN_SCREEN_CONTENT_MAX_RESULTS_TAG).assertIsDisplayed()
     }
 }
