@@ -19,7 +19,6 @@
 
 package ca.rmen.android.poetassistant.main.favorites.ui.composables
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -42,7 +41,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.main.Tab
@@ -50,13 +48,11 @@ import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.common.ui.composables.WordPopupMenu
 import ca.rmen.android.poetassistant.main.common.models.ExternalAppMenuItem
+import ca.rmen.android.poetassistant.main.common.ui.composables.Rtd
 import kotlinx.coroutines.launch
 
 const val FAVORITE_ITEM_STAR_TAG = "FavoriteItem_Star_"
 const val FAVORITE_ITEM_ROW_TAG = "FavoriteItem_Row_"
-const val FAVORITE_ITEM_RHYMER_TAG = "FavoriteItem_Rhymer_"
-const val FAVORITE_ITEM_THESAURUS_TAG = "FavoriteItem_Thesaurus_"
-const val FAVORITE_ITEM_DICTIONARY_TAG = "FavoriteItem_Dictionary_"
 
 @Composable
 fun FavoriteItem(
@@ -131,32 +127,9 @@ fun FavoriteItem(
 
         // R/T/D icons for EFFICIENT layout
         if (layout == Layout.EFFICIENT) {
-            Image(
-                painter = painterResource(R.drawable.ic_rhymer),
-                contentDescription = stringResource(R.string.tab_rhymer),
-                modifier = Modifier
-                    .size(44.dp)
-                    .padding(horizontal = 4.dp)
-                    .clickable(onClick = { onSearchInTab(Tab.RHYMER) })
-                    .testTag("$FAVORITE_ITEM_RHYMER_TAG$word"),
-            )
-            Image(
-                painter = painterResource(R.drawable.ic_thesaurus),
-                contentDescription = stringResource(R.string.tab_thesaurus),
-                modifier = Modifier
-                    .size(44.dp)
-                    .padding(horizontal = 4.dp)
-                    .clickable(onClick = { onSearchInTab(Tab.THESAURUS) })
-                    .testTag("$FAVORITE_ITEM_THESAURUS_TAG$word"),
-            )
-            Image(
-                painter = painterResource(R.drawable.ic_dictionary),
-                contentDescription = stringResource(R.string.tab_dictionary),
-                modifier = Modifier
-                    .size(44.dp)
-                    .padding(horizontal = 4.dp)
-                    .clickable(onClick = { onSearchInTab(Tab.DICTIONARY) })
-                    .testTag("$FAVORITE_ITEM_DICTIONARY_TAG$word"),
+            Rtd(
+                word = word,
+                onSearchInTab = onSearchInTab,
             )
         }
 
