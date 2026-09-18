@@ -5,15 +5,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ca.rmen.android.poetassistant.main.common.ui.composables.FavoritesPopupMenu
+import ca.rmen.android.poetassistant.main.common.ui.composables.WordPopupMenu
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.theme.AppTheme
 
 @Composable
 @Preview(showBackground = true)
-fun FavoritesPopupMenuPreview() {
+fun WordPopupMenuPreview() {
     AppTheme {
-        FavoritesPopupMenu(
+        WordPopupMenu(
             expanded = true,
             layout = Layout.CLEAN,
             externalAppMenuItems = emptyList(),
@@ -28,9 +28,9 @@ fun FavoritesPopupMenuPreview() {
 
 @Composable
 @Preview(showBackground = true)
-fun FavoritesPopupMenuEfficientPreview() {
+fun WordPopupMenuEfficientPreview() {
     AppTheme {
-        FavoritesPopupMenu(
+        WordPopupMenu(
             expanded = true,
             layout = Layout.EFFICIENT,
             externalAppMenuItems = emptyList(),

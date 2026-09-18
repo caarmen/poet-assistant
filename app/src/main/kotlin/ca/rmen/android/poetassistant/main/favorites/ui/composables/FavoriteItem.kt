@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.main.common.ui.composables.FavoritesPopupMenu
+import ca.rmen.android.poetassistant.main.common.ui.composables.WordPopupMenu
 import ca.rmen.android.poetassistant.main.common.models.ExternalAppMenuItem
 import kotlinx.coroutines.launch
 
@@ -112,7 +112,7 @@ fun FavoriteItem(
                 color = MaterialTheme.colorScheme.onSurface,
             )
             // DropdownMenu anchored to the word Text
-            FavoritesPopupMenu(
+            WordPopupMenu(
                 expanded = showPopupMenu,
                 layout = layout,
                 externalAppMenuItems = externalAppMenuItems,
