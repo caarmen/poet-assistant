@@ -27,9 +27,6 @@ import javax.inject.Inject
 class DictionaryFragment : Fragment() {
 
     companion object {
-        // Remove this as soon as we have test coverage of the new code.
-        // Then we can definitively use this new fragment.
-        const val TEMP_USE_ME = true
         private const val ARG_INITIAL_QUERY = "initialQuery"
         fun create(initialQuery: String?): DictionaryFragment = DictionaryFragment().apply {
             arguments = Bundle(1).apply {

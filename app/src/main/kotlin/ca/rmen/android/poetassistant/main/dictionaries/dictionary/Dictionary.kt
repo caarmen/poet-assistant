@@ -21,7 +21,6 @@ package ca.rmen.android.poetassistant.main.dictionaries.dictionary
 
 import android.database.Cursor
 import android.text.TextUtils
-import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
 import ca.rmen.android.poetassistant.main.dictionaries.textprocessing.WordSimilarities
@@ -75,25 +74,6 @@ class Dictionary @Inject constructor(
             }
         }
         return DictionaryEntry(word, emptyList())
-    }
-
-    fun findWordsByPattern(pattern: String): Array<String> {
-        val projection = arrayOf("word")
-        val selection = "word LIKE ?"
-        val selectionArgs = arrayOf(pattern)
-        val orderBy = "word"
-        val limit = Constants.MAX_RESULTS.toString()
-        embeddedDb.query(true, "dictionary", projection, selection, selectionArgs, orderBy, limit)
-            ?.use { cursor ->
-                if (cursor.count > 0) {
-                    val result = Array(cursor.count) { "" }
-                    while (cursor.moveToNext()) {
-                        result[cursor.position] = cursor.getString(0)
-                    }
-                    return result
-                }
-            }
-        return emptyArray()
     }
 
     suspend fun getRandomEntry(): DictionaryEntry? {
