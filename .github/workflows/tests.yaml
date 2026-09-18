@@ -13,18 +13,18 @@ jobs:
       checks: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Set up JDK
         uses: actions/setup-java@v6
         with:
           java-version: '17'
           distribution: 'temurin'
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
       - name: Start Genymotion Cloud SaaS instance
         uses: genymobile/genymotion-saas-github-action@v1
         with:
@@ -37,13 +37,13 @@ jobs:
           bash scripts/run_screenshots.sh
           zip -r screenshots.zip screenshots
       - name: Publish Unit Test Report
-        uses: mikepenz/action-junit-report@v4
+        uses: mikepenz/action-junit-report@v6
         if: always() # always run even if the previous step fails
         with:
           report_paths: "app/build/test-results/testDebugUnitTest/*.xml"
           check_name: UnitTests
       - name: Publish Instrumentation Test Report
-        uses: mikepenz/action-junit-report@v4
+        uses: mikepenz/action-junit-report@v6
         if: always() # always run even if the previous step fails
         with:
           report_paths: "app/build/outputs/androidTest-results/connected/**/*.xml"
@@ -57,31 +57,31 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Archive unit tests
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: unit-tests
           path: app/build/reports/tests/testDebugUnitTest
       - name: Archive instrumentation tests
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: instrumentation-tests
           path: app/build/reports/androidTests/connected/debug
       - name: Archive coverage
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage
           path: app/build/reports/jacoco
       - name: Archive logcat
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: logcat
           path: /tmp/lolcat.log
       - name: Archive apks
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: apks
           path: |
@@ -89,7 +89,7 @@ jobs:
             ./app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
       - name: Archive screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: screenshots
           path: |
