@@ -37,7 +37,6 @@ class PoetAssistantComposeTestRule<T : androidx.activity.ComponentActivity>(
 
     override fun finished(description: Description?) {
         super.finished(description)
-        composeTestRule.waitForIdle()
         ActivityTestRules.afterActivityFinished(composeTestRule.activity)
     }
 }
