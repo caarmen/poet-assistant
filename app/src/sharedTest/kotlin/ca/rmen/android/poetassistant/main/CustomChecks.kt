@@ -60,6 +60,8 @@ import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.not
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_ITEM_ROW_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.composables.PATTERNS_SCREEN_CONTENT_EMPTY_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.composables.PATTERNS_SCREEN_CONTENT_LIST_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_SCREEN_CONTENT_LIST_TAG
 import org.junit.Assert.assertEquals
@@ -100,22 +102,20 @@ object CustomChecks {
                 .perform(scrollTo<ResultListAdapter.ResultListEntryViewHolder>(hasDescendant(withText(expectedRhyme))))
     }
 
-    fun checkPatterns(context: Context, query: String, vararg patterns: String) {
+    fun checkPatterns(context: Context, composeTestRule: ComposeTestRule, query: String, vararg patterns: String) {
         checkTitleStripOrTab(context, R.string.tab_pattern)
-        val emptyViewMatch: Matcher<View> = allOf(withId(R.id.empty), withText(context.getString(R.string.empty_pattern_list_with_query, query)))
-        val emptyView = onView(emptyViewMatch)
-        val recyclerViewMatch: Matcher<View> = allOf(withId(R.id.pattern_recycler_view), hasSibling(emptyViewMatch))
+        val emptyNode = composeTestRule.onNodeWithTag(PATTERNS_SCREEN_CONTENT_EMPTY_TAG)
+        val listNode = composeTestRule.onNodeWithTag(PATTERNS_SCREEN_CONTENT_LIST_TAG)
         if (patterns.isNotEmpty()) {
-            emptyView.check(matches(not(isDisplayed())))
-            onView(recyclerViewMatch).check(matches(withChildCount(patterns.size)))
-            for (i in patterns.indices) {
-                onView(allOf(withId(R.id.text1), withText(patterns[i]),
-                        childAtPosition(childAtPosition(recyclerViewMatch, i), 1),
-                        isDisplayed()))
-                        .check(matches(withText(patterns[i])))
+            emptyNode.assertDoesNotExist()
+            listNode.assertIsDisplayed()
+            for (word in patterns) {
+                composeTestRule.onNode(hasText(word) and hasAnyAncestor(hasTestTag(PATTERNS_SCREEN_CONTENT_LIST_TAG)), useUnmergedTree = true)
+                    .assertIsDisplayed()
             }
         } else {
-            emptyView.check(matches(isDisplayed()))
+            emptyNode.assertIsDisplayed()
+            listNode.assertDoesNotExist()
         }
     }
 

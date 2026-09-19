@@ -85,7 +85,9 @@ class ShareTest {
     @Test
     fun sharePatternTest() {
         search("ho?t")
+        composeTestRule.waitForIdle()
         openMenuItem(R.string.share)
+        composeTestRule.waitForIdle()
         checkShareIntentContains("host")
     }
 

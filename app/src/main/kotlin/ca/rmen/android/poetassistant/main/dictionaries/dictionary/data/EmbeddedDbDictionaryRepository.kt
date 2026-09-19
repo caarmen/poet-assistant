@@ -79,4 +79,23 @@ class EmbeddedDbDictionaryRepository @Inject constructor(
                 }
             } ?: emptyList()
     }
+
+    /**
+     * Finds words matching the given SQLite pattern.
+     * Returns all matching words without applying any limit.
+     * This replaces the legacy Dictionary.findWordsByPattern logic.
+     *
+     * @param pattern The SQLite pattern to match (using _ and % wildcards).
+     * @return List of all words matching the pattern, sorted alphabetically.
+     */
+    override suspend fun findByPattern(pattern: String): List<String> = withContext(ioDispatcher) {
+        embeddedDb.query(true, "dictionary", arrayOf("word"), "word LIKE ?", arrayOf(pattern), "word", null)
+            ?.use { cursor ->
+                buildList {
+                    while (cursor.moveToNext()) {
+                        add(cursor.getString(0))
+                    }
+                }
+            } ?: emptyList()
+    }
 }

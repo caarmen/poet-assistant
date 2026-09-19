@@ -21,7 +21,7 @@ package ca.rmen.android.poetassistant.main.dictionaries.dictionary
 
 /**
  * Repository interface defining dictionary data access.
- * Provides methods for looking up dictionary entries and finding words by stem.
+ * Provides methods for looking up dictionary entries and finding words by stem or pattern.
  */
 interface DictionaryRepository {
 
@@ -41,4 +41,13 @@ interface DictionaryRepository {
      * @return List of words that share this stem.
      */
     suspend fun getWordsByStem(stem: String): List<String>
+
+    /**
+     * Finds words matching the given SQLite pattern.
+     * Returns all matching words without applying any limit.
+     *
+     * @param pattern The SQLite pattern to match (using _ and % wildcards).
+     * @return List of all words matching the pattern.
+     */
+    suspend fun findByPattern(pattern: String): List<String>
 }
