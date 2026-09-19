@@ -34,6 +34,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.TestUiUtils
+import ca.rmen.android.poetassistant.main.rules.RetryTestRule
 import ca.rmen.android.poetassistant.rules.PoetAssistantComposeTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -53,10 +54,19 @@ class AboutScreenTest {
     @get:Rule(order = 0)
     val hiltTestRule = HiltAndroidRule(this)
 
-    @get:Rule(order = 1)
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
+    @JvmField
+    @Rule(order = 1)
+    // This is the first test in the suite. Sometimes there's some timing issues for the first
+    // test regarding compose + espresso:
+    // androidx.compose.ui.test.junit4.android.ComposeNotIdleException: Idling resource timed out: possibly due to compose being busy.
+    // IdlingResourceRegistry has the following idling resources registered:
+    // - [busy] ComposeIdlingResource is busy due to pending measure/layout.
+    val retry = RetryTestRule()
 
     @get:Rule(order = 2)
+    val composeTestRule = createAndroidComposeRule<MainActivity>()
+
+    @get:Rule(order = 3)
     val poetAssistantComposeTestRule = PoetAssistantComposeTestRule(composeTestRule)
 
     @Test
