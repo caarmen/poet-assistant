@@ -124,7 +124,7 @@ class Search(
         Log.d(TAG, "search in $tab for $ word")
         viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false)
         ViewShownScheduler.runWhenShown(viewPager) {
-            if (tab == Tab.DICTIONARY && DictionaryFragment.TEMP_USE_ME) {
+            if (tab == Tab.DICTIONARY) {
                 (mPagerAdapter.getFragment(viewPager, Tab.DICTIONARY) as DictionaryFragment?)?.query(word.trim())
             } else {
                 (mPagerAdapter.getFragment(viewPager, tab) as ResultListFragment<*>?)?.query(
@@ -149,11 +149,7 @@ class Search(
             } else {
                 (mPagerAdapter.getFragment(viewPager, Tab.RHYMER) as ResultListFragment<*>?)?.query(wordTrimmed)
                 (mPagerAdapter.getFragment(viewPager, Tab.THESAURUS) as ResultListFragment<*>?)?.query(wordTrimmed)
-                if (DictionaryFragment.TEMP_USE_ME) {
-                    (mPagerAdapter.getFragment(viewPager, Tab.DICTIONARY) as DictionaryFragment?)?.query(wordTrimmed)
-                } else {
-                    (mPagerAdapter.getFragment(viewPager, Tab.DICTIONARY) as ResultListFragment<*>?)?.query(wordTrimmed)
-                }
+                (mPagerAdapter.getFragment(viewPager, Tab.DICTIONARY) as DictionaryFragment?)?.query(wordTrimmed)
             }
         }
     }
