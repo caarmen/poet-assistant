@@ -42,7 +42,7 @@ import ca.rmen.android.poetassistant.main.common.ui.graphics.DrawablePainter
 import ca.rmen.android.poetassistant.settings.Layout
 
 @Composable
-fun FavoritesPopupMenu(
+fun WordPopupMenu(
     expanded: Boolean,
     layout: Layout,
     externalAppMenuItems: List<ExternalAppMenuItem>,

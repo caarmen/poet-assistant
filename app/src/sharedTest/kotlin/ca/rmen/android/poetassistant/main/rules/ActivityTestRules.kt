@@ -59,11 +59,11 @@ object ActivityTestRules {
     }
 
     fun afterActivityFinished(targetContext: Context) {
-        cleanup(targetContext)
         val idlingResourceList: Collection<IdlingResource> = IdlingRegistry.getInstance().resources
         for (idlingResource in idlingResourceList) {
             IdlingRegistry.getInstance().unregister(idlingResource)
         }
+        cleanup(targetContext)
         val tts = EntryPointAccessors.fromApplication(targetContext.applicationContext, ActivityTestRulesEntryPoint::class.java).tts()
         getInstrumentation().runOnMainSync { tts.shutdown() }
     }

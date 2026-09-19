@@ -16,6 +16,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.Tab
+import ca.rmen.android.poetassistant.main.common.ui.composables.ITEM_DICTIONARY_TAG
+import ca.rmen.android.poetassistant.main.common.ui.composables.ITEM_RHYMER_TAG
+import ca.rmen.android.poetassistant.main.common.ui.composables.ITEM_THESAURUS_TAG
 import ca.rmen.android.poetassistant.main.favorites.usecases.CreateFavoritesShareUseCase
 import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import ca.rmen.android.poetassistant.main.favorites.FavoritesScreenViewModel
@@ -27,10 +30,7 @@ import ca.rmen.android.poetassistant.main.favorites.ui.composables.CONFIRM_DELET
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_HEADER_DELETE_ALL_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_SCREEN_CONTENT_LIST_TAG
-import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITE_ITEM_DICTIONARY_TAG
-import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITE_ITEM_RHYMER_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITE_ITEM_ROW_TAG
-import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITE_ITEM_THESAURUS_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FavoritesScreen
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.settings.SettingsRepository
@@ -206,9 +206,9 @@ class FavoritesScreenTest {
     }
 
     enum class EfficientLookupScenario(val testTagPrefix: String, val expectedTab: Tab) {
-        RHYMER(FAVORITE_ITEM_RHYMER_TAG, Tab.RHYMER),
-        THESAURUS(FAVORITE_ITEM_THESAURUS_TAG, Tab.THESAURUS),
-        DICTIONARY(FAVORITE_ITEM_DICTIONARY_TAG, Tab.DICTIONARY),
+        RHYMER(ITEM_RHYMER_TAG, Tab.RHYMER),
+        THESAURUS(ITEM_THESAURUS_TAG, Tab.THESAURUS),
+        DICTIONARY(ITEM_DICTIONARY_TAG, Tab.DICTIONARY),
     }
 
     @Test
