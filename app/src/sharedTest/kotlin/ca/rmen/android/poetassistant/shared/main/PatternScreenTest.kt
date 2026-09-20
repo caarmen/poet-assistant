@@ -38,6 +38,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.composables.P
 import ca.rmen.android.poetassistant.main.dictionaries.patterns.usecases.CreatePatternShareUseCase
 import ca.rmen.android.poetassistant.main.dictionaries.patterns.usecases.LookupPatternUseCase
 import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
+import ca.rmen.android.poetassistant.rules.PoetAssistantComposeTestRule
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.settings.SettingsRepository
 import ca.rmen.android.poetassistant.theme.AppTheme
@@ -62,6 +63,9 @@ class PatternScreenTest {
 
     @get:Rule(order = 1)
     val composeTestRule = createComposeRule()
+
+    @get:Rule(order = 2)
+    val poetAssistantComposeTestRule = PoetAssistantComposeTestRule(composeTestRule)
 
     private lateinit var context: Context
 
