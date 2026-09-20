@@ -170,6 +170,7 @@ android {
         // execution "ANDROIDX_TEST_ORCHESTRATOR"
         unitTests {
             all {
+                it.maxHeapSize = "2g"
                 it.jvmArgs("-noverify", "-ea",
                     // Add the following to use the robolectric simulator:
                     /*
