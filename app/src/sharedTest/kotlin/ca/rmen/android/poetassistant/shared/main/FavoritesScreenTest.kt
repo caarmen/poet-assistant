@@ -32,6 +32,7 @@ import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_SCR
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_SCREEN_CONTENT_LIST_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITE_ITEM_ROW_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FavoritesScreen
+import ca.rmen.android.poetassistant.rules.PoetAssistantComposeTestRule
 import ca.rmen.android.poetassistant.settings.Layout
 import ca.rmen.android.poetassistant.settings.SettingsRepository
 import ca.rmen.android.poetassistant.theme.AppTheme
@@ -56,6 +57,9 @@ class FavoritesScreenTest {
 
     @get:Rule(order = 1)
     val composeTestRule = createComposeRule()
+
+    @get:Rule(order = 2)
+    val poetAssistantComposeTestRule = PoetAssistantComposeTestRule(composeTestRule)
 
     private lateinit var context: Context
 

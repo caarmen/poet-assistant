@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main.rules
 import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
+import ca.rmen.android.poetassistant.testsupport.TestTeardownStrategy
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.test.espresso.Espresso
@@ -49,6 +50,7 @@ object ActivityTestRules {
         fun tts(): Tts
         fun userDb(): UserDb
         fun embeddedDb(): EmbeddedDb
+        fun testTeardownStrategy(): TestTeardownStrategy
     }
 
     fun beforeActivityLaunched(targetContext: Context) {
@@ -66,6 +68,8 @@ object ActivityTestRules {
         cleanup(targetContext)
         val tts = EntryPointAccessors.fromApplication(targetContext.applicationContext, ActivityTestRulesEntryPoint::class.java).tts()
         getInstrumentation().runOnMainSync { tts.shutdown() }
+        val entryPoint = EntryPointAccessors.fromApplication(targetContext.applicationContext, ActivityTestRulesEntryPoint::class.java)
+        entryPoint.testTeardownStrategy().tearDown()
     }
 
     private fun cleanup(targetContext: Context) {

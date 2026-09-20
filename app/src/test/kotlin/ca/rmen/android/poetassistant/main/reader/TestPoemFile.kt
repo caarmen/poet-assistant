@@ -92,7 +92,6 @@ class TestPoemFile {
     }
 
     @Test
-    @Config(sdk = [30]) // TODO investigate why this doesn't work starting from 31
     fun testSave() = runTest {
         val text = "Roses are red\n"
         val savedPoem = PoemFile.save(Environment.getApplication(), mPoemUri, text)

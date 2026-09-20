@@ -19,24 +19,24 @@
 package ca.rmen.android.poetassistant.rules;
 
 
-import androidx.compose.ui.test.junit4.AndroidComposeTestRule
-import androidx.test.ext.junit.rules.ActivityScenarioRule
+import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.test.platform.app.InstrumentationRegistry
 import ca.rmen.android.poetassistant.main.rules.ActivityTestRules
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
-class PoetAssistantComposeTestRule<T : androidx.activity.ComponentActivity>(
-    private val composeTestRule: AndroidComposeTestRule<ActivityScenarioRule<T>, T>
+class PoetAssistantComposeTestRule(
+    private val composeTestRule: ComposeTestRule
 ) : TestWatcher() {
 
     override fun starting(description: Description?) {
         super.starting(description)
         composeTestRule.waitForIdle()
-        ActivityTestRules.beforeActivityLaunched(composeTestRule.activity)
+        ActivityTestRules.beforeActivityLaunched(InstrumentationRegistry.getInstrumentation().targetContext)
     }
 
     override fun finished(description: Description?) {
         super.finished(description)
-        ActivityTestRules.afterActivityFinished(composeTestRule.activity)
+        ActivityTestRules.afterActivityFinished(InstrumentationRegistry.getInstrumentation().targetContext)
     }
 }
