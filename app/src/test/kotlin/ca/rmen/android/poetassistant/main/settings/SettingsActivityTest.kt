@@ -58,7 +58,6 @@ class SettingsActivityTest {
     }
 
     @Test
-    @Config(sdk = [27])
     fun testSystemSettings() {
         mockSystemSettingsApp()
         val activityController: ActivityController<SettingsActivity> = Robolectric.buildActivity(SettingsActivity::class.java)
