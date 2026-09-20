@@ -27,7 +27,6 @@ object Patterns {
      * easier for a user to type, than _ or %.
      */
     private val USER_PATTERN_SYMBOLS = arrayOf("?", "*")
-    private val SQLITE_PATTERN_SYMBOLS = arrayOf("_", "%")
 
     /**
      * @return true if the given input contains symbols that can be used with pattern matching
@@ -37,12 +36,4 @@ object Patterns {
         return false
     }
 
-    /**
-     * @return a pattern string that can be used in an SQLite query.
-     */
-    fun convertForSqlite(input: String) : String {
-        var result = input
-        USER_PATTERN_SYMBOLS.forEachIndexed { index, s -> result = result.replace(s, SQLITE_PATTERN_SYMBOLS[index]) }
-        return result
-    }
 }

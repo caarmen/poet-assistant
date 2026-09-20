@@ -32,8 +32,6 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding
 import ca.rmen.android.poetassistant.main.Tab
-import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternListExporter
-import ca.rmen.android.poetassistant.main.dictionaries.rt.PatternLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLiveData
@@ -50,7 +48,6 @@ object ResultListFactory {
     fun createListFragment(tab: Tab, initialQuery: String?): ResultListFragment<Any> {
         Log.d(TAG, "createListFragment: tab=$tab, initialQuery = $initialQuery")
         val fragment = when (tab) {
-            Tab.PATTERN -> PatternListFragment()
             Tab.RHYMER -> RhymerListFragment()
             Tab.THESAURUS -> ThesaurusListFragment()
             else -> WotdListFragment()
@@ -66,7 +63,7 @@ object ResultListFactory {
 
     fun createAdapter(activity: Activity, tab: Tab): ResultListAdapter<out Any> {
         return when (tab) {
-            Tab.PATTERN, Tab.RHYMER, Tab.THESAURUS -> RTListAdapter(tab, activity)
+            Tab.RHYMER, Tab.THESAURUS -> RTListAdapter(tab, activity)
             else -> /* WOTD */ WotdAdapter(activity)
         }
     }
@@ -76,7 +73,6 @@ object ResultListFactory {
 
         // Map the Tab to the corresponding ViewModel Class
         val viewModelClass = when (tab) {
-            Tab.PATTERN -> PatternListViewModel::class.java
             Tab.RHYMER -> RhymerListViewModel::class.java
             Tab.THESAURUS -> ThesaurusListViewModel::class.java
             else /*Tab.WOTD */-> WotdListViewModel::class.java
@@ -94,7 +90,6 @@ object ResultListFactory {
         filter: String?,
     ): ResultListLiveData<out ResultListData<Any>> {
         return when (tab) {
-            Tab.PATTERN -> PatternLiveData(context, scope, query!!)
             Tab.WOTD -> WotdLiveData(context, scope)
             Tab.RHYMER -> RhymerLiveData(context, scope, query!!, filter)
             else /* THESAURUS */ -> ThesaurusLiveData(context, scope, query!!, filter)
@@ -103,7 +98,6 @@ object ResultListFactory {
 
     fun createExporter(context: Context, tab: Tab): ResultListExporter<*> {
         return when (tab) {
-            Tab.PATTERN -> PatternListExporter(context)
             Tab.WOTD -> WotdListExporter(context)
             Tab.RHYMER -> RhymerListExporter(context)
             else /*Tab.THESAURUS*/ -> ThesaurusListExporter(context)
@@ -127,7 +121,6 @@ object ResultListFactory {
 
     fun getEmptyListText(context: Context, tab: Tab, query: String): String {
         return when (tab) {
-            Tab.PATTERN -> context.getString(R.string.empty_pattern_list_with_query, query)
             Tab.RHYMER -> context.getString(R.string.empty_rhymer_list_with_query, query)
             else -> /*Tab.THESAURUS */ context.getString(R.string.empty_thesaurus_list_with_query, query)
         }
@@ -144,12 +137,6 @@ object ResultListFactory {
     fun updateListHeaderButtonsVisibility(binding: ResultListHeaderBinding, tab: Tab, ttsStatus: TtsState.TtsStatus) {
         when (tab) {
             Tab.WOTD -> {
-                binding.btnPlay.visibility = View.GONE
-                binding.btnWebSearch.visibility = View.GONE
-                binding.btnStarQuery.visibility = View.GONE
-            }
-            Tab.PATTERN -> {
-                binding.btnHelp.visibility = View.VISIBLE
                 binding.btnPlay.visibility = View.GONE
                 binding.btnWebSearch.visibility = View.GONE
                 binding.btnStarQuery.visibility = View.GONE
@@ -189,7 +176,6 @@ object ResultListFactory {
     }
     @IdRes
     fun getRecyclerViewId(tab: Tab): Int = when (tab) {
-        Tab.PATTERN -> R.id.pattern_recycler_view
         Tab.WOTD -> R.id.wotd_recycler_view
         Tab.RHYMER -> R.id.rhymer_recycler_view
         Tab.THESAURUS -> R.id.thesaurus_recycler_view

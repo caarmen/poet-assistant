@@ -47,8 +47,6 @@ import javax.inject.Inject
 open class RTListViewModel(application: Application, tab: Tab, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): ResultListViewModel<RTListItem>(application, tab,
     favoritesRepository, settingsPrefs)
 @HiltViewModel
-class PatternListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.PATTERN, favoritesRepository, settingsPrefs)
-@HiltViewModel
 class RhymerListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.RHYMER, favoritesRepository, settingsPrefs)
 @HiltViewModel
 class ThesaurusListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.THESAURUS, favoritesRepository, settingsPrefs)
