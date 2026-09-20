@@ -3,6 +3,7 @@ package ca.rmen.android.poetassistant.main.favorites
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.UserDb
 import ca.rmen.android.poetassistant.main.common.models.Share
 import ca.rmen.android.poetassistant.main.common.usecases.GetProcessTextMenuItemsUseCase
 import ca.rmen.android.poetassistant.di.IODispatcher
@@ -18,6 +19,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -36,6 +38,9 @@ class FavoritesScreenViewModelTest {
 
     @get:Rule(order = 1)
     val archRule: InstantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @Inject
+    lateinit var userDb: UserDb
 
     @Inject
     lateinit var favoritesRepository: FavoritesRepository
@@ -64,6 +69,11 @@ class FavoritesScreenViewModelTest {
             createFavoritesShareUseCase = createFavoritesShareUseCase,
             getProcessTextMenuItemsUseCase = getProcessTextMenuItemsUseCase
         )
+    }
+
+    @After
+    fun tearDown() {
+        userDb.close()
     }
 
     /**
