@@ -22,7 +22,7 @@ package ca.rmen.android.poetassistant.main.rules
 import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
+import ca.rmen.android.poetassistant.testsupport.TestTeardownStrategy
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.test.espresso.Espresso
@@ -50,6 +50,7 @@ object ActivityTestRules {
         fun tts(): Tts
         fun userDb(): UserDb
         fun embeddedDb(): EmbeddedDb
+        fun testTeardownStrategy(): TestTeardownStrategy
     }
 
     fun beforeActivityLaunched(targetContext: Context) {
@@ -67,18 +68,8 @@ object ActivityTestRules {
         cleanup(targetContext)
         val tts = EntryPointAccessors.fromApplication(targetContext.applicationContext, ActivityTestRulesEntryPoint::class.java).tts()
         getInstrumentation().runOnMainSync { tts.shutdown() }
-        // In robolectric, we get a new Application instance in each test function.
-        // If we don't close the dbs, we get errors like "A resource failed to call SQLiteConnectionPool.close".
-        // These accumulate over time, resulting in OutOfMemoryErrors.
-        // However, in instrumentation tests, we have the same application over the whole lifetime
-        // of the test suite. Closing the user db (room) results in issues.
-        // TODO: document WHAT issues happen if we close the user db in instrumentaion tests.
-        // TODO: move robolectric/jvm-specific cleanup in the src/test sourceset, to avoid
-        // if(robolectric) code in the shared sourceset. This could become difficult to manage.
-        if (Build.FINGERPRINT == "robolectric") {
-            val entryPoint = EntryPointAccessors.fromApplication(targetContext.applicationContext, ActivityTestRulesEntryPoint::class.java)
-            entryPoint.userDb().close()
-        }
+        val entryPoint = EntryPointAccessors.fromApplication(targetContext.applicationContext, ActivityTestRulesEntryPoint::class.java)
+        entryPoint.testTeardownStrategy().tearDown()
     }
 
     private fun cleanup(targetContext: Context) {
