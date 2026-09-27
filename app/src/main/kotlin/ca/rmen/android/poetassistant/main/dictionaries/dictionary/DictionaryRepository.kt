@@ -50,4 +50,14 @@ interface DictionaryRepository {
      * @return List of all words matching the pattern.
      */
     suspend fun findByPattern(pattern: String): List<String>
+
+    /**
+     * Gets words with a google_ngram_frequency in the given range (exclusive bounds),
+     * sorted by word ascending.
+     *
+     * @param minFrequency The minimum frequency (exclusive).
+     * @param maxFrequency The maximum frequency (exclusive).
+     * @return matching words, or an empty list if the dictionary DB is not loaded.
+     */
+    suspend fun getWordsInFrequencyRange(minFrequency: Int, maxFrequency: Int): List<String>
 }
