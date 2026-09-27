@@ -47,7 +47,6 @@ import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
-import ca.rmen.android.poetassistant.wotd.WotdListItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -56,8 +55,6 @@ open class RTListFragment: ResultListFragment<RTListItem>()
 class RhymerListFragment: RTListFragment()
 @AndroidEntryPoint
 class ThesaurusListFragment: RTListFragment()
-@AndroidEntryPoint
-class WotdListFragment: ResultListFragment<WotdListItem>()
 
 open class ResultListFragment<out T: Any> : Fragment() {
     companion object {
