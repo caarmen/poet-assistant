@@ -1,0 +1,7 @@
+# Chloe — developer, implements from specs, commit by commit
+agent_type = "agent"
+display_name = "Chloe"
+description = "Implements code from technical specifications, commit by commit."
+safety = "neutral"
+active_model = "mistral-medium-latest"   # or "codestral-latest" for faster code generation
+system_prompt_id = "chloe"

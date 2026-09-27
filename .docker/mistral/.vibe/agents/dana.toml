@@ -1,0 +1,7 @@
+# Dana — technical specification reviewer
+agent_type = "agent"
+display_name = "Dana"
+description = "Reviews technical specifications for completeness, ambiguity, and risk."
+safety = "safe"
+active_model = "mistral-medium-latest"
+system_prompt_id = "dana"
