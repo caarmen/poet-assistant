@@ -80,6 +80,7 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_HEADER_TEXT_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_HEADER_TEXT_TAG
 
 @LargeTest
 @HiltAndroidTest
@@ -145,7 +146,7 @@ class PoemTest {
         swipeViewPagerLeft(3)
         onView(withId(R.id.tv_text)).perform(longTap(1, 0))
         clickPopupView("thesaurus")
-        onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)))
+        composeTestRule.onNode(hasTestTag(THESAURUS_HEADER_TEXT_TAG) and hasText(firstWord)).assertIsDisplayed()
 
         // Look up in the dictionary
         swipeViewPagerLeft(2)

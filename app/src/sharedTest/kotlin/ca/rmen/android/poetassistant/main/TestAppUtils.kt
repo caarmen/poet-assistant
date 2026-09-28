@@ -27,12 +27,22 @@ import android.text.TextUtils
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.assertIsToggleable
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.isOff
 import androidx.compose.ui.test.isOn
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
+import ca.rmen.android.poetassistant.main.common.ui.composables.ITEM_DICTIONARY_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_HEADER_FILTER_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_ITEM_ROW_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_SCREEN_CONTENT_LIST_TAG
 import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
@@ -112,34 +122,38 @@ object TestAppUtils {
         getInstrumentation().waitForIdleSync()
     }
 
-    fun openThesaurus(context: Context, entry: String, expectedFirstSynonym: String) {
+    fun openThesaurus(composeTestRule: ComposeTestRule, context: Context, entry: String, expectedFirstSynonym: String) {
         onView(allOf(withId(R.id.btn_thesaurus),
                 hasSibling(withText(entry)),
                 isDisplayed()))
                 .perform(click())
-        CustomChecks.checkFirstSynonym(expectedFirstSynonym)
+        CustomChecks.checkFirstSynonym(composeTestRule, expectedFirstSynonym)
         TestUiUtils.checkTitleStripOrTab(context, R.string.tab_thesaurus)
     }
 
-    fun openThesaurusCleanLayout(context: Context, entry: String, expectedFirstSynonym: String) {
+    fun openThesaurusCleanLayout(composeTestRule: ComposeTestRule, context: Context, entry: String, expectedFirstSynonym: String) {
         onView(withText(entry)).perform(click())
         onView(withText(R.string.tab_thesaurus)).perform(click())
-        CustomChecks.checkFirstSynonym(expectedFirstSynonym)
+        CustomChecks.checkFirstSynonym(composeTestRule, expectedFirstSynonym)
         TestUiUtils.checkTitleStripOrTab(context, R.string.tab_thesaurus)
     }
 
     fun openDictionary(composeTestRule: ComposeTestRule, context: Context, entry: String, expectedFirstDefinition: String) {
-        onView(allOf(withId(R.id.btn_dictionary),
-                hasSibling(withText(entry)),
-                isDisplayed()))
-                .perform(click())
+        // The entry is in the Compose thesaurus list: click its dictionary icon.
+        composeTestRule.onNodeWithTag("${ITEM_DICTIONARY_TAG}$entry").performClick()
         TestUiUtils.checkTitleStripOrTab(context, R.string.tab_dictionary)
         CustomChecks.checkFirstDefinition(composeTestRule, expectedFirstDefinition)
     }
 
     fun openDictionaryCleanLayout(composeTestRule: ComposeTestRule, context: Context, entry: String, expectedFirstDefinition: String) {
-        onView(withText(entry)).perform(click())
-        onView(withText(R.string.tab_dictionary)).perform(click())
+        // The entry is in the Compose thesaurus list: click the word, then
+        // the dictionary item of the popup menu.
+        composeTestRule.onNodeWithTag("${THESAURUS_ITEM_ROW_TAG}$entry").performClick()
+        val lookupLabel = context.getString(R.string.tab_dictionary)
+        composeTestRule.waitUntil(timeoutMillis = 5_000) {
+            composeTestRule.onAllNodesWithText(lookupLabel).fetchSemanticsNodes().isNotEmpty()
+        }
+        composeTestRule.onNodeWithText(lookupLabel).performClick()
         TestUiUtils.checkTitleStripOrTab(context, R.string.tab_dictionary)
         CustomChecks.checkFirstDefinition(composeTestRule, expectedFirstDefinition)
     }
@@ -156,6 +170,11 @@ object TestAppUtils {
         composeTestRule.onNodeWithTag(DICTIONARY_FAVORITE_ICON_TAG).assert(isOff())
         composeTestRule.onNodeWithTag(DICTIONARY_FAVORITE_ICON_TAG).performClick()
         composeTestRule.onNodeWithTag(DICTIONARY_FAVORITE_ICON_TAG).assert(isOn())
+    }
+    fun unStarQueryWord(composeTestRule: ComposeTestRule, testTag: String) {
+        composeTestRule.onNodeWithTag(testTag).assert(isOn())
+        composeTestRule.onNodeWithTag(testTag).performClick()
+        composeTestRule.onNodeWithTag(testTag).assert(isOff())
     }
 
     fun unStarQueryWord() {
@@ -181,7 +200,23 @@ object TestAppUtils {
         return result
     }
 
+    fun addFilter(composeTestRule: ComposeTestRule, context: Context, tab: Tab, filter: String, firstExpectedFilteredMatch: String?) {
+        if (tab == Tab.THESAURUS) {
+            addThesaurusFilter(composeTestRule, context, filter, firstExpectedFilteredMatch)
+            return
+        }
+        addLegacyFilter(tab, filter, firstExpectedFilteredMatch)
+    }
+
+    /**
+     * Applies a filter in a tab which still uses the legacy result list
+     * (the rhymer).
+     */
     fun addFilter(tab: Tab, filter: String, firstExpectedFilteredMatch: String?) {
+        addLegacyFilter(tab, filter, firstExpectedFilteredMatch)
+    }
+
+    private fun addLegacyFilter(tab: Tab, filter: String, firstExpectedFilteredMatch: String?) {
         @IdRes val recyclerViewId = ResultListFactory.getRecyclerViewId(tab)
         val filterView = openFilter("")
         filterView.perform(typeText(filter), closeSoftKeyboard())
@@ -202,7 +237,33 @@ object TestAppUtils {
 
     }
 
-    fun clearFilter(tab: Tab, firstExpectedNonFilteredMatch: String) {
+    /**
+     * Applies a filter in the Compose thesaurus screen: opens the filter
+     * dialog, types the filter, submits it, then waits for the filtered
+     * results.
+     */
+    private fun addThesaurusFilter(composeTestRule: ComposeTestRule, context: Context, filter: String, firstExpectedFilteredMatch: String?) {
+        composeTestRule.onNodeWithTag(THESAURUS_HEADER_FILTER_TAG).performClick()
+        composeTestRule.onNode(hasSetTextAction()).performTextInput(filter)
+        composeTestRule.onNodeWithText(context.getString(android.R.string.ok)).performClick()
+        if (firstExpectedFilteredMatch == null) {
+            composeTestRule.waitUntil(timeoutMillis = 5_000) {
+                composeTestRule.onAllNodesWithTag(THESAURUS_SCREEN_CONTENT_LIST_TAG).fetchSemanticsNodes().isEmpty()
+            }
+            composeTestRule.onNodeWithTag(THESAURUS_SCREEN_CONTENT_LIST_TAG).assertDoesNotExist()
+        } else {
+            composeTestRule.waitUntil(timeoutMillis = 5_000) {
+                composeTestRule.onAllNodesWithTag("${THESAURUS_ITEM_ROW_TAG}$firstExpectedFilteredMatch").fetchSemanticsNodes().isNotEmpty()
+            }
+            composeTestRule.onNodeWithTag("${THESAURUS_ITEM_ROW_TAG}$firstExpectedFilteredMatch").assertIsDisplayed()
+        }
+    }
+
+    fun clearFilter(composeTestRule: ComposeTestRule, context: Context, tab: Tab, firstExpectedNonFilteredMatch: String) {
+        if (tab == Tab.THESAURUS) {
+            clearThesaurusFilter(composeTestRule, context, firstExpectedNonFilteredMatch)
+            return
+        }
         @IdRes val recyclerViewId = ResultListFactory.getRecyclerViewId(tab)
         onView(allOf(withId(R.id.btn_clear), withContentDescription(R.string.filter_clear), isDisplayed()))
                 .perform(click())
@@ -212,6 +273,18 @@ object TestAppUtils {
                 withParent(withParent(withId(recyclerViewId))),
                 isDisplayed()))
                 .check(matches(withText(firstExpectedNonFilteredMatch)))
+    }
+
+    /**
+     * Clears the filter in the Compose thesaurus screen, then waits for the
+     * unfiltered results.
+     */
+    private fun clearThesaurusFilter(composeTestRule: ComposeTestRule, context: Context, firstExpectedNonFilteredMatch: String) {
+        composeTestRule.onNode(hasContentDescription(context.getString(R.string.filter_clear))).performClick()
+        composeTestRule.waitUntil(timeoutMillis = 5_000) {
+            composeTestRule.onAllNodesWithTag("${THESAURUS_ITEM_ROW_TAG}$firstExpectedNonFilteredMatch").fetchSemanticsNodes().isNotEmpty()
+        }
+        composeTestRule.onNodeWithTag("${THESAURUS_ITEM_ROW_TAG}$firstExpectedNonFilteredMatch").assertIsDisplayed()
     }
 
     fun clearStarredWords(composeTestRule: ComposeTestRule) {

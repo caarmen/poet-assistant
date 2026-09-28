@@ -39,6 +39,7 @@ import ca.rmen.android.poetassistant.main.TestAppUtils.starQueryWord
 import ca.rmen.android.poetassistant.main.TestAppUtils.unStarQueryWord
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_HEADER_STAR_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITE_ITEM_STAR_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -75,7 +76,7 @@ class FavoritesTest {
         swipeViewPagerLeft(4)
         checkAllStarredWords(context, composeTestRule, "cheesecake", "ache")
         swipeViewPagerRight(3)
-        unStarQueryWord()
+        unStarQueryWord(composeTestRule, testTag = THESAURUS_HEADER_STAR_TAG)
         swipeViewPagerLeft(3)
         checkAllStarredWords(context, composeTestRule, "ache")
         composeTestRule.onNodeWithTag("${FAVORITE_ITEM_STAR_TAG}ache").performClick()

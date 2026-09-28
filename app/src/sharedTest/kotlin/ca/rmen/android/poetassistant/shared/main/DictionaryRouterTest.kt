@@ -27,6 +27,7 @@ import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -40,6 +41,7 @@ import ca.rmen.android.poetassistant.main.CustomChecks.checkFirstDefinition
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_HEADER_TEXT_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.search.DictionaryRouterActivity
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -80,9 +82,10 @@ class DictionaryRouterTest {
         composeTestRule.onNode(hasTestTag(DICTIONARY_HEADER_TEXT_TAG) and hasText("polyvalent")).assertIsDisplayed()
         checkFirstDefinition(composeTestRule, "containing several antibodies each capable of counteracting a specific antigen")
         swipeViewPagerRight(1)
-        onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
-            .check(matches(isDisplayed()))
+        // Thesaurus
+        composeTestRule.onNodeWithTag(THESAURUS_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
         swipeViewPagerRight(1)
+        // Rhymer
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
             .check(matches(isDisplayed()))
     }

@@ -45,6 +45,7 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_SCREEN_CONTENT_EMPTY_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -78,7 +79,7 @@ class IntentTest {
         checkTitleStripOrTab(activity, R.string.tab_rhymer)
         checkRhymes(activity, "mcguffin", "toughen")
         swipeViewPagerLeft(1)
-        checkFirstSynonym("quick bread")
+        checkFirstSynonym(composeTestRule, "quick bread")
         swipeViewPagerLeft(1)
         checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
     }
@@ -90,7 +91,7 @@ class IntentTest {
         checkTitleStripOrTab(activity, R.string.tab_rhymer)
         checkRhymes(activity, "mcguffin", "toughen")
         swipeViewPagerLeft(1)
-        checkFirstSynonym("quick bread")
+        checkFirstSynonym(composeTestRule, "quick bread")
         swipeViewPagerLeft(1)
         checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
     }
@@ -98,12 +99,15 @@ class IntentTest {
     @Test
     fun onNewIntentViewQueryTest() {
         val activity: MainActivity = activityTestRule.launchActivity(Intent())
+        composeTestRule.waitForIdle()
         launchNewIntent(Intent.ACTION_VIEW, "poetassistant://query/muffin")
         checkTitleStripOrTab(activity, R.string.tab_dictionary)
         checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
         swipeViewPagerRight(1)
-        checkFirstSynonym("quick bread")
+        checkFirstSynonym(composeTestRule, "quick bread")
+        composeTestRule.waitForIdle()
         swipeViewPagerRight(1)
+        composeTestRule.waitForIdle()
         checkRhymes(activity, "mcguffin", "toughen")
     }
 
@@ -111,7 +115,7 @@ class IntentTest {
     fun onNewIntentViewRhymerTest() {
         activityTestRule.launchActivity(Intent())
         launchNewIntent(Intent.ACTION_VIEW, "poetassistant://rhymer/muffin")
-        checkRhymerOnly("mcguffin", "toughen")
+        checkRhymerOnly(composeTestRule, "mcguffin", "toughen")
     }
 
     @Test
@@ -125,7 +129,7 @@ class IntentTest {
     fun onNewIntentViewDictionaryTest() {
         activityTestRule.launchActivity(Intent())
         launchNewIntent(Intent.ACTION_VIEW, "poetassistant://dictionary/muffin")
-        checkDictionaryOnly("a sweet quick bread baked in a cup-shaped pan")
+        checkDictionaryOnly(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
     }
 
     @Test
@@ -157,7 +161,7 @@ class IntentTest {
         checkTitleStripOrTab(activity, R.string.tab_dictionary)
         checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
         swipeViewPagerRight(1)
-        checkFirstSynonym("quick bread")
+        checkFirstSynonym(composeTestRule, "quick bread")
         swipeViewPagerRight(1)
         checkRhymes(activity, "mcguffin", "toughen")
     }
@@ -167,7 +171,7 @@ class IntentTest {
         val intent = Intent(Intent.ACTION_VIEW)
             .setData(Uri.parse("poetassistant://rhymer/muffin"))
         activityTestRule.launchActivity(intent)
-        checkRhymerOnly("mcguffin", "toughen")
+        checkRhymerOnly(composeTestRule, "mcguffin", "toughen")
     }
 
     @Test
@@ -184,7 +188,7 @@ class IntentTest {
         val intent = Intent(Intent.ACTION_VIEW)
             .setData(Uri.parse("poetassistant://dictionary/muffin"))
         activityTestRule.launchActivity(intent)
-        checkDictionaryOnly("a sweet quick bread baked in a cup-shaped pan")
+        checkDictionaryOnly(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
     }
 
     private fun launchNewIntent(action: String, extraKey: String, extraValue: String) {
@@ -203,14 +207,13 @@ class IntentTest {
         }
     }
 
-    private fun checkRhymerOnly(expectedRhyme1: String, expectedRhyme2: String) {
+    private fun checkRhymerOnly(composeTestRule: ComposeTestRule, expectedRhyme1: String, expectedRhyme2: String) {
         val activity: Activity = activityTestRule.activity
         checkTitleStripOrTab(activity, R.string.tab_rhymer)
         checkRhymes(activity, expectedRhyme1, expectedRhyme2)
         swipeViewPagerLeft(1)
         // Thesaurus
-        onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
-            .check(matches(isDisplayed()))
+        composeTestRule.onNodeWithTag(THESAURUS_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
         swipeViewPagerLeft(1)
         // Dictionary
         composeTestRule.onNodeWithTag(DICTIONARY_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
@@ -219,7 +222,7 @@ class IntentTest {
     private fun checkThesaurusOnly(composeTestRule: ComposeTestRule, expectedFirstSynonym: String) {
         val activity: Activity = activityTestRule.activity
         checkTitleStripOrTab(activity, R.string.tab_thesaurus)
-        checkFirstSynonym(expectedFirstSynonym)
+        checkFirstSynonym(composeTestRule, expectedFirstSynonym)
         swipeViewPagerLeft(1)
         // Dictionary
         composeTestRule.onNodeWithTag(DICTIONARY_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
@@ -229,14 +232,15 @@ class IntentTest {
             .check(matches(isDisplayed()))
     }
 
-    private fun checkDictionaryOnly(expectedFirstDefinition: String) {
+    private fun checkDictionaryOnly(composeTestRule: ComposeTestRule, expectedFirstDefinition: String) {
         val activity: Activity = activityTestRule.activity
         checkTitleStripOrTab(activity, R.string.tab_dictionary)
         checkFirstDefinition(composeTestRule, expectedFirstDefinition)
         swipeViewPagerRight(1)
-        onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
-            .check(matches(isDisplayed()))
+        // Thesaurus
+        composeTestRule.onNodeWithTag(THESAURUS_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
         swipeViewPagerRight(1)
+        // Rhymer
         onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
             .check(matches(isDisplayed()))
     }

@@ -30,34 +30,36 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasAnyDescendant
 import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithTag
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_ITEM_ROW_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_SCREEN_CONTENT_LIST_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_ITEM_STAR_TAG
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.NoMatchingRootException
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.scrollTo
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
-import androidx.test.espresso.matcher.ViewMatchers.hasSibling
-import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withChild
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.main.CustomViewMatchers.atPosition
 import ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition
 import ca.rmen.android.poetassistant.main.CustomViewMatchers.withChildCount
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
 import org.fest.reflect.core.Reflection
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.not
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_ITEM_ROW_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.composables.PATTERNS_SCREEN_CONTENT_EMPTY_TAG
@@ -74,26 +76,14 @@ object CustomChecks {
     fun checkRhymes(context: Context, firstRhyme: String, secondRhyme: String) {
         // Make sure we're in the rhymer tab
         TestUiUtils.checkTitleStripOrTab(context, R.string.tab_rhymer)
+        // Assert the first item (index 1, since index 0 is the "Strict rhyme matches:" header) has firstRhyme
+        onView(withId(R.id.rhymer_recycler_view))
+            .check(matches(atPosition(1, hasDescendant(withText(firstRhyme)))))
 
-        val firstRhymeWord = onView(
-                allOf(withId(R.id.text1), withText(firstRhyme),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.rhymer_recycler_view),
-                                        1),
-                                1),
-                        isDisplayed()))
-        firstRhymeWord.check(matches(withText(firstRhyme)))
+        // Assert the second item (index 2) has secondRhyme
+        onView(withId(R.id.rhymer_recycler_view))
+            .check(matches(atPosition(2, hasDescendant(withText(secondRhyme)))))
 
-        val secondRhymeWord = onView(
-                allOf(withId(R.id.text1), withText(secondRhyme),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.rhymer_recycler_view),
-                                        2),
-                                1),
-                        isDisplayed()))
-        secondRhymeWord.check(matches(withText(secondRhyme)))
     }
 
     fun checkRhyme(expectedRhyme: String) {
@@ -119,14 +109,10 @@ object CustomChecks {
         }
     }
 
-    fun checkStarredInList(entry: String) {
-        val star = onView(
-                allOf(withId(R.id.btn_star_result),
-                        childAtPosition(
-                                withChild(withText(entry)),
-                                0),
-                        isDisplayed()))
-        star.check(matches(isChecked()))
+    fun checkStarredInList(composeTestRule: ComposeTestRule, entry: String) {
+        composeTestRule
+            .onNodeWithTag("${THESAURUS_ITEM_STAR_TAG}$entry")
+            .assertIsOn()
     }
 
     fun checkAllStarredWords(context: Context, composeTestRule: ComposeTestRule, vararg expectedStarredWords: String) {
@@ -202,22 +188,24 @@ object CustomChecks {
             .assertExists()
     }
 
-    fun checkFirstSynonym(expectedFirstSynonym: String) {
-        val firstSynonymWord = onView(
-                allOf(withId(R.id.text1), withText(expectedFirstSynonym),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.thesaurus_recycler_view),
-                                        2),
-                                1),
-                        isDisplayed()))
-        firstSynonymWord.check(matches(withText(expectedFirstSynonym)))
+    fun checkFirstSynonym(composeTestRule: ComposeTestRule, expectedFirstSynonym: String) {
+        // The synonym may be below the visible area of the lazy list: scroll to it.
+        composeTestRule
+            .onNodeWithTag(THESAURUS_SCREEN_CONTENT_LIST_TAG)
+            .performScrollToNode(hasTestTag("${THESAURUS_ITEM_ROW_TAG}$expectedFirstSynonym"))
+        composeTestRule
+            .onNodeWithTag("${THESAURUS_ITEM_ROW_TAG}$expectedFirstSynonym")
+            .assertIsDisplayed()
+        // Wait for the list scroll to settle: a pager swipe during the
+        // scroll animation can desynchronize the pager title strip.
+        composeTestRule.waitForIdle()
     }
 
-    fun checkSynonym(expectedSynonym: String) {
-        // Scroll to the item in case it's not visible
-        onView(allOf(withId(R.id.thesaurus_recycler_view), isDisplayed()))
-                .perform(scrollTo<ResultListAdapter.ResultListEntryViewHolder>(withChild(withText(expectedSynonym))))
+    /**
+     * Checks that the synonym is in the thesaurus result list.
+     */
+    fun checkSynonym(composeTestRule: ComposeTestRule, expectedSynonym: String) {
+        checkFirstSynonym(composeTestRule, expectedSynonym)
     }
 
     fun hasNonEmptyText(): SemanticsMatcher = SemanticsMatcher("has non-empty text") { node ->
