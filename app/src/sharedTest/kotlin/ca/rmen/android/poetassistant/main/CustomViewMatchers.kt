@@ -30,6 +30,21 @@ import org.hamcrest.TypeSafeMatcher
 // This is generated from the test recorder
 object CustomViewMatchers {
 
+    fun atPosition(position: Int, itemMatcher: Matcher<View>): Matcher<View> {
+        return object : TypeSafeMatcher<View>() {
+            override fun describeTo(description: Description) {
+                description.appendText("Item at adapter position $position: ")
+                itemMatcher.describeTo(description)
+            }
+
+            override fun matchesSafely(view: View): Boolean {
+                if (view !is RecyclerView) return false
+                val viewHolder = view.findViewHolderForAdapterPosition(position) ?: return false
+                return itemMatcher.matches(viewHolder.itemView)
+            }
+        }
+    }
+
     fun childAtPosition(parentMatcher: Matcher<View>, position: Int): Matcher<View> {
         return object : TypeSafeMatcher<View>() {
             override fun describeTo(description: Description) {

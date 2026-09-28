@@ -97,7 +97,9 @@ class ShareTest {
     fun sharePopupTest() {
         search("strawberry")
         val context: Context = activityTestRule.activity
+        composeTestRule.waitForIdle()
         onView(allOf(withText("adversary"), isDisplayed())).perform(click())
+        composeTestRule.waitForIdle()
         onView(allOf(withText(endsWith(context.getString(R.string.share))), isDisplayed())).perform(click())
         checkShareIntentEquals("adversary")
     }

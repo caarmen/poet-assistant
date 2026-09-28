@@ -38,6 +38,7 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.search.RhymerRouterActivity
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -72,14 +73,14 @@ class RhymerRouterTest {
             putExtra(Intent.EXTRA_PROCESS_TEXT, "polyvalent")
         }
         activityTestRule.launchActivity(intent)
+        composeTestRule.waitForIdle()
         val activity: Activity = activityTestRule.activity
         checkTitleStripOrTab(activity, R.string.tab_rhymer)
         onView(allOf(withId(R.id.empty), isDisplayed()))
             .check(matches(withText(activity.getString(R.string.empty_rhymer_list_with_query, "polyvalent"))))
         swipeViewPagerLeft(1)
         // Thesaurus
-        onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
-            .check(matches(isDisplayed()))
+        composeTestRule.onNodeWithTag(THESAURUS_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
         swipeViewPagerLeft(1)
         // Dictionary
         composeTestRule.onNodeWithTag(DICTIONARY_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
