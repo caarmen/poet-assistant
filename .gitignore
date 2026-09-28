@@ -11,4 +11,10 @@ signing.properties
 etc/apk
 app/schemas
 .env
-/.vibe/
+.m2/
+.vibe/
+!.vibe/agents/
+!.vibe/agents/**
+!.vibe/prompts/
+!.vibe/prompts/**
+plans/
