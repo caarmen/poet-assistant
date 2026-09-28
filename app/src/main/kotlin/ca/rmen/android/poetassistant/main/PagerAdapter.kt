@@ -34,6 +34,7 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryFragment
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ThesaurusFragment
 import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.PatternFragment
 import ca.rmen.android.poetassistant.main.favorites.FavoritesFragment
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment
@@ -74,7 +75,7 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
             Tab.FAVORITES -> FavoritesFragment()
             Tab.WOTD -> WotdFragment()
             Tab.RHYMER -> ResultListFactory.createListFragment(Tab.RHYMER, mInitialRhymeQuery)
-            Tab.THESAURUS -> ResultListFactory.createListFragment(Tab.THESAURUS, mInitialThesaurusQuery)
+            Tab.THESAURUS -> ThesaurusFragment.create(mInitialThesaurusQuery)
             Tab.DICTIONARY -> DictionaryFragment.create(mInitialDictionaryQuery)
             else -> ReaderFragment.newInstance(mInitialPoemText)
         }
@@ -94,6 +95,9 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
         }
         if (obj is FavoritesFragment) {
             return getPositionForTab(Tab.FAVORITES)
+        }
+        if (obj is ThesaurusFragment) {
+            return getPositionForTab(Tab.THESAURUS)
         }
         if (obj is WotdFragment) {
             return getPositionForTab(Tab.WOTD)

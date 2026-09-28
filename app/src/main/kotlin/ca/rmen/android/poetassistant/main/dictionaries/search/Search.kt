@@ -32,6 +32,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryFragment
 import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.PatternFragment
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ThesaurusFragment
 import ca.rmen.android.poetassistant.widget.BaseTextWatcher
 import ca.rmen.android.poetassistant.widget.ViewShownScheduler
 import com.google.android.material.search.SearchView
@@ -126,6 +127,11 @@ class Search(
         ViewShownScheduler.runWhenShown(viewPager) {
             if (tab == Tab.DICTIONARY) {
                 (mPagerAdapter.getFragment(viewPager, Tab.DICTIONARY) as DictionaryFragment?)?.query(word.trim())
+            } else if (tab == Tab.THESAURUS) {
+                (mPagerAdapter.getFragment(viewPager, Tab.THESAURUS) as ThesaurusFragment?)?.query(
+                    word.trim()
+                        .lowercase(Locale.US)
+                )
             } else {
                 (mPagerAdapter.getFragment(viewPager, tab) as ResultListFragment<*>?)?.query(
                     word.trim()
@@ -148,7 +154,7 @@ class Search(
                 (mPagerAdapter.getFragment(viewPager, Tab.PATTERN) as PatternFragment?)?.query(wordTrimmed)
             } else {
                 (mPagerAdapter.getFragment(viewPager, Tab.RHYMER) as ResultListFragment<*>?)?.query(wordTrimmed)
-                (mPagerAdapter.getFragment(viewPager, Tab.THESAURUS) as ResultListFragment<*>?)?.query(wordTrimmed)
+                (mPagerAdapter.getFragment(viewPager, Tab.THESAURUS) as ThesaurusFragment?)?.query(wordTrimmed)
                 (mPagerAdapter.getFragment(viewPager, Tab.DICTIONARY) as DictionaryFragment?)?.query(wordTrimmed)
             }
         }
