@@ -37,9 +37,6 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLiveData
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLiveData
-import ca.rmen.android.poetassistant.wotd.WotdAdapter
-import ca.rmen.android.poetassistant.wotd.WotdListExporter
-import ca.rmen.android.poetassistant.wotd.WotdLiveData
 import kotlinx.coroutines.CoroutineScope
 
 object ResultListFactory {
@@ -49,8 +46,7 @@ object ResultListFactory {
         Log.d(TAG, "createListFragment: tab=$tab, initialQuery = $initialQuery")
         val fragment = when (tab) {
             Tab.RHYMER -> RhymerListFragment()
-            Tab.THESAURUS -> ThesaurusListFragment()
-            else -> WotdListFragment()
+            else /*Tab.THESAURUS */-> ThesaurusListFragment()
         }
         val bundle = Bundle(2)
         bundle.putSerializable(ResultListFragment.EXTRA_TAB, tab)
@@ -61,12 +57,7 @@ object ResultListFactory {
         return fragment
     }
 
-    fun createAdapter(activity: Activity, tab: Tab): ResultListAdapter<out Any> {
-        return when (tab) {
-            Tab.RHYMER, Tab.THESAURUS -> RTListAdapter(tab, activity)
-            else -> /* WOTD */ WotdAdapter(activity)
-        }
-    }
+    fun createAdapter(activity: Activity, tab: Tab): ResultListAdapter<out Any> = RTListAdapter(tab, activity)
 
     fun createViewModel(tab: Tab, fragment: Fragment): ResultListViewModel<*>? {
         if (fragment.context == null) return null
@@ -74,8 +65,7 @@ object ResultListFactory {
         // Map the Tab to the corresponding ViewModel Class
         val viewModelClass = when (tab) {
             Tab.RHYMER -> RhymerListViewModel::class.java
-            Tab.THESAURUS -> ThesaurusListViewModel::class.java
-            else /*Tab.WOTD */-> WotdListViewModel::class.java
+            else /*Tab.THESAURUS */-> ThesaurusListViewModel::class.java
         }
 
         // Hilt integrates with Fragment's default ViewModelProvider when using @HiltViewModel
@@ -90,7 +80,6 @@ object ResultListFactory {
         filter: String?,
     ): ResultListLiveData<out ResultListData<Any>> {
         return when (tab) {
-            Tab.WOTD -> WotdLiveData(context, scope)
             Tab.RHYMER -> RhymerLiveData(context, scope, query!!, filter)
             else /* THESAURUS */ -> ThesaurusLiveData(context, scope, query!!, filter)
         }
@@ -98,7 +87,6 @@ object ResultListFactory {
 
     fun createExporter(context: Context, tab: Tab): ResultListExporter<*> {
         return when (tab) {
-            Tab.WOTD -> WotdListExporter(context)
             Tab.RHYMER -> RhymerListExporter(context)
             else /*Tab.THESAURUS*/ -> ThesaurusListExporter(context)
         }
@@ -136,11 +124,6 @@ object ResultListFactory {
      */
     fun updateListHeaderButtonsVisibility(binding: ResultListHeaderBinding, tab: Tab, ttsStatus: TtsState.TtsStatus) {
         when (tab) {
-            Tab.WOTD -> {
-                binding.btnPlay.visibility = View.GONE
-                binding.btnWebSearch.visibility = View.GONE
-                binding.btnStarQuery.visibility = View.GONE
-            }
             Tab.RHYMER, Tab.THESAURUS -> {
                 binding.btnFilter.visibility = View.VISIBLE
             }
@@ -176,7 +159,6 @@ object ResultListFactory {
     }
     @IdRes
     fun getRecyclerViewId(tab: Tab): Int = when (tab) {
-        Tab.WOTD -> R.id.wotd_recycler_view
         Tab.RHYMER -> R.id.rhymer_recycler_view
         Tab.THESAURUS -> R.id.thesaurus_recycler_view
         else -> R.id.recycler_view

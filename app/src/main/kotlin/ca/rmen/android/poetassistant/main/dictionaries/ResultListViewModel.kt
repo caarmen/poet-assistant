@@ -35,7 +35,6 @@ import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListItem
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
-import ca.rmen.android.poetassistant.wotd.WotdListItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -50,8 +49,6 @@ open class RTListViewModel(application: Application, tab: Tab, favoritesReposito
 class RhymerListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.RHYMER, favoritesRepository, settingsPrefs)
 @HiltViewModel
 class ThesaurusListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.THESAURUS, favoritesRepository, settingsPrefs)
-@HiltViewModel
-class WotdListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): ResultListViewModel<WotdListItem>(application, Tab.WOTD, favoritesRepository, settingsPrefs)
 
 open class ResultListViewModel<T: Any> (
     application: Application,
