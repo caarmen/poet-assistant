@@ -151,6 +151,20 @@ class ThesaurusScreenViewModel @Inject constructor(
     }
 
     /**
+     * Applies the initial query (deep link).
+     *
+     * Idempotent: does nothing when a query was already applied. The
+     * fragment re-applies the initial query on every view creation, so
+     * this must neither reset a later search nor clear an active filter
+     * on a configuration change.
+     *
+     * @param query The initial query.
+     */
+    fun onInitialQuerySearched(query: String) {
+        if (this.query.value.isBlank()) this.query.value = query
+    }
+
+    /**
      * Applies a filter to the results: only words rhyming with the filter
      * word are shown. A blank input clears the filter.
      *
