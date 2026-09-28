@@ -24,6 +24,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.espresso.Espresso.onView
@@ -39,6 +40,7 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_SCREEN_CONTENT_EMPTY_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_HEADER_TEXT_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.search.ThesaurusRouterActivity
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -77,9 +79,8 @@ class ThesaurusRouterTest {
         activityTestRule.launchActivity(intent)
         val activity: Activity = activityTestRule.activity
         checkTitleStripOrTab(activity, R.string.tab_thesaurus)
-        onView(allOf(withId(R.id.tv_list_header), isDisplayed()))
-            .check(matches(withText("almost")))
-        checkFirstSynonym("about")
+        composeTestRule.onNodeWithTag(THESAURUS_HEADER_TEXT_TAG).assertTextEquals("almost")
+        checkFirstSynonym(composeTestRule, "about")
         swipeViewPagerLeft(1)
         // Dictionary
         composeTestRule.onNodeWithTag(DICTIONARY_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()

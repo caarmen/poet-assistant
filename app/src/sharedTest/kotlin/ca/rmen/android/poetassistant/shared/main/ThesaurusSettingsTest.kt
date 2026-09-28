@@ -19,9 +19,11 @@
 
 package ca.rmen.android.poetassistant.shared.main
 
-import androidx.test.espresso.NoMatchingViewException
-import androidx.test.espresso.PerformException
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.espresso.Espresso.pressBack
+import androidx.test.espresso.NoMatchingViewException
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import ca.rmen.android.poetassistant.R
@@ -34,6 +36,8 @@ import ca.rmen.android.poetassistant.main.TestAppUtils.search
 import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_ITEM_ROW_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_SCREEN_CONTENT_LIST_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -53,8 +57,13 @@ class ThesaurusSettingsTest {
     val hiltTestRule: HiltAndroidRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @get:Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> =
         PoetAssistantActivityTestRule(MainActivity::class.java, true)
+
+
 
     @Test
     fun testReverseLookupEnabled() {
@@ -63,14 +72,19 @@ class ThesaurusSettingsTest {
         pressBack()
         swipeViewPagerLeft(1)
         search("mistake")
-        checkSynonym("blunder")
+        checkSynonym(composeTestRule, "blunder")
     }
 
-    @Test(expected = PerformException::class)
+    @Test
     fun testReverseLookupDisabled() {
         swipeViewPagerLeft(1)
         search("mistake")
-        checkSynonym("blunder")
+        // Wait for the results to load, then check that the reverse synonym
+        // is not in the list.
+        composeTestRule.waitUntil(timeoutMillis = 5_000) {
+            composeTestRule.onAllNodesWithTag(THESAURUS_SCREEN_CONTENT_LIST_TAG).fetchSemanticsNodes().isNotEmpty()
+        }
+        composeTestRule.onNodeWithTag("${THESAURUS_ITEM_ROW_TAG}blunder").assertDoesNotExist()
     }
 
     @Test

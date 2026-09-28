@@ -23,6 +23,8 @@ package ca.rmen.android.poetassistant.main
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.intent.Intents.intended
@@ -42,6 +44,7 @@ import ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem
 import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
+import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_SCREEN_CONTENT_LIST_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantIntentsTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -64,6 +67,10 @@ class ShareTest {
 
     @JvmField
     @Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @JvmField
+    @Rule(order = 2)
     val activityTestRule: PoetAssistantIntentsTestRule<MainActivity> = PoetAssistantIntentsTestRule(MainActivity::class.java)
 
     @Test
@@ -83,6 +90,12 @@ class ShareTest {
     fun shareThesaurusTest() {
         search("splurge")
         swipeViewPagerLeft(1)
+        // Wait for the results to load, not just for Compose to be idle:
+        // the lookup loads on a background dispatcher, and the share menu
+        // must not be tapped while the screen is still in the Idle state.
+        composeTestRule.waitUntil(timeoutMillis = 5_000) {
+            composeTestRule.onAllNodesWithTag(THESAURUS_SCREEN_CONTENT_LIST_TAG).fetchSemanticsNodes().isNotEmpty()
+        }
         openMenuItem(R.string.share)
         checkShareIntentContains("flaunt")
     }
@@ -92,7 +105,7 @@ class ShareTest {
         val context: Context = activityTestRule.activity
         search("happy")
         swipeViewPagerLeft(1)
-        addFilter(Tab.THESAURUS, "messed", "blessed")
+        addFilter(composeTestRule, context, Tab.THESAURUS, "messed", "blessed")
         openMenuItem(R.string.share)
         val expectedContent = context.getString(R.string.share_thesaurus_title_with_filter, "happy", "messed")
         checkShareIntentContains(expectedContent)
