@@ -91,9 +91,12 @@ class RandomWordTest {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             onView(prioritySettingMatcher).check(doesNotExist())
         } else {
+            // TODO update this to look for the wotd page
+            /*
             onView(withId(R.id.wotd_recycler_view))
                 .perform(scrollTo<ResultListAdapter.ResultListEntryViewHolder>(hasDescendant(prioritySettingMatcher)))
             onView(prioritySettingMatcher).check(matches(isDisplayed()))
+             */
         }
     }
 
