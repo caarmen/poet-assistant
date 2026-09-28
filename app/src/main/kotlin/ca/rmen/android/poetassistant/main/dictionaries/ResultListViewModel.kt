@@ -47,8 +47,6 @@ open class RTListViewModel(application: Application, tab: Tab, favoritesReposito
     favoritesRepository, settingsPrefs)
 @HiltViewModel
 class RhymerListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.RHYMER, favoritesRepository, settingsPrefs)
-@HiltViewModel
-class ThesaurusListViewModel @Inject constructor(application: Application, favoritesRepository: FavoritesRepository, settingsPrefs: SettingsPrefs): RTListViewModel(application, Tab.THESAURUS, favoritesRepository, settingsPrefs)
 
 open class ResultListViewModel<T: Any> (
     application: Application,

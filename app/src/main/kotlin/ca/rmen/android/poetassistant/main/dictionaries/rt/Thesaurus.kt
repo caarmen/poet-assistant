@@ -42,8 +42,6 @@ class Thesaurus @Inject constructor(private val embeddedDb: EmbeddedDb) {
 
     fun isLoaded(): Boolean = embeddedDb.isLoaded()
 
-    fun lookup(word: String, includeReverseLookup: Boolean): ThesaurusEntry = lookup(word, EnumSet.allOf(RelationType::class.java), includeReverseLookup)
-
     private fun lookup(word: String, relationTypes: Set<RelationType>, includeReverseLookup: Boolean): ThesaurusEntry {
         val projection = arrayOf("word_type", "synonyms", "antonyms")
         val selection = "word=?"
