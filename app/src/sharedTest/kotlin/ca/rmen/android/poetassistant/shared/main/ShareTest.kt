@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.shared.main
 import android.content.Context
 import android.content.Intent
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.intent.Intents.intended
@@ -37,6 +38,7 @@ import ca.rmen.android.poetassistant.main.TestAppUtils.search
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantIntentsTestRule
+import ca.rmen.android.poetassistant.main.wotd.ui.composables.WOTD_SCREEN_CONTENT_LIST_TAG
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -104,7 +106,15 @@ class ShareTest {
     fun shareWotdTest() {
         val context: Context = activityTestRule.activity
         openMenuItem(R.string.action_wotd_history)
+        // Wait for the history to load, not just for Compose to be idle:
+        // the history loads on a background dispatcher, and the share menu
+        // must not be tapped while the screen is still in the Idle state.
+        composeTestRule.waitUntil(timeoutMillis = 5_000) {
+            composeTestRule.onAllNodesWithTag(WOTD_SCREEN_CONTENT_LIST_TAG)
+                .fetchSemanticsNodes().isNotEmpty()
+        }
         openMenuItem(R.string.share)
+        composeTestRule.waitForIdle()
         checkShareIntentContains(context.getString(R.string.share_wotd_title))
     }
 

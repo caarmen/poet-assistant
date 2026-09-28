@@ -60,6 +60,7 @@
     <string name="thesaurus_section_antonyms">Antonyms:</string>
     <string name="empty_pattern_list_with_query">Sorry, no words match &#8220;%s&#8221;</string>
     <string name="empty_favorites_list">You haven\'t starred any words yet.</string>
+    <string name="empty_wotd_list">No words of the day yet</string>
     <string name="empty_rhymer_list_with_query">Sorry, no rhymes for &#8220;%s&#8221;</string>
     <string name="empty_thesaurus_list_with_query">Sorry, no synonyms for &#8220;%s&#8221;</string>
     <string name="empty_dictionary_list_with_query">Sorry, no definitions for &#8220;%s&#8221;</string>

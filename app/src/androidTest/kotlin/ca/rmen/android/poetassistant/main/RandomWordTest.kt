@@ -25,9 +25,16 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
@@ -44,21 +51,12 @@ import java.util.Calendar
 import junit.framework.TestCase.assertTrue
 import org.junit.Assert.assertNotNull
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withParent
-import androidx.test.espresso.matcher.ViewMatchers.withText
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.containsString
-import ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition
 import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_SCREEN_CONTENT_LIST_TAG
+import ca.rmen.android.poetassistant.main.wotd.ui.composables.WOTD_SCREEN_CONTENT_LIST_TAG
 
 @LargeTest
 @HiltAndroidTest
@@ -80,26 +78,36 @@ class RandomWordTest {
     @Test
     fun openWotdListTest() {
         openMenuItem(R.string.action_wotd_history)
-        val latestEntryViewMatcher = childAtPosition(withId(R.id.wotd_recycler_view), 0)
-        // Check that the date field in the first (most recent) entry in the Wotd list contains today's date.
-        val cal = Calendar.getInstance()
-        val dayOfMonth = cal[Calendar.DAY_OF_MONTH]
-        onView(allOf(withId(R.id.date), withParent(childAtPosition(latestEntryViewMatcher, 1))))
-                .check(matches(withText(containsString(dayOfMonth.toString()))))
-        onView(allOf(withId(R.id.btn_rhymer), isDescendantOfA(latestEntryViewMatcher)))
-                .perform(click())
+        val context = activityTestRule.activity
+        val wotdListMatcher = hasTestTag(WOTD_SCREEN_CONTENT_LIST_TAG)
+        val listNode = composeTestRule.onNodeWithTag(WOTD_SCREEN_CONTENT_LIST_TAG)
+        listNode.assertIsDisplayed()
+        // Check that the date in the first (most recent) entry in the Wotd list contains today's date.
+        val dayOfMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH).toString()
+        listNode.onChildren().onFirst().assertTextContains(dayOfMonth, substring = true)
+        // The row buttons are identified by their content descriptions, not their test tags:
+        // the tags contain the word of the day (and the date for the star), which is not
+        // known in this test. The content descriptions are shared with other screens,
+        // so they are scoped to the Wotd list, and onFirst() selects the most recent row.
+        composeTestRule.onAllNodes(
+            hasContentDescription(context.getString(R.string.tab_rhymer)) and hasAnyAncestor(wotdListMatcher)
+        ).onFirst().performClick()
         swipeViewPagerLeft(5)
-        onView(allOf(withId(R.id.btn_thesaurus), isDescendantOfA(latestEntryViewMatcher)))
-                .perform(click())
+        composeTestRule.onAllNodes(
+            hasContentDescription(context.getString(R.string.tab_thesaurus)) and hasAnyAncestor(wotdListMatcher)
+        ).onFirst().performClick()
         swipeViewPagerLeft(4)
-        onView(allOf(withId(R.id.btn_dictionary), isDescendantOfA(latestEntryViewMatcher)))
-                .perform(click())
+        composeTestRule.onAllNodes(
+            hasContentDescription(context.getString(R.string.tab_dictionary)) and hasAnyAncestor(wotdListMatcher)
+        ).onFirst().performClick()
         swipeViewPagerLeft(3)
-        onView(allOf(withId(R.id.btn_star_result), isDescendantOfA(latestEntryViewMatcher)))
-                .perform(click())
+        // Star the word of the day
+        composeTestRule.onAllNodes(
+            hasContentDescription(context.getString(R.string.content_description_toggle_favorite)) and hasAnyAncestor(wotdListMatcher)
+        ).onFirst().performClick()
         swipeViewPagerRight(1)
-        val listNode = composeTestRule.onNodeWithTag(FAVORITES_SCREEN_CONTENT_LIST_TAG)
-        listNode.onChildren().assertCountEquals(1)
+        composeTestRule.onNodeWithTag(FAVORITES_SCREEN_CONTENT_LIST_TAG)
+                .onChildren().assertCountEquals(1)
     }
 
     @Test

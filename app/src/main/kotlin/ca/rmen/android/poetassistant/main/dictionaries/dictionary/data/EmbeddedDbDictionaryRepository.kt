@@ -98,4 +98,31 @@ class EmbeddedDbDictionaryRepository @Inject constructor(
                 }
             } ?: emptyList()
     }
+
+    /**
+     * Gets words with a google_ngram_frequency in the given range (exclusive bounds),
+     * sorted by word ascending.
+     *
+     * @param minFrequency The minimum frequency (exclusive).
+     * @param maxFrequency The maximum frequency (exclusive).
+     * @return matching words, or an empty list if the dictionary DB is not loaded.
+     */
+    override suspend fun getWordsInFrequencyRange(minFrequency: Int, maxFrequency: Int): List<String> = withContext(ioDispatcher) {
+        embeddedDb.query(
+            false,
+            "stems",
+            arrayOf("word"),
+            "google_ngram_frequency > ? AND google_ngram_frequency < ?",
+            arrayOf(minFrequency.toString(), maxFrequency.toString()),
+            "word ASC",
+            null
+        )
+            ?.use { cursor ->
+                buildList {
+                    while (cursor.moveToNext()) {
+                        add(cursor.getString(0))
+                    }
+                }
+            } ?: emptyList()
+    }
 }
