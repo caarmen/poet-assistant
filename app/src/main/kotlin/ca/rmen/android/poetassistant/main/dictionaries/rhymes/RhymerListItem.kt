@@ -23,7 +23,7 @@ package ca.rmen.android.poetassistant.main.dictionaries.rhymes
  * One item of the rhymer result list.
  *
  * Each item carries a stable id: structural and deterministic (see
- * [LookupRhymesUseCase]), unique even for the duplicate rows (a
+ * [ca.rmen.android.poetassistant.main.dictionaries.rhymes.usecases.LookupRhymesUseCase]), unique even for the duplicate rows (a
  * favorite rhyme appears in the favorites section and in its
  * syllable section), and stable across the favorites rebuilds. The
  * list keys on it, so row identity survives reorders — the
