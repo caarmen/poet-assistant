@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -18,9 +19,20 @@ const val ITEM_RHYMER_TAG = "ItemRhymer_"
 const val ITEM_THESAURUS_TAG = "ItemThesaurus_"
 const val ITEM_DICTIONARY_TAG = "ItemDictionary_"
 
+/**
+ * The R/T/D icons to open a word in the rhymer, thesaurus and dictionary
+ * tabs.
+ *
+ * @param word The word to open in the other tabs.
+ * @param hasDefinition Whether the word has a dictionary definition. When
+ * false, the thesaurus and dictionary icons are dimmed (Material 3
+ * disabled alpha) and not clickable; the rhymer icon is unaffected.
+ * @param onSearchInTab Callback to request opening the word in a tab.
+ */
 @Composable
 fun Rtd(
     word: String,
+    hasDefinition: Boolean = true,
     onSearchInTab: (Tab) -> Unit,
 ) {
     Image(
@@ -38,7 +50,7 @@ fun Rtd(
         modifier = Modifier
             .size(44.dp)
             .padding(horizontal = 4.dp)
-            .clickable(onClick = { onSearchInTab(Tab.THESAURUS) })
+            .dimOrClickable(hasDefinition) { onSearchInTab(Tab.THESAURUS) }
             .testTag("$ITEM_THESAURUS_TAG$word"),
     )
     Image(
@@ -47,7 +59,14 @@ fun Rtd(
         modifier = Modifier
             .size(44.dp)
             .padding(horizontal = 4.dp)
-            .clickable(onClick = { onSearchInTab(Tab.DICTIONARY) })
+            .dimOrClickable(hasDefinition) { onSearchInTab(Tab.DICTIONARY) }
             .testTag("$ITEM_DICTIONARY_TAG$word"),
     )
 }
+
+/**
+ * Clickable when the word has a definition; dimmed to the Material 3
+ * disabled alpha otherwise.
+ */
+private fun Modifier.dimOrClickable(hasDefinition: Boolean, onClick: () -> Unit): Modifier =
+    if (hasDefinition) clickable(onClick = onClick) else alpha(0.38f)
