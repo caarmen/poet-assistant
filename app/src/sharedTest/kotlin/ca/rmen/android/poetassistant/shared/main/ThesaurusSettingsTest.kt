@@ -19,11 +19,11 @@
 
 package ca.rmen.android.poetassistant.shared.main
 
+import android.content.Context
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.espresso.Espresso.pressBack
-import androidx.test.espresso.NoMatchingViewException
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import ca.rmen.android.poetassistant.R
@@ -36,6 +36,7 @@ import ca.rmen.android.poetassistant.main.TestAppUtils.search
 import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
+import ca.rmen.android.poetassistant.main.dictionaries.rhymer.ui.composables.RHYMER_ITEM_ROW_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_ITEM_ROW_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_SCREEN_CONTENT_LIST_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
@@ -89,18 +90,23 @@ class ThesaurusSettingsTest {
 
     @Test
     fun testFilterWithReverseLookupEnabled() {
+        val context: Context = activityTestRule.activity
         openMenuItem(R.string.action_settings)
         clickPreference(R.string.thesaurus_reverse_lookup_setting_title)
         pressBack()
         search("number")
-        addFilter(Tab.RHYMER, "mistake", "bloomer")
-        checkRhyme("blunder")
+        addFilter(composeTestRule, context, Tab.RHYMER, "mistake", "bloomer")
+        checkRhyme(composeTestRule, "blunder")
     }
 
-    @Test(expected = NoMatchingViewException::class)
+    @Test
     fun testFilterWithReverseLookupDisabled() {
+        val context: Context = activityTestRule.activity
         search("number")
-        addFilter(Tab.RHYMER, "mistake", null)
-        checkRhyme("blunder")
+        addFilter(composeTestRule, context, Tab.RHYMER, "mistake", null)
+        composeTestRule.waitForIdle()
+        composeTestRule
+            .onNodeWithTag("${RHYMER_ITEM_ROW_TAG}blunder")
+            .assertDoesNotExist()
     }
 }

@@ -24,6 +24,7 @@ import android.content.Context
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.main.dictionaries.rhymes.RhymeResult
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.RhymesRepository
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ThesaurusEntry
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ThesaurusListItem
@@ -291,6 +292,7 @@ class LookupThesaurusEntryUseCaseTest {
         override suspend fun lookupReverseSynonyms(word: String, excludeWords: Set<String>): List<ThesaurusEntry.ThesaurusEntryDetails> = emptyList()
         override suspend fun lookupReverseAntonyms(word: String, excludeWords: Set<String>): List<ThesaurusEntry.ThesaurusEntryDetails> = emptyList()
         override suspend fun getWordsByStem(stem: String): List<String> = stemCandidates
+        override suspend fun getFlatSynonyms(word: String, includeReverseLookup: Boolean): List<String> = emptyList()
     }
 
     private class FakeRhymesRepository(private val rhymes: Set<String>) : RhymesRepository {
@@ -300,5 +302,12 @@ class LookupThesaurusEntryUseCaseTest {
             aoToAaMatchEnabled: Boolean,
             aorToAoMatchEnabled: Boolean,
         ): Set<String> = rhymes
+        override suspend fun getRhymingWords(
+            word: String,
+            allRhymesEnabled: Boolean,
+            aoToAaMatchEnabled: Boolean,
+            aorToAoMatchEnabled: Boolean,
+        ): List<RhymeResult>? = null
+        override suspend fun getWordsWithDefinitions(words: List<String>): Set<String> = emptySet()
     }
 }
