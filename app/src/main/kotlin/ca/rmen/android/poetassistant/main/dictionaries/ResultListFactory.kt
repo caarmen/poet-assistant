@@ -35,8 +35,6 @@ import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListExporter
 import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLiveData
-import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusListExporter
-import ca.rmen.android.poetassistant.main.dictionaries.rt.ThesaurusLiveData
 import kotlinx.coroutines.CoroutineScope
 
 object ResultListFactory {
@@ -44,10 +42,7 @@ object ResultListFactory {
 
     fun createListFragment(tab: Tab, initialQuery: String?): ResultListFragment<Any> {
         Log.d(TAG, "createListFragment: tab=$tab, initialQuery = $initialQuery")
-        val fragment = when (tab) {
-            Tab.RHYMER -> RhymerListFragment()
-            else /*Tab.THESAURUS */-> ThesaurusListFragment()
-        }
+        val fragment =  RhymerListFragment()
         val bundle = Bundle(2)
         bundle.putSerializable(ResultListFragment.EXTRA_TAB, tab)
         if (initialQuery != null) {
@@ -63,10 +58,7 @@ object ResultListFactory {
         if (fragment.context == null) return null
 
         // Map the Tab to the corresponding ViewModel Class
-        val viewModelClass = when (tab) {
-            Tab.RHYMER -> RhymerListViewModel::class.java
-            else /*Tab.THESAURUS */-> ThesaurusListViewModel::class.java
-        }
+        val viewModelClass =  RhymerListViewModel::class.java
 
         // Hilt integrates with Fragment's default ViewModelProvider when using @HiltViewModel
         return ViewModelProvider(fragment)[viewModelClass]
@@ -78,41 +70,20 @@ object ResultListFactory {
         scope: CoroutineScope,
         query: String?,
         filter: String?,
-    ): ResultListLiveData<out ResultListData<Any>> {
-        return when (tab) {
-            Tab.RHYMER -> RhymerLiveData(context, scope, query!!, filter)
-            else /* THESAURUS */ -> ThesaurusLiveData(context, scope, query!!, filter)
-        }
-    }
+    ): ResultListLiveData<out ResultListData<Any>> = RhymerLiveData(context, scope, query!!, filter)
 
-    fun createExporter(context: Context, tab: Tab): ResultListExporter<*> {
-        return when (tab) {
-            Tab.RHYMER -> RhymerListExporter(context)
-            else /*Tab.THESAURUS*/ -> ThesaurusListExporter(context)
-        }
-    }
+    fun createExporter(context: Context, tab: Tab): ResultListExporter<*> = RhymerListExporter(context)
 
     fun createFilterDialog(context: Context, tab: Tab, text: String?): FilterDialogFragment {
-        val dialogMessage = when (tab) {
-            Tab.RHYMER -> context.getString(R.string.filter_rhymer_message)
-            else -> context.getString(R.string.filter_thesaurus_message)
-        }
+        val dialogMessage = context.getString(R.string.filter_rhymer_message)
         return FilterDialogFragment.newInstance(dialogMessage, text)
     }
 
-    fun getFilterLabel(context: Context, tab: Tab): String {
-        return when (tab) {
-            Tab.RHYMER -> context.getString(R.string.filter_rhymer_label)
-            else -> context.getString(R.string.filter_thesaurus_label)
-        }
-    }
+    fun getFilterLabel(context: Context, tab: Tab): String =
+            context.getString(R.string.filter_rhymer_label)
 
-    fun getEmptyListText(context: Context, tab: Tab, query: String): String {
-        return when (tab) {
-            Tab.RHYMER -> context.getString(R.string.empty_rhymer_list_with_query, query)
-            else -> /*Tab.THESAURUS */ context.getString(R.string.empty_thesaurus_list_with_query, query)
-        }
-    }
+    fun getEmptyListText(context: Context, tab: Tab, query: String): String =
+         context.getString(R.string.empty_rhymer_list_with_query, query)
 
     fun isLoadWithoutQuerySupported(tab: Tab): Boolean {
         return tab == Tab.WOTD
@@ -160,7 +131,6 @@ object ResultListFactory {
     @IdRes
     fun getRecyclerViewId(tab: Tab): Int = when (tab) {
         Tab.RHYMER -> R.id.rhymer_recycler_view
-        Tab.THESAURUS -> R.id.thesaurus_recycler_view
         else -> R.id.recycler_view
     }
 }
