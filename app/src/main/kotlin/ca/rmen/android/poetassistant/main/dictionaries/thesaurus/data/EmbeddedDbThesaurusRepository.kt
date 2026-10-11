@@ -81,6 +81,16 @@ class EmbeddedDbThesaurusRepository @Inject constructor(
             } ?: emptyList()
     }
 
+    override suspend fun getFlatSynonyms(word: String, includeReverseLookup: Boolean): List<String> {
+        val forwardEntry = lookupForward(word)
+        val entries = forwardEntry?.entries?.toMutableList() ?: mutableListOf()
+        if (includeReverseLookup) {
+            val forwardSynonyms = entries.flatMap { it.synonyms }.toSet()
+            entries.addAll(lookupReverseSynonyms(word, forwardSynonyms))
+        }
+        return merge(entries).flatMap { it.synonyms }
+    }
+
     /**
      * Gets entries of words listing the given word among their synonyms or
      * antonyms (per the relation type), excluding the given words — the
