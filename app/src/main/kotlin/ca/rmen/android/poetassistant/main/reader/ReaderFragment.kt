@@ -220,9 +220,9 @@ open class ReaderFragmentImpl : Fragment(), ConfirmDialogFragment.ConfirmDialogL
         }
     }
 
-    fun setText(text: String?) {
-        Log.d(TAG, "setText: text=$text")
-        mViewModel.setSavedPoem(PoemFile(null, null, text))
+    fun appendText(text: String?) {
+        Log.d(TAG, "appendText: text=$text")
+        text?.let { mViewModel.appendToPoem(it) }
     }
 
     override fun onOk(actionId: Int) {
