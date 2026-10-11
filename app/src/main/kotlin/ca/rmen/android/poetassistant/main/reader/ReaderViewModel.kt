@@ -173,6 +173,12 @@ class ReaderViewModel @Inject constructor(
         poem.get()?.let { mPoemPrefs.updatePoemText(it)}
     }
 
+    fun appendToPoem(text: String) {
+        val currentPoemText = poem.get()
+        val newPoemText = if(currentPoemText.isNullOrBlank()) text else "$currentPoemText\n$text"
+        poem.set(newPoemText)
+    }
+
     fun setSavedPoem(savedPoem: PoemFile) {
         Log.v(TAG, "setSavedPoem $savedPoem")
         mPoemPrefs.setSavedPoem(savedPoem)

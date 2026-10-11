@@ -203,7 +203,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
                 mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
                 val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
                 val readerFragment = mPagerAdapter.getFragment(mBinding.viewPager, Tab.READER) as ReaderFragment
-                readerFragment.setText(sharedText)
+                readerFragment.appendText(sharedText)
             }
         }
     }
