@@ -26,11 +26,7 @@ import android.os.Build
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import ca.rmen.android.poetassistant.R
@@ -43,7 +39,6 @@ import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
-import org.hamcrest.Matchers.allOf
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -76,8 +71,11 @@ class RhymerRouterTest {
         composeTestRule.waitForIdle()
         val activity: Activity = activityTestRule.activity
         checkTitleStripOrTab(activity, R.string.tab_rhymer)
-        onView(allOf(withId(R.id.empty), isDisplayed()))
-            .check(matches(withText(activity.getString(R.string.empty_rhymer_list_with_query, "polyvalent"))))
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(
+            text=activity.getString(R.string.empty_rhymer_list_with_query, "polyvalent"),
+            substring = true,
+        ).assertIsDisplayed()
         swipeViewPagerLeft(1)
         // Thesaurus
         composeTestRule.onNodeWithTag(THESAURUS_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()

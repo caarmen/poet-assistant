@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.common.ui.composables.ActiveFilterChip
 
+// TODO iconsistent undersscore
 const val RHYMER_HEADER_TEXT_TAG = "Rhymer_Header_Text"
 const val RHYMER_HEADER_FILTER_TAG = "RhymerHeader_Filter"
 const val RHYMER_HEADER_STAR_TAG = "RhymerHeader_Star"
