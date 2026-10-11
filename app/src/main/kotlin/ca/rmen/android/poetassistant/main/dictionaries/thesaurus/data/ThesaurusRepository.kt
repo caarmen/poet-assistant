@@ -62,4 +62,19 @@ interface ThesaurusRepository {
      * @return List of words that share this stem.
      */
     suspend fun getWordsByStem(stem: String): List<String>
+
+    /**
+     * All synonyms of [word], including (when [includeReverseLookup] is
+     * true) the synonyms of words listing [word] as a synonym, merged per
+     * word type.
+     *
+     * No closest-word fallback: the caller resolves the word first (use
+     * case layer, thesaurus precedent).
+     *
+     * @param word The word to look up.
+     * @param includeReverseLookup Whether to include the reverse-lookup
+     * synonyms.
+     * @return all synonyms of the word.
+     */
+    suspend fun getFlatSynonyms(word: String, includeReverseLookup: Boolean): List<String>
 }
