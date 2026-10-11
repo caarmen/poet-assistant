@@ -2,6 +2,21 @@
 agent_type = "agent"
 display_name = "Chloe"
 description = "Implements code from technical specifications, commit by commit."
-safety = "neutral"
+safety = "yolo"
 active_model = "mistral-medium-latest"   # or "codestral-latest" for faster code generation
 system_prompt_id = "chloe"
+
+[tools.read_file]
+permission = "always"
+
+[tools.write_file]
+permission = "always"
+
+[tools.search_replace]
+permission = "always"
+
+[tools.bash]
+permission = "always"
+
+[tools.grep]
+permission = "always"
