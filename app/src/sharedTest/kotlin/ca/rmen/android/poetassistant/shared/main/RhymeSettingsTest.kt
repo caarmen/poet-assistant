@@ -19,6 +19,7 @@
 
 package ca.rmen.android.poetassistant.shared.main
 
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -47,6 +48,9 @@ class RhymeSettingsTest {
     val hiltTestRule: HiltAndroidRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @get:Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> =
         PoetAssistantActivityTestRule(MainActivity::class.java, true)
 
@@ -55,16 +59,20 @@ class RhymeSettingsTest {
         openMenuItem(R.string.action_settings)
         clickPreference(R.string.match_aor_ao_setting_title)
         pressBack()
+        composeTestRule.waitForIdle()
         search("thorny")
         checkRhymes(activityTestRule.activity, "barany", "brawny")
+        composeTestRule.waitForIdle()
         search("brawny")
         checkRhymes(activityTestRule.activity, "barany", "cornie")
     }
 
     @Test
     fun testMatchAORAODisabled() {
+        composeTestRule.waitForIdle()
         search("thorny")
         checkRhymes(activityTestRule.activity, "cornie", "corny")
+        composeTestRule.waitForIdle()
         search("brawny")
         checkRhymes(activityTestRule.activity, "barany", "scrawny")
     }
@@ -75,8 +83,10 @@ class RhymeSettingsTest {
         clickPreference(R.string.match_ao_aa_setting_title)
         pressBack()
         search("trauma")
+        composeTestRule.waitForIdle()
         checkRhymes(activityTestRule.activity, "bahama", "cama")
         search("across")
+        composeTestRule.waitForIdle()
         checkRhymes(activityTestRule.activity, "alsace", "bos")
     }
 

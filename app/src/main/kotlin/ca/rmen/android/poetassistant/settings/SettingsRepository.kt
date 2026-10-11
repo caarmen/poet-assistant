@@ -22,6 +22,10 @@ class SettingsRepository @Inject constructor(application: Application) {
         private const val PREF_THEME_DARK = "Dark"
         private const val PREF_THEME_AUTO = "Auto"
 
+        private const val PREF_THESAURUS_REVERSE_LOOKUP_ENABLED = "PREF_THESAURUS_REVERSE_LOOKUP_ENABLED"
+        private const val PREF_ALL_RHYMES_ENABLED = "PREF_ALL_RHYMES_ENABLED"
+        private const val PREF_MATCH_AO_AA_ENABLED = "PREF_MATCH_AO_AA_ENABLED"
+        private const val PREF_MATCH_AOR_AO_ENABLED = "PREF_MATCH_AOR_AO_ENABLED"
     }
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
@@ -44,7 +48,11 @@ class SettingsRepository @Inject constructor(application: Application) {
             PREF_THEME_LIGHT -> Theme.LIGHT
             PREF_THEME_DARK -> Theme.DARK
             else -> Theme.AUTO
-        }
+        },
+        isThesaurusReverseLookupEnabled = sharedPreferences.getBoolean(PREF_THESAURUS_REVERSE_LOOKUP_ENABLED, false),
+        isAllRhymesEnabled = sharedPreferences.getBoolean(PREF_ALL_RHYMES_ENABLED, false),
+        isAOAAMatchEnabled = sharedPreferences.getBoolean(PREF_MATCH_AO_AA_ENABLED, false),
+        isAORAOMatchEnabled = sharedPreferences.getBoolean(PREF_MATCH_AOR_AO_ENABLED, false),
     )
 
     fun setLayout(layout: Layout) {
