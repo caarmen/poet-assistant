@@ -44,4 +44,35 @@ interface RhymesRepository {
         aoToAaMatchEnabled: Boolean,
         aorToAoMatchEnabled: Boolean,
     ): Set<String>
+
+    /**
+     * The rhymes for [word], one [RhymeResult] per pronunciation variant,
+     * in the algorithm's order.
+     *
+     * Null when the word has no pronunciation variants (unknown word) —
+     * the not-found path. The match settings apply as in
+     * [getFlatRhymes].
+     *
+     * @param word The word to find rhymes for.
+     * @param allRhymesEnabled Whether to include words without definitions.
+     * @param aoToAaMatchEnabled Whether to apply the AO->AA substitution.
+     * @param aorToAoMatchEnabled Whether to apply the AOR->AO substitution.
+     * @return the rhyme results per pronunciation variant, or null for an
+     * unknown word.
+     */
+    suspend fun getRhymingWords(
+        word: String,
+        allRhymesEnabled: Boolean,
+        aoToAaMatchEnabled: Boolean,
+        aorToAoMatchEnabled: Boolean,
+    ): List<RhymeResult>?
+
+    /**
+     * Of the given words, those with a dictionary definition
+     * (`has_definition=1` in the word_variants table).
+     *
+     * @param words The words to check.
+     * @return the subset of words which have a definition.
+     */
+    suspend fun getWordsWithDefinitions(words: List<String>): Set<String>
 }
