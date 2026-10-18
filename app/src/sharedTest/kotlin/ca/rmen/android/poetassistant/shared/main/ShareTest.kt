@@ -21,8 +21,12 @@ package ca.rmen.android.poetassistant.shared.main
 
 import android.content.Context
 import android.content.Intent
+import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.intent.Intents.intended
@@ -70,7 +74,9 @@ class ShareTest {
     @Test
     fun shareRhymesTest() {
         search("merge")
+        composeTestRule.waitForIdle()
         openMenuItem(R.string.share)
+        composeTestRule.waitForIdle()
         checkShareIntentContains("upsurge")
     }
 
@@ -91,17 +97,6 @@ class ShareTest {
         openMenuItem(R.string.share)
         composeTestRule.waitForIdle()
         checkShareIntentContains("host")
-    }
-
-    @Test
-    fun sharePopupTest() {
-        search("strawberry")
-        val context: Context = activityTestRule.activity
-        composeTestRule.waitForIdle()
-        onView(allOf(withText("adversary"), isDisplayed())).perform(click())
-        composeTestRule.waitForIdle()
-        onView(allOf(withText(endsWith(context.getString(R.string.share))), isDisplayed())).perform(click())
-        checkShareIntentEquals("adversary")
     }
 
     @Test

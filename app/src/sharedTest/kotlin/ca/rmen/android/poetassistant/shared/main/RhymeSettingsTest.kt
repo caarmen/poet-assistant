@@ -61,20 +61,20 @@ class RhymeSettingsTest {
         pressBack()
         composeTestRule.waitForIdle()
         search("thorny")
-        checkRhymes(activityTestRule.activity, "barany", "brawny")
+        checkRhymes(composeTestRule, "barany", "brawny")
         composeTestRule.waitForIdle()
         search("brawny")
-        checkRhymes(activityTestRule.activity, "barany", "cornie")
+        checkRhymes(composeTestRule, "barany", "cornie")
     }
 
     @Test
     fun testMatchAORAODisabled() {
         composeTestRule.waitForIdle()
         search("thorny")
-        checkRhymes(activityTestRule.activity, "cornie", "corny")
+        checkRhymes(composeTestRule, "cornie", "corny")
         composeTestRule.waitForIdle()
         search("brawny")
-        checkRhymes(activityTestRule.activity, "barany", "scrawny")
+        checkRhymes(composeTestRule, "barany", "scrawny")
     }
 
     @Test
@@ -84,24 +84,24 @@ class RhymeSettingsTest {
         pressBack()
         search("trauma")
         composeTestRule.waitForIdle()
-        checkRhymes(activityTestRule.activity, "bahama", "cama")
+        checkRhymes(composeTestRule, "bahama", "cama")
         search("across")
         composeTestRule.waitForIdle()
-        checkRhymes(activityTestRule.activity, "alsace", "bos")
+        checkRhymes(composeTestRule, "alsace", "bos")
     }
 
     @Test
     fun testMatchAOAADisabled() {
         search("trauma")
-        checkRhymes(activityTestRule.activity, "abasia", "abila")
+        checkRhymes(composeTestRule, "abasia", "abila")
         search("across")
-        checkRhymes(activityTestRule.activity, "boss", "boss'")
+        checkRhymes(composeTestRule, "boss", "boss'")
     }
 
     @Test
     fun testRhymesWithDefinitionsOnly() {
         search("faith")
-        checkRhymes(activityTestRule.activity, "eighth", "interfaith")
+        checkRhymes(composeTestRule, "eighth", "interfaith")
     }
 
     @Test
@@ -110,6 +110,6 @@ class RhymeSettingsTest {
         clickPreference(R.string.all_rhymes_setting_title)
         pressBack()
         search("faith")
-        checkRhymes(activityTestRule.activity, "eighth", "haith")
+        checkRhymes(composeTestRule, "eighth", "haith")
     }
 }

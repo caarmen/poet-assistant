@@ -28,10 +28,10 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.PagerAdapter
 import ca.rmen.android.poetassistant.main.Tab
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryFragment
 import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.PatternFragment
+import ca.rmen.android.poetassistant.main.dictionaries.rhymes.RhymerFragment
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ThesaurusFragment
 import ca.rmen.android.poetassistant.widget.BaseTextWatcher
 import ca.rmen.android.poetassistant.widget.ViewShownScheduler
@@ -132,8 +132,8 @@ class Search(
                     word.trim()
                         .lowercase(Locale.US)
                 )
-            } else {
-                (mPagerAdapter.getFragment(viewPager, tab) as ResultListFragment<*>?)?.query(
+            } else if (tab == Tab.RHYMER) {
+                (mPagerAdapter.getFragment(viewPager, Tab.RHYMER) as RhymerFragment?)?.query(
                     word.trim()
                         .lowercase(Locale.US)
                 )
@@ -153,7 +153,7 @@ class Search(
             if (Patterns.isPattern(wordTrimmed)) {
                 (mPagerAdapter.getFragment(viewPager, Tab.PATTERN) as PatternFragment?)?.query(wordTrimmed)
             } else {
-                (mPagerAdapter.getFragment(viewPager, Tab.RHYMER) as ResultListFragment<*>?)?.query(wordTrimmed)
+                (mPagerAdapter.getFragment(viewPager, Tab.RHYMER) as RhymerFragment?)?.query(wordTrimmed)
                 (mPagerAdapter.getFragment(viewPager, Tab.THESAURUS) as ThesaurusFragment?)?.query(wordTrimmed)
                 (mPagerAdapter.getFragment(viewPager, Tab.DICTIONARY) as DictionaryFragment?)?.query(wordTrimmed)
             }

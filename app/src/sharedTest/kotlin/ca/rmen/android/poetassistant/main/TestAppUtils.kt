@@ -23,11 +23,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.SystemClock
-import android.text.TextUtils
-import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.isOff
@@ -47,26 +47,23 @@ import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
 import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.RootMatchers.isFocusable
-import androidx.test.espresso.matcher.ViewMatchers.hasSibling
-import androidx.test.espresso.matcher.ViewMatchers.isChecked
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isEnabled
-import androidx.test.espresso.matcher.ViewMatchers.isNotChecked
 import androidx.test.espresso.matcher.ViewMatchers.withClassName
-import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory
+import ca.rmen.android.poetassistant.main.common.ui.composables.ITEM_THESAURUS_TAG
+import ca.rmen.android.poetassistant.main.common.ui.composables.TEXT_INPUT_DIALOG_TEXT
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_FAVORITE_ICON_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_HEADER_FILTER_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_ITEM_ROW_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_SCREEN_CONTENT_LIST_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.CONFIRM_DELETE_DIALOG_CONFIRM_BUTTON_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_HEADER_DELETE_ALL_TAG
 import com.google.android.material.button.MaterialButton
@@ -123,17 +120,18 @@ object TestAppUtils {
     }
 
     fun openThesaurus(composeTestRule: ComposeTestRule, context: Context, entry: String, expectedFirstSynonym: String) {
-        onView(allOf(withId(R.id.btn_thesaurus),
-                hasSibling(withText(entry)),
-                isDisplayed()))
-                .perform(click())
+        composeTestRule.onNodeWithTag("${ITEM_THESAURUS_TAG}$entry").performClick()
         CustomChecks.checkFirstSynonym(composeTestRule, expectedFirstSynonym)
         TestUiUtils.checkTitleStripOrTab(context, R.string.tab_thesaurus)
     }
 
     fun openThesaurusCleanLayout(composeTestRule: ComposeTestRule, context: Context, entry: String, expectedFirstSynonym: String) {
-        onView(withText(entry)).perform(click())
-        onView(withText(R.string.tab_thesaurus)).perform(click())
+        composeTestRule.onNodeWithTag("${RHYMER_ITEM_ROW_TAG}$entry").performClick()
+        val lookupLabel = context.getString(R.string.tab_thesaurus)
+        composeTestRule.waitUntil(timeoutMillis = 5_000) {
+            composeTestRule.onAllNodesWithText(lookupLabel).fetchSemanticsNodes().isNotEmpty()
+        }
+        composeTestRule.onNodeWithText(lookupLabel).performClick()
         CustomChecks.checkFirstSynonym(composeTestRule, expectedFirstSynonym)
         TestUiUtils.checkTitleStripOrTab(context, R.string.tab_thesaurus)
     }
@@ -158,14 +156,6 @@ object TestAppUtils {
         CustomChecks.checkFirstDefinition(composeTestRule, expectedFirstDefinition)
     }
 
-    fun starQueryWord() {
-        val starIcon = onView(
-                allOf(withId(R.id.btn_star_query), isDisplayed()))
-        starIcon.check(matches(isNotChecked()))
-        starIcon.perform(click())
-        starIcon.check(matches(isChecked()))
-    }
-
     fun starQueryWord(composeTestRule: ComposeTestRule) {
         composeTestRule.onNodeWithTag(DICTIONARY_FAVORITE_ICON_TAG).assert(isOff())
         composeTestRule.onNodeWithTag(DICTIONARY_FAVORITE_ICON_TAG).performClick()
@@ -177,27 +167,12 @@ object TestAppUtils {
         composeTestRule.onNodeWithTag(testTag).assert(isOff())
     }
 
-    fun unStarQueryWord() {
-        val starIcon = onView(
-                allOf(withId(R.id.btn_star_query), isDisplayed()))
-        starIcon.check(matches(isChecked()))
-        starIcon.perform(click())
-        onView(allOf(withId(R.id.btn_star_query), isDisplayed()))
-                .check(matches(isNotChecked()))
-    }
-
-    fun openFilter(expectedPrefilledFilter: String): ViewInteraction {
+    fun openFilter(composeTestRule: ComposeTestRule, expectedPrefilledFilter: String) {
         getInstrumentation().waitForIdleSync()
-        val vi = onView(allOf(withId(R.id.btn_filter), withContentDescription(R.string.filter_title), isDisplayed()))
-        vi.check(matches(isDisplayed()))
-        vi.perform(click())
+        composeTestRule.onNodeWithTag(RHYMER_HEADER_FILTER_TAG).performClick()
         SystemClock.sleep(200)
-        val result = onView(allOf(
-                withId(R.id.edit),
-                isDisplayed()))
-                .inRoot(isFocusable())
-        result.check(matches(withText(expectedPrefilledFilter)))
-        return result
+        composeTestRule.onNodeWithTag(TEXT_INPUT_DIALOG_TEXT).assertTextEquals(expectedPrefilledFilter)
+            .assertIsFocused()
     }
 
     fun addFilter(composeTestRule: ComposeTestRule, context: Context, tab: Tab, filter: String, firstExpectedFilteredMatch: String?) {
@@ -205,36 +180,7 @@ object TestAppUtils {
             addThesaurusFilter(composeTestRule, context, filter, firstExpectedFilteredMatch)
             return
         }
-        addLegacyFilter(tab, filter, firstExpectedFilteredMatch)
-    }
-
-    /**
-     * Applies a filter in a tab which still uses the legacy result list
-     * (the rhymer).
-     */
-    fun addFilter(tab: Tab, filter: String, firstExpectedFilteredMatch: String?) {
-        addLegacyFilter(tab, filter, firstExpectedFilteredMatch)
-    }
-
-    private fun addLegacyFilter(tab: Tab, filter: String, firstExpectedFilteredMatch: String?) {
-        @IdRes val recyclerViewId = ResultListFactory.getRecyclerViewId(tab)
-        val filterView = openFilter("")
-        filterView.perform(typeText(filter), closeSoftKeyboard())
-        clickDialogPositiveButton(android.R.string.ok)
-
-        if (TextUtils.isEmpty(firstExpectedFilteredMatch)) {
-            onView(allOf(withId(R.id.empty), hasSibling(withId(recyclerViewId)), isDisplayed()))
-                    .check(matches(isDisplayed()))
-        } else {
-            onView(allOf(withId(R.id.empty), hasSibling(allOf(withId(recyclerViewId), isDisplayed()))))
-                    .check(matches(not(isDisplayed())))
-            onView(allOf(withId(R.id.text1),
-                    withText(firstExpectedFilteredMatch),
-                    withParent(withParent(withId(recyclerViewId))),
-                    isDisplayed()))
-                    .check(matches(withText(firstExpectedFilteredMatch)))
-        }
-
+        addRhymerFilter(composeTestRule, context, filter, firstExpectedFilteredMatch)
     }
 
     /**
@@ -259,20 +205,41 @@ object TestAppUtils {
         }
     }
 
+    private fun addRhymerFilter(composeTestRule: ComposeTestRule, context: Context, filter: String, firstExpectedFilteredMatch: String?) {
+        composeTestRule.onNodeWithTag(RHYMER_HEADER_FILTER_TAG).performClick()
+        composeTestRule.onNode(hasSetTextAction()).performTextInput(filter)
+        composeTestRule.onNodeWithText(context.getString(android.R.string.ok)).performClick()
+        if (firstExpectedFilteredMatch == null) {
+            composeTestRule.waitUntil(timeoutMillis = 5_000) {
+                composeTestRule.onAllNodesWithTag(RHYMER_SCREEN_CONTENT_LIST_TAG).fetchSemanticsNodes().isEmpty()
+            }
+            composeTestRule.onNodeWithTag(RHYMER_SCREEN_CONTENT_LIST_TAG).assertDoesNotExist()
+        } else {
+            composeTestRule.waitUntil(timeoutMillis = 5_000) {
+                composeTestRule.onAllNodesWithTag("${RHYMER_ITEM_ROW_TAG}$firstExpectedFilteredMatch").fetchSemanticsNodes().isNotEmpty()
+            }
+            composeTestRule.onNodeWithTag("${RHYMER_ITEM_ROW_TAG}$firstExpectedFilteredMatch").assertIsDisplayed()
+        }
+    }
+
     fun clearFilter(composeTestRule: ComposeTestRule, context: Context, tab: Tab, firstExpectedNonFilteredMatch: String) {
         if (tab == Tab.THESAURUS) {
             clearThesaurusFilter(composeTestRule, context, firstExpectedNonFilteredMatch)
             return
         }
-        @IdRes val recyclerViewId = ResultListFactory.getRecyclerViewId(tab)
-        onView(allOf(withId(R.id.btn_clear), withContentDescription(R.string.filter_clear), isDisplayed()))
-                .perform(click())
+        clearRhymerFilter(composeTestRule, context, firstExpectedNonFilteredMatch)
+    }
 
-        onView(allOf(withId(R.id.text1),
-                withText(firstExpectedNonFilteredMatch),
-                withParent(withParent(withId(recyclerViewId))),
-                isDisplayed()))
-                .check(matches(withText(firstExpectedNonFilteredMatch)))
+    /**
+     * Clears the filter in the Compose rhymer screen, then waits for the
+     * unfiltered results.
+     */
+    private fun clearRhymerFilter(composeTestRule: ComposeTestRule, context: Context, firstExpectedNonFilteredMatch: String) {
+        composeTestRule.onNode(hasContentDescription(context.getString(R.string.filter_clear))).performClick()
+        composeTestRule.waitUntil(timeoutMillis = 5_000) {
+            composeTestRule.onAllNodesWithTag("${RHYMER_ITEM_ROW_TAG}$firstExpectedNonFilteredMatch").fetchSemanticsNodes().isNotEmpty()
+        }
+        composeTestRule.onNodeWithTag("${RHYMER_ITEM_ROW_TAG}$firstExpectedNonFilteredMatch").assertIsDisplayed()
     }
 
     /**

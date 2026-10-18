@@ -45,6 +45,7 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_SCREEN_CONTENT_EMPTY_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -77,7 +78,7 @@ class IntentTest {
         val activity: MainActivity = activityTestRule.launchActivity(Intent())
         launchNewIntent(Intent.ACTION_SEARCH, SearchManager.QUERY, "muffin")
         checkTitleStripOrTab(activity, R.string.tab_rhymer)
-        checkRhymes(activity, "mcguffin", "toughen")
+        checkRhymes(composeTestRule, "mcguffin", "toughen")
         swipeViewPagerLeft(1)
         checkFirstSynonym(composeTestRule, "quick bread")
         swipeViewPagerLeft(1)
@@ -89,7 +90,7 @@ class IntentTest {
         val activity: MainActivity = activityTestRule.launchActivity(Intent())
         launchNewIntent(Intent.ACTION_SEARCH, SearchManager.USER_QUERY, "muffin")
         checkTitleStripOrTab(activity, R.string.tab_rhymer)
-        checkRhymes(activity, "mcguffin", "toughen")
+        checkRhymes(composeTestRule, "mcguffin", "toughen")
         swipeViewPagerLeft(1)
         checkFirstSynonym(composeTestRule, "quick bread")
         swipeViewPagerLeft(1)
@@ -108,7 +109,7 @@ class IntentTest {
         composeTestRule.waitForIdle()
         swipeViewPagerRight(1)
         composeTestRule.waitForIdle()
-        checkRhymes(activity, "mcguffin", "toughen")
+        checkRhymes(composeTestRule, "mcguffin", "toughen")
     }
 
     @Test
@@ -163,7 +164,7 @@ class IntentTest {
         swipeViewPagerRight(1)
         checkFirstSynonym(composeTestRule, "quick bread")
         swipeViewPagerRight(1)
-        checkRhymes(activity, "mcguffin", "toughen")
+        checkRhymes(composeTestRule, "mcguffin", "toughen")
     }
 
     @Test
@@ -210,7 +211,7 @@ class IntentTest {
     private fun checkRhymerOnly(composeTestRule: ComposeTestRule, expectedRhyme1: String, expectedRhyme2: String) {
         val activity: Activity = activityTestRule.activity
         checkTitleStripOrTab(activity, R.string.tab_rhymer)
-        checkRhymes(activity, expectedRhyme1, expectedRhyme2)
+        checkRhymes(composeTestRule, expectedRhyme1, expectedRhyme2)
         swipeViewPagerLeft(1)
         // Thesaurus
         composeTestRule.onNodeWithTag(THESAURUS_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
@@ -228,8 +229,7 @@ class IntentTest {
         composeTestRule.onNodeWithTag(DICTIONARY_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
         swipeViewPagerRight(2)
         // Rhymer
-        onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
-            .check(matches(isDisplayed()))
+        composeTestRule.onNodeWithTag(RHYMER_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
     }
 
     private fun checkDictionaryOnly(composeTestRule: ComposeTestRule, expectedFirstDefinition: String) {
@@ -241,7 +241,6 @@ class IntentTest {
         composeTestRule.onNodeWithTag(THESAURUS_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
         swipeViewPagerRight(1)
         // Rhymer
-        onView(allOf(withId(R.id.empty), isDisplayed(), withText(R.string.empty_list_without_query)))
-            .check(matches(isDisplayed()))
+        composeTestRule.onNodeWithTag(RHYMER_SCREEN_CONTENT_EMPTY_TAG).assertIsDisplayed()
     }
 }

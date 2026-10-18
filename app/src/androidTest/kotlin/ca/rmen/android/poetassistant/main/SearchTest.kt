@@ -148,7 +148,7 @@ class SearchTest {
     @Test
     fun patternSearchWithFavoriteTest() {
         search("hello")
-        starQueryWord()
+        starQueryWord(composeTestRule)
         // For some reason, sometimes the view scrolls up, hiding the search field :(
         // Scroll down so we can search again.
         onView(withId(android.R.id.content)).perform(swipeDown())

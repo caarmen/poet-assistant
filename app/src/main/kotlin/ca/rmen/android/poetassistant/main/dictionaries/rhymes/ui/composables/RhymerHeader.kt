@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.common.ui.composables.ActiveFilterChip
 
+// The inconsistent underscore matches Thesaurus_Header_Text (spec §2.8).
 const val RHYMER_HEADER_TEXT_TAG = "Rhymer_Header_Text"
 const val RHYMER_HEADER_FILTER_TAG = "RhymerHeader_Filter"
 const val RHYMER_HEADER_STAR_TAG = "RhymerHeader_Star"

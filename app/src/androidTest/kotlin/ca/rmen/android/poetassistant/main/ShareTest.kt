@@ -25,25 +25,20 @@ import android.content.Intent
 import android.os.Build
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
-import androidx.test.espresso.matcher.ViewMatchers.hasSibling
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.TestAppUtils.addFilter
 import ca.rmen.android.poetassistant.main.TestAppUtils.search
 import ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem
-import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
+import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_ITEM_STAR_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_SCREEN_CONTENT_LIST_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantIntentsTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -114,8 +109,8 @@ class ShareTest {
     @Test
     fun shareFavoritesTest() {
         search("happy")
-        onView(allOf(withId(R.id.btn_star_result), isDisplayed(), hasSibling(withText("snappy")))).perform(click())
-        onView(allOf(withId(R.id.btn_star_result), isDisplayed(), hasSibling(withText("crappy")))).perform(click())
+        composeTestRule.onNodeWithTag("${RHYMER_ITEM_STAR_TAG}snappy").performClick()
+        composeTestRule.onNodeWithTag("${RHYMER_ITEM_STAR_TAG}crappy").performClick()
         swipeViewPagerLeft(4)
         openMenuItem(R.string.share)
         checkShareIntentContains("snappy")

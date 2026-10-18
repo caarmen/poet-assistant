@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.main
 import android.app.Application
 import android.graphics.Bitmap
 import android.os.SystemClock
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
 import androidx.test.filters.LargeTest
@@ -64,8 +65,11 @@ class ScreenshotTest {
     @get:Rule(order=0)
     val hiltTestRule = HiltAndroidRule(this)
 
+    @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
     @JvmField
-    @Rule(order=1)
+    @Rule(order=2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(
         MainActivity::class.java, true
     )
@@ -124,7 +128,7 @@ class ScreenshotTest {
         for (word in words) {
             TestAppUtils.search(word)
             Espresso.onIdle()
-            TestAppUtils.starQueryWord()
+            TestAppUtils.starQueryWord(composeTestRule)
         }
     }
 

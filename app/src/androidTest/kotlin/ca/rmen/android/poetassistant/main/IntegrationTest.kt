@@ -21,13 +21,16 @@ package ca.rmen.android.poetassistant.main
 
 
 import android.content.Context
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isChecked
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -56,8 +59,6 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.endsWith
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -112,7 +113,7 @@ class IntegrationTest {
         checkAllStarredWords(context, composeTestRule)
         swipeViewPagerRight(4)
         search(data.query)
-        checkRhymes(context, data.firstRhyme, data.secondRhyme)
+        checkRhymes(composeTestRule, data.firstRhyme, data.secondRhyme)
         openThesaurus(composeTestRule, context, data.firstRhyme, data.firstSynonymForFirstRhyme)
         openDictionary(composeTestRule, context, data.secondSynonymForFirstRhyme, data.firstDefinitionForSecondSynonym)
         starQueryWord(composeTestRule)
@@ -143,7 +144,7 @@ class IntegrationTest {
         checkAllStarredWords(context, composeTestRule)
         swipeViewPagerRight(4)
         search(data.query)
-        checkRhymes(context, data.firstRhyme, data.secondRhyme)
+        checkRhymes(composeTestRule, data.firstRhyme, data.secondRhyme)
         openThesaurusCleanLayout(composeTestRule, context, data.firstRhyme, data.firstSynonymForFirstRhyme)
         openDictionaryCleanLayout(composeTestRule, context, data.secondSynonymForFirstRhyme, data.firstDefinitionForSecondSynonym)
         starQueryWord(composeTestRule)
@@ -193,9 +194,9 @@ class IntegrationTest {
         useCleanLayout()
         search("donkey")
         val wordToCopy = "swanky"
-        onView(allOf(withText(wordToCopy), isDisplayed())).perform(click())
-        onView(allOf(withText(endsWith(context.getString(R.string.menu_more))), isDisplayed())).perform(click())
-        onView(allOf(withText(endsWith(context.getString(R.string.menu_copy))), isDisplayed())).perform(click())
+        composeTestRule.onNodeWithText(wordToCopy).assertIsDisplayed().performClick()
+        composeTestRule.onNode(hasText(context.getString(R.string.menu_copy), substring = true))
+            .assertIsDisplayed().performClick()
         getInstrumentation().runOnMainSync { checkClipboard(context, wordToCopy) }
     }
 

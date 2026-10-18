@@ -20,11 +20,11 @@
 package ca.rmen.android.poetassistant.shared.main
 
 import android.content.Context
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -33,15 +33,12 @@ import ca.rmen.android.poetassistant.main.CustomChecks.checkClipboard
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.TestAppUtils.addFilter
-import ca.rmen.android.poetassistant.main.TestAppUtils.clickDialogPositiveButton
 import ca.rmen.android.poetassistant.main.TestAppUtils.openFilter
 import ca.rmen.android.poetassistant.main.TestAppUtils.search
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.endsWith
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -56,7 +53,11 @@ class IntegrationTest {
     @get:Rule(order = 0)
     val hiltTestRule: HiltAndroidRule = HiltAndroidRule(this)
 
-    @get:Rule(order = 1)
+    @JvmField
+    @Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @get:Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> =
         PoetAssistantActivityTestRule(MainActivity::class.java, true)
 
@@ -65,17 +66,18 @@ class IntegrationTest {
         val context: Context = activityTestRule.activity
         search("donkey")
         val wordToCopy = "swanky"
-        onView(allOf(withText(wordToCopy), isDisplayed())).perform(click())
-        onView(allOf(withText(endsWith(context.getString(R.string.menu_copy))), isDisplayed())).perform(click())
+
+        composeTestRule.onNodeWithText(wordToCopy).assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText(context.getString(R.string.menu_copy)).assertIsDisplayed().performClick()
         getInstrumentation().runOnMainSync { checkClipboard(context, wordToCopy) }
     }
 
     @Test
     fun saveFilterTest() {
         search("pugnacious")
-        addFilter(Tab.RHYMER, "vulturous", "rapacious")
-        val filterView = openFilter("vulturous")
-        filterView.perform(closeSoftKeyboard())
-        clickDialogPositiveButton(android.R.string.ok)
+        addFilter(composeTestRule, activityTestRule.activity, Tab.RHYMER, "vulturous", "rapacious")
+        openFilter(composeTestRule, "vulturous")
+        Espresso.closeSoftKeyboard()
+        composeTestRule.onNodeWithText(activityTestRule.activity.getString(android.R.string.ok)).performClick()
     }
 }
