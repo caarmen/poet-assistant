@@ -1,13 +1,13 @@
 #!/bin/bash
-# dev-loop.sh — Cameron ↔ Chloe loop for the thesaurus-tab feature.
+# dev-loop.sh — Cameron ↔ Chloe loop for the rhymer-tab feature.
 # Hardcoded for this feature; generalize only after the pattern is proven.
 
-SPEC="plans/thesaurus-tab-spec.md"
-REVIEW="plans/thesaurus-tab-code-review.md"
-REVISIONS="plans/thesaurus-tab-revisions.md"
-SPEC_ISSUES="plans/thesaurus-tab-spec-issues.md"
-BRANCH="feature/thesaurus-tab"
-BASE_BRANCH="loops"
+SPEC="plans/rhymer-tab-spec.md"
+REVIEW="plans/rhymer-tab-code-review.md"
+REVISIONS="plans/rhymer-tab-revisions.md"
+SPEC_ISSUES="plans/rhymer-tab-spec-issues.md"
+BRANCH="feature/rhymer-tab"
+BASE_BRANCH="master"
 MAX_ROUNDS=5
 
 set -euo pipefail
@@ -81,7 +81,7 @@ Otherwise end with: VERDICT: CHANGES_REQUESTED"
   echo "=== Round $round: Chloe revises ==="
 
   # Chloe: resumed kickoff session — her mental model accumulates.
-  vibe --agent chloe --continue --prompt "Cameron's review is at $REVIEW.
+  vibe --agent chloe --resume 7c62b1cb --prompt "Cameron's review is at $REVIEW.
 
 For each remark:
 - If you agree: fix it, with a fixup commit, to adjust the commit which originally
