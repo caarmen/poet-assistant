@@ -32,7 +32,6 @@ import android.view.ViewGroup
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryFragment
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.RhymerFragment
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ThesaurusFragment
@@ -84,13 +83,6 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
 
     override fun getItemPosition(obj: Any): Int {
         Log.v(TAG, "getItemPosition $obj")
-        if (obj is ResultListFragment<*>) {
-            val arguments = obj.arguments
-            if (arguments != null) {
-                val tab = arguments.getSerializable(ResultListFragment.EXTRA_TAB) as Tab
-                return getPositionForTab(tab)
-            }
-        }
         if (obj is ReaderFragment) {
             return getPositionForTab(Tab.READER)
         }

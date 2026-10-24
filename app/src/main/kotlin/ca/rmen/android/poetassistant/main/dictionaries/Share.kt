@@ -21,37 +21,11 @@ package ca.rmen.android.poetassistant.main.dictionaries
 
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.createChooser
 import android.os.Build
 import androidx.annotation.DrawableRes
-import android.util.Log
-import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.main.Tab
 
 object Share {
-    private val TAG = Constants.TAG + Share::class.java.simpleName
-
-    /**
-     * Allows the user to share the contents of the given {@link ResultListFragment} tab as text.
-     *
-     * @param word    the word the user searched for
-     * @param filter  an optional filter the user specified to narrow the search results.
-     * @param entries the rhymer, thesaurus, or dictionary entries for the given word
-     * @param <T>     the type of data displayed in the list fragment. Must be List of {@link RTEntryViewModel} or List of {@link ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry.DictionaryEntryDetails}
-     */
-    fun <T> share(context: Context, tab: Tab, word: String, filter: String?, entries: T) {
-        @Suppress("UNCHECKED_CAST")
-        val exporter = ResultListFactory.createExporter(context, tab) as ResultListExporter<T>
-        val text = exporter.export(word, filter, entries)
-        Log.v(TAG, "Will share $text")
-        val intent = Intent(Intent.ACTION_SEND)
-        intent.putExtra(Intent.EXTRA_TEXT, text)
-        intent.type = "text/plain"
-        val chooserIntent = createChooser(intent, context.getString(R.string.share))
-        chooserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(chooserIntent)
-    }
 
     /**
      * Allows the user to share the given text.

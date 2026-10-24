@@ -49,11 +49,9 @@ import ca.rmen.android.poetassistant.about.AboutActivity
 import ca.rmen.android.poetassistant.databinding.ActivityMainBinding
 import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.getInsets
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListFragment
+import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
-import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
-import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsViewModel
@@ -83,8 +81,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
     private lateinit var mBinding: ActivityMainBinding
     private lateinit var mPagerAdapter: PagerAdapter
     @Inject lateinit var mPrefs: SettingsPrefs
-    @Inject lateinit var mRhymer: Rhymer
-    @Inject lateinit var mThesaurus: Thesaurus
+    @Inject lateinit var mEmbeddedDb: EmbeddedDb
     @Inject lateinit var mDictionary: Dictionary
     @Inject lateinit var mFavoritesRepository: FavoritesRepository
     @Inject lateinit var suggestionsRepository: SuggestionsRepository
@@ -174,7 +171,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
 
     private suspend fun loadDatabase(): Boolean {
         return withContext(ioDispatcher) {
-            mRhymer.isLoaded() && mThesaurus.isLoaded() && mDictionary.isLoaded()
+            mEmbeddedDb.isLoaded()
         }
     }
 
@@ -303,9 +300,6 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
                 imm?.hideSoftInputFromWindow(mBinding.viewPager.windowToken, 0)
             }
-            val fragment = mPagerAdapter.getFragment(mBinding.viewPager, tab)
-            (fragment as? ResultListFragment<*>)?.enableAutoHideIfNeeded()
-
             AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout)
             mPrefs.tab = tab.name
         }
