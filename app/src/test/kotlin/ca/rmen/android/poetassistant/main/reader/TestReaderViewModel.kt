@@ -23,6 +23,8 @@ import android.text.SpannableStringBuilder
 import androidx.test.core.app.ApplicationProvider
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.di.IODispatcher
+import ca.rmen.android.poetassistant.main.reader.data.PoemFileRepository
+import ca.rmen.android.poetassistant.main.reader.data.PoemRepository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -50,12 +52,22 @@ class TestReaderViewModel {
     @IODispatcher
     @Inject lateinit var ioDispatcher: CoroutineDispatcher
 
+    @Inject lateinit var poemRepository: PoemRepository
+
+    @Inject lateinit var poemFileRepository: PoemFileRepository
+
     private lateinit var viewModel: ReaderViewModel
 
     @Before
     fun setUp() {
         hiltTestRule.inject()
-        viewModel = ReaderViewModel(ApplicationProvider.getApplicationContext(), tts, ioDispatcher)
+        viewModel = ReaderViewModel(
+            ApplicationProvider.getApplicationContext(),
+            tts,
+            ioDispatcher,
+            poemRepository,
+            poemFileRepository,
+        )
     }
 
     @After
