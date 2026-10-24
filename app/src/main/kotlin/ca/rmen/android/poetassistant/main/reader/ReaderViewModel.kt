@@ -24,10 +24,8 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
-import androidx.preference.PreferenceManager
 import android.print.PrintJob
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -41,6 +39,9 @@ import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.dictionaries.Share
+import ca.rmen.android.poetassistant.main.reader.data.Poem
+import ca.rmen.android.poetassistant.main.reader.data.PoemFileRepository
+import ca.rmen.android.poetassistant.main.reader.data.PoemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
@@ -59,6 +60,8 @@ class ReaderViewModel @Inject constructor(
     application: Application,
     private val mTts: Tts,
     @IODispatcher private val ioDispatcher: CoroutineDispatcher,
+    private val poemRepository: PoemRepository,
+    private val poemFileRepository: PoemFileRepository,
     ) : AndroidViewModel(application) {
     companion object {
         private val TAG = Constants.TAG + ReaderViewModel::class.java.simpleName
@@ -91,8 +94,6 @@ class ReaderViewModel @Inject constructor(
     data class PlayButtonState(val isEnabled: Boolean, @DrawableRes val iconId: Int)
 
 
-    private val mPrefsListener : PrefsListener
-
     val wordCountText: StateFlow<String?>
         field = MutableStateFlow(null)
 
@@ -123,9 +124,6 @@ class ReaderViewModel @Inject constructor(
                 )
             )
 
-    private val mPoemPrefs: PoemPrefs
-    private val mSharedPreferences: SharedPreferences
-
     init {
         viewModelScope.launch {
             @OptIn(FlowPreview::class)
@@ -133,12 +131,22 @@ class ReaderViewModel @Inject constructor(
                 updateWordCount()
             }
         }
-        mPoemPrefs = PoemPrefs(application)
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
-        mPrefsListener = PrefsListener()
-        mSharedPreferences.registerOnSharedPreferenceChangeListener(mPrefsListener)
-        poemFile.value = mPoemPrefs.getSavedPoem()
+        poemFile.value = poemRepository.savedPoem.value.toPoemFile()
+        // Mirror the legacy PrefsListener: reflect changes to the saved
+        // poem (e.g. made by other components) into poemFile.
+        viewModelScope.launch {
+            poemRepository.savedPoem.collect { poem ->
+                poemFile.value = poem.toPoemFile()
+            }
+        }
     }
+
+    /**
+     * Convert a [Poem] from the new repository layer into the legacy
+     * [PoemFile] shape used by the fragment-facing API.
+     * Deleted in Step 2 together with this ViewModel.
+     */
+    private fun Poem?.toPoemFile(): PoemFile? = this?.let { PoemFile(it.uri, it.name, it.text) }
 
     fun updateWordCount() {
         wordCountText.value = WordCounter.getWordCountText(getApplication(), poem.value)
@@ -202,17 +210,17 @@ class ReaderViewModel @Inject constructor(
     // Begin saving/Opening files
     fun updatePoemText() {
         Log.d(TAG, "Update poem text")
-        poem.value?.let { mPoemPrefs.updatePoemText(it)}
+        poem.value?.let { poemRepository.updatePoemText(it)}
     }
 
     fun setSavedPoem(savedPoem: PoemFile) {
         Log.v(TAG, "setSavedPoem $savedPoem")
-        mPoemPrefs.setSavedPoem(savedPoem)
+        poemRepository.setPoem(Poem(savedPoem.uri, savedPoem.name, savedPoem.text))
         poem.value = savedPoem.text
     }
 
     private fun getSaveAsFilename(): String? {
-        val poemFile = mPoemPrefs.getSavedPoem()
+        val poemFile = poemRepository.savedPoem.value
         return if (poemFile != null) {
             poemFile.name
         } else {
@@ -221,16 +229,17 @@ class ReaderViewModel @Inject constructor(
     }
 
     fun clearPoem() {
-        mPoemPrefs.clear()
+        poemRepository.clear()
         poem.value = ""
     }
 
     fun save(context: Context) {
-        val savedPoem = mPoemPrefs.getSavedPoem()
-        if (savedPoem?.uri != null) {
+        // context no longer used; parameter kept until Step 2
+        val savedPoemUri = poemRepository.savedPoem.value?.uri
+        if (savedPoemUri != null) {
             poem.value?.let {
                 viewModelScope.launch {
-                    val savedPoem = PoemFile.save(context, savedPoem.uri, it)
+                    val savedPoem = poemFileRepository.save(savedPoemUri, it).toPoemFile()
                     onPoemSaved(savedPoem)
                 }
             }
@@ -238,9 +247,10 @@ class ReaderViewModel @Inject constructor(
     }
 
     fun saveAs(context: Context, uri: Uri) {
+        // context no longer used; parameter kept until Step 2
         poem.value?.let {
             viewModelScope.launch {
-                val savedPoem = PoemFile.save(context, uri, it)
+                val savedPoem = poemFileRepository.save(uri, it).toPoemFile()
                 onPoemSaved(savedPoem)
             }
         }
@@ -269,22 +279,23 @@ class ReaderViewModel @Inject constructor(
     }
 
     fun open(context: Context, uri: Uri) {
+        // context no longer used; parameter kept until Step 2
         viewModelScope.launch {
-            val loadedPoem = PoemFile.open(context, uri)
+            val loadedPoem = poemFileRepository.read(uri).toPoemFile()
             onPoemLoaded(loadedPoem)
         }
     }
 
     fun loadPoem() {
         // Load the poem we previously saved
-        if (mPoemPrefs.hasSavedPoem()) {
-            val savedPoem = mPoemPrefs.getSavedPoem()
-            if (savedPoem != null) {
-                poem.value = savedPoem.text
+        val savedPoem = poemRepository.savedPoem.value
+        if (savedPoem != null) {
+            poem.value = savedPoem.text
+        } else {
+            val tempPoemText = poemRepository.getTempPoemText()
+            if (tempPoemText != null) {
+                poem.value = tempPoemText
             }
-        } else if (mPoemPrefs.hasTempPoem()) {
-            val tempPoemText = mPoemPrefs.getTempPoem()
-            poem.value = tempPoemText
         }
     }
 
@@ -333,32 +344,4 @@ class ReaderViewModel @Inject constructor(
             snackbarText.value = SnackbarText(R.string.file_saved, poemFile.name ?: "")
         }
     }
-
-    private inner class PrefsListener : SharedPreferences.OnSharedPreferenceChangeListener {
-        override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
-            Log.v(TAG, "onSharedPreferenceChanged: key=$key")
-            // Prevent the search EditText from disappearing while the user is typing,
-            // by only notifying actual changes in the poem text.
-            // When starting a new instrumentation test after completing another instrumentation
-            // test, we get a shared prefs change with a null value before and after for the shared poem.
-            // This resulted in an invalidation of the options menu, causing problems when entering
-            // search text.
-            val oldPoemText = poemFile.value
-            val newPoemText = mPoemPrefs.getSavedPoem()
-            Log.v(TAG, "old: $oldPoemText, new: $newPoemText")
-            if ((oldPoemText == null && newPoemText == null)
-                    || (oldPoemText != null && oldPoemText == newPoemText)
-                    || (newPoemText != null && newPoemText == oldPoemText)) {
-                Log.v(TAG, "Ignoring uninteresting poem file change")
-            } else {
-                poemFile.value = mPoemPrefs.getSavedPoem()
-            }
-        }
-    }
-
-    override fun onCleared() {
-        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(mPrefsListener)
-        super.onCleared()
-    }
-
 }
