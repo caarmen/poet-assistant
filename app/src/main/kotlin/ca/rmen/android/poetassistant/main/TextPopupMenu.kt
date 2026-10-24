@@ -19,68 +19,25 @@
 
 package ca.rmen.android.poetassistant.main
 
-import android.annotation.TargetApi
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
-import android.os.Build
 import android.text.TextUtils
 import android.view.ActionMode
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import androidx.appcompat.widget.PopupMenu
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import ca.rmen.android.poetassistant.main.dictionaries.Share
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.widget.HackFor23381
-import ca.rmen.android.poetassistant.widget.PopupMenuHelper
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.EntryPointAccessors
 
 object TextPopupMenu {
-    enum class Style {
-        /**
-         * Denotes popup menu items for copying text, and any other actions provided by the system.
-         */
-        SYSTEM,
-        /**
-         * Denotes popup menu items for looking up a text in the rhymer, thesaurus, or dictionary, as well as SYSTEM items.
-         */
-        FULL
-    }
-
-    /**
-     * Create a popup menu allowing the user perform actions on the whole text of the given text view.
-     *
-     * @param style    determines what popup menu items will appear. See {@link Style}.
-     * @param textView tapping on it will bring up the popup menu
-     * @param listener this listener will be notified when the user selects one of the popup menu items
-     */
-    fun addPopupMenu(style: Style, snackbarView: View, textView: TextView, listener: OnWordClickListener) {
-        textView.setOnClickListener {
-            val text = textView.text.toString()
-            val popupMenu = createPopupMenu(snackbarView, textView, text, listener)
-            when (style) {
-                Style.SYSTEM -> {
-                    addSystemMenuItems(textView.context, popupMenu.menuInflater, popupMenu.menu, text)
-                    PopupMenuHelper.insertMenuItemIcons(textView.context, popupMenu)
-                }
-                Style.FULL -> {
-                    addAppMenuItems(popupMenu)
-                    val systemMenu = popupMenu.menu.addSubMenu(R.string.menu_more)
-                    addSystemMenuItems(textView.context, popupMenu.menuInflater, systemMenu, text)
-                }
-            }
-            popupMenu.show()
-        }
-    }
 
     /**
      * Create a popup menu allowing the user to lookup the selected text in the given text view, in
@@ -152,68 +109,6 @@ object TextPopupMenu {
             else -> return false
         }
         return true
-    }
-
-    private fun createPopupMenu(snackbarView: View, view: View, selectedWord: String, listener: OnWordClickListener): PopupMenu {
-        val popupMenu = PopupMenu(view.context, view)
-        popupMenu.setOnMenuItemClickListener { item ->
-            handleItemClicked(item.itemId, snackbarView, view, selectedWord, listener)
-            false
-        }
-        return popupMenu
-    }
-
-    private fun addAppMenuItems(popupMenu: PopupMenu) {
-        popupMenu.inflate(R.menu.menu_word_lookup)
-    }
-
-    private fun addSystemMenuItems(context: Context, menuInflater: MenuInflater, menu: Menu, text: String) {
-        menuInflater.inflate(R.menu.menu_word_other, menu)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getSupportedActivities(context, text)
-                    .filter { resolveInfo -> context.applicationInfo.packageName != resolveInfo.activityInfo.packageName }
-                    .forEach { resolveInfo ->
-                        menu.add(
-                                R.id.group_system_popup_menu_items, Menu.NONE,
-                                Menu.NONE,
-                                resolveInfo.loadLabel(context.packageManager))
-                                .setIcon(resolveInfo.loadIcon(context.packageManager))
-                                .setIntent(createProcessTextIntentForResolveInfo(resolveInfo, text))
-                                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
-                    }
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private fun getSupportedActivities(context: Context, text: String): List<ResolveInfo> {
-        //https://android-developers.googleblog.com/2015/10/in-app-translations-in-android.html?hl=mk
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.packageManager.queryIntentActivities(
-                createProcessTextIntent(text),
-                PackageManager.ResolveInfoFlags.of(0)
-            )
-        } else {
-            @Suppress("DEPRECATION")
-            context.packageManager.queryIntentActivities(createProcessTextIntent(text), 0)
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private fun createProcessTextIntent(text: String): Intent {
-        //https://android-developers.googleblog.com/2015/10/in-app-translations-in-android.html?hl=mk
-        return Intent()
-                .setAction(Intent.ACTION_PROCESS_TEXT)
-                .putExtra(Intent.EXTRA_PROCESS_TEXT, text)
-                .setType("text/plain")
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private fun createProcessTextIntentForResolveInfo(info: ResolveInfo, text: String): Intent {
-        //https://android-developers.googleblog.com/2015/10/in-app-translations-in-android.html?hl=mk
-        return createProcessTextIntent(text)
-                .putExtra(Intent.EXTRA_PROCESS_TEXT_READONLY, true)
-                .setClassName(info.activityInfo.packageName,
-                        info.activityInfo.name)
     }
 
     private fun getSelectedWord(textView: TextView): String? {

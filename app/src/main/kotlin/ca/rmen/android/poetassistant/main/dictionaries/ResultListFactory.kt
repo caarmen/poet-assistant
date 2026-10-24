@@ -19,103 +19,11 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries
 
-import android.app.Activity
-import androidx.lifecycle.ViewModelProvider
 import android.content.Context
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.util.Log
-import android.view.View
-import androidx.annotation.IdRes
-import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.TtsState
-import ca.rmen.android.poetassistant.databinding.ResultListHeaderBinding
 import ca.rmen.android.poetassistant.main.Tab
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RTListAdapter
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerListExporter
-import ca.rmen.android.poetassistant.main.dictionaries.rt.RhymerLiveData
-import kotlinx.coroutines.CoroutineScope
 
 object ResultListFactory {
-    private val TAG = Constants.TAG + ResultListFactory::class.java.simpleName
-
-    fun createListFragment(tab: Tab, initialQuery: String?): ResultListFragment<Any> {
-        Log.d(TAG, "createListFragment: tab=$tab, initialQuery = $initialQuery")
-        val fragment =  RhymerListFragment()
-        val bundle = Bundle(2)
-        bundle.putSerializable(ResultListFragment.EXTRA_TAB, tab)
-        if (initialQuery != null) {
-            bundle.putString(ResultListFragment.EXTRA_QUERY, initialQuery)
-        }
-        fragment.arguments = bundle
-        return fragment
-    }
-
-    fun createAdapter(activity: Activity, tab: Tab): ResultListAdapter<out Any> = RTListAdapter(tab, activity)
-
-    fun createViewModel(tab: Tab, fragment: Fragment): ResultListViewModel<*>? {
-        if (fragment.context == null) return null
-
-        // Map the Tab to the corresponding ViewModel Class
-        val viewModelClass =  RhymerListViewModel::class.java
-
-        // Hilt integrates with Fragment's default ViewModelProvider when using @HiltViewModel
-        return ViewModelProvider(fragment)[viewModelClass]
-    }
-
-    fun createLiveData(
-        tab: Tab,
-        context: Context,
-        scope: CoroutineScope,
-        query: String?,
-        filter: String?,
-    ): ResultListLiveData<out ResultListData<Any>> = RhymerLiveData(context, scope, query!!, filter)
-
-    fun createExporter(context: Context, tab: Tab): ResultListExporter<*> = RhymerListExporter(context)
-
-    fun createFilterDialog(context: Context, tab: Tab, text: String?): FilterDialogFragment {
-        val dialogMessage = context.getString(R.string.filter_rhymer_message)
-        return FilterDialogFragment.newInstance(dialogMessage, text)
-    }
-
-    fun getFilterLabel(context: Context, tab: Tab): String =
-            context.getString(R.string.filter_rhymer_label)
-
-    fun getEmptyListText(context: Context, tab: Tab, query: String): String =
-         context.getString(R.string.empty_rhymer_list_with_query, query)
-
-    fun isLoadWithoutQuerySupported(tab: Tab): Boolean {
-        return tab == Tab.WOTD
-    }
-
-    /**
-     * Set the various buttons which appear in the result list header (ex: tts play,
-     * web search, filter, help) to visible or gone, depending on the tab.
-     */
-    fun updateListHeaderButtonsVisibility(binding: ResultListHeaderBinding, tab: Tab, ttsStatus: TtsState.TtsStatus) {
-        when (tab) {
-            Tab.RHYMER, Tab.THESAURUS -> {
-                binding.btnFilter.visibility = View.VISIBLE
-            }
-            else -> Unit
-        }
-    }
-
-    /**
-     * Determine if the matched word in the results list header should be selectable
-     * (for copying/pasting).
-     *
-     * If we make the matched word always selectable, this causes issues with the
-     * app bar: When loading the app, the content scrolls up, partially hiding the
-     * top bar.
-     *
-     * Maybe there's a better way to avoid this scrolling. But in any case, it doesn't
-     * make sense for the text to be selectable if it's empty, or if it's just a "label"
-     * as in the case of the favorites result list header.
-     */
-    fun getMatchedWordSelectability(matchedWord: String) =
-        matchedWord.isNotBlank()
 
     fun getTabName(context: Context, tab: Tab): String {
         return when (tab) {
@@ -127,10 +35,5 @@ object ResultListFactory {
             Tab.DICTIONARY -> context.getString(R.string.tab_dictionary)
             else -> context.getString(R.string.tab_reader)
         }
-    }
-    @IdRes
-    fun getRecyclerViewId(tab: Tab): Int = when (tab) {
-        Tab.RHYMER -> R.id.rhymer_recycler_view
-        else -> R.id.recycler_view
     }
 }

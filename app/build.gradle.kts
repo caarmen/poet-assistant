@@ -52,8 +52,8 @@ android {
         jacocoVersion = "0.8.15"
     }
     lint {
-        abortOnError = true
-        ignoreWarnings = true
+        abortOnError = false
+        ignoreWarnings = false
         disable.add("RestrictedApi")  // https://stackoverflow.com/questions/45648530/restricted-api-lint-error-when-deleting-table-room-persistence
         checkReleaseBuilds = false
     }

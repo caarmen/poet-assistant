@@ -25,8 +25,6 @@ import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.UserDb
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
-import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
-import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.Module
@@ -44,14 +42,6 @@ class AppModule {
     @Singleton
     fun providesTts(application: Application, settingsPrefs: SettingsPrefs): Tts =
         Tts(application, settingsPrefs)
-
-    @Provides
-    @Singleton
-    fun providesRhymer(embeddedDb: EmbeddedDb, settingsPrefs: SettingsPrefs) = Rhymer(embeddedDb, settingsPrefs)
-
-    @Provides
-    @Singleton
-    fun providesThesaurus(embeddedDb: EmbeddedDb) = Thesaurus(embeddedDb)
 
     @Provides
     @Singleton

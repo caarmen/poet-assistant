@@ -74,12 +74,6 @@ class TestUtilityClasses {
 
     @Test
     @Throws(Exception::class)
-    fun testRTUtils() {
-        assertUtilityClassVisibility(ca.rmen.android.poetassistant.main.dictionaries.rt.RTUtils::class.java)
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun testPatterns() {
         assertUtilityClassVisibility(Patterns::class.java)
     }

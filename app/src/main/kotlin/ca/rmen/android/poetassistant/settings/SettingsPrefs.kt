@@ -24,7 +24,6 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import androidx.core.app.NotificationCompat
 import ca.rmen.android.poetassistant.main.Tab
-import java.util.Locale
 
 class SettingsPrefs(application: Application) {
 
@@ -64,10 +63,6 @@ class SettingsPrefs(application: Application) {
         const val PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED"
         const val PREF_WOTD_NOTIFICATION_PRIORITY = "PREF_WOTD_NOTIFICATION_PRIORITY"
         private const val PREF_WOTD_NOTIFICATION_PRIORITY_DEFAULT = "default"
-        private const val PREF_ALL_RHYMES_ENABLED = "PREF_ALL_RHYMES_ENABLED"
-        private const val PREF_MATCH_AO_AA_ENABLED = "PREF_MATCH_AO_AA_ENABLED"
-        private const val PREF_MATCH_AOR_AO_ENABLED = "PREF_MATCH_AOR_AO_ENABLED"
-        private const val PREF_THESAURUS_REVERSE_LOOKUP_ENABLED = "PREF_THESAURUS_REVERSE_LOOKUP_ENABLED"
         private const val PREF_TAB = "PREF_TAB"
         private const val PREF_TAB_DEFAULT = "RHYMER"
 
@@ -94,37 +89,24 @@ class SettingsPrefs(application: Application) {
             }
         }
 
-        fun getLayout(prefs: SettingsPrefs): ca.rmen.android.poetassistant.settings.SettingsPrefs.Layout {
-            return SettingsPrefs.Layout.valueOf(prefs.layout.uppercase(Locale.US))
-        }
-
         fun getTab(prefs: SettingsPrefs): Tab? {
             return Tab.parse(prefs.tab)
         }
     }
 
 
-    var voice: String
+    val voice: String
         get() {
             return sharedPreferences.getString(PREF_VOICE, VOICE_SYSTEM) ?: VOICE_SYSTEM
         }
-        set(newValue) {
-            sharedPreferences.edit().putString(PREF_VOICE, newValue).apply()
-        }
 
-    var voiceSpeed: Int
+    val voiceSpeed: Int
         get() {
             return sharedPreferences.getInt(PREF_VOICE_SPEED, VOICE_SPEED_NORMAL)
         }
-        set(newValue) {
-            sharedPreferences.edit().putInt(PREF_VOICE_SPEED, newValue).apply()
-        }
-    var voicePitch: Int
+    val voicePitch: Int
         get() {
             return sharedPreferences.getInt(PREF_VOICE_PITCH, VOICE_PITCH_NORMAL)
-        }
-        set(newValue) {
-            sharedPreferences.edit().putInt(PREF_VOICE_PITCH, newValue).apply()
         }
 
     var theme: String
@@ -134,23 +116,16 @@ class SettingsPrefs(application: Application) {
         set(newValue) {
             sharedPreferences.edit().putString(PREF_THEME, newValue).apply()
         }
-    var layout: String
+    val layout: String
         get() {
             return sharedPreferences.getString(PREF_LAYOUT, PREF_DEFAULT_LAYOUT)
                     ?: PREF_DEFAULT_LAYOUT
         }
-        set(newValue) {
-            sharedPreferences.edit().putString(PREF_LAYOUT, newValue).apply()
-        }
 
-    var isSelectionLookupEnabled: Boolean
+    val isSelectionLookupEnabled: Boolean
         get () {
             return sharedPreferences.getBoolean(PREF_SELECTION_LOOKUP, true)
         }
-        set(newValue) {
-            sharedPreferences.edit().putBoolean(PREF_SELECTION_LOOKUP, newValue).apply()
-        }
-
     var isWotdEnabled: Boolean
         get () {
             return sharedPreferences.getBoolean(PREF_WOTD_ENABLED, true)
@@ -166,38 +141,6 @@ class SettingsPrefs(application: Application) {
         }
         set(newValue) {
             sharedPreferences.edit().putString(PREF_WOTD_NOTIFICATION_PRIORITY, newValue).apply()
-        }
-
-    var isAllRhymesEnabled: Boolean
-        get () {
-            return sharedPreferences.getBoolean(PREF_ALL_RHYMES_ENABLED, false)
-        }
-        set(newValue) {
-            sharedPreferences.edit().putBoolean(PREF_ALL_RHYMES_ENABLED, newValue).apply()
-        }
-
-    var isAOAAMatchEnabled: Boolean
-        get () {
-            return sharedPreferences.getBoolean(PREF_MATCH_AO_AA_ENABLED, false)
-        }
-        set(newValue) {
-            sharedPreferences.edit().putBoolean(PREF_MATCH_AO_AA_ENABLED, newValue).apply()
-        }
-
-    var isAORAOMatchEnabled: Boolean
-        get () {
-            return sharedPreferences.getBoolean(PREF_MATCH_AOR_AO_ENABLED, false)
-        }
-        set(newValue) {
-            sharedPreferences.edit().putBoolean(PREF_MATCH_AOR_AO_ENABLED, newValue).apply()
-        }
-
-    var isThesaurusReverseLookupEnabled: Boolean
-        get () {
-            return sharedPreferences.getBoolean(PREF_THESAURUS_REVERSE_LOOKUP_ENABLED, false)
-        }
-        set(newValue) {
-            sharedPreferences.edit().putBoolean(PREF_THESAURUS_REVERSE_LOOKUP_ENABLED, newValue).apply()
         }
 
     var tab: String

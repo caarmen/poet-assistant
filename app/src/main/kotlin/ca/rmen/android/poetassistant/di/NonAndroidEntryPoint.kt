@@ -1,10 +1,7 @@
 package ca.rmen.android.poetassistant.di
 
-import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
-import ca.rmen.android.poetassistant.main.dictionaries.rt.Rhymer
-import ca.rmen.android.poetassistant.main.dictionaries.rt.Thesaurus
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.hilt.EntryPoint
@@ -20,10 +17,7 @@ import kotlinx.coroutines.CoroutineDispatcher
  */
 interface NonAndroidEntryPoint {
     fun tts(): Tts
-    fun rhymer(): Rhymer
-    fun thesaurus(): Thesaurus
     fun dictionary(): Dictionary
-    fun favoritesRepository(): FavoritesRepository
     fun suggestionsRepository(): SuggestionsRepository
     fun prefs(): SettingsPrefs
     @IODispatcher fun ioDispatcher(): CoroutineDispatcher

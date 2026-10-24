@@ -42,8 +42,6 @@ class Dictionary @Inject constructor(
 
     }
 
-    fun isLoaded(): Boolean = embeddedDb.isLoaded()
-
     fun lookup(word: String): DictionaryEntry {
 
         val projection = arrayOf("part_of_speech", "definition")
