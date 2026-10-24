@@ -22,7 +22,9 @@ package ca.rmen.android.poetassistant.main.dictionaries.rhymes.data
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
+import ca.rmen.android.poetassistant.main.dictionaries.rhymes.RhymeResult
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.RhymesRepository
+import ca.rmen.rhymer.RhymeResult as JarRhymeResult
 import ca.rmen.rhymer.WordVariant
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -52,23 +54,7 @@ class EmbeddedDbRhymesRepository @Inject constructor(
         aoToAaMatchEnabled: Boolean,
         aorToAoMatchEnabled: Boolean,
     ): Set<String> = withContext(ioDispatcher) {
-        val rhymer = object : ca.rmen.rhymer.Rhymer() {
-            override fun getWordVariants(word: String): List<WordVariant> =
-                this@EmbeddedDbRhymesRepository.getWordVariants(word)
-
-            override fun getWordsWithLastStressSyllable(lastStressSyllable: String): SortedSet<String> =
-                lookupBySyllable(lastStressSyllable, "stress_syllables", allRhymesEnabled, aoToAaMatchEnabled, aorToAoMatchEnabled)
-
-            override fun getWordsWithLastSyllable(lastSyllable: String): SortedSet<String> =
-                lookupBySyllable(lastSyllable, "last_syllable", allRhymesEnabled, aoToAaMatchEnabled, aorToAoMatchEnabled)
-
-            override fun getWordsWithLastTwoSyllables(lastTwoSyllables: String): SortedSet<String> =
-                lookupBySyllable(lastTwoSyllables, "last_two_syllables", allRhymesEnabled, aoToAaMatchEnabled, aorToAoMatchEnabled)
-
-            override fun getWordsWithLastThreeSyllables(lastThreeSyllables: String): SortedSet<String> =
-                lookupBySyllable(lastThreeSyllables, "last_three_syllables", allRhymesEnabled, aoToAaMatchEnabled, aorToAoMatchEnabled)
-        }
-        val rhymeResults = rhymer.getRhymingWords(word, Constants.MAX_RESULTS)
+        val rhymeResults = rhymingWords(word, allRhymesEnabled, aoToAaMatchEnabled, aorToAoMatchEnabled)
         buildSet {
             rhymeResults.forEach { rhymeResult ->
                 addAll(rhymeResult.strictRhymes)
@@ -78,6 +64,84 @@ class EmbeddedDbRhymesRepository @Inject constructor(
             }
         }
     }
+
+    override suspend fun getRhymingWords(
+        word: String,
+        allRhymesEnabled: Boolean,
+        aoToAaMatchEnabled: Boolean,
+        aorToAoMatchEnabled: Boolean,
+    ): List<RhymeResult>? = withContext(ioDispatcher) {
+        // An unknown word (no pronunciation variants) is the not-found
+        // path. The pre-check lowercases the word like the rhymer
+        // algorithm does for its variant lookup.
+        if (getWordVariants(word.lowercase(Locale.US)).isEmpty()) null
+        else rhymingWords(word, allRhymesEnabled, aoToAaMatchEnabled, aorToAoMatchEnabled).map { it.toRhymeResult() }
+    }
+
+    override suspend fun getWordsWithDefinitions(words: List<String>): Set<String> = withContext(ioDispatcher) {
+        if (words.isEmpty()) return@withContext emptySet()
+        val allArgs = words.toTypedArray()
+        val queryCount = EmbeddedDb.getQueryCount(allArgs.size)
+        buildSet {
+            for (i in 0 until queryCount) {
+                val queryWords = EmbeddedDb.getArgsInQuery(allArgs, i)
+                val selection = "word in " + EmbeddedDb.buildInClause(queryWords.size) + " AND has_definition=1"
+                embeddedDb.query("word_variants", arrayOf("word"), selection, queryWords)?.use { cursor ->
+                    while (cursor.moveToNext()) {
+                        add(cursor.getString(0))
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * The rhyme results per pronunciation variant, from the rhymer algorithm
+     * on the embedded db.
+     */
+    private fun rhymingWords(
+        word: String,
+        allRhymesEnabled: Boolean,
+        aoToAaMatchEnabled: Boolean,
+        aorToAoMatchEnabled: Boolean,
+    ): List<JarRhymeResult> = rhymer(allRhymesEnabled, aoToAaMatchEnabled, aorToAoMatchEnabled)
+        .getRhymingWords(word, Constants.MAX_RESULTS)
+
+    /**
+     * A rhymer algorithm instance over the embedded db, capturing the match
+     * settings.
+     */
+    private fun rhymer(
+        allRhymesEnabled: Boolean,
+        aoToAaMatchEnabled: Boolean,
+        aorToAoMatchEnabled: Boolean,
+    ): ca.rmen.rhymer.Rhymer = object : ca.rmen.rhymer.Rhymer() {
+        override fun getWordVariants(word: String): List<WordVariant> =
+            this@EmbeddedDbRhymesRepository.getWordVariants(word)
+
+        override fun getWordsWithLastStressSyllable(lastStressSyllable: String): SortedSet<String> =
+            lookupBySyllable(lastStressSyllable, "stress_syllables", allRhymesEnabled, aoToAaMatchEnabled, aorToAoMatchEnabled)
+
+        override fun getWordsWithLastSyllable(lastSyllable: String): SortedSet<String> =
+            lookupBySyllable(lastSyllable, "last_syllable", allRhymesEnabled, aoToAaMatchEnabled, aorToAoMatchEnabled)
+
+        override fun getWordsWithLastTwoSyllables(lastTwoSyllables: String): SortedSet<String> =
+            lookupBySyllable(lastTwoSyllables, "last_two_syllables", allRhymesEnabled, aoToAaMatchEnabled, aorToAoMatchEnabled)
+
+        override fun getWordsWithLastThreeSyllables(lastThreeSyllables: String): SortedSet<String> =
+            lookupBySyllable(lastThreeSyllables, "last_three_syllables", allRhymesEnabled, aoToAaMatchEnabled, aorToAoMatchEnabled)
+    }
+
+    /**
+     * Maps a rhymer library result to the repository model.
+     */
+    private fun JarRhymeResult.toRhymeResult() = RhymeResult(
+        variantNumber = variantNumber,
+        strictRhymes = strictRhymes.toList(),
+        oneSyllableRhymes = oneSyllableRhymes.toList(),
+        twoSyllableRhymes = twoSyllableRhymes.toList(),
+        threeSyllableRhymes = threeSyllableRhymes.toList(),
+    )
 
     /**
      * The pronunciation variants of the given word, from the embedded db.

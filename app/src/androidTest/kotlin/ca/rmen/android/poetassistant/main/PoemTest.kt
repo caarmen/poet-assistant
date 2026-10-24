@@ -80,6 +80,7 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_HEADER_TEXT_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_HEADER_TEXT_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_HEADER_TEXT_TAG
 
 @LargeTest
@@ -140,7 +141,7 @@ class PoemTest {
         // Select the "rhymer" popup
         clickPopupView("rhymer")
         checkTitleStripOrTab(activityTestRule.activity, R.string.tab_rhymer)
-        onView(allOf(withId(R.id.tv_list_header), isDisplayed())).check(matches(withText(firstWord)))
+        composeTestRule.onNode(hasTestTag(RHYMER_HEADER_TEXT_TAG) and hasText(firstWord)).assertIsDisplayed()
 
         // Look up in the thesaurus
         swipeViewPagerLeft(3)

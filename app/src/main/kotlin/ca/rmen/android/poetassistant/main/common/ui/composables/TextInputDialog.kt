@@ -35,8 +35,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 
+const val TEXT_INPUT_DIALOG_TEXT = "TextInput_DialogText"
 /**
  * A text input dialog.
  */
@@ -47,6 +49,7 @@ fun TextInputDialog(
     currentTextInput: String?,
     onSubmit: (String) -> Unit,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var textInput by remember(currentTextInput) { mutableStateOf(currentTextInput ?: "") }
     // Focus the input when the dialog opens.
@@ -70,7 +73,8 @@ fun TextInputDialog(
                     onValueChange = { textInput = it },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .focusRequester(focusRequester),
+                        .focusRequester(focusRequester)
+                        .testTag(TEXT_INPUT_DIALOG_TEXT),
                 )
             }
         },

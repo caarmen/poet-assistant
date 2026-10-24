@@ -28,6 +28,7 @@ import android.view.WindowManager
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOn
@@ -37,6 +38,7 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithTag
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_ITEM_ROW_TAG
@@ -46,17 +48,12 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.NoMatchingRootException
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.contrib.RecyclerViewActions.scrollTo
-import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.main.CustomViewMatchers.atPosition
 import ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition
 import ca.rmen.android.poetassistant.main.CustomViewMatchers.withChildCount
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
 import org.fest.reflect.core.Reflection
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
@@ -64,6 +61,8 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_ITEM_ROW_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.composables.PATTERNS_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.composables.PATTERNS_SCREEN_CONTENT_LIST_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_ITEM_ROW_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_SCREEN_CONTENT_LIST_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_SCREEN_CONTENT_LIST_TAG
 import org.junit.Assert.assertEquals
@@ -73,23 +72,32 @@ import org.junit.Assert.fail
 
 object CustomChecks {
 
-    fun checkRhymes(context: Context, firstRhyme: String, secondRhyme: String) {
-        // Make sure we're in the rhymer tab
-        TestUiUtils.checkTitleStripOrTab(context, R.string.tab_rhymer)
-        // Assert the first item (index 1, since index 0 is the "Strict rhyme matches:" header) has firstRhyme
-        onView(withId(R.id.rhymer_recycler_view))
-            .check(matches(atPosition(1, hasDescendant(withText(firstRhyme)))))
+    fun checkRhymes(
+        composeTestRule: ComposeTestRule,
+        firstRhyme: String,
+        secondRhyme: String
+    ) {
+        val list = composeTestRule.onNodeWithTag(RHYMER_SCREEN_CONTENT_LIST_TAG)
+        // Index 0 is the "Strict rhyme matches:" header
+        list.onChildAt(1)
+            .assertIsDisplayed()
+            .assert(hasTestTag("${RHYMER_ITEM_ROW_TAG}$firstRhyme"))
+        list.onChildAt(2)
+            .assertIsDisplayed()
+            .assert(hasTestTag("${RHYMER_ITEM_ROW_TAG}$secondRhyme"))
 
-        // Assert the second item (index 2) has secondRhyme
-        onView(withId(R.id.rhymer_recycler_view))
-            .check(matches(atPosition(2, hasDescendant(withText(secondRhyme)))))
-
+        composeTestRule.waitForIdle()
     }
 
-    fun checkRhyme(expectedRhyme: String) {
+    fun checkRhyme(composeTestRule: ComposeTestRule, expectedRhyme: String) {
+        composeTestRule.waitForIdle()
         // Scroll to the item in case it's not visible
-        onView(allOf(withId(R.id.rhymer_recycler_view), isDisplayed()))
-                .perform(scrollTo<ResultListAdapter.ResultListEntryViewHolder>(hasDescendant(withText(expectedRhyme))))
+        composeTestRule
+            .onNodeWithTag(RHYMER_SCREEN_CONTENT_LIST_TAG)
+            .performScrollToNode(hasTestTag("${RHYMER_ITEM_ROW_TAG}$expectedRhyme"))
+        composeTestRule
+            .onNodeWithTag("${RHYMER_ITEM_ROW_TAG}$expectedRhyme")
+            .assertIsDisplayed()
     }
 
     fun checkPatterns(context: Context, composeTestRule: ComposeTestRule, query: String, vararg patterns: String) {
