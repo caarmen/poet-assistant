@@ -2,6 +2,9 @@
 agent_type = "agent"
 display_name = "Donna"
 description = "Creates technical specifications from requirements and revises them from review feedback."
-safety = "safe"
+safety = "yolo"
 active_model = "mistral-medium-latest"
 system_prompt_id = "donna"
+
+[tools.read_file]
+permission = "always"
