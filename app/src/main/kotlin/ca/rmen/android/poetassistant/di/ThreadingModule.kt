@@ -34,4 +34,9 @@ class ThreadingModule {
     @Singleton
     @IODispatcher
     fun providesIODispatcher(): CoroutineDispatcher = Dispatchers.IO
+
+    @Provides
+    @Singleton
+    @MainDispatcher
+    fun providesMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
 }

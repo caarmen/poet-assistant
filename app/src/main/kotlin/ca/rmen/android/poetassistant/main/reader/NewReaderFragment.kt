@@ -48,6 +48,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment
 import ca.rmen.android.poetassistant.main.reader.data.Poem
 import ca.rmen.android.poetassistant.main.reader.ui.composables.ReaderScreen
 import ca.rmen.android.poetassistant.main.reader.usecases.GetSaveAsFilenameUseCase
+import ca.rmen.android.poetassistant.main.reader.usecases.PrintPoemUseCase
 import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.theme.AppTheme
 import com.google.android.material.snackbar.Snackbar
@@ -84,6 +85,9 @@ class NewReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListene
 
     @Inject
     lateinit var getSaveAsFilenameUseCase: GetSaveAsFilenameUseCase
+
+    @Inject
+    lateinit var printPoemUseCase: PrintPoemUseCase
 
     private val viewModel: ReaderScreenViewModel by viewModels()
     private val isVisibleFlow = MutableStateFlow(false)
@@ -189,8 +193,6 @@ class NewReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListene
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_tts, menu)
         menu.findItem(R.id.action_share).isVisible = false
-        // Printing is reworked in a later step; hidden until then.
-        menu.findItem(R.id.action_print).isVisible = false
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
@@ -204,6 +206,7 @@ class NewReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListene
             R.id.action_share,
             R.id.action_share_poem_text,
             R.id.action_share_poem_audio,
+            R.id.action_print,
         ).forEach { menu.findItem(it)?.isEnabled = hasPoemText }
     }
 
@@ -223,6 +226,13 @@ class NewReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListene
             )
             R.id.action_share, R.id.action_share_poem_text -> viewModel.onSharePoem()
             R.id.action_share_poem_audio -> viewModel.onSharePoemAsAudio()
+            R.id.action_print -> {
+                val activity = requireActivity()
+                val poemText = viewModel.state.value.textFieldValue.text
+                lifecycleScope.launch {
+                    printPoemUseCase(activity, poemText)
+                }
+            }
         }
         return true
     }
