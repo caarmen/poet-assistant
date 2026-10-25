@@ -2,10 +2,10 @@
 # dev-loop.sh — Cameron ↔ Chloe loop for the rhymer-tab feature.
 # Hardcoded for this feature; generalize only after the pattern is proven.
 
-SPEC="plans/reader-tab-step2-spec.md"
-REVIEW="plans/reader-tab-step2-code-review.md"
-REVISIONS="plans/reader-tab-step2-revisions.md"
-SPEC_ISSUES="plans/reader-tab-step2-spec-issues.md"
+SPEC="plans/reader-print-spec.md"
+REVIEW="plans/reader-print-code-review.md"
+REVISIONS="plans/reader-print-revisions.md"
+SPEC_ISSUES="plans/reader-print-spec-issues.md"
 BRANCH="feature/reader-tab"
 BASE_BRANCH="master"
 MAX_ROUNDS=5
