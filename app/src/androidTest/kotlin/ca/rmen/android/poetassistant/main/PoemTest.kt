@@ -24,10 +24,19 @@ import android.annotation.TargetApi
 import android.os.Build
 import android.os.SystemClock
 import androidx.appcompat.widget.ActionBarContextView
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.longClick
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTouchInput
 import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
@@ -39,7 +48,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.uiautomator.UiDevice
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.main.reader.WordCounter
+import ca.rmen.android.poetassistant.main.reader.WordCount
+import ca.rmen.android.poetassistant.main.reader.ui.composables.formatWordCount
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -47,7 +57,6 @@ import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.equalToIgnoringCase
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.lessThan
-import org.hamcrest.Matchers.not
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -58,21 +67,16 @@ import org.junit.Assert.assertThat
 import org.junit.Assert.assertTrue
 import junit.framework.TestCase.assertFalse
 
-import androidx.test.espresso.action.ViewActions.clearText
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
-import androidx.test.espresso.matcher.ViewMatchers.hasFocus
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withClassName
 import androidx.test.espresso.matcher.ViewMatchers.withContentDescription
-import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import ca.rmen.android.poetassistant.main.CustomViewActions.longTap
 import ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem
-import ca.rmen.android.poetassistant.main.TestAppUtils.clickDialogPositiveButton
 import ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem
 import ca.rmen.android.poetassistant.main.TestAppUtils.typePoem
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
@@ -82,6 +86,8 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_HEADER_TEXT_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_HEADER_TEXT_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_HEADER_TEXT_TAG
+import ca.rmen.android.poetassistant.main.reader.ui.composables.READER_POEM_TEXT_FIELD_TAG
+import ca.rmen.android.poetassistant.main.reader.ui.composables.READER_WORD_COUNT_TAG
 
 @LargeTest
 @HiltAndroidTest
@@ -104,7 +110,7 @@ class PoemTest {
     fun exportAudioTest() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return
         swipeViewPagerLeft(3)
-        typeAndSpeakPoem("Will export some text")
+        typeAndSpeakPoem(composeTestRule, "Will export some text")
         val exportDir = File(activityTestRule.activity.filesDir, "export")
         val poemFile = File(exportDir, "poem.wav")
         assertFalse(poemFile.exists())
@@ -116,9 +122,9 @@ class PoemTest {
         // Try another one
 
         UiDevice.getInstance(getInstrumentation()).pressBack()
-        onView(allOf(withId(R.id.tv_text), isDisplayed())).perform(clearText())
+        composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG).performTextClearance()
         SystemClock.sleep(250)
-        typeAndSpeakPoem("Will export some text which is a bit longer")
+        typeAndSpeakPoem(composeTestRule, "Will export some text which is a bit longer")
         openMenuItem(R.string.share_poem_audio)
         assertTrue(poemFile.exists())
         val length2 = poemFile.length()
@@ -131,12 +137,12 @@ class PoemTest {
     fun lookupFromPoemTest() {
         swipeViewPagerLeft(3)
         val poemText = "Here is a poem"
-        typeAndSpeakPoem(poemText)
+        typeAndSpeakPoem(composeTestRule, poemText)
 
         // Look up in the rhymer
         // Long press on the left part of the EditText, to select the first word
         val firstWord = poemText.substring(0, poemText.indexOf(' ')).lowercase(Locale.getDefault())
-        onView(withId(R.id.tv_text)).perform(longTap(1, 0))
+        composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG).performTouchInput { longClick(Offset(1f, 0f)) }
 
         // Select the "rhymer" popup
         clickPopupView("rhymer")
@@ -145,13 +151,13 @@ class PoemTest {
 
         // Look up in the thesaurus
         swipeViewPagerLeft(3)
-        onView(withId(R.id.tv_text)).perform(longTap(1, 0))
+        composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG).performTouchInput { longClick(Offset(1f, 0f)) }
         clickPopupView("thesaurus")
         composeTestRule.onNode(hasTestTag(THESAURUS_HEADER_TEXT_TAG) and hasText(firstWord)).assertIsDisplayed()
 
         // Look up in the dictionary
         swipeViewPagerLeft(2)
-        onView(withId(R.id.tv_text)).perform(longTap(1, 0))
+        composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG).performTouchInput { longClick(Offset(1f, 0f)) }
         clickPopupView("dictionary")
         composeTestRule.onNode(hasTestTag(DICTIONARY_HEADER_TEXT_TAG) and hasText(firstWord)).assertIsDisplayed()
     }
@@ -163,7 +169,7 @@ class PoemTest {
         pressBack()
         swipeViewPagerLeft(3)
         val poemText = "Here is a poem with lookup disabled"
-        typePoem(poemText)
+        typePoem(composeTestRule, poemText)
 
         assertPopupMissing("rhymer")
         assertPopupMissing("thesaurus")
@@ -181,34 +187,38 @@ class PoemTest {
     @Test
     fun testWordCount() {
         swipeViewPagerLeft(3)
-        onView(withId(R.id.reader_word_count)).check(matches(not(isDisplayed())))
+        composeTestRule.onNodeWithTag(READER_WORD_COUNT_TAG).assertIsNotDisplayed()
         val poemText = "Here is some text"
-        typePoem(poemText)
+        typePoem(composeTestRule, poemText)
         // Need to wait for the debounce to finish
         SystemClock.sleep(1000)
-        onView(withId(R.id.reader_word_count))
-                .check(matches(isDisplayed()))
-                .check(matches(withText(WordCounter.getWordCountText(activityTestRule.activity, poemText))))
-                .perform(click())
-        onView(withText(R.string.word_count_help_title))
-                .check(matches(isDisplayed()))
-        clickDialogPositiveButton(android.R.string.ok)
+        composeTestRule.onNodeWithTag(READER_WORD_COUNT_TAG)
+            .assertIsDisplayed()
+            .assertTextEquals(
+                // "Here is some text" = 4 words, 17 characters
+                formatWordCount(activityTestRule.activity.resources, WordCount(4, 17)),
+            )
+            .performClick()
+        composeTestRule.onNodeWithText(activityTestRule.activity.getString(R.string.word_count_help_title))
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText(activityTestRule.activity.getString(android.R.string.ok))
+            .performClick()
         checkTitleStripOrTab(activityTestRule.activity, R.string.tab_reader)
 
-        clearPoem()
+        clearPoem(composeTestRule)
         SystemClock.sleep(1000)
-        onView(withId(R.id.reader_word_count)).check(matches(not(isDisplayed())))
+        composeTestRule.onNodeWithTag(READER_WORD_COUNT_TAG).assertIsNotDisplayed()
     }
 
     private fun assertPopupVisible(label: String) {
-        onView(allOf(withId(R.id.tv_text), isDisplayed())).perform(click())
-        onView(allOf(withId(R.id.tv_text), hasFocus())).perform(longTap(1, 0))
+        composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG).assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG).performTouchInput { longClick(Offset(1f, 0f)) }
         getPopupView(label).check(matches(isDisplayed()))
         pressBack()
     }
 
     private fun assertPopupMissing(label: String) {
-        onView(withId(R.id.tv_text)).perform(longTap(1, 0))
+        composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG).performTouchInput { longClick(Offset(1f, 0f)) }
         var exceptionThrown = false
         try {
             getPopupView(label)
@@ -216,7 +226,6 @@ class PoemTest {
             exceptionThrown = true
         }
         assertTrue(exceptionThrown)
-        pressBack()
     }
 
     private fun getPopupView(label: String): ViewInteraction {

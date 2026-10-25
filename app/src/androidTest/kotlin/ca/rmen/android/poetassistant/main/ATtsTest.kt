@@ -23,6 +23,8 @@ package ca.rmen.android.poetassistant.main
 import android.annotation.TargetApi
 import android.os.Build
 import androidx.annotation.StringRes
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.GeneralClickAction
@@ -84,6 +86,10 @@ class ATtsTest {
     val hiltTestRule = HiltAndroidRule(this)
 
     @JvmField
+    @Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @JvmField
     @Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(MainActivity::class.java, true)
 
@@ -99,7 +105,7 @@ class ATtsTest {
         clickPreference(R.string.pref_voice_preview_title)
         pressBack()
         swipeViewPagerLeft(3)
-        typeAndSpeakPoem("Do I have an accent?")
+        typeAndSpeakPoem(composeTestRule, "Do I have an accent?")
     }
 
 
@@ -141,9 +147,9 @@ class ATtsTest {
         val scope = CoroutineScope(SupervisorJob())
         val timeWithoutPause = timePoem("Hello. Bonjour", scope)
         pressBack()
-        clearPoem()
+        clearPoem(composeTestRule)
         val timeWithPause = timePoem("Hello....... Bonjour", scope)
-        assertThat("expected paused poem to be longer than non-paused poem",
+        assertThat("expected paused poem ($timeWithPause) to be longer than non-paused poem ($timeWithoutPause)",
                 timeWithPause - timeWithoutPause,
                 greaterThan(2000L))
     }
@@ -156,19 +162,23 @@ class ATtsTest {
         return tts
     }
 
+    @OptIn(FlowPreview::class)
     private fun timePoem(poem: String, scope: CoroutineScope): Long {
         var timeUtteranceCompleted: Long = 0
-        typePoem(poem)
+        typePoem(composeTestRule, poem)
         val before = System.currentTimeMillis()
 
         val tts = getTts()
         val job = scope.launch {
-            tts.ttsFlow.filter { it?.currentStatus == TtsState.TtsStatus.UTTERANCE_COMPLETE  }
+            tts.ttsFlow
+                .filter { it?.currentStatus == TtsState.TtsStatus.UTTERANCE_COMPLETE  }
                 .timeout(30.seconds)
                 .first()
             timeUtteranceCompleted = System.currentTimeMillis()
         }
-        speakPoem()
+        speakPoem(composeTestRule)
+        Espresso.onIdle()
+        composeTestRule.waitForIdle()
         job.cancel()
         val poemSpeechTime = timeUtteranceCompleted - before
         return poemSpeechTime

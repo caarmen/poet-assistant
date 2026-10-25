@@ -127,8 +127,8 @@ class IntegrationTest {
         addFilter(composeTestRule, context, Tab.RHYMER, data.rhymerFilter, data.rhymerFilterMatch)
         clearFilter(composeTestRule, context, Tab.RHYMER, data.firstRhyme)
         swipeViewPagerLeft(3)
-        typeAndSpeakPoem(data.poem)
-        clearPoem()
+        typeAndSpeakPoem(composeTestRule, data.poem)
+        clearPoem(composeTestRule)
         // clearing the search history doesn't erase starred words
         clearSearchHistory()
         swipeViewPagerLeft(1)
@@ -158,8 +158,8 @@ class IntegrationTest {
         addFilter(composeTestRule, context, Tab.RHYMER, data.rhymerFilter, data.rhymerFilterMatch)
         clearFilter(composeTestRule, context, Tab.RHYMER, data.firstRhyme)
         swipeViewPagerLeft(3)
-        typeAndSpeakPoem(data.poem)
-        clearPoem()
+        typeAndSpeakPoem(composeTestRule, data.poem)
+        clearPoem(composeTestRule)
         // clearing the search history doesn't erase starred words
         clearSearchHistory()
         swipeViewPagerLeft(1)

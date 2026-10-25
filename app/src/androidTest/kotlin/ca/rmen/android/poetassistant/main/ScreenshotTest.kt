@@ -115,7 +115,7 @@ class ScreenshotTest {
         TestUiUtils.swipeViewPagerLeft(1)
         takeScreenshot("dictionary")
         TestUiUtils.swipeViewPagerLeft(1)
-        TestAppUtils.typePoem("Roses are red.\nViolets are blue.\nIf you are a poet,\nthis app is for you.")
+        TestAppUtils.typePoem(composeTestRule, "Roses are red.\nViolets are blue.\nIf you are a poet,\nthis app is for you.")
         SystemClock.sleep(1000)
         takeScreenshot("composer")
         TestUiUtils.swipeViewPagerLeft(1)
