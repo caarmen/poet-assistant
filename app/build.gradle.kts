@@ -61,7 +61,7 @@ android {
     defaultConfig {
         applicationId = "ca.rmen.android.poetassistant"
         namespace = "ca.rmen.android.poetassistant"
-        minSdk = 23
+        minSdk = 24
         targetSdk = 36
         versionCode = 113200
         versionName = "1.32.0"
@@ -263,9 +263,11 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.preference)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.google.material)
     implementation(libs.hilt.android)
     implementation(libs.hilt.lifecycle.viewmodel.compose)
+    implementation(libs.hilt.work)
     implementation(libs.kotlin)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.core)
@@ -283,6 +285,7 @@ dependencies {
 
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.android.compiler)
+    ksp(libs.hilt.compiler)
 
     kspTest(libs.hilt.android.compiler)
 
@@ -301,6 +304,7 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
     testImplementation(libs.robolectric.simulator)
+    testImplementation(libs.androidx.work.testing)
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.room.testing)
@@ -317,6 +321,7 @@ dependencies {
     androidTestImplementation(libs.google.test.parameter.injector)
     androidTestImplementation(libs.hilt.android.testing)
     androidTestImplementation(libs.robolectric.annotations)
+    androidTestImplementation(libs.androidx.work.testing)
     kspAndroidTest(libs.hilt.android.compiler)
 
     androidTestUtil(libs.androidx.test.orchesetrator)
