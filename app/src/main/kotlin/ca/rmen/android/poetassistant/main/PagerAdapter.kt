@@ -37,7 +37,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rhymes.RhymerFragment
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ThesaurusFragment
 import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.PatternFragment
 import ca.rmen.android.poetassistant.main.favorites.FavoritesFragment
-import ca.rmen.android.poetassistant.main.reader.ReaderFragment
+import ca.rmen.android.poetassistant.main.reader.NewReaderFragment
 import ca.rmen.android.poetassistant.main.wotd.WotdFragment
 import java.util.Locale
 
@@ -77,13 +77,13 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
             Tab.RHYMER -> RhymerFragment.create(mInitialRhymeQuery)
             Tab.THESAURUS -> ThesaurusFragment.create(mInitialThesaurusQuery)
             Tab.DICTIONARY -> DictionaryFragment.create(mInitialDictionaryQuery)
-            else -> ReaderFragment.newInstance(mInitialPoemText)
+            else -> NewReaderFragment.create(mInitialPoemText)
         }
     }
 
     override fun getItemPosition(obj: Any): Int {
         Log.v(TAG, "getItemPosition $obj")
-        if (obj is ReaderFragment) {
+        if (obj is NewReaderFragment) {
             return getPositionForTab(Tab.READER)
         }
         if (obj is FavoritesFragment) {

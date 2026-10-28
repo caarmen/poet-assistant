@@ -67,9 +67,8 @@ class RhymerRouterTest {
         val intent = Intent(Intent.ACTION_PROCESS_TEXT).apply {
             putExtra(Intent.EXTRA_PROCESS_TEXT, "polyvalent")
         }
-        activityTestRule.launchActivity(intent)
+        val activity: Activity = activityTestRule.launchActivity(intent)
         composeTestRule.waitForIdle()
-        val activity: Activity = activityTestRule.activity
         checkTitleStripOrTab(activity, R.string.tab_rhymer)
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText(

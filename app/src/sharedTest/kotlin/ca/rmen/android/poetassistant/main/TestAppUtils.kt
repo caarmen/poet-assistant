@@ -24,12 +24,16 @@ import android.content.Intent
 import android.os.Build
 import android.os.SystemClock
 import androidx.annotation.StringRes
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasContentDescription
-import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.isOff
 import androidx.compose.ui.test.isOn
 import androidx.compose.ui.test.junit4.ComposeTestRule
@@ -39,6 +43,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.text.AnnotatedString
 import ca.rmen.android.poetassistant.main.common.ui.composables.ITEM_DICTIONARY_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_HEADER_FILTER_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_ITEM_ROW_TAG
@@ -52,8 +57,6 @@ import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.isEnabled
-import androidx.test.espresso.matcher.ViewMatchers.withClassName
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -66,11 +69,9 @@ import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHY
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_SCREEN_CONTENT_LIST_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.CONFIRM_DELETE_DIALOG_CONFIRM_BUTTON_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_HEADER_DELETE_ALL_TAG
-import com.google.android.material.button.MaterialButton
+import ca.rmen.android.poetassistant.main.reader.ui.composables.READER_PLAY_BUTTON_TAG
+import ca.rmen.android.poetassistant.main.reader.ui.composables.READER_POEM_TEXT_FIELD_TAG
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.equalToIgnoringCase
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.not
 
 /**
  * Utility functions specific to the functionality of this app.
@@ -190,7 +191,7 @@ object TestAppUtils {
      */
     private fun addThesaurusFilter(composeTestRule: ComposeTestRule, context: Context, filter: String, firstExpectedFilteredMatch: String?) {
         composeTestRule.onNodeWithTag(THESAURUS_HEADER_FILTER_TAG).performClick()
-        composeTestRule.onNode(hasSetTextAction()).performTextInput(filter)
+        composeTestRule.onNodeWithTag(TEXT_INPUT_DIALOG_TEXT).performTextInput(filter)
         composeTestRule.onNodeWithText(context.getString(android.R.string.ok)).performClick()
         if (firstExpectedFilteredMatch == null) {
             composeTestRule.waitUntil(timeoutMillis = 5_000) {
@@ -207,7 +208,7 @@ object TestAppUtils {
 
     private fun addRhymerFilter(composeTestRule: ComposeTestRule, context: Context, filter: String, firstExpectedFilteredMatch: String?) {
         composeTestRule.onNodeWithTag(RHYMER_HEADER_FILTER_TAG).performClick()
-        composeTestRule.onNode(hasSetTextAction()).performTextInput(filter)
+        composeTestRule.onNodeWithTag(TEXT_INPUT_DIALOG_TEXT).performTextInput(filter)
         composeTestRule.onNodeWithText(context.getString(android.R.string.ok)).performClick()
         if (firstExpectedFilteredMatch == null) {
             composeTestRule.waitUntil(timeoutMillis = 5_000) {
@@ -266,34 +267,34 @@ object TestAppUtils {
         onView(allOf(withId(android.R.id.button1), withText(labelRes))).perform(scrollTo(), click())
     }
 
-    fun typeAndSpeakPoem(poem: String) {
-        typePoem(poem)
-        speakPoem()
+    fun typeAndSpeakPoem(composeTestRule: ComposeTestRule, poem: String) {
+        typePoem(composeTestRule, poem)
+        speakPoem(composeTestRule)
         pressBack()
         getInstrumentation().waitForIdleSync()
     }
 
-    fun typePoem(poem: String) {
+    fun typePoem(composeTestRule: ComposeTestRule, poem: String) {
         // The fab should be disabled until there is text
-        val fab = onView(allOf(
-                withId(R.id.btn_play),
-                withClassName(`is`(MaterialButton::class.java.name))
-        ))
-        fab.check(matches(not(isEnabled())))
-        val appCompatEditText = onView(
-                allOf(withId(R.id.tv_text), isDisplayed()))
-        appCompatEditText.check(matches(withText("")))
-        appCompatEditText.perform(typeText(poem))
-        appCompatEditText.check(matches(withText(equalToIgnoringCase(poem))))
-        fab.check(matches(isEnabled()))
+        val playButton = composeTestRule.onNodeWithTag(READER_PLAY_BUTTON_TAG)
+        val poemText = composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG)
+        playButton.assertIsNotEnabled()
+        poemText.assertIsDisplayed()
+            // Check that the text is empty.
+            // A simple assertTextEquals("") fails because the text has a placeholder.
+            .assert(
+                SemanticsMatcher.expectValue(
+                SemanticsProperties.EditableText, AnnotatedString("")))
+            .performTextInput(poem)
+        poemText.assertTextContains(poem, ignoreCase=true)
+        playButton.assertIsEnabled()
     }
 
-    fun speakPoem() {
-        val fab = onView(allOf(withClassName(`is`(MaterialButton::class.java.name)), isEnabled()))
-        fab.perform(click())
+    fun speakPoem(composeTestRule: ComposeTestRule) {
+        composeTestRule.onNodeWithTag(READER_PLAY_BUTTON_TAG).assertIsEnabled().performClick()
     }
 
-    fun clearPoem() {
+    fun clearPoem(composeTestRule: ComposeTestRule) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             TestUiUtils.openMenuItem(R.string.file)
             onView(allOf(withId(R.id.title), withText(R.string.file_new), isDisplayed())).perform(click())
@@ -301,7 +302,12 @@ object TestAppUtils {
             TestUiUtils.openMenuItem(R.string.file_clear)
         }
         clickDialogPositiveButton(R.string.action_clear)
-        onView(allOf(withId(R.id.tv_text), isDisplayed())).check(matches(withText("")))
+        composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG).assertIsDisplayed()
+            // Check that the text is empty.
+            // A simple assertTextEquals("") fails because the text has a placeholder.
+            .assert(
+                SemanticsMatcher.expectValue(
+                    SemanticsProperties.EditableText, AnnotatedString("")))
     }
 
     fun onNewIntent(activity: MainActivity, intent: Intent) {

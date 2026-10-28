@@ -55,7 +55,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsViewModel
-import ca.rmen.android.poetassistant.main.reader.ReaderFragment
+import ca.rmen.android.poetassistant.main.reader.NewReaderFragment
 import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.widget.CABEditText
@@ -206,8 +206,8 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             Intent.ACTION_SEND -> {
                 mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
                 val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
-                val readerFragment = mPagerAdapter.getFragment(mBinding.viewPager, Tab.READER) as ReaderFragment
-                readerFragment.setText(sharedText)
+                val readerFragment = mPagerAdapter.getFragment(mBinding.viewPager, Tab.READER) as NewReaderFragment
+                readerFragment.setPoem(sharedText)
             }
         }
     }

@@ -70,4 +70,9 @@ class TestThreadingModule {
     @Singleton
     @IODispatcher
     fun providesIODispatcher(): CoroutineDispatcher = testIODispatcher
+
+    @Provides
+    @Singleton
+    @MainDispatcher
+    fun providesMainDispatcher(): CoroutineDispatcher = testMainDispatcher
 }

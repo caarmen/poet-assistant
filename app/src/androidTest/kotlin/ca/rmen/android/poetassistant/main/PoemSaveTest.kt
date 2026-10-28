@@ -24,6 +24,7 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.net.Uri
 import android.os.Build
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.preference.PreferenceManager
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -60,6 +61,10 @@ class PoemSaveTest {
 
     @JvmField
     @Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @JvmField
+    @Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = object : PoetAssistantActivityTestRule<MainActivity>(MainActivity::class.java, true) {
         override fun beforeActivityLaunched() {
             super.beforeActivityLaunched()
@@ -74,7 +79,7 @@ class PoemSaveTest {
         swipeViewPagerLeft(3)
         val poemFile = getPoemFile()
         assertFalse(poemFile.exists())
-        typeAndSpeakPoem("Let's save a file")
+        typeAndSpeakPoem(composeTestRule, "Let's save a file")
         openMenuItem(R.string.file)
         onView(allOf(withId(R.id.title), withText(R.string.file_save), isDisplayed())).perform(click())
         assertTrue(poemFile.exists())

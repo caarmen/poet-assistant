@@ -72,7 +72,7 @@ class ShareTest {
     fun sharePoemTest() {
         swipeViewPagerLeft(3)
         val poemText = "Let us share a poem"
-        typeAndSpeakPoem(poemText)
+        typeAndSpeakPoem(composeTestRule, poemText)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             openMenuItem(R.string.share_poem_text)
         } else {

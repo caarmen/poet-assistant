@@ -60,4 +60,10 @@ class TestThreadingModule {
     @Singleton
     @IODispatcher
     fun providesIODispatcher(): CoroutineDispatcher = UnconfinedTestDispatcher()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Provides
+    @Singleton
+    @MainDispatcher
+    fun providesMainDispatcher(): CoroutineDispatcher = UnconfinedTestDispatcher()
 }

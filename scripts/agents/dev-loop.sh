@@ -2,11 +2,11 @@
 # dev-loop.sh — Cameron ↔ Chloe loop for the rhymer-tab feature.
 # Hardcoded for this feature; generalize only after the pattern is proven.
 
-SPEC="plans/rhymer-tab-spec.md"
-REVIEW="plans/rhymer-tab-code-review.md"
-REVISIONS="plans/rhymer-tab-revisions.md"
-SPEC_ISSUES="plans/rhymer-tab-spec-issues.md"
-BRANCH="feature/rhymer-tab"
+SPEC="plans/reader-print-spec.md"
+REVIEW="plans/reader-print-code-review.md"
+REVISIONS="plans/reader-print-revisions.md"
+SPEC_ISSUES="plans/reader-print-spec-issues.md"
+BRANCH="feature/reader-tab"
 BASE_BRANCH="master"
 MAX_ROUNDS=5
 
@@ -37,7 +37,10 @@ Review the changes: run 'git diff ${BASE_BRANCH}...HEAD' and 'git log ${BASE_BRA
 and read the actual code — not just the diff — wherever the diff
 references it. Check: correctness, spec compliance (claim-by-claim
 against the spec, EXCEPT where the spec itself is flawed — see below),
-and code quality.
+and code quality. Some deviation from the spec is acceptable if this results
+in improved code (ex: clearer or more idiomatic code).
+
+Look for opportunities for simplification and to use more idiomatic code.
 
 Tests: don't run tests unless you need to prove something. If you run tests, run
 ./gradlew testDebugUnitTest --tests name-of-test-class-or-method
@@ -81,7 +84,7 @@ Otherwise end with: VERDICT: CHANGES_REQUESTED"
   echo "=== Round $round: Chloe revises ==="
 
   # Chloe: resumed kickoff session — her mental model accumulates.
-  vibe --agent chloe --resume 7c62b1cb --prompt "Cameron's review is at $REVIEW.
+  vibe --agent chloe --resume 7228d01e --prompt "Cameron's review is at $REVIEW.
 
 For each remark:
 - If you agree: fix it, with a fixup commit, to adjust the commit which originally
