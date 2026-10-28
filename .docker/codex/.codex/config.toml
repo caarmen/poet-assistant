@@ -1,3 +1,5 @@
-[[skills.config]]
-path = "/opt/myproj/.vibe/skills"
-enabled = false
+[tui]
+screen_reader_detection_done = true
+
+[projects."/opt/myproj"]
+trust_level = "trusted"

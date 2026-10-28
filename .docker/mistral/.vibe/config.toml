@@ -1,6 +1,3 @@
-skill_paths = [
-    "/opt/myproj/.vibe/skills",
-]
 enabled_tools = [
     "bash",
     "read_file",

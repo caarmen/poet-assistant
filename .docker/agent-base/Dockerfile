@@ -41,6 +41,7 @@ RUN useradd -ms /bin/bash vibeuser
 USER vibeuser
 WORKDIR /home/vibeuser
 
+# Install gmsaas
 RUN python3 -m venv /home/vibeuser/venv && \
     /home/vibeuser/venv/bin/pip install --no-cache-dir --upgrade pip && \
     /home/vibeuser/venv/bin/pip install --no-cache-dir gmsaas
@@ -48,6 +49,11 @@ RUN python3 -m venv /home/vibeuser/venv && \
 ENV PATH="/home/vibeuser/venv/bin:/home/vibeuser/.local/bin:${PATH}"
 
 RUN gmsaas config set android-sdk-path /opt/android-sdk
+
+# Install android skills
+RUN curl -fsSL https://dl.google.com/android/cli/latest/linux_x86_64/install.sh | bash
+
+RUN android update
 
 # Verify installations.
 RUN adb --version && gmsaas --version

@@ -14,11 +14,13 @@ docker run --rm -it \
   -e GIT_AUTHOR_EMAIL="$(git config user.email)" \
   -e GIT_COMMITTER_NAME="$(git config user.name) (via Codex)" \
   -e GIT_COMMITTER_EMAIL="$(git config user.email)" \
+  -e CODEX_HOME=/home/vibeuser/.codex-state \
   -v "${repo_root}":/opt/myproj \
   -v /dev/null:/opt/myproj/.env \
   -v /opt/myproj/node_modules \
   -v "${script_dir}/local.properties":/opt/myproj/local.properties \
   -v "${script_dir}/.gradle":/home/vibeuser/.gradle \
   -v "${script_dir}/.m2":/home/vibeuser/.m2 \
+  -v "${script_dir}/.codex":/home/vibeuser/.codex-state \
   -w /opt/myproj \
   --entrypoint bash poetassistant-codex

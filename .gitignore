@@ -17,4 +17,6 @@ app/schemas
 !.vibe/agents/**
 !.vibe/prompts/
 !.vibe/prompts/**
+.codex/
+!.codex/config.toml
 plans/
