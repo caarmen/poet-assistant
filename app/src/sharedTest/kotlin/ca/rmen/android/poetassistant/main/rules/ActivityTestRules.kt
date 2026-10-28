@@ -40,6 +40,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
 import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.Theme
+import ca.rmen.android.poetassistant.main.wotd.work.WotdPeriodicWork
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -81,6 +82,7 @@ object ActivityTestRules {
         for (idlingResource in idlingResourceList) {
             IdlingRegistry.getInstance().unregister(idlingResource)
         }
+        WotdPeriodicWork.cancel(targetContext)
         cleanup(targetContext)
         val tts = EntryPointAccessors.fromApplication(targetContext.applicationContext, ActivityTestRulesEntryPoint::class.java).tts()
         getInstrumentation().runOnMainSync { tts.shutdown() }
