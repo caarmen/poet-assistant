@@ -8,3 +8,6 @@ system_prompt_id = "donna"
 
 [tools.read_file]
 permission = "always"
+
+[tools.file_system.bash]
+permission = "always"
