@@ -33,7 +33,7 @@ import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
-import ca.rmen.android.poetassistant.main.reader.PoemFile
+import ca.rmen.android.poetassistant.main.common.usecases.GetFileDisplayNameUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,6 +50,7 @@ class SettingsViewModel @Inject constructor(
     @IODispatcher val ioDispatcher: CoroutineDispatcher,
     private val dictionary: Dictionary,
     private val settingsPrefs: SettingsPrefs,
+    private val getFileDisplayNameUseCase: GetFileDisplayNameUseCase,
 ) : AndroidViewModel(application) {
 
     val snackbarText: StateFlow<String> field = MutableStateFlow<String>("")
@@ -81,8 +82,8 @@ class SettingsViewModel @Inject constructor(
             .setType("text/plain")
 
     fun exportFavorites(uri: Uri) {
-        val fileDisplayName = PoemFile.readDisplayName(getApplication(), uri)
         viewModelScope.launch {
+            val fileDisplayName = getFileDisplayNameUseCase(uri)
             try {
                 mFavoritesRepository.exportFavorites(getApplication(), uri)
                 snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_success, fileDisplayName)
@@ -93,8 +94,8 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun importFavorites(uri: Uri) {
-        val fileDisplayName = PoemFile.readDisplayName(getApplication(), uri)
         viewModelScope.launch {
+            val fileDisplayName = getFileDisplayNameUseCase(uri)
             try {
                 mFavoritesRepository.importFavorites(getApplication(), uri)
             } catch (_: Exception) {
