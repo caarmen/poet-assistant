@@ -58,7 +58,6 @@ import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsViewMod
 import ca.rmen.android.poetassistant.main.reader.NewReaderFragment
 import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
-import ca.rmen.android.poetassistant.widget.CABEditText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -71,7 +70,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : MainActivityImpl()
 
-open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener, CABEditText.ImeListener {
+open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener {
     companion object {
         private val TAG = Constants.TAG + MainActivity::class.java.simpleName
         private const val DIALOG_TAG = "dialog"
@@ -269,13 +268,6 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onImeClosed() {
-        // In the reader fragment, when the user taps on the EditText, the soft keyboard is opened, and UI scrolls up, hiding the AppBarLayout.
-        // When the user taps back to close the soft keyboard, we should show the AppBarLayout again, or else the only way
-        // for the user to access the actionbar + tabs would be to swipe left or right to another fragment.
-        AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout)
     }
 
     override fun onWordClick(word: String, tab: Tab) {
