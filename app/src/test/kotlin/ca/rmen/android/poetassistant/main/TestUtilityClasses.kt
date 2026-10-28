@@ -56,12 +56,6 @@ class TestUtilityClasses {
 
     @Test
     @Throws(Exception::class)
-    fun testTextPopupMenu() {
-        assertUtilityClassVisibility(TextPopupMenu::class.java)
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun testResultListFactory() {
         assertUtilityClassVisibility(ResultListFactory::class.java)
     }
