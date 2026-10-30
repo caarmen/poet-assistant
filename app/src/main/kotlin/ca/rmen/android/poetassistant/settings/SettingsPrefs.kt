@@ -22,20 +22,11 @@ package ca.rmen.android.poetassistant.settings
 import android.app.Application
 import android.content.Context
 import androidx.preference.PreferenceManager
-import androidx.core.app.NotificationCompat
 import ca.rmen.android.poetassistant.main.Tab
 
 class SettingsPrefs(application: Application) {
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
-
-    enum class NotificationPriority(val priority: Int) {
-        MAX(NotificationCompat.PRIORITY_MAX),
-        HIGH(NotificationCompat.PRIORITY_HIGH),
-        DEFAULT(NotificationCompat.PRIORITY_DEFAULT),
-        LOW(NotificationCompat.PRIORITY_LOW),
-        MIN(NotificationCompat.PRIORITY_MIN)
-    }
 
     enum class Layout {
         CLEAN,
@@ -62,7 +53,6 @@ class SettingsPrefs(application: Application) {
         const val PREF_SELECTION_LOOKUP = "PREF_SELECTION_LOOKUP"
         const val PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED"
         const val PREF_WOTD_NOTIFICATION_PRIORITY = "PREF_WOTD_NOTIFICATION_PRIORITY"
-        private const val PREF_WOTD_NOTIFICATION_PRIORITY_DEFAULT = "default"
         private const val PREF_TAB = "PREF_TAB"
         private const val PREF_TAB_DEFAULT = "RHYMER"
 
@@ -132,15 +122,6 @@ class SettingsPrefs(application: Application) {
         }
         set(newValue) {
             sharedPreferences.edit().putBoolean(PREF_WOTD_ENABLED, newValue).apply()
-        }
-
-    var wotdNotificationPriority: String
-        get() {
-            return sharedPreferences.getString(PREF_WOTD_NOTIFICATION_PRIORITY, PREF_WOTD_NOTIFICATION_PRIORITY_DEFAULT)
-                    ?: PREF_WOTD_NOTIFICATION_PRIORITY_DEFAULT
-        }
-        set(newValue) {
-            sharedPreferences.edit().putString(PREF_WOTD_NOTIFICATION_PRIORITY, newValue).apply()
         }
 
     var tab: String

@@ -19,7 +19,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <queries>
         <intent>
@@ -182,18 +181,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ca.rmen.android.poetassistant.main.MainActivity" />
         </activity>
-
-        <service
-            android:name=".wotd.WotdJobService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <receiver
-            android:name=".wotd.WotdBroadcastReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="action_wotd" />
-            </intent-filter>
-        </receiver>
 
         <provider
             android:exported="false"
