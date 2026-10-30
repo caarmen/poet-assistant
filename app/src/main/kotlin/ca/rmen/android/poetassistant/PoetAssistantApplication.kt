@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import ca.rmen.android.poetassistant.main.wotd.work.WotdMigration
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -30,8 +31,16 @@ class PoetAssistantApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
+    @Inject
+    lateinit var wotdMigration: WotdMigration
+
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .build()
+
+    override fun onCreate() {
+        super.onCreate()
+        wotdMigration.migrate()
+    }
 }
