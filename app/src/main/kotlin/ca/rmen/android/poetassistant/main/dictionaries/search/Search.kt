@@ -28,8 +28,8 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.PagerAdapter
 import ca.rmen.android.poetassistant.main.Tab
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryFragment
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.usecases.GetRandomWordUseCase
 import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.PatternFragment
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.RhymerFragment
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ThesaurusFragment
@@ -53,7 +53,7 @@ import java.util.Locale
 class Search(
     private val searchableActivity: Activity,
     private val viewPager: ViewPager,
-    private val dictionary: Dictionary,
+    private val getRandomWordUseCase: GetRandomWordUseCase,
     private val suggestionsRepository: SuggestionsRepository,
     ) {
     companion object {
@@ -194,8 +194,8 @@ class Search(
 
     suspend fun lookupRandom() {
         Log.d(TAG, "lookupRandom")
-        dictionary.getRandomEntry()?.let { entry ->
-            search(entry.word)
+        getRandomWordUseCase()?.let { word ->
+            search(word)
             viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false)
         }
     }
