@@ -209,6 +209,26 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <!--
+            Remove the default WorkManager initializer, so WorkManager
+            initializes on demand with the HiltWorkerFactory from the
+            Configuration.Provider in PoetAssistantApplication. Only the
+            WorkManager initializer is removed; other libraries use
+            androidx.startup too. See:
+            https://developer.android.com/develop/background-work/background-tasks/persistent/configuration/custom-configuration
+            https://developer.android.com/training/dependency-injection/hilt-jetpack
+        -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
     </application>
 
 </manifest>

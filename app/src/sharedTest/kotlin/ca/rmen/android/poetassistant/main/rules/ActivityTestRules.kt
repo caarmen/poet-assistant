@@ -22,6 +22,8 @@ package ca.rmen.android.poetassistant.main.rules
 import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
+import android.util.Log
+import androidx.hilt.work.HiltWorkerFactory
 import ca.rmen.android.poetassistant.testsupport.TestTeardownStrategy
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
@@ -29,12 +31,16 @@ import androidx.test.espresso.Espresso
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.IdlingResource
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import androidx.work.Configuration
+import androidx.work.testing.SynchronousExecutor
+import androidx.work.testing.WorkManagerTestInitHelper
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.UserDb
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
 import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.Theme
+import ca.rmen.android.poetassistant.main.wotd.work.WotdPeriodicWork
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -51,10 +57,21 @@ object ActivityTestRules {
         fun userDb(): UserDb
         fun embeddedDb(): EmbeddedDb
         fun testTeardownStrategy(): TestTeardownStrategy
+
+        fun workerFactory(): HiltWorkerFactory
     }
 
     fun beforeActivityLaunched(targetContext: Context) {
         IdlingRegistry.getInstance().register(TtsIdlingResource(targetContext))
+        // https://developer.android.com/develop/background-work/background-tasks/testing/persistent/integration-testing
+        val config = Configuration.Builder()
+            .setMinimumLoggingLevel(Log.DEBUG)
+            .setExecutor(SynchronousExecutor())
+            .setWorkerFactory(EntryPointAccessors.fromApplication(targetContext.applicationContext, ActivityTestRulesEntryPoint::class.java).workerFactory())
+            .build()
+
+        // Initialize WorkManager for instrumentation tests.
+        WorkManagerTestInitHelper.initializeTestWorkManager(targetContext, config)
 
         cleanup(targetContext)
         ProcessTextRouter.setEnabled(targetContext, true)
@@ -65,6 +82,7 @@ object ActivityTestRules {
         for (idlingResource in idlingResourceList) {
             IdlingRegistry.getInstance().unregister(idlingResource)
         }
+        WotdPeriodicWork.cancel(targetContext)
         cleanup(targetContext)
         val tts = EntryPointAccessors.fromApplication(targetContext.applicationContext, ActivityTestRulesEntryPoint::class.java).tts()
         getInstrumentation().runOnMainSync { tts.shutdown() }

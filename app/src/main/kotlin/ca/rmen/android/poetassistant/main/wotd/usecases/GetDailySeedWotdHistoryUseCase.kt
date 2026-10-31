@@ -24,15 +24,13 @@ import android.text.format.DateUtils
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryRepository
 import ca.rmen.android.poetassistant.main.wotd.WotdHistoryItem
 import java.util.Calendar
-import java.util.Random
 import java.util.TimeZone
 import javax.inject.Inject
 
 /**
  * Generates the words-of-the-day history: for each of the last
- * [HISTORY_SIZE] days, a java.util.Random seeded with the start of the UTC
- * day picks one word from the candidate words in the interesting-frequency
- * range.
+ * [HISTORY_SIZE] days, [WotdSelection] picks one word from the candidate
+ * words in the interesting-frequency range.
  *
  * The word selection uses UTC days, while the date is formatted for display
  * in the default timezone.
@@ -47,23 +45,13 @@ class GetDailySeedWotdHistoryUseCase @Inject constructor(
 ) : GetWotdHistoryUseCase {
     companion object {
         /**
-         * Words less frequent than this are not interesting (too rare).
-         */
-        private const val MIN_INTERESTING_FREQUENCY = 1500
-
-        /**
-         * Words more frequent than this are not interesting (too common).
-         */
-        private const val MAX_INTERESTING_FREQUENCY = 25000
-
-        /**
          * Number of days of history to show.
          */
         private const val HISTORY_SIZE = 100
     }
 
     override suspend operator fun invoke(favoriteWords: Set<String>): List<WotdHistoryItem> =
-        invoke(favoriteWords, todayUtc())
+        invoke(favoriteWords, WotdSelection.todayUtc())
 
     /**
      * Generates the history of words of the day for the days ending at the
@@ -77,8 +65,8 @@ class GetDailySeedWotdHistoryUseCase @Inject constructor(
      */
     suspend operator fun invoke(favoriteWords: Set<String>, asOf: Calendar): List<WotdHistoryItem> {
         val candidates = dictionaryRepository.getWordsInFrequencyRange(
-            MIN_INTERESTING_FREQUENCY,
-            MAX_INTERESTING_FREQUENCY
+            WotdSelection.MIN_INTERESTING_FREQUENCY,
+            WotdSelection.MAX_INTERESTING_FREQUENCY
         )
         if (candidates.isEmpty()) return emptyList()
 
@@ -89,32 +77,16 @@ class GetDailySeedWotdHistoryUseCase @Inject constructor(
         calendarDisplay.timeZone = TimeZone.getDefault()
         return buildList {
             repeat(HISTORY_SIZE) {
-                val random = Random()
-                random.setSeed(calendar.timeInMillis)
                 val date = DateUtils.formatDateTime(
                     application,
                     calendarDisplay.timeInMillis,
                     DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_ABBREV_ALL
                 )
-                val position = random.nextInt(candidates.size)
-                val word = candidates[position]
+                val word = WotdSelection.pick(candidates, calendar)
                 add(WotdHistoryItem(word, date, favoriteWords.contains(word)))
                 calendar.add(Calendar.DAY_OF_YEAR, -1)
                 calendarDisplay.add(Calendar.DAY_OF_YEAR, -1)
             }
         }
-    }
-
-    /**
-     * Returns a calendar for the start of the current UTC day (00:00:00.000).
-     */
-    private fun todayUtc(): Calendar {
-        val now = Calendar.getInstance()
-        now.timeZone = TimeZone.getTimeZone("UTC")
-        now[Calendar.HOUR_OF_DAY] = 0
-        now[Calendar.MINUTE] = 0
-        now[Calendar.SECOND] = 0
-        now[Calendar.MILLISECOND] = 0
-        return now
     }
 }

@@ -2,11 +2,11 @@
 # dev-loop.sh — Cameron ↔ Chloe loop for the rhymer-tab feature.
 # Hardcoded for this feature; generalize only after the pattern is proven.
 
-SPEC="plans/reader-print-spec.md"
-REVIEW="plans/reader-print-code-review.md"
-REVISIONS="plans/reader-print-revisions.md"
-SPEC_ISSUES="plans/reader-print-spec-issues.md"
-BRANCH="feature/reader-tab"
+SPEC="plans/wotd-notification-spec.md"
+REVIEW="plans/wotd-notification-code-review.md"
+REVISIONS="plans/wotd-notification-revisions.md"
+SPEC_ISSUES="plans/wotd-notification-spec-issues.md"
+BRANCH="feature/wotd-notification"
 BASE_BRANCH="master"
 MAX_ROUNDS=5
 
@@ -84,7 +84,7 @@ Otherwise end with: VERDICT: CHANGES_REQUESTED"
   echo "=== Round $round: Chloe revises ==="
 
   # Chloe: resumed kickoff session — her mental model accumulates.
-  vibe --agent chloe --resume 7228d01e --prompt "Cameron's review is at $REVIEW.
+  vibe --agent chloe --resume dd2bacad --prompt "Cameron's review is at $REVIEW.
 
 For each remark:
 - If you agree: fix it, with a fixup commit, to adjust the commit which originally

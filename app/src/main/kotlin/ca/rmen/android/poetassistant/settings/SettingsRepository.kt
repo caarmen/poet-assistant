@@ -26,6 +26,15 @@ class SettingsRepository @Inject constructor(application: Application) {
         private const val PREF_ALL_RHYMES_ENABLED = "PREF_ALL_RHYMES_ENABLED"
         private const val PREF_MATCH_AO_AA_ENABLED = "PREF_MATCH_AO_AA_ENABLED"
         private const val PREF_MATCH_AOR_AO_ENABLED = "PREF_MATCH_AOR_AO_ENABLED"
+
+        // WOTD settings.
+        private const val PREF_WOTD_ENABLED = "PREF_WOTD_ENABLED"
+        private const val PREF_WOTD_NOTIFICATION_PRIORITY = "PREF_WOTD_NOTIFICATION_PRIORITY"
+        private const val PREF_WOTD_NOTIFICATION_PRIORITY_MAX = "max"
+        private const val PREF_WOTD_NOTIFICATION_PRIORITY_HIGH = "high"
+        private const val PREF_WOTD_NOTIFICATION_PRIORITY_DEFAULT = "default"
+        private const val PREF_WOTD_NOTIFICATION_PRIORITY_LOW = "low"
+        private const val PREF_WOTD_NOTIFICATION_PRIORITY_MIN = "min"
     }
 
     private val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(application)
@@ -39,6 +48,11 @@ class SettingsRepository @Inject constructor(application: Application) {
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPrefsListener)
     }
 
+    /**
+     * Returns the current settings, read synchronously from the prefs
+     * in-memory state. The value is always fresh: apply() updates the
+     * in-memory state before any prefs listener runs.
+     */
     private fun getSettings() = Settings(
         layout = when (sharedPreferences.getString(PREF_LAYOUT, null)) {
             PREF_LAYOUT_CLEAN -> Layout.CLEAN
@@ -53,6 +67,16 @@ class SettingsRepository @Inject constructor(application: Application) {
         isAllRhymesEnabled = sharedPreferences.getBoolean(PREF_ALL_RHYMES_ENABLED, false),
         isAOAAMatchEnabled = sharedPreferences.getBoolean(PREF_MATCH_AO_AA_ENABLED, false),
         isAORAOMatchEnabled = sharedPreferences.getBoolean(PREF_MATCH_AOR_AO_ENABLED, false),
+        // Defaults: WOTD enabled, priority default.
+        // Unknown stored priority values map to DEFAULT.
+        isWotdEnabled = sharedPreferences.getBoolean(PREF_WOTD_ENABLED, false),
+        wotdNotificationPriority = when (sharedPreferences.getString(PREF_WOTD_NOTIFICATION_PRIORITY, PREF_WOTD_NOTIFICATION_PRIORITY_DEFAULT)) {
+            PREF_WOTD_NOTIFICATION_PRIORITY_MAX -> WotdNotificationPriority.MAX
+            PREF_WOTD_NOTIFICATION_PRIORITY_HIGH -> WotdNotificationPriority.HIGH
+            PREF_WOTD_NOTIFICATION_PRIORITY_LOW -> WotdNotificationPriority.LOW
+            PREF_WOTD_NOTIFICATION_PRIORITY_MIN -> WotdNotificationPriority.MIN
+            else -> WotdNotificationPriority.DEFAULT
+        },
     )
 
     fun setLayout(layout: Layout) {

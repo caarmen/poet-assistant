@@ -31,9 +31,9 @@ import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.di.IODispatcher
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
 import ca.rmen.android.poetassistant.main.common.usecases.GetFileDisplayNameUseCase
+import ca.rmen.android.poetassistant.main.wotd.usecases.SetWotdEnabledUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,18 +46,30 @@ class SettingsViewModel @Inject constructor(
     application: Application,
     private val mFavoritesRepository: FavoritesRepository,
     private val suggestionsRepository: SuggestionsRepository,
+    private val settingsRepository: SettingsRepository,
     private val mTts: Tts,
     @IODispatcher val ioDispatcher: CoroutineDispatcher,
-    private val dictionary: Dictionary,
+    private val setWotdEnabledUseCase: SetWotdEnabledUseCase,
     private val settingsPrefs: SettingsPrefs,
     private val getFileDisplayNameUseCase: GetFileDisplayNameUseCase,
 ) : AndroidViewModel(application) {
 
     val snackbarText: StateFlow<String> field = MutableStateFlow<String>("")
-    private val mListener: SettingsChangeListener = SettingsChangeListener(application, dictionary, settingsPrefs, viewModelScope)
+    private val mListener: SettingsChangeListener = SettingsChangeListener(application, settingsPrefs)
 
     init {
         PreferenceManager.getDefaultSharedPreferences(application).registerOnSharedPreferenceChangeListener(mListener)
+        viewModelScope.launch {
+            var previousSettings = settingsRepository.settingsFlow.value
+            settingsRepository.settingsFlow.collect { newSettings ->
+                if (previousSettings.isWotdEnabled != newSettings.isWotdEnabled ||
+                    previousSettings.wotdNotificationPriority != newSettings.wotdNotificationPriority
+                ) {
+                    setWotdEnabledUseCase()
+                }
+                previousSettings = newSettings
+            }
+        }
     }
 
     fun playTtsPreview() {
