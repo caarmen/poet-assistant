@@ -33,5 +33,17 @@ data class Settings(
     val isAORAOMatchEnabled: Boolean,
     val isWotdEnabled: Boolean,
     val wotdNotificationPriority: WotdNotificationPriority,
-    // TODO add more settings progressively
-)
+    val voice: String,
+    val voiceSpeed: Int,
+    val voicePitch: Int,
+    val isSelectionLookupEnabled: Boolean,
+) {
+    companion object {
+        /**
+         * Sentinel voice value meaning "use the system default voice".
+         * Same string value as the legacy SettingsPrefs.VOICE_SYSTEM constant:
+         * both stacks read and write the same preferences file.
+         */
+        const val VOICE_SYSTEM = "VOICE_SYSTEM"
+    }
+}
