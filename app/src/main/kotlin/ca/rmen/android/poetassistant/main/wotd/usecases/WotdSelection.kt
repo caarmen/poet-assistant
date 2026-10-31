@@ -19,13 +19,15 @@
 
 package ca.rmen.android.poetassistant.main.wotd.usecases
 
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.InterestingWords
 import java.util.Calendar
 import java.util.Random
 import java.util.TimeZone
 
 /**
  * Single source of truth for which word is the word of the day: the
- * candidate bounds, the UTC-day logic, and the seeded pick.
+ * UTC-day logic and the seeded pick. The candidate pool bounds live in
+ * [InterestingWords].
  *
  * Everything that defines the word of the day must come from here, so that
  * the notification and the WOTD history tab show the same word for the same
@@ -34,26 +36,17 @@ import java.util.TimeZone
 object WotdSelection {
 
     /**
-     * Words less frequent than this are not interesting (too rare).
-     */
-    const val MIN_INTERESTING_FREQUENCY = 1500
-
-    /**
-     * Words more frequent than this are not interesting (too common).
-     */
-    const val MAX_INTERESTING_FREQUENCY = 25000
-
-    /**
      * Picks the word of the day for the given day from the candidate words.
      *
      * The pick depends only on the UTC-day instant and the candidate list.
-     * Do not change the seed, the Random implementation, the bounds, or the
-     * candidate ordering: the pick must stay identical to the word already
-     * shown on devices for the same day and database.
+     * Do not change the seed, the Random implementation, or the candidate
+     * ordering: the pick must stay identical to the word already shown on
+     * devices for the same day and database.
      *
      * @param candidates Candidate words, sorted by word ascending. The
-     * caller decides the candidate set; use [MIN_INTERESTING_FREQUENCY] and
-     * [MAX_INTERESTING_FREQUENCY] to build it.
+     * caller decides the candidate set; use
+     * [InterestingWords.MIN_INTERESTING_FREQUENCY] and
+     * [InterestingWords.MAX_INTERESTING_FREQUENCY] to build it.
      * @param day The day for which to pick the word. Read-only: it is not
      * modified.
      * @return The word of the day for the given day.

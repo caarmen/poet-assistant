@@ -50,8 +50,8 @@ import ca.rmen.android.poetassistant.databinding.ActivityMainBinding
 import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.usecases.GetRandomWordUseCase
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsViewModel
@@ -81,7 +81,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
     private lateinit var mPagerAdapter: PagerAdapter
     @Inject lateinit var mPrefs: SettingsPrefs
     @Inject lateinit var mEmbeddedDb: EmbeddedDb
-    @Inject lateinit var mDictionary: Dictionary
+    @Inject lateinit var getRandomWordUseCase: GetRandomWordUseCase
     @Inject lateinit var mFavoritesRepository: FavoritesRepository
     @Inject lateinit var suggestionsRepository: SuggestionsRepository
 
@@ -119,7 +119,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
         }
 
-        mSearch = Search(this, mBinding.viewPager, dictionary = mDictionary, suggestionsRepository = suggestionsRepository)
+        mSearch = Search(this, mBinding.viewPager, getRandomWordUseCase = getRandomWordUseCase, suggestionsRepository = suggestionsRepository)
         // Load our dictionaries when the activity starts, so that the first search can already be fast.
         lifecycleScope.launch {
             val dbLoaded = loadDatabase()

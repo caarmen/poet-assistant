@@ -22,6 +22,7 @@ package ca.rmen.android.poetassistant.main.wotd.usecases
 import android.app.Application
 import android.text.format.DateUtils
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryRepository
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.InterestingWords
 import ca.rmen.android.poetassistant.main.wotd.WotdHistoryItem
 import java.util.Calendar
 import java.util.TimeZone
@@ -65,8 +66,8 @@ class GetDailySeedWotdHistoryUseCase @Inject constructor(
      */
     suspend operator fun invoke(favoriteWords: Set<String>, asOf: Calendar): List<WotdHistoryItem> {
         val candidates = dictionaryRepository.getWordsInFrequencyRange(
-            WotdSelection.MIN_INTERESTING_FREQUENCY,
-            WotdSelection.MAX_INTERESTING_FREQUENCY
+            InterestingWords.MIN_INTERESTING_FREQUENCY,
+            InterestingWords.MAX_INTERESTING_FREQUENCY
         )
         if (candidates.isEmpty()) return emptyList()
 

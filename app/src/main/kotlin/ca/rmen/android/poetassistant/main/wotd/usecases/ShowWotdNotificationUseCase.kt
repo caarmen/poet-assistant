@@ -33,6 +33,7 @@ import ca.rmen.android.poetassistant.compat.HtmlCompat
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryEntry
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryRepository
+import ca.rmen.android.poetassistant.main.dictionaries.dictionary.InterestingWords
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.WordNotFoundException
 import ca.rmen.android.poetassistant.settings.SettingsRepository
 import javax.inject.Inject
@@ -74,8 +75,8 @@ class ShowWotdNotificationUseCase @Inject constructor(
      */
     suspend operator fun invoke() {
         val candidates = dictionaryRepository.getWordsInFrequencyRange(
-            WotdSelection.MIN_INTERESTING_FREQUENCY,
-            WotdSelection.MAX_INTERESTING_FREQUENCY
+            InterestingWords.MIN_INTERESTING_FREQUENCY,
+            InterestingWords.MAX_INTERESTING_FREQUENCY
         )
         // The dictionary DB is not loaded yet: post nothing.
         if (candidates.isEmpty()) return
