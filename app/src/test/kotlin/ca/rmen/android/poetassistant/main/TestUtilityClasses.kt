@@ -21,8 +21,6 @@ package ca.rmen.android.poetassistant.main
 
 import ca.rmen.android.poetassistant.compat.HtmlCompat
 import ca.rmen.android.poetassistant.compat.VectorCompat
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory
-import ca.rmen.android.poetassistant.main.dictionaries.Share
 import ca.rmen.android.poetassistant.main.dictionaries.search.Patterns
 import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter
 import org.junit.Assert.assertNotNull
@@ -48,18 +46,6 @@ class TestUtilityClasses {
     @Throws(Exception::class)
     fun testAppBarLayoutHelper() {
         assertUtilityClassVisibility(AppBarLayoutHelper::class.java)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun testResultListFactory() {
-        assertUtilityClassVisibility(ResultListFactory::class.java)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun testShare() {
-        assertUtilityClassVisibility(Share::class.java)
     }
 
     @Test

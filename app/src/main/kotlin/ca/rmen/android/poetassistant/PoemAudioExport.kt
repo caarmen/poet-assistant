@@ -26,6 +26,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import androidx.annotation.DrawableRes
 import androidx.annotation.MainThread
 import androidx.annotation.WorkerThread
 import androidx.core.app.NotificationCompat
@@ -33,7 +34,6 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ProcessLifecycleOwner
 import ca.rmen.android.poetassistant.main.MainActivity
-import ca.rmen.android.poetassistant.main.dictionaries.Share
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -118,7 +118,7 @@ class PoemAudioExport(val context: Context, val mTts: Tts) {
                         .setContentIntent(getMainActivityIntent())
                         .setContentTitle(context.getString(R.string.share_poem_audio_progress_notification_title))
                         .setContentText(context.getString(R.string.share_poem_audio_progress_notification_message))
-                        .setSmallIcon(Share.getNotificationIcon())
+                        .setSmallIcon(getNotificationIcon())
                         .build())
     }
 
@@ -139,9 +139,9 @@ class PoemAudioExport(val context: Context, val mTts: Tts) {
                             .setContentIntent(pendingIntent)
                             .setContentTitle(context.getString(R.string.share_poem_audio_ready_notification_title))
                             .setContentText(context.getString(R.string.share_poem_audio_ready_notification_message))
-                            .setSmallIcon(Share.getNotificationIcon())
+                            .setSmallIcon(getNotificationIcon())
                             .addAction(
-                                    Share.getShareIconId(),
+                                    getShareIconId(),
                                     context.getString(R.string.share),
                                     pendingIntent)
                             .build())
@@ -158,7 +158,7 @@ class PoemAudioExport(val context: Context, val mTts: Tts) {
                         .setAutoCancel(true)
                         .setContentTitle(context.getString(R.string.share_poem_audio_error_notification_title))
                         .setContentText(context.getString(R.string.share_poem_audio_error_notification_message))
-                        .setSmallIcon(Share.getNotificationIcon())
+                        .setSmallIcon(getNotificationIcon())
                         .build())
     }
 
@@ -190,6 +190,15 @@ class PoemAudioExport(val context: Context, val mTts: Tts) {
         } else {
             File(exportFolder, TEMP_AUDIO_FILE)
         }
+    }
+    @DrawableRes
+    private fun getShareIconId(): Int {
+        return R.drawable.ic_share_vector
+    }
+
+    @DrawableRes
+    private fun getNotificationIcon(): Int {
+        return R.drawable.ic_book_vector
     }
 
 }
