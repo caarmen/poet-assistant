@@ -25,7 +25,6 @@ import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory
 import ca.rmen.android.poetassistant.main.dictionaries.Share
 import ca.rmen.android.poetassistant.main.dictionaries.search.Patterns
 import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter
-import ca.rmen.android.poetassistant.widget.PopupMenuHelper
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -73,12 +72,6 @@ class TestUtilityClasses {
     @Throws(Exception::class)
     fun testProcessTextRouter() {
         assertUtilityClassVisibility(ProcessTextRouter::class.java)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun testPopupMenuHelper() {
-        assertUtilityClassVisibility(PopupMenuHelper::class.java)
     }
 
     @Throws(Exception::class)
