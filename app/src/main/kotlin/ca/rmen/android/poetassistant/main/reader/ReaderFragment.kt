@@ -66,14 +66,14 @@ import javax.inject.Inject
  * needs a Context.
  */
 @AndroidEntryPoint
-class NewReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
+class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
 
     companion object {
         private const val ARG_INITIAL_POEM = "initial_poem"
         private const val DIALOG_TAG = "dialog"
         private const val ACTION_FILE_NEW = 2
 
-        fun create(initialPoem: String?): NewReaderFragment = NewReaderFragment().apply {
+        fun create(initialPoem: String?): ReaderFragment = ReaderFragment().apply {
             arguments = Bundle(1).apply {
                 putString(ARG_INITIAL_POEM, initialPoem)
             }
