@@ -181,6 +181,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ca.rmen.android.poetassistant.main.MainActivity" />
         </activity>
+        <activity
+            android:name=".main.settings.NewSettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".main.MainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            tools:ignore="UnusedAttribute">
+            <!-- Parent activity meta-data to support 4.0 -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ca.rmen.android.poetassistant.main.MainActivity" />
+        </activity>
 
         <provider
             android:exported="false"

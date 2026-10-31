@@ -101,7 +101,7 @@ class RandomWordTest {
         openMenuItem(R.string.action_settings)
         scrollToPreference(R.string.wotd_setting_system_notification_priority_title)
         onView(withText(R.string.wotd_setting_system_notification_priority_title)).check(matches(not(isEnabled())))
-        clickPreference(R.string.wotd_setting_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.wotd_setting_title)
         onView(withText(R.string.wotd_setting_system_notification_priority_title)).check(matches(isEnabled()))
     }
 
@@ -112,26 +112,26 @@ class RandomWordTest {
         }
         openMenuItem(R.string.action_settings)
         scrollToPreference(R.string.wotd_setting_system_notification_priority_title)
-        clickPreference(R.string.wotd_setting_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.wotd_setting_title)
 
-        clickPreference(R.string.wotd_setting_system_notification_priority_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.wotd_setting_system_notification_priority_title)
         onView(withId(R.id.select_dialog_listview)).check(matches(hasChildCount(5)))
         onView(withText(R.string.wotd_setting_system_notification_priority_label_default)).check(matches(isChecked()))
 
         onView(withText(R.string.wotd_setting_system_notification_priority_label_max)).perform(click())
-        clickPreference(R.string.wotd_setting_system_notification_priority_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.wotd_setting_system_notification_priority_title)
         onView(withText(R.string.wotd_setting_system_notification_priority_label_max)).check(matches(isChecked()))
 
         onView(withText(R.string.wotd_setting_system_notification_priority_label_high)).perform(click())
-        clickPreference(R.string.wotd_setting_system_notification_priority_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.wotd_setting_system_notification_priority_title)
         onView(withText(R.string.wotd_setting_system_notification_priority_label_high)).check(matches(isChecked()))
 
         onView(withText(R.string.wotd_setting_system_notification_priority_label_low)).perform(click())
-        clickPreference(R.string.wotd_setting_system_notification_priority_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.wotd_setting_system_notification_priority_title)
         onView(withText(R.string.wotd_setting_system_notification_priority_label_low)).check(matches(isChecked()))
 
         onView(withText(R.string.wotd_setting_system_notification_priority_label_min)).perform(click())
-        clickPreference(R.string.wotd_setting_system_notification_priority_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.wotd_setting_system_notification_priority_title)
         onView(withText(R.string.wotd_setting_system_notification_priority_label_min)).check(matches(isChecked()))
     }
 }

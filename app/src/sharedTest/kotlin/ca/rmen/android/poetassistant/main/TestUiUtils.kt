@@ -26,6 +26,12 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.annotation.StringRes
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.NoMatchingViewException
@@ -158,5 +164,17 @@ object TestUiUtils {
         scrollToPreference(prefTitleRes)
         // click on the preference
         onView(withText(prefTitleRes)).perform(click())
+    }
+
+    fun clickPreference(composeTestRule: ComposeTestRule, context: Context, @StringRes prefTitleRes: Int) {
+        // Scroll to the preference in case it's not visible
+        composeTestRule
+            .onNode(hasScrollAction())
+            .performScrollToNode(hasText(context.getString(prefTitleRes)))
+
+        // Click on the preference
+        composeTestRule
+            .onNodeWithText(context.getString(prefTitleRes))
+            .performClick()
     }
 }

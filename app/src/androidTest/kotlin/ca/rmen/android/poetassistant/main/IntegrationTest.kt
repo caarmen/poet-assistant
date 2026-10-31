@@ -130,7 +130,7 @@ class IntegrationTest {
         typeAndSpeakPoem(composeTestRule, data.poem)
         clearPoem(composeTestRule)
         // clearing the search history doesn't erase starred words
-        clearSearchHistory()
+        clearSearchHistory(composeTestRule, activityTestRule.activity)
         swipeViewPagerLeft(1)
         checkAllStarredWords(context, composeTestRule, data.secondSynonymForFirstRhyme)
         clearStarredWords(composeTestRule)
@@ -161,7 +161,7 @@ class IntegrationTest {
         typeAndSpeakPoem(composeTestRule, data.poem)
         clearPoem(composeTestRule)
         // clearing the search history doesn't erase starred words
-        clearSearchHistory()
+        clearSearchHistory(composeTestRule, activityTestRule.activity)
         swipeViewPagerLeft(1)
         checkAllStarredWords(context, composeTestRule, data.secondSynonymForFirstRhyme)
         clearStarredWords(composeTestRule)
