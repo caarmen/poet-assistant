@@ -215,10 +215,8 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
         @OptIn(ExperimentalAtomicApi::class)
         private fun onUtteranceCompleted(utteranceId: String) {
-            Log.d("CARM", "onUtteranceCompleted $utteranceId $utteranceCount")
             val newUtteranceCount = utteranceCount.decrementAndFetch()
             if (newUtteranceCount <= 0) {
-                Log.v("CARM", "emit now")
                 utteranceCount.store(0)
                 ttsFlow.tryEmit(TtsState(TtsState.TtsStatus.SPEAKING, TtsState.TtsStatus.UTTERANCE_COMPLETE, utteranceId))
                 ttsFlow.tryEmit(TtsState(TtsState.TtsStatus.UTTERANCE_COMPLETE, TtsState.TtsStatus.INITIALIZED, null))
