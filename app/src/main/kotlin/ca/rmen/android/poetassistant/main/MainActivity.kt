@@ -56,8 +56,8 @@ import ca.rmen.android.poetassistant.main.dictionaries.search.Search
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsViewModel
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment
-import ca.rmen.android.poetassistant.settings.SettingsActivity
-import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import ca.rmen.android.poetassistant.settings.NewSettingsActivity
+import ca.rmen.android.poetassistant.settings.SettingsRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -79,7 +79,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
     private lateinit var mSearch: Search
     private lateinit var mBinding: ActivityMainBinding
     private lateinit var mPagerAdapter: PagerAdapter
-    @Inject lateinit var mPrefs: SettingsPrefs
+    @Inject lateinit var settingsRepository: SettingsRepository
     @Inject lateinit var mEmbeddedDb: EmbeddedDb
     @Inject lateinit var getRandomWordUseCase: GetRandomWordUseCase
     @Inject lateinit var mFavoritesRepository: FavoritesRepository
@@ -105,7 +105,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
         mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener)
 
         mBinding.tabs.setupWithViewPager(mBinding.viewPager)
-        val savedTab = SettingsPrefs.getTab(mPrefs)
+        val savedTab = settingsRepository.tab
         if (savedTab != null && savedTab.ordinal < mPagerAdapter.count) {
             mBinding.viewPager.currentItem = savedTab.ordinal
         }
@@ -258,7 +258,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
                 return true
             }
             R.id.action_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
+                startActivity(Intent(this, NewSettingsActivity::class.java))
                 return true
             }
             R.id.action_wotd_history -> {
@@ -293,7 +293,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
                 imm?.hideSoftInputFromWindow(mBinding.viewPager.windowToken, 0)
             }
             AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout)
-            mPrefs.tab = tab.name
+            settingsRepository.tab = tab
         }
     }
 
