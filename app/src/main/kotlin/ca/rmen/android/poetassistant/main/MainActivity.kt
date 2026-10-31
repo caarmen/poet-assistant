@@ -56,7 +56,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.search.Search
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsViewModel
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment
-import ca.rmen.android.poetassistant.settings.SettingsActivity
+import ca.rmen.android.poetassistant.main.settings.NewSettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
@@ -258,7 +258,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
                 return true
             }
             R.id.action_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
+                startActivity(Intent(this, NewSettingsActivity::class.java))
                 return true
             }
             R.id.action_wotd_history -> {
