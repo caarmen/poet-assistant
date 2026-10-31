@@ -31,7 +31,6 @@ import android.util.Log
 import android.view.ViewGroup
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListFactory
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryFragment
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.RhymerFragment
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ThesaurusFragment
@@ -111,7 +110,18 @@ class PagerAdapter// Text shared from another app:// Deep link to query in a spe
 
     override fun getPageTitle(position: Int): CharSequence {
         val tab = getTabForPosition(position)
-        return ResultListFactory.getTabName(mContext, tab).uppercase(Locale.getDefault())
+        return getTabName(mContext, tab).uppercase(Locale.getDefault())
+    }
+    private fun getTabName(context: Context, tab: Tab): String {
+        return when (tab) {
+            Tab.PATTERN -> context.getString(R.string.tab_pattern)
+            Tab.FAVORITES -> context.getString(R.string.tab_favorites)
+            Tab.WOTD -> context.getString(R.string.tab_wotd)
+            Tab.RHYMER -> context.getString(R.string.tab_rhymer)
+            Tab.THESAURUS -> context.getString(R.string.tab_thesaurus)
+            Tab.DICTIONARY -> context.getString(R.string.tab_dictionary)
+            else -> context.getString(R.string.tab_reader)
+        }
     }
 
     @DrawableRes

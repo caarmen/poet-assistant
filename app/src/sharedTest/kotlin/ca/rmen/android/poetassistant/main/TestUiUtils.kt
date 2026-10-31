@@ -26,6 +26,7 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.annotation.StringRes
+import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.PerformException
@@ -39,26 +40,21 @@ import androidx.test.espresso.action.ViewActions.swipeRight
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.scrollTo
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
-import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isSelected
 import androidx.test.espresso.matcher.ViewMatchers.withClassName
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withParent
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.viewpager.widget.ViewPager
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition
-import ca.rmen.android.poetassistant.main.dictionaries.ResultListAdapter
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalToIgnoringCase
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 
 /**
  * Generic utility functions for Ui operations like opening a menu or swiping the screen.
@@ -155,7 +151,7 @@ object TestUiUtils {
     fun scrollToPreference(@StringRes prefTitleRes: Int) {
         // Scroll to the preference in case it's not visible
         onView(withId(R.id.recycler_view))
-                .perform(scrollTo<ResultListAdapter.ResultListEntryViewHolder>(hasDescendant(withText(prefTitleRes))))
+                .perform(scrollTo<RecyclerView.ViewHolder>(hasDescendant(withText(prefTitleRes))))
     }
 
     fun clickPreference(@StringRes prefTitleRes: Int) {
