@@ -1,7 +1,7 @@
 #!/bin/bash
 # spec-loop.sh — iterate Donna ↔ Dana until Dana approves
-SPEC="plans/wotd-notification-spec.md"
-REVIEW="plans/wotd-notification-review.md"
+SPEC="plans/random-word-spec.md"
+REVIEW="plans/random-word-spec-review.md"
 MAX_ROUNDS=5
 
 for round in $(seq 1 $MAX_ROUNDS); do

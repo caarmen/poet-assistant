@@ -2,11 +2,11 @@
 # dev-loop.sh — Cameron ↔ Chloe loop for the rhymer-tab feature.
 # Hardcoded for this feature; generalize only after the pattern is proven.
 
-SPEC="plans/wotd-notification-spec.md"
-REVIEW="plans/wotd-notification-code-review.md"
-REVISIONS="plans/wotd-notification-revisions.md"
-SPEC_ISSUES="plans/wotd-notification-spec-issues.md"
-BRANCH="feature/wotd-notification"
+SPEC="plans/random-word-spec.md"
+REVIEW="plans/random-word-code-review.md"
+REVISIONS="plans/random-word-revisions.md"
+SPEC_ISSUES="plans/random-word-spec-issues.md"
+BRANCH="feature/random-word"
 BASE_BRANCH="master"
 MAX_ROUNDS=5
 
