@@ -19,8 +19,6 @@
 
 package ca.rmen.android.poetassistant.shared.main
 
-import android.annotation.TargetApi
-import android.os.Build
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -56,23 +54,15 @@ class FavoritesTest {
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> =
         PoetAssistantActivityTestRule(MainActivity::class.java, true)
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Test
     fun exportTest() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            return
-        }
         openMenuItem(R.string.action_settings)
         clickPreference(R.string.action_export_favorites)
         checkActivityHidden(SettingsActivity::class.java.name)
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Test
     fun importTest() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-            return
-        }
         openMenuItem(R.string.action_settings)
         clickPreference(R.string.action_import_favorites)
         checkActivityHidden(SettingsActivity::class.java.name)

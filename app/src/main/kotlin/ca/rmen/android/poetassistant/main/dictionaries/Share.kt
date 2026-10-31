@@ -21,7 +21,6 @@ package ca.rmen.android.poetassistant.main.dictionaries
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.annotation.DrawableRes
 import ca.rmen.android.poetassistant.R
 
@@ -41,11 +40,11 @@ object Share {
 
     @DrawableRes
     fun getShareIconId(): Int {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) R.drawable.ic_share_vector else R.drawable.ic_share
+        return R.drawable.ic_share_vector
     }
 
     @DrawableRes
     fun getNotificationIcon(): Int {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) R.drawable.ic_book_vector else R.drawable.ic_book
+        return R.drawable.ic_book_vector
     }
 }

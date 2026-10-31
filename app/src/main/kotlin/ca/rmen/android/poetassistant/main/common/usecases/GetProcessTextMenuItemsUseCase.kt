@@ -1,6 +1,5 @@
 package ca.rmen.android.poetassistant.main.common.usecases
 
-import android.annotation.TargetApi
 import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -55,7 +54,6 @@ class GetProcessTextMenuItemsUseCase @Inject constructor(
      * @param text The text to be processed.
      * @return Intent configured for text processing.
      */
-    @TargetApi(Build.VERSION_CODES.M)
     private fun createProcessTextIntent(text: String): Intent {
         // See: https://android-developers.googleblog.com/2015/10/in-app-translations-in-android.html
         return Intent()

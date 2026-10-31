@@ -19,12 +19,10 @@
 
 package ca.rmen.android.poetassistant.settings
 
-import android.annotation.TargetApi
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import androidx.lifecycle.viewModelScope
 import androidx.preference.PreferenceManager
 import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
@@ -77,7 +75,6 @@ class SettingsViewModel @Inject constructor(
         else mTts.speak(getApplication<Application>().getString(R.string.pref_voice_preview_text))
     }
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     fun getExportFavoritesIntent(): Intent =
         Intent(Intent.ACTION_CREATE_DOCUMENT)
             .addCategory(Intent.CATEGORY_OPENABLE)
@@ -87,7 +84,6 @@ class SettingsViewModel @Inject constructor(
                 getApplication<Application>().getString(R.string.export_favorites_default_filename)
             )
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     fun getImportFavoritesIntent(): Intent =
         Intent(Intent.ACTION_OPEN_DOCUMENT)
             .addCategory(Intent.CATEGORY_OPENABLE)

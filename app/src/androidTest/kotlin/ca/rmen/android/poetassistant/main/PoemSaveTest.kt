@@ -20,10 +20,8 @@
 package ca.rmen.android.poetassistant.main
 
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.preference.PreferenceManager
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -73,9 +71,7 @@ class PoemSaveTest {
     }
 
     @Test
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     fun saveTest() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return
         swipeViewPagerLeft(3)
         val poemFile = getPoemFile()
         assertFalse(poemFile.exists())

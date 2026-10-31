@@ -18,9 +18,7 @@
  */
 package ca.rmen.android.poetassistant.settings
 
-import android.annotation.TargetApi
 import android.content.Context
-import android.os.Build
 import android.speech.tts.TextToSpeech
 import android.speech.tts.Voice
 import android.text.TextUtils
@@ -33,7 +31,6 @@ import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 class Voices constructor(private val context: Context) {
     companion object {
         private val TAG = Constants.TAG + Voices::class.java.simpleName

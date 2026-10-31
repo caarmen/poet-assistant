@@ -198,12 +198,10 @@ open class GeneralPreferenceFragmentImpl : PreferenceFragmentCompat(), ConfirmDi
         super.onViewCreated(view, savedInstanceState)
         // Hide the voice preference if we can't load any voices
         val voicePreference = findPreference<Preference>(SettingsPrefs.PREF_VOICE) as VoicePreference
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            viewLifecycleOwner.lifecycleScope.launch {
-                voicePreference.loadVoices()
-                if (voicePreference.entries == null || voicePreference.entries.size < 2) {
-                    removePreference(PREF_CATEGORY_VOICE, voicePreference)
-                }
+        viewLifecycleOwner.lifecycleScope.launch {
+            voicePreference.loadVoices()
+            if (voicePreference.entries == null || voicePreference.entries.size < 2) {
+                removePreference(PREF_CATEGORY_VOICE, voicePreference)
             }
         }
         viewLifecycleOwner.lifecycleScope.launch {

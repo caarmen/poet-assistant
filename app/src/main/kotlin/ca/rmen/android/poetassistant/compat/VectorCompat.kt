@@ -20,22 +20,11 @@
 package ca.rmen.android.poetassistant.compat
 
 import android.app.Activity
-import android.os.Build
-import android.text.style.ImageSpan
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 
 object VectorCompat {
-    fun createVectorImageSpan(activity: Activity, @DrawableRes resId: Int): ImageSpan {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return ImageSpan(activity, resId)
-        }
-
-        val drawable = createVectorDrawable(activity, resId)
-        drawable!!.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
-        return ImageSpan(drawable)
-    }
 
     /**
      * AppCompat 23.3.0 removed support of vector drawables attributes like

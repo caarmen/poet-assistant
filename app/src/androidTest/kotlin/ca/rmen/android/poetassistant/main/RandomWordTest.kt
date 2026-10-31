@@ -117,21 +117,19 @@ class RandomWordTest {
             InstrumentationRegistry.getInstrumentation().uiAutomation.grantRuntimePermission(BuildConfig.APPLICATION_ID, Manifest.permission.POST_NOTIFICATIONS)
         }
         clickPreference(R.string.wotd_setting_title)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val notificationManager = getInstrumentation().targetContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            assertNotNull(notificationManager)
-            val activeNotifications = notificationManager.activeNotifications
-            var foundNotification = false
-            for (statusBarNotification in activeNotifications) {
-                statusBarNotification.notification
-                val title = statusBarNotification.notification.extras.getCharSequence("android.title")
-                if (title != null && title.toString().startsWith(activityTestRule.activity.getString(R.string.wotd_setting_title))) {
-                    foundNotification = true
-                    break
-                }
+        val notificationManager = getInstrumentation().targetContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        assertNotNull(notificationManager)
+        val activeNotifications = notificationManager.activeNotifications
+        var foundNotification = false
+        for (statusBarNotification in activeNotifications) {
+            statusBarNotification.notification
+            val title = statusBarNotification.notification.extras.getCharSequence("android.title")
+            if (title != null && title.toString().startsWith(activityTestRule.activity.getString(R.string.wotd_setting_title))) {
+                foundNotification = true
+                break
             }
-            assertTrue("Didn't find a Wotd notification", foundNotification)
         }
+        assertTrue("Didn't find a Wotd notification", foundNotification)
 
         // Disable it again
         clickPreference(R.string.wotd_setting_title)

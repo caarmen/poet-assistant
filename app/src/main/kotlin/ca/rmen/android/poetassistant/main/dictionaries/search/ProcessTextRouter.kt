@@ -25,7 +25,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.main.Tab
@@ -35,19 +34,17 @@ object ProcessTextRouter {
     private val TAG = Constants.TAG + ProcessTextRouter::class.java.simpleName
 
     fun handleIntent(context: Context, intent: Intent, tab: Tab) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (Intent.ACTION_PROCESS_TEXT == intent.action) {
-                val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)
-                if (!text.isNullOrEmpty()) {
-                    val query = text.toString().trim().lowercase(Locale.US)
-                    val uri = Uri.withAppendedPath(
-                            Uri.parse("poetassistant://${tab.name.lowercase(Locale.US)}"),
-                            query)
-                    val mainActivityIntent = Intent(Intent.ACTION_VIEW)
-                    mainActivityIntent.data = uri
-                    Log.v(TAG, "Launching intent $mainActivityIntent")
-                    context.startActivity(mainActivityIntent)
-                }
+        if (Intent.ACTION_PROCESS_TEXT == intent.action) {
+            val text = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)
+            if (!text.isNullOrEmpty()) {
+                val query = text.toString().trim().lowercase(Locale.US)
+                val uri = Uri.withAppendedPath(
+                        Uri.parse("poetassistant://${tab.name.lowercase(Locale.US)}"),
+                        query)
+                val mainActivityIntent = Intent(Intent.ACTION_VIEW)
+                mainActivityIntent.data = uri
+                Log.v(TAG, "Launching intent $mainActivityIntent")
+                context.startActivity(mainActivityIntent)
             }
         }
     }

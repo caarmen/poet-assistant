@@ -19,10 +19,8 @@
 
 package ca.rmen.android.poetassistant.shared.main
 
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -61,9 +59,7 @@ class RhymerRouterTest {
         PoetAssistantActivityTestRule(RhymerRouterActivity::class.java, false)
 
     @Test
-    @TargetApi(Build.VERSION_CODES.M)
     fun onTextRouted() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
         val intent = Intent(Intent.ACTION_PROCESS_TEXT).apply {
             putExtra(Intent.EXTRA_PROCESS_TEXT, "polyvalent")
         }

@@ -19,10 +19,8 @@
 
 package ca.rmen.android.poetassistant
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Build
 import androidx.preference.PreferenceManager
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
@@ -93,33 +91,12 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
     fun isSpeaking(): Boolean = isReady() && mTextToSpeech!!.isSpeaking
 
+    @OptIn(ExperimentalAtomicApi::class)
     fun speak(text: String) {
         if (!isReady()) return
         val splitText = TtsSplitter.split(text)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) speak21(splitText)
-        else speak4(splitText)
-    }
-
-    @OptIn(ExperimentalAtomicApi::class)
-    @Suppress("DEPRECATION")
-    private fun speak4(text: List<String>) {
-        val map = HashMap<String, String>()
-        map[TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID] = TAG
-        utteranceCount.store(text.size)
-        text.forEach {
-            if (TextUtils.isEmpty(it)) {
-                mTextToSpeech?.playSilence(PAUSE_DURATION_MS, TextToSpeech.QUEUE_ADD, map)
-            } else {
-                mTextToSpeech?.speak(it, TextToSpeech.QUEUE_ADD, map)
-            }
-        }
-    }
-
-    @OptIn(ExperimentalAtomicApi::class)
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun speak21(text: List<String>) {
-        utteranceCount.store(text.size)
-        text.forEach {
+        utteranceCount.store(splitText.size)
+        splitText.forEach {
             if (TextUtils.isEmpty(it)) {
                 mTextToSpeech?.playSilentUtterance(PAUSE_DURATION_MS, TextToSpeech.QUEUE_ADD, TAG)
             } else {
@@ -160,7 +137,6 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
     private fun setVoicePitchFromSettings() =
             mTextToSpeech?.setPitch(Math.max(MIN_VOICE_PITCH, settingsPrefs.voicePitch / 100f))
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun useVoice(textToSpeech: TextToSpeech?, voiceId: String?) {
         if (textToSpeech != null) {
             try {
@@ -171,8 +147,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
                     textToSpeech.voice = textToSpeech.voices
                             .asSequence()
                             .filter { voice ->
-                                // The SDK check is here because lint currently ignores @TargetApi in nested lambdas
-                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && voiceId == voice.name
+                                voiceId == voice.name
                             }
                             // If the user changed the tts engine in the system settings, we may not find
                             // the previous voice they selected.
@@ -193,9 +168,7 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
         override fun onInit(status: Int) {
             Log.v(TAG, "onInit: status = $status")
             mTtsStatus = status
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                useVoiceFromSettings()
-            }
+            useVoiceFromSettings()
 
             if (status == TextToSpeech.SUCCESS) {
                 setVoiceSpeedFromSettings()

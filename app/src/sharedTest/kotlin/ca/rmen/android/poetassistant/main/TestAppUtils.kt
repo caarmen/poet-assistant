@@ -21,7 +21,6 @@ package ca.rmen.android.poetassistant.main
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.SystemClock
 import androidx.annotation.StringRes
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -295,12 +294,8 @@ object TestAppUtils {
     }
 
     fun clearPoem(composeTestRule: ComposeTestRule) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            TestUiUtils.openMenuItem(R.string.file)
-            onView(allOf(withId(R.id.title), withText(R.string.file_new), isDisplayed())).perform(click())
-        } else {
-            TestUiUtils.openMenuItem(R.string.file_clear)
-        }
+        TestUiUtils.openMenuItem(R.string.file)
+        onView(allOf(withId(R.id.title), withText(R.string.file_new), isDisplayed())).perform(click())
         clickDialogPositiveButton(R.string.action_clear)
         composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG).assertIsDisplayed()
             // Check that the text is empty.
