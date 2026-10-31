@@ -16,7 +16,6 @@ val lightColorTheme = lightColorScheme(
     surface = LightSurface,
     onBackground = LightOnBackground,
     onSecondary = LightOnSecondary,
-    outline = LightDivider,
 )
 
 val darkColorTheme = darkColorScheme(
@@ -28,7 +27,6 @@ val darkColorTheme = darkColorScheme(
     surface = DarkSurface,
     onBackground = DarkOnBackground,
     onSecondary = DarkOnSecondary,
-    outline = DarkDivider,
 )
 
 @Composable
