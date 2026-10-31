@@ -28,15 +28,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 
 /**
- * A settings row with a switch: title, optional description, and the
- * switch on the trailing edge. The whole row toggles the setting, like
- * the legacy SwitchPreferenceCompat rows.
+ * A settings row with a switch: title, optional description, optional
+ * leading icon, and the switch on the trailing edge. The whole row
+ * toggles the setting, like the legacy SwitchPreferenceCompat rows.
  *
  * @param title The row title.
  * @param description The row description, or null for none.
  * @param checked Whether the switch is on.
  * @param onCheckedChange Called with the new value when the row is
  * toggled.
+ * @param leadingContent Optional leading content (e.g. an icon).
  * @param testTag Tag for UI tests, applied to the row; null for none.
  * @param modifier The modifier for this composable.
  */
@@ -47,11 +48,13 @@ fun SettingsSwitchRow(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     testTag: String?,
+    leadingContent: @Composable (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     ListItem(
         headlineContent = { Text(title) },
         supportingContent = description?.let { desc -> { Text(desc) } },
+        leadingContent = leadingContent,
         trailingContent = {
             Switch(
                 checked = checked,
