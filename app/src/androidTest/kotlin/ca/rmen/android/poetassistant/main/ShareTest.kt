@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.main
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -73,11 +72,7 @@ class ShareTest {
         swipeViewPagerLeft(3)
         val poemText = "Let us share a poem"
         typeAndSpeakPoem(composeTestRule, poemText)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            openMenuItem(R.string.share_poem_text)
-        } else {
-            openMenuItem(R.string.share)
-        }
+        openMenuItem(R.string.share_poem_text)
         checkShareIntentEquals(poemText)
     }
 

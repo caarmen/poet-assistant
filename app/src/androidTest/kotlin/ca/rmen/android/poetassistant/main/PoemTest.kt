@@ -20,8 +20,6 @@
 package ca.rmen.android.poetassistant.main
 
 
-import android.annotation.TargetApi
-import android.os.Build
 import android.os.SystemClock
 import androidx.appcompat.widget.ActionBarContextView
 import androidx.compose.ui.geometry.Offset
@@ -106,9 +104,7 @@ class PoemTest {
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(MainActivity::class.java, true)
 
     @Test
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     fun exportAudioTest() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return
         swipeViewPagerLeft(3)
         typeAndSpeakPoem(composeTestRule, "Will export some text")
         val exportDir = File(activityTestRule.activity.filesDir, "export")

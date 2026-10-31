@@ -19,7 +19,6 @@
 
 package ca.rmen.android.poetassistant.compat
 
-import android.annotation.TargetApi
 import android.os.Build
 import android.text.Html
 
@@ -33,7 +32,6 @@ object HtmlCompat {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.N)
     private fun fromHtml24(content: String): CharSequence {
         return Html.fromHtml(content, 0)
     }

@@ -26,9 +26,6 @@ import ca.rmen.android.poetassistant.main.dictionaries.Share
 import ca.rmen.android.poetassistant.main.dictionaries.search.Patterns
 import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter
 import ca.rmen.android.poetassistant.widget.PopupMenuHelper
-import ca.rmen.android.poetassistant.wotd.Wotd
-import ca.rmen.android.poetassistant.wotd.WotdAlarm
-import ca.rmen.android.poetassistant.wotd.WotdJob
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -82,24 +79,6 @@ class TestUtilityClasses {
     @Throws(Exception::class)
     fun testPopupMenuHelper() {
         assertUtilityClassVisibility(PopupMenuHelper::class.java)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun testWotd() {
-        assertUtilityClassVisibility(Wotd::class.java)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun testWotdAlarm() {
-        assertUtilityClassVisibility(WotdAlarm::class.java)
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun testWotdJob() {
-        assertUtilityClassVisibility(WotdJob::class.java)
     }
 
     @Throws(Exception::class)

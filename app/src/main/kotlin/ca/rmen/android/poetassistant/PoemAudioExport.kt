@@ -19,12 +19,10 @@
 
 package ca.rmen.android.poetassistant
 
-import android.annotation.TargetApi
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
@@ -45,7 +43,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-@TargetApi(Build.VERSION_CODES.KITKAT)
 class PoemAudioExport(val context: Context, val mTts: Tts) {
     companion object {
         private val TAG = Constants.TAG + PoemAudioExport::class.java.simpleName
@@ -100,23 +97,7 @@ class PoemAudioExport(val context: Context, val mTts: Tts) {
 
     @MainThread
     private fun speakToFile(textToSpeech: TextToSpeech, textToRead: String, audioFile: File) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            speakToFile21(textToSpeech, textToRead, audioFile)
-        } else {
-            speakToFile4(textToSpeech, textToRead, audioFile)
-        }
-    }
-
-    private fun speakToFile4(textToSpeech: TextToSpeech, text: String, audioFile: File) {
-        val params = HashMap<String, String>()
-        params[TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID] = TEMP_AUDIO_FILE
-        @Suppress("DEPRECATION")
-        textToSpeech.synthesizeToFile(text, params, audioFile.absolutePath)
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun speakToFile21(textToSpeech: TextToSpeech, text: String, audioFile: File) {
-        textToSpeech.synthesizeToFile(text, Bundle(), audioFile, TEMP_AUDIO_FILE)
+        textToSpeech.synthesizeToFile(textToRead, Bundle(), audioFile, TEMP_AUDIO_FILE)
     }
 
     private fun cancelNotifications() {

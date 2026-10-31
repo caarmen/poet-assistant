@@ -20,10 +20,8 @@
 package ca.rmen.android.poetassistant.main
 
 
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -79,21 +77,16 @@ class TaskStackTest {
     val activityTestRule: PoetAssistantActivityTestRule<SettingsActivity> = PoetAssistantActivityTestRule(SettingsActivity::class.java, false)
 
     @Test
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     fun dictionaryDeepLinkAfterThemeChangeTest() {
         deepLinkAfterThemeChangeTest("poetassistant://dictionary/muffin")
     }
 
     @Test
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     fun queryDeepLinkAfterThemeChangeTest() {
         deepLinkAfterThemeChangeTest("poetassistant://query/muffin")
     }
 
     private fun deepLinkAfterThemeChangeTest(deepLinkUrl: String) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            return
-        }
         // Change the theme
         val intent = Intent()
         activityTestRule.launchActivity(intent)

@@ -20,8 +20,6 @@
 package ca.rmen.android.poetassistant.main
 
 
-import android.annotation.TargetApi
-import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.espresso.Espresso
@@ -94,9 +92,7 @@ class ATtsTest {
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(MainActivity::class.java, true)
 
     @Test
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     fun aVoiceSelectionTest() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return
         openMenuItem(R.string.action_settings)
         clickPreference(R.string.pref_voice_title)
         // We don't know what voices will be available on the device.  Just select the last one.

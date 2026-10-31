@@ -19,15 +19,12 @@
 
 package ca.rmen.android.poetassistant.settings
 
-import android.annotation.TargetApi
 import android.content.Context
-import android.os.Build
 import androidx.preference.ListPreference
 import android.util.AttributeSet
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.components.SingletonComponent
 
 class VoicePreference : ListPreference {
     @Suppress("unused")
@@ -57,7 +54,6 @@ class VoicePreference : ListPreference {
         mTts = entryPoint.tts()
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     suspend fun loadVoices() {
         val tts = mTts.getTextToSpeech()
         if (tts != null) {

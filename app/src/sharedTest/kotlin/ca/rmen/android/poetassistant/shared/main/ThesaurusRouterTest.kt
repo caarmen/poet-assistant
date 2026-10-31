@@ -19,10 +19,8 @@
 
 package ca.rmen.android.poetassistant.shared.main
 
-import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
@@ -64,10 +62,8 @@ class ThesaurusRouterTest {
         PoetAssistantActivityTestRule(ThesaurusRouterActivity::class.java, false)
 
     @Test
-    @TargetApi(Build.VERSION_CODES.M)
     @Config(qualifiers = "w360dp-h640dp")
     fun onTextRouted() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
         val intent = Intent(Intent.ACTION_PROCESS_TEXT).apply {
             putExtra(Intent.EXTRA_PROCESS_TEXT, "almostic")
         }

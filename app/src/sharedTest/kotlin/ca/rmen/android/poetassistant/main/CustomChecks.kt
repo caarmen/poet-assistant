@@ -21,7 +21,6 @@ package ca.rmen.android.poetassistant.main
 
 import android.content.ClipboardManager
 import android.content.Context
-import android.os.Build
 import android.os.SystemClock
 import android.view.View
 import android.view.WindowManager
@@ -144,15 +143,9 @@ object CustomChecks {
     fun checkSingleRootView(context: Context) {
         SystemClock.sleep(500)
         val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            val impl = Reflection.field("mWindowManager").ofType(Any::class.java).`in`(windowManager).get()
-            val views = Reflection.field("mViews").ofType(Array<View>::class.java).`in`(impl).get() as Array<View>
-            assertEquals(1, views.size)
-        } else {
-            val impl = Reflection.field("mGlobal").ofType(Any::class.java).`in`(windowManager).get()
-            val views = Reflection.field("mViews").ofType(List::class.java).`in`(impl).get() as List<*>
-            assertEquals(1, views.size)
-        }
+        val impl = Reflection.field("mGlobal").ofType(Any::class.java).`in`(windowManager).get()
+        val views = Reflection.field("mViews").ofType(List::class.java).`in`(impl).get() as List<*>
+        assertEquals(1, views.size)
     }
 
     fun checkSearchSuggestions(vararg suggestions: String) {
