@@ -20,25 +20,22 @@
 package ca.rmen.android.poetassistant.main
 
 
-import androidx.annotation.StringRes
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.TouchInjectionScope
+import androidx.compose.ui.test.click
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeLeft
+import androidx.compose.ui.test.swipeRight
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
-import androidx.test.espresso.action.GeneralClickAction
-import androidx.test.espresso.action.GeneralLocation
-import androidx.test.espresso.action.Press
-import androidx.test.espresso.action.Tap
-import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
-import androidx.test.espresso.matcher.ViewMatchers.withClassName
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withParent
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -46,8 +43,6 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.di.NonAndroidEntryPoint
-import ca.rmen.android.poetassistant.main.CustomViewActions.clickLastChild
-import ca.rmen.android.poetassistant.main.CustomViewActions.scrollToEnd
 import ca.rmen.android.poetassistant.main.TestAppUtils.clearPoem
 import ca.rmen.android.poetassistant.main.TestAppUtils.speakPoem
 import ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem
@@ -56,7 +51,9 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
+import ca.rmen.android.poetassistant.main.settings.ui.composables.SETTINGS_VOICE_PITCH_SLIDER_TAG
 import ca.rmen.android.poetassistant.main.settings.ui.composables.SETTINGS_VOICE_SELECTION_LIST_TAG
+import ca.rmen.android.poetassistant.main.settings.ui.composables.SETTINGS_VOICE_SPEED_SLIDER_TAG
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -67,8 +64,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.timeout
 import kotlinx.coroutines.launch
-import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.Matchers.lessThan
 import org.junit.Assert.assertThat
@@ -97,6 +92,8 @@ class ATtsTest {
     @Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(MainActivity::class.java, true)
 
+    val sliderEdgeMargin = 32f
+
     @Test
     fun aVoiceSelectionTest() {
         openMenuItem(R.string.action_settings)
@@ -119,9 +116,12 @@ class ATtsTest {
     fun voicePitchTest() {
         openMenuItem(R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_preview_title)
-        slideSeekbar(R.string.pref_voice_pitch_title, GeneralLocation.CENTER_RIGHT)
+        composeTestRule
+            .onNodeWithTag(SETTINGS_VOICE_PITCH_SLIDER_TAG)
+            .performTouchInput { click(centerRight)}
+        slideSeekbar(SETTINGS_VOICE_PITCH_SLIDER_TAG) { centerRight }
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_preview_title)
-        slideSeekbar(R.string.pref_voice_pitch_title, GeneralLocation.CENTER_LEFT)
+        slideSeekbar(SETTINGS_VOICE_PITCH_SLIDER_TAG) { centerLeft }
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_preview_title)
     }
 
@@ -133,14 +133,22 @@ class ATtsTest {
 
         val defaultSpeechTime = timeTtsPreview(scope)
 
-        slideSeekbar(R.string.pref_voice_speed_title, GeneralLocation.CENTER_RIGHT)
+        composeTestRule
+            .onNodeWithTag(SETTINGS_VOICE_SPEED_SLIDER_TAG)
+            .performTouchInput {
+                swipeRight(startX = centerX, endX = centerRight.x - sliderEdgeMargin)
+            }
         val fastSpeechTime = timeTtsPreview(scope)
         assertThat("expected speech time to be faster after scrolling seekbar to the right",
                 fastSpeechTime,
                 lessThan(defaultSpeechTime))
 
 
-        slideSeekbar(R.string.pref_voice_speed_title, GeneralLocation.CENTER_LEFT)
+        composeTestRule
+            .onNodeWithTag(SETTINGS_VOICE_SPEED_SLIDER_TAG)
+            .performTouchInput {
+                swipeLeft(startX = centerRight.x - sliderEdgeMargin, endX = centerLeft.x + sliderEdgeMargin)
+            }
         val slowSpeechTime = timeTtsPreview(scope)
         assertThat("expected speech time to be slower after scrolling seekbar to the left",
                 slowSpeechTime,
@@ -202,14 +210,16 @@ class ATtsTest {
             timeUtteranceCompleted = System.currentTimeMillis()
         }
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_preview_title)
+        Espresso.onIdle()
+        composeTestRule.waitForIdle()
         job.cancel()
         val defaultSpeechTime = timeUtteranceCompleted - before
         return defaultSpeechTime
     }
 
-    private fun slideSeekbar(@StringRes prefTitleId: Int, location: GeneralLocation) {
-        //http://stackoverflow.com/questions/23659367/espresso-set-seekbar
-        onView(allOf(withId(R.id.seekbar), withParent(withParent(hasDescendant(withText(prefTitleId))))))
-                .perform(GeneralClickAction(Tap.SINGLE, location, Press.FINGER, 0, 0))
+    private fun slideSeekbar(testTag: String, position: TouchInjectionScope.() -> Offset) {
+        composeTestRule
+            .onNodeWithTag(testTag)
+            .performTouchInput { click(position()) }
     }
 }
