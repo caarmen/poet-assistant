@@ -1,9 +1,7 @@
 package ca.rmen.android.poetassistant.di
 
 import ca.rmen.android.poetassistant.Tts
-import ca.rmen.android.poetassistant.main.dictionaries.dictionary.Dictionary
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
-import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
@@ -17,8 +15,6 @@ import kotlinx.coroutines.CoroutineDispatcher
  */
 interface NonAndroidEntryPoint {
     fun tts(): Tts
-    fun dictionary(): Dictionary
     fun suggestionsRepository(): SuggestionsRepository
-    fun prefs(): SettingsPrefs
     @IODispatcher fun ioDispatcher(): CoroutineDispatcher
 }
