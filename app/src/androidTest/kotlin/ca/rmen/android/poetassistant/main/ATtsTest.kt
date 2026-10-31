@@ -22,6 +22,11 @@ package ca.rmen.android.poetassistant.main
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onLast
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
@@ -51,6 +56,7 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
+import ca.rmen.android.poetassistant.main.settings.ui.composables.SETTINGS_VOICE_SELECTION_LIST_TAG
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -94,11 +100,15 @@ class ATtsTest {
     @Test
     fun aVoiceSelectionTest() {
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.pref_voice_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_title)
         // We don't know what voices will be available on the device.  Just select the last one.
-        onView(withClassName(endsWith("RecycleListView")))
-                .perform(scrollToEnd(), clickLastChild())
-        clickPreference(R.string.pref_voice_preview_title)
+        composeTestRule
+            .onNodeWithTag(SETTINGS_VOICE_SELECTION_LIST_TAG)
+            .onChildren()
+            .onLast()
+            .performScrollTo()
+            .performClick()
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_preview_title)
         pressBack()
         swipeViewPagerLeft(3)
         typeAndSpeakPoem(composeTestRule, "Do I have an accent?")
@@ -108,11 +118,11 @@ class ATtsTest {
     @Test
     fun voicePitchTest() {
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.pref_voice_preview_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_preview_title)
         slideSeekbar(R.string.pref_voice_pitch_title, GeneralLocation.CENTER_RIGHT)
-        clickPreference(R.string.pref_voice_preview_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_preview_title)
         slideSeekbar(R.string.pref_voice_pitch_title, GeneralLocation.CENTER_LEFT)
-        clickPreference(R.string.pref_voice_preview_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_preview_title)
     }
 
     @Test
@@ -191,7 +201,7 @@ class ATtsTest {
                 .first()
             timeUtteranceCompleted = System.currentTimeMillis()
         }
-        clickPreference(R.string.pref_voice_preview_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_preview_title)
         job.cancel()
         val defaultSpeechTime = timeUtteranceCompleted - before
         return defaultSpeechTime

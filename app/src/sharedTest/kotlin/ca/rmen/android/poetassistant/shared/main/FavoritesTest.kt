@@ -19,6 +19,7 @@
 
 package ca.rmen.android.poetassistant.shared.main
 
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -30,7 +31,7 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.rules.ActivityStageIdlingResource
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
-import ca.rmen.android.poetassistant.settings.SettingsActivity
+import ca.rmen.android.poetassistant.main.settings.NewSettingsActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -50,26 +51,31 @@ class FavoritesTest {
     @get:Rule(order = 0)
     val hiltTestRule: HiltAndroidRule = HiltAndroidRule(this)
 
-    @get:Rule(order = 1)
+    @get:Rule(order=1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @get:Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> =
         PoetAssistantActivityTestRule(MainActivity::class.java, true)
+
 
     @Test
     fun exportTest() {
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.action_export_favorites)
-        checkActivityHidden(SettingsActivity::class.java.name)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.action_export_favorites)
+        checkActivityHidden(NewSettingsActivity::class.java.name)
     }
 
     @Test
     fun importTest() {
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.action_import_favorites)
-        checkActivityHidden(SettingsActivity::class.java.name)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.action_import_favorites)
+        checkActivityHidden(NewSettingsActivity::class.java.name)
     }
 
     private fun checkActivityHidden(activityClassName: String) {
         // Wait for the activity to pause
+        composeTestRule.waitForIdle()
         val stages: Set<Stage> = EnumSet.of(Stage.PAUSED, Stage.STOPPED, Stage.DESTROYED)
         val waitForActivityPause = ActivityStageIdlingResource(activityClassName, stages)
         IdlingRegistry.getInstance().register(waitForActivityPause)

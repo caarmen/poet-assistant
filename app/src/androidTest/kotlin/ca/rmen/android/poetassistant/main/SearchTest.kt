@@ -122,7 +122,7 @@ class SearchTest {
         Espresso.pressBack()
         Espresso.onIdle()
 
-        clearSearchHistory()
+        clearSearchHistory(composeTestRule, activityTestRule.activity)
 
         openSearchView()
         checkSingleRootView(activityTestRule.activity)

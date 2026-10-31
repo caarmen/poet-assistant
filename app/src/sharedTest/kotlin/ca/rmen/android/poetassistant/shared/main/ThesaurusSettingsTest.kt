@@ -69,7 +69,7 @@ class ThesaurusSettingsTest {
     @Test
     fun testReverseLookupEnabled() {
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.thesaurus_reverse_lookup_setting_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.thesaurus_reverse_lookup_setting_title)
         pressBack()
         swipeViewPagerLeft(1)
         search("mistake")
@@ -92,7 +92,7 @@ class ThesaurusSettingsTest {
     fun testFilterWithReverseLookupEnabled() {
         val context: Context = activityTestRule.activity
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.thesaurus_reverse_lookup_setting_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.thesaurus_reverse_lookup_setting_title)
         pressBack()
         search("number")
         addFilter(composeTestRule, context, Tab.RHYMER, "mistake", "bloomer")
