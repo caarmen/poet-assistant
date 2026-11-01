@@ -161,7 +161,7 @@ class PoemTest {
     @Test
     fun testLookupSetting() {
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.pref_selection_lookup_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_selection_lookup_title)
         pressBack()
         swipeViewPagerLeft(3)
         val poemText = "Here is a poem with lookup disabled"
@@ -173,7 +173,7 @@ class PoemTest {
         closeSoftKeyboard()
 
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.pref_selection_lookup_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_selection_lookup_title)
         pressBack()
         assertPopupVisible("rhymer")
         assertPopupVisible("thesaurus")

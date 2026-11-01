@@ -22,7 +22,11 @@ package ca.rmen.android.poetassistant.main
 
 import android.app.Activity
 import android.content.Intent
+import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.performClick
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -32,7 +36,6 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.rules.ActivityStageIdlingResource
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
 import ca.rmen.android.poetassistant.main.rules.RetryTestRule
-import ca.rmen.android.poetassistant.settings.SettingsActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.FixMethodOrder
@@ -41,14 +44,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isChecked
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import ca.rmen.android.poetassistant.main.CustomChecks.checkFirstDefinition
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
+import ca.rmen.android.poetassistant.settings.NewSettingsActivity
 
 /**
  * Test for these issues:
@@ -74,7 +73,7 @@ class TaskStackTest {
 
     @JvmField
     @Rule(order = 3)
-    val activityTestRule: PoetAssistantActivityTestRule<SettingsActivity> = PoetAssistantActivityTestRule(SettingsActivity::class.java, false)
+    val activityTestRule: PoetAssistantActivityTestRule<NewSettingsActivity> = PoetAssistantActivityTestRule(NewSettingsActivity::class.java, false)
 
     @Test
     fun dictionaryDeepLinkAfterThemeChangeTest() {
@@ -90,9 +89,9 @@ class TaskStackTest {
         // Change the theme
         val intent = Intent()
         activityTestRule.launchActivity(intent)
-        clickPreference(R.string.pref_theme_title)
-        onView(withText(R.string.pref_theme_value_auto)).check(matches(isChecked()))
-        onView(withText(R.string.pref_theme_value_dark)).perform(click())
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_theme_title)
+        composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_theme_value_auto)) and isSelectable()).assertIsSelected()
+        composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_theme_value_dark)) and isSelectable()).performClick()
 
         // Open a deep link
         getInstrumentation().uiAutomation.executeShellCommand("am start -a android.intent.action.VIEW -d " + deepLinkUrl)

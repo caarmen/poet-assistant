@@ -32,8 +32,8 @@ run_tests() {
     rm -rf "${screenshots_local_folder}/${device}-dark"
   fi
   base_folder=/storage/emulated/0/Android/data/ca.rmen.android.poetassistant.test/files
-  adb -s "${device}" pull "${base_folder}/screenshots-Light" "${screenshots_local_folder}/${device}-light"
-  adb -s "${device}" pull "${base_folder}/screenshots-Dark" "${screenshots_local_folder}/${device}-dark"
+  adb -s "${device}" pull "${base_folder}/screenshots-LIGHT" "${screenshots_local_folder}/${device}-light"
+  adb -s "${device}" pull "${base_folder}/screenshots-DARK" "${screenshots_local_folder}/${device}-dark"
 }
 
 device_count=${#devices[@]}

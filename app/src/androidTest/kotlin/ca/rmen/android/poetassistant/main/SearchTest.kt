@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.main
 
 
 import android.content.Context
+import android.os.SystemClock
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
@@ -122,7 +123,9 @@ class SearchTest {
         Espresso.pressBack()
         Espresso.onIdle()
 
-        clearSearchHistory()
+        composeTestRule.waitForIdle()
+        SystemClock.sleep(500) // :( the previous idle apis aren't enough
+        clearSearchHistory(composeTestRule, activityTestRule.activity)
 
         openSearchView()
         checkSingleRootView(activityTestRule.activity)
