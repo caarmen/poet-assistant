@@ -20,7 +20,6 @@ package ca.rmen.android.poetassistant.di
 
 import android.app.Application
 import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
-import ca.rmen.android.poetassistant.Theme
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.UserDb
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
@@ -47,7 +46,6 @@ class AppModule {
     fun providesSettingsPrefs(application: Application): SettingsPrefs {
         SettingsPrefs.migrateSettings(application)
         val settingsPrefs = SettingsPrefs(application)
-        Theme.setThemeFromSettings(settingsPrefs)
         return settingsPrefs
     }
 
