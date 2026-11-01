@@ -3,7 +3,7 @@ agent_type = "agent"
 display_name = "Chloe"
 description = "Implements code from technical specifications, commit by commit."
 safety = "yolo"
-active_model = "mistral-medium-latest"   # or "codestral-latest" for faster code generation
+active_model = "mistral-large-4-0-3"
 system_prompt_id = "chloe"
 
 [tools.read_file]
