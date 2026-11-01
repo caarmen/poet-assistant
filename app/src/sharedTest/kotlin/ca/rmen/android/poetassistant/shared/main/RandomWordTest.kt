@@ -22,16 +22,15 @@ package ca.rmen.android.poetassistant.shared.main
 import android.os.Build
 import android.view.View
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.hasChildCount
-import androidx.test.espresso.matcher.ViewMatchers.isChecked
-import androidx.test.espresso.matcher.ViewMatchers.isEnabled
-import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -41,14 +40,17 @@ import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
-import ca.rmen.android.poetassistant.main.TestUiUtils.scrollToPreference
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_HEADER_TEXT_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
+import ca.rmen.android.poetassistant.settings.SettingsRepository
+import ca.rmen.android.poetassistant.settings.WotdNotificationPriority
+import ca.rmen.android.poetassistant.settings.ui.composables.SETTINGS_WOTD_NOTIFICATION_PRIORITY_ITEM_TAG_PREFIX
+import ca.rmen.android.poetassistant.settings.ui.composables.SETTINGS_WOTD_NOTIFICATION_PRIORITY_ROW_TAG
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers.not
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -99,10 +101,18 @@ class RandomWordTest {
             return // The setting isn't available on O+
         }
         openMenuItem(R.string.action_settings)
-        scrollToPreference(R.string.wotd_setting_system_notification_priority_title)
-        onView(withText(R.string.wotd_setting_system_notification_priority_title)).check(matches(not(isEnabled())))
-        clickPreference(R.string.wotd_setting_title)
-        onView(withText(R.string.wotd_setting_system_notification_priority_title)).check(matches(isEnabled()))
+        composeTestRule
+            .onNode(hasScrollAction())
+            .performScrollToNode(hasTestTag(SETTINGS_WOTD_NOTIFICATION_PRIORITY_ROW_TAG))
+        // The priority row is disabled while the wotd switch is off.
+        composeTestRule
+            .onNode(hasTestTag(SETTINGS_WOTD_NOTIFICATION_PRIORITY_ROW_TAG))
+            .assertIsNotEnabled()
+        // The priority row is enabled when the wotd switch is on.
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.wotd_setting_title)
+        composeTestRule
+            .onNode(hasTestTag(SETTINGS_WOTD_NOTIFICATION_PRIORITY_ROW_TAG))
+            .assertIsEnabled()
     }
 
     @Test
@@ -111,27 +121,31 @@ class RandomWordTest {
             return // The setting isn't available on O+
         }
         openMenuItem(R.string.action_settings)
-        scrollToPreference(R.string.wotd_setting_system_notification_priority_title)
-        clickPreference(R.string.wotd_setting_title)
+        // The priority row is disabled while the wotd switch is off:
+        // turn wotd on first.
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.wotd_setting_title)
 
-        clickPreference(R.string.wotd_setting_system_notification_priority_title)
-        onView(withId(R.id.select_dialog_listview)).check(matches(hasChildCount(5)))
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_default)).check(matches(isChecked()))
+        // The default priority is DEFAULT.
+        assertEquals(WotdNotificationPriority.DEFAULT, wotdNotificationPriority())
 
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_max)).perform(click())
-        clickPreference(R.string.wotd_setting_system_notification_priority_title)
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_max)).check(matches(isChecked()))
-
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_high)).perform(click())
-        clickPreference(R.string.wotd_setting_system_notification_priority_title)
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_high)).check(matches(isChecked()))
-
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_low)).perform(click())
-        clickPreference(R.string.wotd_setting_system_notification_priority_title)
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_low)).check(matches(isChecked()))
-
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_min)).perform(click())
-        clickPreference(R.string.wotd_setting_system_notification_priority_title)
-        onView(withText(R.string.wotd_setting_system_notification_priority_label_min)).check(matches(isChecked()))
+        // Selecting each dropdown item stores the value.
+        for (priority in WotdNotificationPriority.entries) {
+            composeTestRule
+                .onNode(hasScrollAction())
+                .performScrollToNode(hasTestTag(SETTINGS_WOTD_NOTIFICATION_PRIORITY_ROW_TAG))
+            composeTestRule
+                .onNode(hasTestTag(SETTINGS_WOTD_NOTIFICATION_PRIORITY_ROW_TAG))
+                .performClick()
+            composeTestRule
+                .onNode(hasTestTag(SETTINGS_WOTD_NOTIFICATION_PRIORITY_ITEM_TAG_PREFIX + priority.name))
+                .performClick()
+            assertEquals(priority, wotdNotificationPriority())
+        }
     }
+
+    private fun wotdNotificationPriority(): WotdNotificationPriority =
+        SettingsRepository(activityTestRule.activity.application)
+            .settingsFlow
+            .value
+            .wotdNotificationPriority
 }

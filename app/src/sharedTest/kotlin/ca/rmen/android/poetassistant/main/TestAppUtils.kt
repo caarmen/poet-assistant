@@ -77,14 +77,14 @@ import org.hamcrest.Matchers.allOf
  */
 object TestAppUtils {
 
-    fun clearSearchHistory() {
+    fun clearSearchHistory(composeTestRule: ComposeTestRule, context: Context) {
         // click on the settings menu item
         TestUiUtils.openMenuItem(R.string.action_settings)
 
-        TestUiUtils.clickPreference(R.string.action_clear_search_history)
+        TestUiUtils.clickPreference(composeTestRule, context, R.string.action_clear_search_history)
 
         // Tap ok on the confirmation dialog
-        clickDialogPositiveButton(R.string.action_clear)
+        composeTestRule.onNodeWithText(context.getString(R.string.action_clear)).performClick()
 
         // Exit settings
         pressBack()

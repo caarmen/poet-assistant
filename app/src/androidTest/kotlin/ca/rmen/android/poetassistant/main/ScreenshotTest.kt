@@ -30,9 +30,9 @@ import androidx.test.runner.screenshot.ScreenCapture
 import androidx.test.runner.screenshot.ScreenCaptureProcessor
 import androidx.test.runner.screenshot.Screenshot
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.Theme.setThemeFromSettings
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
-import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import ca.rmen.android.poetassistant.settings.Theme
+import ca.rmen.android.poetassistant.settings.usecases.ApplyThemeUseCase
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -45,6 +45,7 @@ import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 import java.io.File
 import java.io.IOException
+import javax.inject.Inject
 
 
 @LargeTest
@@ -52,9 +53,9 @@ import java.io.IOException
 @RunWith(TestParameterInjector::class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class ScreenshotTest {
-    enum class ThemePreference(val value: String) {
-        LIGHT(SettingsPrefs.THEME_LIGHT),
-        DARK(SettingsPrefs.THEME_DARK)
+    enum class ThemePreference(val value: Theme) {
+        LIGHT(Theme.LIGHT),
+        DARK(Theme.DARK)
     }
 
     @TestParameter
@@ -74,14 +75,15 @@ class ScreenshotTest {
         MainActivity::class.java, true
     )
 
+    @Inject
+    lateinit var applyThemeUseCase: ApplyThemeUseCase
+
     @Before
     fun setup() {
+        hiltTestRule.inject()
         // Set the theme
         InstrumentationRegistry.getInstrumentation().runOnMainSync {
-            val settingsPrefs =
-                SettingsPrefs(ApplicationProvider.getApplicationContext())
-            settingsPrefs.theme = themePreference.value
-            setThemeFromSettings(settingsPrefs)
+            applyThemeUseCase(themePreference.value)
         }
 
         // Create a fresh folder to store the screenshots

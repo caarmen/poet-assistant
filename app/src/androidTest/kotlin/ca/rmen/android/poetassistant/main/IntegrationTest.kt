@@ -22,16 +22,13 @@ package ca.rmen.android.poetassistant.main
 
 import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isChecked
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -130,7 +127,7 @@ class IntegrationTest {
         typeAndSpeakPoem(composeTestRule, data.poem)
         clearPoem(composeTestRule)
         // clearing the search history doesn't erase starred words
-        clearSearchHistory()
+        clearSearchHistory(composeTestRule, activityTestRule.activity)
         swipeViewPagerLeft(1)
         checkAllStarredWords(context, composeTestRule, data.secondSynonymForFirstRhyme)
         clearStarredWords(composeTestRule)
@@ -161,7 +158,7 @@ class IntegrationTest {
         typeAndSpeakPoem(composeTestRule, data.poem)
         clearPoem(composeTestRule)
         // clearing the search history doesn't erase starred words
-        clearSearchHistory()
+        clearSearchHistory(composeTestRule, activityTestRule.activity)
         swipeViewPagerLeft(1)
         checkAllStarredWords(context, composeTestRule, data.secondSynonymForFirstRhyme)
         clearStarredWords(composeTestRule)
@@ -203,31 +200,31 @@ class IntegrationTest {
     @Test
     fun themeTest() {
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.pref_theme_title)
-        onView(withText(R.string.pref_theme_value_auto)).check(matches(isChecked()))
-        onView(withText(R.string.pref_theme_value_dark)).perform(click())
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_theme_title)
+        composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_theme_value_auto)) and isSelectable()).assertIsSelected()
+        composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_theme_value_dark)) and isSelectable()).performClick()
         pressBack()
 
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.pref_theme_title)
-        onView(withText(R.string.pref_theme_value_dark)).check(matches(isChecked()))
-        onView(withText(R.string.pref_theme_value_auto)).perform(click())
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_theme_title)
+        composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_theme_value_dark)) and isSelectable()).assertIsSelected()
+        composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_theme_value_auto)) and isSelectable()).performClick()
         pressBack()
 
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.pref_theme_title)
-        onView(withText(R.string.pref_theme_value_auto)).check(matches(isChecked()))
-        onView(withText(R.string.pref_theme_value_light)).perform(click())
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_theme_title)
+        composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_theme_value_auto)) and isSelectable()).assertIsSelected()
+        composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_theme_value_light)) and isSelectable()).performClick()
         pressBack()
 
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.pref_theme_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_theme_title)
     }
 
     private fun useCleanLayout() {
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.pref_layout_title)
-        onView(withText(R.string.pref_layout_value_clean)).perform(click())
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_layout_title)
+        composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_layout_value_clean)) and isSelectable()).performClick()
         pressBack()
     }
 }
