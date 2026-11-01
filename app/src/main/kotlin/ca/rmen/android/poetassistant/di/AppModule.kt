@@ -24,7 +24,6 @@ import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.UserDb
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
-import ca.rmen.android.poetassistant.settings.SettingsPrefs
 import ca.rmen.android.poetassistant.settings.SettingsRepository
 import dagger.Module
 import dagger.Provides
@@ -41,14 +40,6 @@ class AppModule {
     @Singleton
     fun providesTts(application: Application, settingsRepository: SettingsRepository): Tts =
         Tts(application, settingsRepository)
-
-    @Provides
-    @Singleton
-    fun providesSettingsPrefs(application: Application): SettingsPrefs {
-        SettingsPrefs.migrateSettings(application)
-        val settingsPrefs = SettingsPrefs(application)
-        return settingsPrefs
-    }
 
     @Provides
     @Singleton
