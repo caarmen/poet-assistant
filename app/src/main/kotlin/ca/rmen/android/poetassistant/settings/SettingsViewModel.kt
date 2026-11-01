@@ -93,7 +93,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             val fileDisplayName = getFileDisplayNameUseCase(uri)
             try {
-                mFavoritesRepository.exportFavorites(getApplication(), uri)
+                mFavoritesRepository.exportFavorites(uri)
                 snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_success, fileDisplayName)
             } catch(_: Exception) {
                 snackbarText.value = getApplication<Application>().getString(R.string.export_favorites_error, fileDisplayName)
@@ -105,7 +105,7 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch {
             val fileDisplayName = getFileDisplayNameUseCase(uri)
             try {
-                mFavoritesRepository.importFavorites(getApplication(), uri)
+                mFavoritesRepository.importFavorites(uri)
             } catch (_: Exception) {
                 snackbarText.value = getApplication<Application>().getString(
                     R.string.import_favorites_error,

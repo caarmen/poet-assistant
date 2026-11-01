@@ -26,7 +26,12 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import androidx.annotation.StringRes
-import androidx.recyclerview.widget.RecyclerView
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.NoMatchingViewException
 import androidx.test.espresso.PerformException
@@ -38,8 +43,6 @@ import androidx.test.espresso.action.ViewActions.swipeDown
 import androidx.test.espresso.action.ViewActions.swipeLeft
 import androidx.test.espresso.action.ViewActions.swipeRight
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.contrib.RecyclerViewActions.scrollTo
-import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isSelected
@@ -148,15 +151,15 @@ object TestUiUtils {
                 .check(matches(isSelected()))
     }
 
-    fun scrollToPreference(@StringRes prefTitleRes: Int) {
+    fun clickPreference(composeTestRule: ComposeTestRule, context: Context, @StringRes prefTitleRes: Int) {
         // Scroll to the preference in case it's not visible
-        onView(withId(R.id.recycler_view))
-                .perform(scrollTo<RecyclerView.ViewHolder>(hasDescendant(withText(prefTitleRes))))
-    }
+        composeTestRule
+            .onNode(hasScrollAction())
+            .performScrollToNode(hasText(context.getString(prefTitleRes)))
 
-    fun clickPreference(@StringRes prefTitleRes: Int) {
-        scrollToPreference(prefTitleRes)
-        // click on the preference
-        onView(withText(prefTitleRes)).perform(click())
+        // Click on the preference
+        composeTestRule
+            .onNodeWithText(context.getString(prefTitleRes))
+            .performClick()
     }
 }

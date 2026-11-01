@@ -24,6 +24,7 @@ import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
 import ca.rmen.android.poetassistant.Constants
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -36,6 +37,7 @@ import java.io.OutputStreamWriter
 import java.util.Locale
 
 class FavoritesRepository(
+    @ApplicationContext private val context: Context,
     private val ioDispatcher: CoroutineDispatcher,
     val favoriteDao: FavoriteDao,
 ) {
@@ -54,7 +56,7 @@ class FavoritesRepository(
     }
 
     @Throws(IOException::class)
-    suspend fun exportFavorites(context: Context, uri: Uri) {
+    suspend fun exportFavorites(uri: Uri) {
         withContext(ioDispatcher) {
             val outputStream = context.contentResolver.openOutputStream(uri) ?: throw IOException("Can't open null output stream")
             BufferedWriter(OutputStreamWriter(outputStream)).use { writer ->
@@ -73,7 +75,7 @@ class FavoritesRepository(
     }
 
     @Throws(IOException::class)
-    suspend fun importFavorites(context: Context, uri: Uri) {
+    suspend fun importFavorites(uri: Uri) {
         withContext(ioDispatcher) {
             val inputStream = context.contentResolver.openInputStream(uri) ?: throw IOException("Can't open null input stream")
             val favorites = getFavorites().toMutableList()

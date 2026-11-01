@@ -5,10 +5,13 @@ enabled_tools = [
     "edit",
     "task",
 ]
-active_model = "devstral-small"
+active_model = "mistral-large-4-0-3"
 theme = "monokai"
 applied_migrations = [
     "bash_read_only_defaults_v1",
+]
+models = [
+    { thinking = "medium", alias = "mistral-large-4-0-3" },
 ]
 
 [tools.bash]

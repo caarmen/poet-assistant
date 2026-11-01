@@ -19,7 +19,6 @@
 
 package ca.rmen.android.poetassistant.main.rules
 
-import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
 import android.util.Log
@@ -37,10 +36,9 @@ import androidx.work.testing.WorkManagerTestInitHelper
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.UserDb
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
-import ca.rmen.android.poetassistant.main.dictionaries.search.ProcessTextRouter
-import ca.rmen.android.poetassistant.settings.SettingsPrefs
-import ca.rmen.android.poetassistant.Theme
+import ca.rmen.android.poetassistant.settings.usecases.SetSelectionLookupEnabledUseCase
 import ca.rmen.android.poetassistant.main.wotd.work.WotdPeriodicWork
+import ca.rmen.android.poetassistant.settings.usecases.ApplyThemeUseCase
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -59,6 +57,8 @@ object ActivityTestRules {
         fun testTeardownStrategy(): TestTeardownStrategy
 
         fun workerFactory(): HiltWorkerFactory
+
+        fun applyThemeUseCase(): ApplyThemeUseCase
     }
 
     fun beforeActivityLaunched(targetContext: Context) {
@@ -74,7 +74,7 @@ object ActivityTestRules {
         WorkManagerTestInitHelper.initializeTestWorkManager(targetContext, config)
 
         cleanup(targetContext)
-        ProcessTextRouter.setEnabled(targetContext, true)
+        SetSelectionLookupEnabledUseCase(targetContext.applicationContext)(true)
     }
 
     fun afterActivityFinished(targetContext: Context) {
@@ -103,7 +103,7 @@ object ActivityTestRules {
         val embeddedDb = entryPoint.embeddedDb()
         embeddedDb.close()
         getInstrumentation().runOnMainSync {
-            Theme.setThemeFromSettings(SettingsPrefs(targetContext.applicationContext as Application))
+            entryPoint.applyThemeUseCase()()
         }
         Espresso.onIdle()
         // https://github.com/robolectric/robolectric/issues/6251
