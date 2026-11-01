@@ -22,6 +22,7 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import ca.rmen.android.poetassistant.main.wotd.work.WotdMigration
+import ca.rmen.android.poetassistant.settings.usecases.ApplyThemeUseCase
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -34,6 +35,9 @@ class PoetAssistantApplication : Application(), Configuration.Provider {
     @Inject
     lateinit var wotdMigration: WotdMigration
 
+    @Inject
+    lateinit var applyThemeUseCase: ApplyThemeUseCase
+
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
@@ -42,5 +46,6 @@ class PoetAssistantApplication : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         wotdMigration.migrate()
+        applyThemeUseCase()
     }
 }
