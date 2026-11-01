@@ -27,7 +27,8 @@ import android.speech.tts.UtteranceProgressListener
 import android.text.TextUtils
 import android.util.Log
 import androidx.annotation.MainThread
-import ca.rmen.android.poetassistant.settings.SettingsPrefs
+import ca.rmen.android.poetassistant.settings.Settings
+import ca.rmen.android.poetassistant.settings.SettingsRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +37,7 @@ import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.decrementAndFetch
 
-class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs) {
+class Tts(private val context: Context, private val settingsRepository: SettingsRepository) {
     companion object {
         private var TAG = Constants.TAG + Tts::class.java.simpleName
         private const val PAUSE_DURATION_MS = 500L
@@ -47,6 +48,12 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
     private var mTextToSpeech: TextToSpeech? = null
     private var mTtsStatus = TextToSpeech.ERROR
+
+    // The last voice/speed/pitch applied to the engine. The prefs
+    // listener compares against these to re-apply only what changed.
+    private var mVoice: String? = null
+    private var mVoiceSpeed = 0
+    private var mVoicePitch = 0
 
     private val mUtteranceListener = UtteranceListener()
     private val mInitListener = TtsInitListener()
@@ -129,18 +136,25 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
         PreferenceManager.getDefaultSharedPreferences(context).unregisterOnSharedPreferenceChangeListener(mTtsPrefsListener)
     }
 
-    private fun useVoiceFromSettings() = useVoice(mTextToSpeech, settingsPrefs.voice)
+    private fun useVoiceFromSettings() {
+        mVoice = settingsRepository.voice
+        useVoice(mTextToSpeech, mVoice)
+    }
 
-    private fun setVoiceSpeedFromSettings() =
-            mTextToSpeech?.setSpeechRate(Math.max(MIN_VOICE_SPEED, settingsPrefs.voiceSpeed / 100f))
+    private fun setVoiceSpeedFromSettings() {
+        mVoiceSpeed = settingsRepository.voiceSpeed
+        mTextToSpeech?.setSpeechRate(Math.max(MIN_VOICE_SPEED, mVoiceSpeed / 100f))
+    }
 
-    private fun setVoicePitchFromSettings() =
-            mTextToSpeech?.setPitch(Math.max(MIN_VOICE_PITCH, settingsPrefs.voicePitch / 100f))
+    private fun setVoicePitchFromSettings() {
+        mVoicePitch = settingsRepository.voicePitch
+        mTextToSpeech?.setPitch(Math.max(MIN_VOICE_PITCH, mVoicePitch / 100f))
+    }
 
     private fun useVoice(textToSpeech: TextToSpeech?, voiceId: String?) {
         if (textToSpeech != null) {
             try {
-                if (voiceId == null || SettingsPrefs.VOICE_SYSTEM == voiceId) {
+                if (voiceId == null || Settings.VOICE_SYSTEM == voiceId) {
                     textToSpeech.voice = textToSpeech.defaultVoice
                     Log.v(TAG, "Using default voice ${textToSpeech.defaultVoice}")
                 } else {
@@ -183,12 +197,15 @@ class Tts(private val context: Context, private val settingsPrefs: SettingsPrefs
 
     private inner class TtsPreferenceListener : SharedPreferences.OnSharedPreferenceChangeListener {
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
+            // The listener fires on any change in the settings file -
+            // including the frequent poem autosave writes. The
+            // preference keys are private to SettingsRepository, so we
+            // compare the repository values against the last applied
+            // ones, and re-apply only what changed.
             if (isReady()) {
-                when (key) {
-                    SettingsPrefs.PREF_VOICE_SPEED -> setVoiceSpeedFromSettings()
-                    SettingsPrefs.PREF_VOICE_PITCH -> setVoicePitchFromSettings()
-                    SettingsPrefs.PREF_VOICE -> useVoiceFromSettings()
-                }
+                if (settingsRepository.voice != mVoice) useVoiceFromSettings()
+                if (settingsRepository.voiceSpeed != mVoiceSpeed) setVoiceSpeedFromSettings()
+                if (settingsRepository.voicePitch != mVoicePitch) setVoicePitchFromSettings()
             }
         }
     }
