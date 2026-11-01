@@ -53,7 +53,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun providesFavoritesRepository(userDb: UserDb, @IODispatcher ioDispatcher: CoroutineDispatcher) = FavoritesRepository(ioDispatcher, userDb.favoriteDao())
+    fun providesFavoritesRepository(application: Application, userDb: UserDb, @IODispatcher ioDispatcher: CoroutineDispatcher) = FavoritesRepository(application, ioDispatcher, userDb.favoriteDao())
 
     @Provides
     @Singleton
