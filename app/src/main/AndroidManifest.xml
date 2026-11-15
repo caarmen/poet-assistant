@@ -172,7 +172,7 @@
                 android:value="ca.rmen.android.poetassistant.about.AboutActivity" />
         </activity>
         <activity
-            android:name=".settings.NewSettingsActivity"
+            android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".main.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"

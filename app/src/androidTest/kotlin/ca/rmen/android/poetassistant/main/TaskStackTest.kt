@@ -47,7 +47,7 @@ import org.junit.runners.MethodSorters
 import ca.rmen.android.poetassistant.main.CustomChecks.checkFirstDefinition
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
-import ca.rmen.android.poetassistant.settings.NewSettingsActivity
+import ca.rmen.android.poetassistant.settings.SettingsActivity
 
 /**
  * Test for these issues:
@@ -73,7 +73,7 @@ class TaskStackTest {
 
     @JvmField
     @Rule(order = 3)
-    val activityTestRule: PoetAssistantActivityTestRule<NewSettingsActivity> = PoetAssistantActivityTestRule(NewSettingsActivity::class.java, false)
+    val activityTestRule: PoetAssistantActivityTestRule<SettingsActivity> = PoetAssistantActivityTestRule(SettingsActivity::class.java, false)
 
     @Test
     fun dictionaryDeepLinkAfterThemeChangeTest() {
