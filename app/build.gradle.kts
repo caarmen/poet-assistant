@@ -43,7 +43,6 @@ android {
 
     buildFeatures {
         compose = true
-        viewBinding = true
         buildConfig = true
         resValues = true
     }
