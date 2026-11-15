@@ -50,7 +50,6 @@ import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.about.AboutActivity
-import ca.rmen.android.poetassistant.databinding.ActivityMainBinding
 import ca.rmen.android.poetassistant.di.IODispatcher
 import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
@@ -83,7 +82,6 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
     }
 
     private lateinit var mSearch: Search
-    private lateinit var mBinding: ActivityMainBinding
     private lateinit var mPagerAdapter: PagerAdapter
     @Inject lateinit var settingsRepository: SettingsRepository
     @Inject lateinit var mEmbeddedDb: EmbeddedDb
@@ -107,17 +105,15 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         }
         super.onCreate(savedInstanceState)
-        mBinding = ActivityMainBinding.inflate(layoutInflater)
-        val view = mBinding.root
-        setContentView(view)
+        setContentView(R.layout.activity_main)
 
-        val pagerTitleStrip = view.findViewById<PagerTitleStrip>(R.id.pager_title_strip)
-        appBarLayout = view.findViewById(R.id.app_bar_layout)
-        searchSuggestionsList = view.findViewById(R.id.search_suggestions_list)
-        searchView = view.findViewById(R.id.search_view)
-        tabs = view.findViewById(R.id.tabs)
-        toolbar = view.findViewById(R.id.toolbar)
-        viewPager = view.findViewById(R.id.view_pager)
+        val pagerTitleStrip = findViewById<PagerTitleStrip>(R.id.pager_title_strip)
+        appBarLayout = findViewById(R.id.app_bar_layout)
+        searchSuggestionsList = findViewById(R.id.search_suggestions_list)
+        searchView = findViewById(R.id.search_view)
+        tabs = findViewById(R.id.tabs)
+        toolbar = findViewById(R.id.toolbar)
+        viewPager = findViewById(R.id.view_pager)
 
         setSupportActionBar(toolbar)
         tabs.tabMode = if (resources.getBoolean(R.bool.tab_text)) TabLayout.MODE_SCROLLABLE else TabLayout.MODE_FIXED
