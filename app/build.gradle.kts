@@ -276,10 +276,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // We need to explicitly add a couple of api dependencies here, otherwise alpha versions
-    // of these libs will be pulled in transitively (by a non-alpha databinding dependency...)
-    api(libs.androidx.collection)
-    api(libs.androidx.lifecycle.runtime)
     api(libs.androidx.lifecycle.process)
     api(libs.androidx.lifecycle.viewmodel.ktx)
 
