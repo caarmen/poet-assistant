@@ -35,12 +35,14 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.updatePadding
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.tabs.TabLayout
 import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
@@ -96,6 +98,8 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
         super.onCreate(savedInstanceState)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         setSupportActionBar(mBinding.toolbar)
+        mBinding.tabs.tabMode = if (resources.getBoolean(R.bool.tab_text)) TabLayout.MODE_SCROLLABLE else TabLayout.MODE_FIXED
+        mBinding.pagerTitleStrip.visibility = if (resources.getBoolean(R.bool.tab_text)) View.GONE else View.VISIBLE
         mPagerAdapter = PagerAdapter(this, supportFragmentManager, intent)
         mPagerAdapter.registerDataSetObserver(mAdapterChangeListener)
 
