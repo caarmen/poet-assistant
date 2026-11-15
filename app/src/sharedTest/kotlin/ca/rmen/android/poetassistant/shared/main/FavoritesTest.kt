@@ -31,7 +31,7 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.rules.ActivityStageIdlingResource
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
-import ca.rmen.android.poetassistant.settings.NewSettingsActivity
+import ca.rmen.android.poetassistant.settings.SettingsActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -63,14 +63,14 @@ class FavoritesTest {
     fun exportTest() {
         openMenuItem(R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.action_export_favorites)
-        checkActivityHidden(NewSettingsActivity::class.java.name)
+        checkActivityHidden(SettingsActivity::class.java.name)
     }
 
     @Test
     fun importTest() {
         openMenuItem(R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.action_import_favorites)
-        checkActivityHidden(NewSettingsActivity::class.java.name)
+        checkActivityHidden(SettingsActivity::class.java.name)
     }
 
     private fun checkActivityHidden(activityClassName: String) {

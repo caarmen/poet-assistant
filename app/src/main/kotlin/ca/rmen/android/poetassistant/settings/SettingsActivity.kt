@@ -44,7 +44,7 @@ import javax.inject.Inject
  * use cases: it never touches the engine directly.
  */
 @AndroidEntryPoint
-class NewSettingsActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity() {
 
     @Inject
     lateinit var stopTtsUseCase: StopTtsUseCase

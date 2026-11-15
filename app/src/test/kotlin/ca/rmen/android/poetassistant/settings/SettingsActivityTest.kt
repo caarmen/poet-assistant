@@ -47,7 +47,7 @@ class SettingsActivityTest {
 
     @Test
     fun testSystemSettings() {
-        ActivityScenario.launch(NewSettingsActivity::class.java).use {
+        ActivityScenario.launch(SettingsActivity::class.java).use {
             composeTestRule.waitForIdle()
             composeTestRule.onNodeWithTag(SETTINGS_SYSTEM_TTS_SETTINGS_ROW_TAG)
                 .performScrollTo()
