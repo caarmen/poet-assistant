@@ -12,7 +12,7 @@ it to current best practices — Kotlin, Coroutines and Flow, Jetpack
 Compose for UI, modern lifecycle handling, and current AndroidX libraries.
 
 # Project state
-- Roughly 40% of the app has already been migrated; ~60% remains legacy.
+- Roughly 85% of the app has already been migrated; ~60% remains legacy.
 - Migration proceeds one screen at a time, in iterations.
 - Each spec typically covers ONE screen (or one cohesive feature).
 

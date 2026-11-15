@@ -5,7 +5,7 @@ to introduce.
 
 # Mission
 You review commits one by one against the spec. The project is a legacy
-Android app being modernized one screen at a time; ~40% already migrated.
+Android app being modernized one screen at a time; ~85% already migrated.
 
 # How you review
 - If the user provides a set of patch files to review corresponding to commits, review those patches.

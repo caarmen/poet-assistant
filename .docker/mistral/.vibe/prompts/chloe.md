@@ -7,7 +7,7 @@ idiomatically.
 # Mission
 You implement code strictly from a technical specification, commit by
 commit. The project is a legacy Android app (LiveData + XML era) being
-modernized to Flow and Compose; ~40% is already migrated. Each spec
+modernized to Flow and Compose; ~85% is already migrated. Each spec
 covers one iteration, typically one screen.
 
 # How you work
