@@ -20,29 +20,22 @@
 package ca.rmen.android.poetassistant.about
 
 import android.content.pm.PackageManager
-import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import androidx.annotation.DrawableRes
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import android.view.View
-import android.widget.TextView
-import androidx.core.view.updatePadding
+import androidx.core.app.NavUtils
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.compat.VectorCompat
-import ca.rmen.android.poetassistant.databinding.ActivityAboutBinding
-import ca.rmen.android.poetassistant.fixStatusBarViewForInsets
-import ca.rmen.android.poetassistant.getInsets
+import ca.rmen.android.poetassistant.theme.AppTheme
 
+/**
+ * The about screen: a thin Compose host for [AboutScreen].
+ */
 class AboutActivity : AppCompatActivity() {
-
-    private lateinit var mBinding: ActivityAboutBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        supportActionBar?.let {
-            it.setDisplayHomeAsUpEnabled(true)
-            it.title = getString(R.string.about_title, getString(R.string.app_name))
-        }
+        enableEdgeToEdge()
         val versionName = try {
             val packageInfo = packageManager.getPackageInfo(packageName, 0)
             packageInfo.versionName
@@ -51,68 +44,24 @@ class AboutActivity : AppCompatActivity() {
             ""
         }
         val appVersionText = getString(R.string.about_app_version, getString(R.string.app_name), versionName)
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_about)
-        mBinding.txtVersion.text = appVersionText
-        getInsets(mBinding.aboutContent) { view, insets ->
-            view.updatePadding(
-                left = insets.left,
-                right = insets.right,
-                bottom = insets.bottom,
-            )
-            fixStatusBarViewForInsets(mBinding.statusBarView, insets)
+        setContent {
+            AppTheme {
+                AboutScreen(
+                    appVersionText = appVersionText,
+                    onNavigateUp = { onSupportNavigateUp() },
+                    onOpenLicense = { title, licenseAssetFile ->
+                        LicenseActivity.start(this, title, licenseAssetFile)
+                    },
+                )
+            }
         }
-        hackSetIcons()
-    }
-
-    @SuppressWarnings("unused")
-    fun onClickAppLicense(@Suppress("UNUSED_PARAMETER") v: View) {
-        LicenseActivity.start(this, getString(R.string.app_name), "LICENSE.txt")
-    }
-
-    @SuppressWarnings("unused")
-    fun onClickRhymerLicense(@Suppress("UNUSED_PARAMETER") v: View) {
-        LicenseActivity.start(this, getString(R.string.about_license_rhyming_dictionary), "LICENSE-rhyming-dictionary.txt")
-    }
-
-    @SuppressWarnings("unused")
-    fun onClickThesaurusLicense(@Suppress("UNUSED_PARAMETER") v: View) {
-        LicenseActivity.start(this, getString(R.string.about_license_thesaurus), "LICENSE-thesaurus-wordnet.txt")
-    }
-
-    @SuppressWarnings("unused")
-    fun onClickDictionaryLicense(@Suppress("UNUSED_PARAMETER") v: View) {
-        LicenseActivity.start(this, getString(R.string.about_license_dictionary), "LICENSE-dictionary-wordnet.txt")
-    }
-
-    @SuppressWarnings("unused")
-    fun onClickGoogleNgramDatasetLicense(@Suppress("UNUSED_PARAMETER") v: View) {
-        LicenseActivity.start(this, getString(R.string.about_license_google_ngram_dataset), "LICENSE-google-ngram-dataset.txt")
     }
 
     /**
-     * The support library 23.3.0 dropped support for using vector drawables in the
-     * "drawableLeft" attribute of TextViews.  We set them programmatically here.
+     * Honors the manifest parentActivityName for up navigation.
      */
-    private fun hackSetIcons() {
-        hackSetIcon(mBinding.tvSourceCode, R.drawable.ic_source_code)
-        hackSetIcon(mBinding.tvBugReport, R.drawable.ic_bug_report_24dp)
-        hackSetIcon(mBinding.tvRate, R.drawable.ic_rate)
-        hackSetIcon(mBinding.tvLegal, R.drawable.ic_legal)
-        hackSetIcon(mBinding.tvPrivacyPolicy, R.drawable.ic_bullet)
-        hackSetIcon(mBinding.tvPoetAssistantLicense, R.drawable.ic_bullet)
-        hackSetIcon(mBinding.tvRhymerLicense, R.drawable.ic_bullet)
-        hackSetIcon(mBinding.tvThesaurusLicense, R.drawable.ic_bullet)
-        hackSetIcon(mBinding.tvDictionaryLicense, R.drawable.ic_bullet)
-        hackSetIcon(mBinding.tvGoogleNgramDatasetLicense, R.drawable.ic_bullet)
-        hackSetIcon(mBinding.tvSupportLibLicense, R.drawable.ic_bullet)
-        hackSetIcon(mBinding.tvDaggerLicense, R.drawable.ic_bullet)
-        hackSetIcon(mBinding.tvKotlinLicense, R.drawable.ic_bullet)
-        hackSetIcon(mBinding.tvPrefsLicense, R.drawable.ic_bullet)
-        hackSetIcon(mBinding.tvStemmerLicense, R.drawable.ic_bullet)
+    override fun onSupportNavigateUp(): Boolean {
+        NavUtils.navigateUpFromSameTask(this)
+        return true
     }
-
-    private fun hackSetIcon(textView: TextView, @DrawableRes iconRes: Int) {
-        VectorCompat.setCompoundVectorDrawables(this, textView, iconRes, 0, 0, 0)
-    }
-
 }
