@@ -21,6 +21,10 @@ package ca.rmen.android.poetassistant.main.reader.ui.composables
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,13 +33,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.main.reader.PlayButtonState
+import ca.rmen.android.poetassistant.main.reader.DialogState
 import ca.rmen.android.poetassistant.main.reader.ReaderScreenViewModel
 
 const val READER_POEM_TEXT_FIELD_TAG = "Reader_Poem_Text_Field"
 const val READER_PLAY_BUTTON_TAG = "Reader_Play_Button"
+const val READER_CLEAR_CONFIRM_BUTTON_TAG = "Reader_Clear_Confirm_Button"
 
 /**
  * Top-level composable for the reader screen.
@@ -87,6 +94,34 @@ fun ReaderScreen(
 
     if (showWordCountHelpDialog) {
         ReaderWordCountHelpDialog(onDismiss = { showWordCountHelpDialog = false })
+    }
+    if (state.dialogState == DialogState.CLEAR_POEM) {
+        AlertDialog(
+            text = {
+                Text(
+                    text = stringResource(R.string.file_new_confirm_title),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = viewModel::onClearPoemConfirmClicked,
+                    modifier = Modifier.testTag(READER_CLEAR_CONFIRM_BUTTON_TAG)
+                ) {
+                    Text(stringResource(R.string.action_clear))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = viewModel::onClearPoemRequestDismissed,
+                ) {
+                    Text(stringResource(android.R.string.cancel))
+                }
+            },
+            onDismissRequest = {
+                viewModel.onClearPoemRequestDismissed()
+            },
+        )
     }
 }
 

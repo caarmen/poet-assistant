@@ -35,6 +35,7 @@ fun ReaderScreenContentPreview() {
         ReaderScreenContent(
             state = ReaderScreenState(
                 textFieldValue = TextFieldValue("Roses are red.\nViolets are blue."),
+                dialogState = null,
                 playButtonState = PlayButtonState.PLAY_ENABLED,
                 wordCount = WordCount(words = 6, characters = 31),
                 poem = null,
@@ -53,6 +54,7 @@ fun ReaderScreenContentEmptyPreview() {
         ReaderScreenContent(
             state = ReaderScreenState(
                 textFieldValue = TextFieldValue(""),
+                dialogState = null,
                 playButtonState = PlayButtonState.PLAY_DISABLED,
                 wordCount = null,
                 poem = null,

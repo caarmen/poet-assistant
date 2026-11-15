@@ -85,6 +85,7 @@ class ReaderScreenViewModel @Inject constructor(
     }
 
     private val textFieldValue = MutableStateFlow(TextFieldValue(initialText()))
+    private val dialogState = MutableStateFlow<DialogState?>(null)
 
     /**
      * The last word count. Fed eagerly by a VM-scoped debounced
@@ -109,12 +110,14 @@ class ReaderScreenViewModel @Inject constructor(
      */
     val state: StateFlow<ReaderScreenState> = combine(
         textFieldValue,
+        dialogState,
         getTtsStateUseCase(),
         wordCount,
         poemRepository.poem,
-    ) { textFieldValue, ttsState, wordCount, poem ->
+    ) { textFieldValue, dialogState, ttsState, wordCount, poem ->
         ReaderScreenState(
             textFieldValue = textFieldValue,
+            dialogState = dialogState,
             playButtonState = toPlayButtonState(ttsState, textFieldValue.text),
             wordCount = wordCount,
             poem = poem,
@@ -181,11 +184,24 @@ class ReaderScreenViewModel @Inject constructor(
     }
 
     /**
+     * The user requested to clear the poem.
+     * We must ask for confirmation before actually clearing it.
+     */
+    fun onClearPoemRequestClicked() {
+        dialogState.value = DialogState.CLEAR_POEM
+    }
+
+    fun onClearPoemRequestDismissed() {
+        dialogState.value = null
+    }
+
+    /**
      * Clears the poem.
      */
-    fun onClearPoemClicked() {
+    fun onClearPoemConfirmClicked() {
         poemRepository.clear()
         textFieldValue.value = TextFieldValue("")
+        dialogState.value = null
     }
 
     /**
@@ -295,6 +311,7 @@ class ReaderScreenViewModel @Inject constructor(
      */
     private fun initialState() = ReaderScreenState(
         textFieldValue = textFieldValue.value,
+        dialogState = null,
         playButtonState = toPlayButtonState(getTtsStateUseCase.current, textFieldValue.value.text),
         wordCount = wordCount.value,
         poem = poemRepository.poem.value,

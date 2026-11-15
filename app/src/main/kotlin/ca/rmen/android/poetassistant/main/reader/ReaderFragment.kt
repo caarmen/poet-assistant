@@ -44,7 +44,6 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.HtmlCompat
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
-import ca.rmen.android.poetassistant.main.dictionaries.ConfirmDialogFragment
 import ca.rmen.android.poetassistant.main.reader.data.Poem
 import ca.rmen.android.poetassistant.main.reader.ui.composables.ReaderScreen
 import ca.rmen.android.poetassistant.main.reader.usecases.GetSaveAsFilenameUseCase
@@ -66,12 +65,10 @@ import javax.inject.Inject
  * needs a Context.
  */
 @AndroidEntryPoint
-class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
+class ReaderFragment : Fragment() {
 
     companion object {
         private const val ARG_INITIAL_POEM = "initial_poem"
-        private const val DIALOG_TAG = "dialog"
-        private const val ACTION_FILE_NEW = 2
 
         fun create(initialPoem: String?): ReaderFragment = ReaderFragment().apply {
             arguments = Bundle(1).apply {
@@ -212,13 +209,13 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.action_new -> ConfirmDialogFragment.show(
-                ACTION_FILE_NEW,
-                getString(R.string.file_new_confirm_title),
-                getString(R.string.action_clear),
-                childFragmentManager,
-                DIALOG_TAG,
-            )
+            R.id.action_new -> {
+                viewModel.onClearPoemRequestClicked()
+                // Hack for https://github.com/caarmen/poet-assistant/issues/72
+                // On some devices, showing the clear poem dialog auto-hides the app bar layout.
+                // Let's expand it again.
+                AppBarLayoutHelper.forceExpandAppBarLayout(activity)
+            }
             R.id.action_open -> openPoemLauncher.launch(arrayOf("text/plain"))
             R.id.action_save -> viewModel.onSavePoem()
             R.id.action_save_as -> saveAsPoemLauncher.launch(
@@ -235,17 +232,6 @@ class ReaderFragment : Fragment(), ConfirmDialogFragment.ConfirmDialogListener {
             }
         }
         return true
-    }
-
-    override fun onOk(actionId: Int) {
-        if (actionId == ACTION_FILE_NEW) {
-            viewModel.onClearPoemClicked()
-            // Hack for https://github.com/caarmen/poet-assistant/issues/72
-            // On some devices, clearing the poem text auto-hides the app bar layout.
-            // Let's expand it again.
-            AppBarLayoutHelper.forceExpandAppBarLayout(activity)
-            activity?.invalidateOptionsMenu()
-        }
     }
 
     /**
