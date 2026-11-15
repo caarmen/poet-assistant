@@ -31,10 +31,15 @@ data class WordCount(val words: Int, val characters: Int)
  */
 enum class PlayButtonState { PLAY_ENABLED, PLAY_DISABLED, STOP }
 
+enum class DialogState {
+    CLEAR_POEM,
+}
+
 /**
  * UI state for the reader screen.
  *
  * @param textFieldValue The poem text and selection — one source of truth.
+ * @param dialogState: The dialog to show, if any.
  * @param playButtonState Whether the play button is enabled, and whether
  * it shows play or stop.
  * @param wordCount The word and character counts, or null to hide the
@@ -44,6 +49,7 @@ enum class PlayButtonState { PLAY_ENABLED, PLAY_DISABLED, STOP }
  */
 data class ReaderScreenState(
     val textFieldValue: TextFieldValue,
+    val dialogState: DialogState?,
     val playButtonState: PlayButtonState,
     val wordCount: WordCount?,
     val poem: Poem?,

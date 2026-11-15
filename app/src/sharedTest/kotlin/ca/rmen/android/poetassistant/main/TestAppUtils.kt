@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.main
 import android.content.Context
 import android.content.Intent
 import android.os.SystemClock
-import androidx.annotation.StringRes
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
@@ -52,7 +51,6 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.pressImeActionButton
-import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -68,6 +66,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHY
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_SCREEN_CONTENT_LIST_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.CONFIRM_DELETE_DIALOG_CONFIRM_BUTTON_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_HEADER_DELETE_ALL_TAG
+import ca.rmen.android.poetassistant.main.reader.ui.composables.READER_CLEAR_CONFIRM_BUTTON_TAG
 import ca.rmen.android.poetassistant.main.reader.ui.composables.READER_PLAY_BUTTON_TAG
 import ca.rmen.android.poetassistant.main.reader.ui.composables.READER_POEM_TEXT_FIELD_TAG
 import org.hamcrest.Matchers.allOf
@@ -260,12 +259,6 @@ object TestAppUtils {
         composeTestRule.onNodeWithTag(CONFIRM_DELETE_DIALOG_CONFIRM_BUTTON_TAG).performClick()
     }
 
-    fun clickDialogPositiveButton(@StringRes labelRes: Int) {
-        // Top ok on the confirmation dialog
-        SystemClock.sleep(200)
-        onView(allOf(withId(android.R.id.button1), withText(labelRes))).perform(scrollTo(), click())
-    }
-
     fun typeAndSpeakPoem(composeTestRule: ComposeTestRule, poem: String) {
         typePoem(composeTestRule, poem)
         speakPoem(composeTestRule)
@@ -296,7 +289,7 @@ object TestAppUtils {
     fun clearPoem(composeTestRule: ComposeTestRule) {
         TestUiUtils.openMenuItem(R.string.file)
         onView(allOf(withId(R.id.title), withText(R.string.file_new), isDisplayed())).perform(click())
-        clickDialogPositiveButton(R.string.action_clear)
+        composeTestRule.onNodeWithTag(READER_CLEAR_CONFIRM_BUTTON_TAG).performClick()
         composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG).assertIsDisplayed()
             // Check that the text is empty.
             // A simple assertTextEquals("") fails because the text has a placeholder.
