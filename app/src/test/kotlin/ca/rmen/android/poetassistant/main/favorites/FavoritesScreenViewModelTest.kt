@@ -128,9 +128,9 @@ class FavoritesScreenViewModelTest {
 
         // When the settings change
         settingsRepository.setLayout(Layout.EFFICIENT)
-        settingsRepository.setTheme(Theme.AUTO)
+        settingsRepository.theme = Theme.AUTO
         settingsRepository.setLayout(Layout.CLEAN)
-        settingsRepository.setTheme(Theme.DARK)
+        settingsRepository.theme = Theme.DARK
         observeLayoutJob.cancel()
 
         // Then the viewmodel emits layout changes.

@@ -19,16 +19,21 @@
 
 package ca.rmen.android.poetassistant.main.common.usecases
 
+import android.content.Context
+import androidx.annotation.StringRes
 import ca.rmen.android.poetassistant.Tts
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 /**
  * Use case for triggering text-to-speech.
  * Wraps the existing Tts class to provide a reusable use case across all tabs.
  *
+ * @param context The application context, to resolve string resources.
  * @param tts The text-to-speech service.
  */
 class SpeakTextUseCase @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val tts: Tts,
 ) {
 
@@ -39,5 +44,14 @@ class SpeakTextUseCase @Inject constructor(
      */
     operator fun invoke(text: String) {
         tts.speak(text)
+    }
+
+    /**
+     * Speaks the given string resource using text-to-speech.
+     *
+     * @param textResId The resource id of the text to speak.
+     */
+    operator fun invoke(@StringRes textResId: Int) {
+        invoke(context.getString(textResId))
     }
 }

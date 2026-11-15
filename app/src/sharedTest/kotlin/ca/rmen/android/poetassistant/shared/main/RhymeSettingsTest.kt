@@ -57,7 +57,7 @@ class RhymeSettingsTest {
     @Test
     fun testMatchAORAOEnabled() {
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.match_aor_ao_setting_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.match_aor_ao_setting_title)
         pressBack()
         composeTestRule.waitForIdle()
         search("thorny")
@@ -80,7 +80,7 @@ class RhymeSettingsTest {
     @Test
     fun testMatchAOAAEnabled() {
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.match_ao_aa_setting_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.match_ao_aa_setting_title)
         pressBack()
         search("trauma")
         composeTestRule.waitForIdle()
@@ -107,7 +107,7 @@ class RhymeSettingsTest {
     @Test
     fun testRhymesWithoutDefinitions() {
         openMenuItem(R.string.action_settings)
-        clickPreference(R.string.all_rhymes_setting_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.all_rhymes_setting_title)
         pressBack()
         search("faith")
         checkRhymes(composeTestRule, "eighth", "haith")

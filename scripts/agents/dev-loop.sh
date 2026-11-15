@@ -2,11 +2,11 @@
 # dev-loop.sh — Cameron ↔ Chloe loop for the rhymer-tab feature.
 # Hardcoded for this feature; generalize only after the pattern is proven.
 
-SPEC="plans/random-word-spec.md"
-REVIEW="plans/random-word-code-review.md"
-REVISIONS="plans/random-word-revisions.md"
-SPEC_ISSUES="plans/random-word-spec-issues.md"
-BRANCH="feature/random-word"
+SPEC="plans/settings-screen-spec.md"
+REVIEW="plans/settings-screen-code-review.md"
+REVISIONS="plans/settings-screen-revisions.md"
+SPEC_ISSUES="plans/settings-screen-spec-issues.md"
+BRANCH="feature/settings-screen"
 BASE_BRANCH="master"
 MAX_ROUNDS=5
 
@@ -38,9 +38,15 @@ and read the actual code — not just the diff — wherever the diff
 references it. Check: correctness, spec compliance (claim-by-claim
 against the spec, EXCEPT where the spec itself is flawed — see below),
 and code quality. Some deviation from the spec is acceptable if this results
-in improved code (ex: clearer or more idiomatic code).
+in improved code (ex: clearer or more idiomatic code). The spec is really more of a guideline.
+We often discover nuances during development that would be hard to anticipate when writing the spec.
+Favor clean idiomatic modern code, over strict spec compliance.
 
-Look for opportunities for simplification and to use more idiomatic code.
+Look for opportunities for simplification and to use more idiomatic and modern kotlin code.
+One goal is to use a modern stack (ex: livedata migrated to flow, xml views migrated to compose),
+but another goal is for the code to be more idiomatic for modern standards. Much of the application
+was written over 10 years ago in Java, and simply moving code from one package/class to another
+to respect clean archi layers may not be enough to truly 'modernize' the code.
 
 Tests: don't run tests unless you need to prove something. If you run tests, run
 ./gradlew testDebugUnitTest --tests name-of-test-class-or-method
@@ -84,7 +90,7 @@ Otherwise end with: VERDICT: CHANGES_REQUESTED"
   echo "=== Round $round: Chloe revises ==="
 
   # Chloe: resumed kickoff session — her mental model accumulates.
-  vibe --agent chloe --resume dd2bacad --prompt "Cameron's review is at $REVIEW.
+  vibe --agent chloe --resume d2a0b31c --prompt "Cameron's review is at $REVIEW.
 
 For each remark:
 - If you agree: fix it, with a fixup commit, to adjust the commit which originally

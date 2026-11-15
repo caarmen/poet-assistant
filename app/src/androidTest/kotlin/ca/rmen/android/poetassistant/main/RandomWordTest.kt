@@ -116,7 +116,8 @@ class RandomWordTest {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             InstrumentationRegistry.getInstrumentation().uiAutomation.grantRuntimePermission(BuildConfig.APPLICATION_ID, Manifest.permission.POST_NOTIFICATIONS)
         }
-        clickPreference(R.string.wotd_setting_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.wotd_setting_title)
+        composeTestRule.waitForIdle()
         val notificationManager = getInstrumentation().targetContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         assertNotNull(notificationManager)
         val activeNotifications = notificationManager.activeNotifications
@@ -132,6 +133,6 @@ class RandomWordTest {
         assertTrue("Didn't find a Wotd notification", foundNotification)
 
         // Disable it again
-        clickPreference(R.string.wotd_setting_title)
+        clickPreference(composeTestRule, activityTestRule.activity, R.string.wotd_setting_title)
     }
 }
