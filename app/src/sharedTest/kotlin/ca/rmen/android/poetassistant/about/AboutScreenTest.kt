@@ -19,17 +19,17 @@
 
 package ca.rmen.android.poetassistant.about
 
-import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.hasScrollAction
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.action.ViewActions
-import androidx.test.espresso.assertion.ViewAssertions
-import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.MainActivity
@@ -54,8 +54,7 @@ class AboutScreenTest {
     @get:Rule(order = 0)
     val hiltTestRule = HiltAndroidRule(this)
 
-    @JvmField
-    @Rule(order = 1)
+    @get:Rule(order = 1)
     // This is the first test in the suite. Sometimes there's some timing issues for the first
     // test regarding compose + espresso:
     // androidx.compose.ui.test.junit4.android.ComposeNotIdleException: Idling resource timed out: possibly due to compose being busy.
@@ -73,28 +72,32 @@ class AboutScreenTest {
     fun openAboutScreenTest() {
         composeTestRule.waitForIdle()
         TestUiUtils.openMenuItem(R.string.action_about)
-        checkLicense(R.id.tv_poet_assistant_license, R.string.about_license_app, "GNU GENERAL")
-        checkLicense(R.id.tv_rhymer_license, R.string.about_license_rhyming_dictionary, "Carnegie Mellon University")
-        checkLicense(R.id.tv_thesaurus_license, R.string.about_license_thesaurus, "WordNet Release 2.1")
-        checkLicense(R.id.tv_dictionary_license, R.string.about_license_dictionary, "WordNet 3.0")
+        checkLicense(ABOUT_LICENSE_APP_ROW_TAG, R.string.about_license_app, "GNU GENERAL")
+        checkLicense(ABOUT_LICENSE_RHYMER_ROW_TAG, R.string.about_license_rhyming_dictionary, "Carnegie Mellon University")
+        checkLicense(ABOUT_LICENSE_THESAURUS_ROW_TAG, R.string.about_license_thesaurus, "WordNet Release 2.1")
+        checkLicense(ABOUT_LICENSE_DICTIONARY_ROW_TAG, R.string.about_license_dictionary, "WordNet 3.0")
         checkLicense(
-            R.id.tv_google_ngram_dataset_license,
+            ABOUT_LICENSE_GOOGLE_NGRAM_ROW_TAG,
             R.string.about_license_google_ngram_dataset,
             "Google Ngram Viewer"
         )
-        Espresso.onView(withId(R.id.tv_source_code))
-            .check(ViewAssertions.matches(ViewMatchers.isCompletelyDisplayed()))
-            .check(ViewAssertions.matches(withText(R.string.about_projectUrl)))
+        composeTestRule.onNode(hasScrollAction())
+            .performScrollToNode(hasTestTag(ABOUT_SOURCE_CODE_ROW_TAG))
+        composeTestRule.onNodeWithTag(ABOUT_SOURCE_CODE_ROW_TAG)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText(composeTestRule.activity.getString(R.string.about_projectUrl))
+            .assertIsDisplayed()
     }
 
-    private fun checkLicense(@IdRes linkResId: Int, @StringRes linkTitle: Int, licenseContent: String) {
-        Espresso.onView(ViewMatchers.withId(linkResId))
-            .check(ViewAssertions.matches(ViewMatchers.withText(linkTitle)))
-            .perform(ViewActions.scrollTo())
-            .check(ViewAssertions.matches(ViewMatchers.isCompletelyDisplayed()))
-            .perform(ViewActions.click())
-
-        composeTestRule.onNodeWithText(text=licenseContent, substring = true).assertIsDisplayed()
+    private fun checkLicense(rowTag: String, @StringRes linkTitle: Int, licenseContent: String) {
+        composeTestRule.onNode(hasScrollAction())
+            .performScrollToNode(hasTestTag(rowTag))
+        composeTestRule.onNodeWithTag(rowTag)
+            .assertIsDisplayed()
+            .assertTextContains(composeTestRule.activity.getString(linkTitle))
+            .performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(text = licenseContent, substring = true).assertIsDisplayed()
         Espresso.pressBack()
     }
 
