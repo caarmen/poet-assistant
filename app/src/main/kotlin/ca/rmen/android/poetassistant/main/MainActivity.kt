@@ -38,9 +38,12 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.updatePadding
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.PagerTitleStrip
 import com.google.android.material.tabs.TabLayout
 import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.Constants
@@ -59,6 +62,8 @@ import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsViewMod
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment
 import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsRepository
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.search.SearchView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -88,6 +93,13 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
 
     @IODispatcher @Inject lateinit var ioDispatcher: CoroutineDispatcher
 
+    private lateinit var appBarLayout: AppBarLayout
+    private lateinit var searchSuggestionsList: RecyclerView
+    private lateinit var tabs: TabLayout
+    private lateinit var toolbar: Toolbar
+    private lateinit var viewPager: ViewPager
+    private lateinit var searchView: SearchView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: savedInstanceState = $savedInstanceState")
         if (BuildConfig.DEBUG && ActivityManager.isUserAMonkey()) {
@@ -98,33 +110,42 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         val view = mBinding.root
         setContentView(view)
-        setSupportActionBar(mBinding.toolbar)
-        mBinding.tabs.tabMode = if (resources.getBoolean(R.bool.tab_text)) TabLayout.MODE_SCROLLABLE else TabLayout.MODE_FIXED
-        mBinding.pagerTitleStrip.visibility = if (resources.getBoolean(R.bool.tab_text)) View.GONE else View.VISIBLE
+
+        val pagerTitleStrip = view.findViewById<PagerTitleStrip>(R.id.pager_title_strip)
+        appBarLayout = view.findViewById(R.id.app_bar_layout)
+        searchSuggestionsList = view.findViewById(R.id.search_suggestions_list)
+        searchView = view.findViewById(R.id.search_view)
+        tabs = view.findViewById(R.id.tabs)
+        toolbar = view.findViewById(R.id.toolbar)
+        viewPager = view.findViewById(R.id.view_pager)
+
+        setSupportActionBar(toolbar)
+        tabs.tabMode = if (resources.getBoolean(R.bool.tab_text)) TabLayout.MODE_SCROLLABLE else TabLayout.MODE_FIXED
+        pagerTitleStrip.visibility = if (resources.getBoolean(R.bool.tab_text)) View.GONE else View.VISIBLE
         mPagerAdapter = PagerAdapter(this, supportFragmentManager, intent)
         mPagerAdapter.registerDataSetObserver(mAdapterChangeListener)
 
         // Set up the ViewPager with the sections adapter.
-        mBinding.viewPager.adapter = mPagerAdapter
-        mBinding.viewPager.offscreenPageLimit = 5
-        mBinding.viewPager.addOnPageChangeListener(mOnPageChangeListener)
+        viewPager.adapter = mPagerAdapter
+        viewPager.offscreenPageLimit = 5
+        viewPager.addOnPageChangeListener(mOnPageChangeListener)
 
-        mBinding.tabs.setupWithViewPager(mBinding.viewPager)
+        tabs.setupWithViewPager(viewPager)
         val savedTab = settingsRepository.tab
         if (savedTab != null && savedTab.ordinal < mPagerAdapter.count) {
-            mBinding.viewPager.currentItem = savedTab.ordinal
+            viewPager.currentItem = savedTab.ordinal
         }
         mAdapterChangeListener.onChanged()
 
         // If the app was launched with a query for the a particular tab, focus on that tab.
         if (intent.data?.host != null) {
             val tab = Tab.parse(intent.data!!.host!!) ?: Tab.DICTIONARY
-            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false)
+            viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false)
         } else if (Intent.ACTION_SEND == intent.action) {
-            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
+            viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
         }
 
-        mSearch = Search(this, mBinding.viewPager, getRandomWordUseCase = getRandomWordUseCase, suggestionsRepository = suggestionsRepository)
+        mSearch = Search(this, viewPager, getRandomWordUseCase = getRandomWordUseCase, suggestionsRepository = suggestionsRepository)
         // Load our dictionaries when the activity starts, so that the first search can already be fast.
         lifecycleScope.launch {
             val dbLoaded = loadDatabase()
@@ -134,26 +155,25 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             }
         }
         volumeControlStream = AudioManager.STREAM_MUSIC
-        getInsets(mBinding.toolbar) { view, insets ->
+        getInsets(toolbar) { view, insets ->
             view.updatePadding(
                 left = insets.left,
                 right = insets.right,
             )
         }
-        getInsets(mBinding.appBarLayout) { view, insets ->
+        getInsets(appBarLayout) { view, insets ->
             view.updatePadding(
                 left = insets.left,
                 right = insets.right,
                 top = insets.top,
             )
         }
-        getInsets(mBinding.searchSuggestionsList) { view, insets ->
+        getInsets(searchSuggestionsList) { view, insets ->
             view.updatePadding(
                 left = insets.left,
                 right = insets.right,
             )
         }
-        val searchView = mBinding.searchView
         val suggestionsViewModel = ViewModelProvider(this).get(SuggestionsViewModel::class.java)
         mSearch.setSearchView(searchView, suggestionsViewModel, lifecycleScope)
     }
@@ -165,7 +185,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
         // Open about (or settings) and come back to the main activity:
         // the AppBarLayout is hidden (even if it wasn't hidden before).
         // We'll force it to be shown again here.
-        AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout)
+        AppBarLayoutHelper.forceExpandAppBarLayout(appBarLayout)
     }
 
     override fun onPause() {
@@ -208,9 +228,9 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             }
             // Load some shared text into the reader tab
             Intent.ACTION_SEND -> {
-                mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
+                viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
                 val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
-                val readerFragment = mPagerAdapter.getFragment(mBinding.viewPager, Tab.READER) as ReaderFragment
+                val readerFragment = mPagerAdapter.getFragment(viewPager, Tab.READER) as ReaderFragment
                 readerFragment.setPoem(sharedText)
             }
         }
@@ -236,7 +256,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
         if (uri == null) return
         val word = uri.lastPathSegment
         if (Constants.DEEP_LINK_QUERY == uri.host) {
-            mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false)
+            viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false)
             word?.let { mSearch.search(it)}
         } else if (uri.host != null && word != null) {
             val tab = Tab.parse(uri.host!!)
@@ -268,7 +288,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             }
             R.id.action_wotd_history -> {
                 mPagerAdapter.setExtraTab(Tab.WOTD)
-                mBinding.viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.WOTD), false)
+                viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.WOTD), false)
                 return true
             }
         }
@@ -295,18 +315,18 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             } else {
                 // Hide the keyboard when we navigate to any tab other than the reader tab.
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm?.hideSoftInputFromWindow(mBinding.viewPager.windowToken, 0)
+                imm?.hideSoftInputFromWindow(viewPager.windowToken, 0)
             }
-            AppBarLayoutHelper.forceExpandAppBarLayout(mBinding.appBarLayout)
+            AppBarLayoutHelper.forceExpandAppBarLayout(appBarLayout)
             settingsRepository.tab = tab
         }
     }
 
     private val mAdapterChangeListener = object : DataSetObserver() {
         override fun onChanged() {
-            for (i in 0 until mBinding.tabs.tabCount) {
+            for (i in 0 until tabs.tabCount) {
                 val icon = mPagerAdapter.getIcon(i)
-                val tab = mBinding.tabs.getTabAt(i)
+                val tab = tabs.getTabAt(i)
                 if (tab != null) {
                     if (icon != null) {
                         tab.setIcon(icon)
