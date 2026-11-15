@@ -43,7 +43,7 @@ android {
 
     buildFeatures {
         compose = true
-        dataBinding = true
+        viewBinding = true
         buildConfig = true
         resValues = true
     }
@@ -281,6 +281,7 @@ dependencies {
     // of these libs will be pulled in transitively (by a non-alpha databinding dependency...)
     api(libs.androidx.collection)
     api(libs.androidx.lifecycle.runtime)
+    api(libs.androidx.lifecycle.process)
     api(libs.androidx.lifecycle.viewmodel.ktx)
 
     ksp(libs.androidx.room.compiler)

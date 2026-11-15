@@ -24,7 +24,6 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.database.DataSetObserver
-import androidx.databinding.DataBindingUtil
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
@@ -96,7 +95,9 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         }
         super.onCreate(savedInstanceState)
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        mBinding = ActivityMainBinding.inflate(layoutInflater)
+        val view = mBinding.root
+        setContentView(view)
         setSupportActionBar(mBinding.toolbar)
         mBinding.tabs.tabMode = if (resources.getBoolean(R.bool.tab_text)) TabLayout.MODE_SCROLLABLE else TabLayout.MODE_FIXED
         mBinding.pagerTitleStrip.visibility = if (resources.getBoolean(R.bool.tab_text)) View.GONE else View.VISIBLE
