@@ -32,6 +32,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryFrag
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.usecases.GetRandomWordUseCase
 import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.PatternFragment
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.RhymerFragment
+import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.SuggestionsViewModel
 import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.data.SuggestionsRepository
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ThesaurusFragment
 import ca.rmen.android.poetassistant.widget.BaseTextWatcher
