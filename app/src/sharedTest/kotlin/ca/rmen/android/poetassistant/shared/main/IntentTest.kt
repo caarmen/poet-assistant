@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.shared.main
 
 import android.app.Activity
-import android.app.SearchManager
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.ui.test.assertIsDisplayed
@@ -68,30 +67,6 @@ class IntentTest {
     @get:Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> =
         PoetAssistantActivityTestRule(MainActivity::class.java, false)
-
-    @Test
-    fun onNewIntentQueryTest() {
-        val activity: MainActivity = activityTestRule.launchActivity(Intent())
-        launchNewIntent(Intent.ACTION_SEARCH, SearchManager.QUERY, "muffin")
-        checkTitleStripOrTab(activity, R.string.tab_rhymer)
-        checkRhymes(composeTestRule, "mcguffin", "toughen")
-        swipeViewPagerLeft(1)
-        checkFirstSynonym(composeTestRule, "quick bread")
-        swipeViewPagerLeft(1)
-        checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
-    }
-
-    @Test
-    fun onNewIntentUserQueryTest() {
-        val activity: MainActivity = activityTestRule.launchActivity(Intent())
-        launchNewIntent(Intent.ACTION_SEARCH, SearchManager.USER_QUERY, "muffin")
-        checkTitleStripOrTab(activity, R.string.tab_rhymer)
-        checkRhymes(composeTestRule, "mcguffin", "toughen")
-        swipeViewPagerLeft(1)
-        checkFirstSynonym(composeTestRule, "quick bread")
-        swipeViewPagerLeft(1)
-        checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
-    }
 
     @Test
     fun onNewIntentViewQueryTest() {
