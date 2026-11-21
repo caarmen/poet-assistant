@@ -29,8 +29,7 @@ class FavoritesScreenViewModel @Inject constructor(
 ) : ViewModel() {
 
     /**
-     * Sorted list of favorite words as StateFlow.
-     * Sorted alphabetically to match FavoritesLiveData behavior.
+     * Alphabetically sorted list of favorite words as StateFlow.
      */
     val favorites: StateFlow<List<String>> = favoritesRepository.getFavoritesFlow()
         .map { favEntities -> favEntities.map { it.getWord() }.sorted() }
@@ -123,6 +122,7 @@ class FavoritesScreenViewModel @Inject constructor(
     fun onDeleteAll() {
         viewModelScope.launch {
             favoritesRepository.clear()
+            snackbarTextResId.value = R.string.favorites_cleared
         }
     }
 }

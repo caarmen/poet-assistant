@@ -20,11 +20,9 @@
 package ca.rmen.android.poetassistant
 
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 
 fun getInsets(view: View, callback: (view: View, insets: Insets) -> Unit) {
     // Issue #206:
@@ -38,13 +36,3 @@ fun getInsets(view: View, callback: (view: View, insets: Insets) -> Unit) {
         WindowInsetsCompat.CONSUMED
     }
 }
-
-fun fixStatusBarViewForInsets(statusBarView: View, insets: Insets) {
-    // To control the status bar color, we have to draw a view behind it.
-    // Make it the height of the status bar.
-    // https://developer.android.com/reference/android/view/Window.html#setStatusBarColor(int)
-    statusBarView.updateLayoutParams<ViewGroup.LayoutParams> {
-        height = insets.top
-    }
-}
-

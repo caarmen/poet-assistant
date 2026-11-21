@@ -89,7 +89,6 @@
     <string name="about_license_kotlin">Kotlin License (Apache2): https://github.com/JetBrains/kotlin/blob/master/license/LICENSE.txt</string>
     <string name="about_porter_stemming_algorithm">Porter stemming algorithm: http://tartarus.org/martin/PorterStemmer/</string>
     <string name="license_title">Licensing Information</string>
-    <string name="file_clear">Clear text</string>
     <string name="file_new_confirm_title">Clear current poem?</string>
     <string name="file">File</string>
     <string name="file_new">New</string>
@@ -107,11 +106,7 @@
     <string name="filter_thesaurus_message">Only show words which rhyme with this word:</string>
     <string name="filter_thesaurus_label">"Rhymes of: "</string>
     <string name="filter_clear">Clear filter</string>
-    <string name="menu_lookup_rhymer">Rhymer</string>
-    <string name="menu_lookup_thesaurus">Thesaurus</string>
-    <string name="menu_lookup_dictionary">Dictionary</string>
     <string name="menu_copy">Copy</string>
-    <string name="menu_more">More</string>
     <string name="snackbar_copied_text">Copied text to clipboard</string>
     <string name="title_activity_settings">Settings</string>
     <string name="wotd_setting_title">Word of the day</string>
@@ -193,11 +188,9 @@
     <string name="pref_category_ui">Interface</string>
     <string name="pref_voice_default">System voice</string>
     <string name="pref_voice_title">Voice</string>
-    <string name="pref_voice_summary">%s</string>
     <string name="pref_voice_speed_title">Voice speed (%)</string>
     <string name="pref_voice_pitch_title">Voice pitch (%)</string>
     <string name="pref_theme_title">Theme</string>
-    <string name="pref_theme_summary">%s</string>
     <string name="pref_theme_value_light">Light</string>
     <string name="pref_theme_value_dark">Dark</string>
     <string name="pref_theme_value_auto">Auto</string>
@@ -212,7 +205,6 @@
         <item>Auto</item>
     </string-array>
     <string name="pref_layout_title">Layout</string>
-    <string name="pref_layout_summary">%s</string>
     <string name="pref_layout_value_clean">Clean</string>
     <string name="pref_layout_value_efficient">Efficient</string>
     <string-array name="pref_layout_titles">
