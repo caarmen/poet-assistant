@@ -15,7 +15,7 @@ set -euo pipefail
 for round in $(seq 1 "$MAX_ROUNDS"); do
   echo "=== Round $round: Cameron reviews ==="
 
-  vibe --agent cameron --prompt "You are reviewing branch $BRANCH against the spec at $SPEC.
+  vibe --agent cameron --auto-approve --trust --prompt "You are reviewing branch $BRANCH against the spec at $SPEC.
 
 First read these files if they exist, in this order:
 - $SPEC_ISSUES — known holes in the spec itself.
@@ -90,7 +90,7 @@ Otherwise end with: VERDICT: CHANGES_REQUESTED"
   echo "=== Round $round: Chloe revises ==="
 
   # Chloe: resumed kickoff session — her mental model accumulates.
-  vibe --agent chloe --resume d2a0b31c --prompt "Cameron's review is at $REVIEW.
+  vibe --agent chloe --auto-approve --trust --resume d2a0b31c --prompt "Cameron's review is at $REVIEW.
 
 For each remark:
 - If you agree: fix it, with a fixup commit, to adjust the commit which originally
