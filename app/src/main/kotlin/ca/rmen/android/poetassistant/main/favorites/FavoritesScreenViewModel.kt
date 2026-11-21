@@ -122,6 +122,7 @@ class FavoritesScreenViewModel @Inject constructor(
     fun onDeleteAll() {
         viewModelScope.launch {
             favoritesRepository.clear()
+            snackbarTextResId.value = R.string.favorites_cleared
         }
     }
 }
