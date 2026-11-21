@@ -44,7 +44,7 @@ class SuggestionsRepository(
 
     suspend fun getSuggestions(filter: String?): List<Entry> {
         return withContext(ioDispatcher) {
-            val history = suggestionDao.getSuggestions().map { Entry(Source.HISTORY, it.getWord()) }
+            val history = suggestionDao.getSuggestions().map { Entry(Source.HISTORY, it.word) }
                 .asSequence().filter { TextUtils.isEmpty(filter) || it.word.contains(filter!!) }
                 .distinct()
                 .sortedBy { it.word }
