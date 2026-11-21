@@ -97,11 +97,6 @@ android {
                 it.contains("jacocoTestReport")
             }
             applicationIdSuffix = ".test"
-            resValue(
-                "string",
-                "search_provider_authority",
-                "${android.defaultConfig.applicationId}${applicationIdSuffix}.SuggestionsProvider"
-            )
         }
         release {
             if (rootProject.hasProperty("AndroidSigningKeyAlias")
@@ -137,11 +132,6 @@ android {
             }
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            resValue(
-                "string",
-                "search_provider_authority",
-                android.defaultConfig.applicationId + ".SuggestionsProvider"
-            )
             signingConfig = signingConfigs.findByName("release")
         }
     }
