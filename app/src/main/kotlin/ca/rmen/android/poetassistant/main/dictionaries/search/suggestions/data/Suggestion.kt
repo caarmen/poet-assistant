@@ -23,15 +23,11 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import androidx.annotation.NonNull
 
 @Entity(tableName = "SUGGESTION", indices = [Index(value = ["WORD"], unique = true)])
-class Suggestion(word: String) {
+data class Suggestion(
 
     @PrimaryKey
-    @NonNull
     @ColumnInfo(name = "WORD")
-    private val mWord : String = word
-
-    fun getWord() = mWord
-}
+    val word: String,
+)
