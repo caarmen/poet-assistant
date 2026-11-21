@@ -25,6 +25,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.di.IODispatcher
+import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.data.Source
+import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.data.SuggestionsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi

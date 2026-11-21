@@ -54,7 +54,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.usecases.GetRandomWordUseCase
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search
-import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
+import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.data.SuggestionsRepository
 import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsViewModel
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment
 import ca.rmen.android.poetassistant.settings.SettingsActivity

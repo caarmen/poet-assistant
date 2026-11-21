@@ -23,7 +23,7 @@ import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import ca.rmen.android.poetassistant.Tts
 import ca.rmen.android.poetassistant.UserDb
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
-import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
+import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.data.SuggestionsRepository
 import ca.rmen.android.poetassistant.settings.SettingsRepository
 import dagger.Module
 import dagger.Provides

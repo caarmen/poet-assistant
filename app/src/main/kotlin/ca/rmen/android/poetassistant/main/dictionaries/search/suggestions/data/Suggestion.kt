@@ -17,21 +17,21 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.search
+package ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.data
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.annotation.NonNull
 
-@Dao
-interface SuggestionDao {
-    @Query("SELECT * FROM SUGGESTION")
-    suspend fun getSuggestions(): Array<Suggestion>
+@Entity(tableName = "SUGGESTION", indices = [Index(value = ["WORD"], unique = true)])
+class Suggestion(word: String) {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAll(suggestion: Suggestion)
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "WORD")
+    private val mWord : String = word
 
-    @Query("DELETE FROM SUGGESTION")
-    suspend fun deleteAll()
+    fun getWord() = mWord
 }
