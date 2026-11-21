@@ -91,15 +91,6 @@
                     android:scheme="poetassistant" />
             </intent-filter>
 
-            <!-- Searches performed with the search widget -->
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
-
             <!-- We will play plain text in the reader tab -->
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -183,11 +174,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ca.rmen.android.poetassistant.main.MainActivity" />
         </activity>
-
-        <provider
-            android:exported="false"
-            android:name="ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsProvider"
-            android:authorities="${applicationId}.SuggestionsProvider"/>
 
         <provider
             android:name="androidx.core.content.FileProvider"
