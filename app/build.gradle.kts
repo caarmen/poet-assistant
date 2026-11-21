@@ -43,7 +43,6 @@ android {
 
     buildFeatures {
         compose = true
-        dataBinding = true
         buildConfig = true
         resValues = true
     }
@@ -277,10 +276,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    // We need to explicitly add a couple of api dependencies here, otherwise alpha versions
-    // of these libs will be pulled in transitively (by a non-alpha databinding dependency...)
-    api(libs.androidx.collection)
-    api(libs.androidx.lifecycle.runtime)
+    api(libs.androidx.lifecycle.process)
     api(libs.androidx.lifecycle.viewmodel.ktx)
 
     ksp(libs.androidx.room.compiler)
@@ -355,19 +351,13 @@ tasks.register<JacocoReport>("jacocoTestReport") {
             "dir" to layout.buildDirectory,
             "includes" to listOf("intermediates/classes/debug/transformDebugClassesWithAsm/dirs/ca/rmen/android/poetassistant/**/*.class"),
             "excludes" to listOf("**/R.class", "**/R*.class", "**/Manifest.class", "**/Manifest*.class", "**/BuildConfig.class",
-                // ignore databinding generated code:
-                "**/ca/rmen/android/poetassistant/databinding/*.class",
-                "**/ca/rmen/android/poetassistant/BR.class",
-                "**/ca/rmen/android/poetassistant/DataBinderMapperImpl.class",
-                "**/ca/rmen/android/poetassistant/DataBinderMapperImpl\$*.class",
+                // Ignore compose previews.
                 "**/ca/rmen/android/poetassistant/**/previews/**/*.class",
                 "**/*_Impl*.class",
                 // ignore hilt generated code:
                 "**/ca/rmen/android/poetassistant/**/*HiltComponents*.class",
                 "**/ca/rmen/android/poetassistant/**/Hilt_*.class",
                 // ignore generated code not in our package
-                "**/android/databinding/*.class",
-                "**/android/databinding/**/*.class",
                 "**/com/android/**/*.class")
         ))
     )
