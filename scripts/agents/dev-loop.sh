@@ -2,11 +2,11 @@
 # dev-loop.sh — Cameron ↔ Chloe loop for the rhymer-tab feature.
 # Hardcoded for this feature; generalize only after the pattern is proven.
 
-SPEC="plans/settings-screen-spec.md"
-REVIEW="plans/settings-screen-code-review.md"
-REVISIONS="plans/settings-screen-revisions.md"
-SPEC_ISSUES="plans/settings-screen-spec-issues.md"
-BRANCH="feature/settings-screen"
+SPEC="plans/menu-rework-spec.md"
+REVIEW="plans/menu-rework-code-review.md"
+REVISIONS="plans/menu-rework-revisions.md"
+SPEC_ISSUES="plans/menu-rework-spec-issues.md"
+BRANCH="rework-menus"
 BASE_BRANCH="master"
 MAX_ROUNDS=5
 
