@@ -26,6 +26,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.SuggestionsViewModel
 
 class SuggestionsAdapter : RecyclerView.Adapter<SuggestionsAdapter.ViewHolder>() {
     val suggestions = mutableListOf<SuggestionsViewModel.SearchSuggestion>()
