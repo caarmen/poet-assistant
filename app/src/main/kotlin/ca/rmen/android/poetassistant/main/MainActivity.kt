@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main
 
 import android.app.ActivityManager
-import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.database.DataSetObserver
@@ -30,7 +29,6 @@ import android.os.Bundle
 import androidx.annotation.MainThread
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
-import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -146,9 +144,6 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
         lifecycleScope.launch {
             val dbLoaded = loadDatabase()
             onDatabaseLoadResult(dbLoaded)
-            if (Intent.ACTION_SEARCH == intent.action) {
-                handleSearchIntent(intent)
-            }
         }
         volumeControlStream = AudioManager.STREAM_MUSIC
         getInsets(toolbar) { view, insets ->
@@ -214,10 +209,6 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
 
     internal fun handleNewIntent(intent: Intent) {
         when (intent.action) {
-            // The user entered a search term either by typing or by voice
-            Intent.ACTION_SEARCH -> {
-                handleSearchIntent(intent)
-            }
             // We got here from a deep link
             Intent.ACTION_VIEW -> {
                 handleDeepLink(intent.data)
@@ -232,21 +223,6 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
         }
     }
 
-    private fun handleSearchIntent(intent: Intent) {
-        var query = intent.dataString
-        if (TextUtils.isEmpty(query)) {
-            query = intent.getStringExtra(SearchManager.QUERY)
-        }
-        if (TextUtils.isEmpty(query)) {
-            val userQuery = intent.getCharSequenceExtra(SearchManager.USER_QUERY)
-            if (!userQuery.isNullOrEmpty()) query = userQuery.toString()
-        }
-        if (TextUtils.isEmpty(query)) return
-        lifecycleScope.launch {
-            mSearch.addSuggestions(query!!)
-            mSearch.search(query)
-        }
-    }
     private fun handleDeepLink(uri: Uri?) {
         Log.d(TAG, "handleDeepLink, uri=$uri")
         if (uri == null) return
