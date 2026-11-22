@@ -134,6 +134,13 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.findByName("release")
         }
+
+        create("profiling") {
+            initWith(getByName("release"))
+            applicationIdSuffix = ".profiling"
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += listOf("release")
+        }
     }
 
     sourceSets.named("main") {
