@@ -17,9 +17,8 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.ui.composables
+package ca.rmen.android.poetassistant.main.dictionaries.search.ui.composables
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,6 +31,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExpandedDockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.Icon
@@ -55,6 +55,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.SuggestionsViewModel.SearchSuggestion
+import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.ui.composables.SuggestionItem
 import ca.rmen.android.poetassistant.theme.AppTheme
 import kotlinx.coroutines.launch
 
@@ -94,6 +95,7 @@ data class SearchBarMenuItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainSearchBar(
+    isLargeScreen: Boolean,
     suggestions: List<SearchSuggestion>,
     menuItems: () -> List<SearchBarMenuItem>,
     onMenuItemClick: (Int) -> Unit,
@@ -186,12 +188,7 @@ fun MainSearchBar(
                 .padding(start = 16.dp, end = 16.dp, top = 8.dp),
         )
 
-        // Expanded search in its own full-screen window. The input field tag
-        // goes on this instance only, so tests find exactly one node.
-        ExpandedFullScreenSearchBar(
-            state = searchBarState,
-            inputField = { inputField(Modifier.testTag(SEARCH_INPUT_FIELD_TAG)) },
-        ) {
+        val suggestionsContent: @Composable () -> Unit  = {
             LazyColumn {
                 // A word can appear twice (history + dictionary), so the key
                 // must include the source icon, not just the word.
@@ -201,6 +198,23 @@ fun MainSearchBar(
                         onClick = ::searchTermSelected,
                     )
                 }
+            }
+        }
+        // Expanded search in its own full-screen window. The input field tag
+        // goes on this instance only, so tests find exactly one node.
+        if (isLargeScreen) {
+            ExpandedDockedSearchBar(
+                state = searchBarState,
+                inputField = { inputField(Modifier.testTag(SEARCH_INPUT_FIELD_TAG)) },
+            ) {
+                suggestionsContent()
+            }
+        } else {
+            ExpandedFullScreenSearchBar(
+                state = searchBarState,
+                inputField = { inputField(Modifier.testTag(SEARCH_INPUT_FIELD_TAG)) },
+            ) {
+                suggestionsContent()
             }
         }
     }

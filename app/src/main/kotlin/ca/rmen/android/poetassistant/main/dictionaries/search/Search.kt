@@ -19,27 +19,18 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.search
 
-import android.app.Activity
 import android.util.Log
-import androidx.lifecycle.viewModelScope
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import ca.rmen.android.poetassistant.Constants
-import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.PagerAdapter
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.DictionaryFragment
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.usecases.GetRandomWordUseCase
 import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.PatternFragment
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.RhymerFragment
-import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.SuggestionsViewModel
 import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.data.SuggestionsRepository
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ThesaurusFragment
-import ca.rmen.android.poetassistant.widget.BaseTextWatcher
 import ca.rmen.android.poetassistant.widget.ViewShownScheduler
-import com.google.android.material.search.SearchView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.util.Locale
 
 /**
@@ -49,11 +40,8 @@ import java.util.Locale
  * the Viewpager, and calls the fragments (which call the adapters) to perform the search and
  * display the search results.
  * <p/>
- * This class also configures the SearchView widget, and intercepts searches to add them to
- * the list of suggested words.
  */
 class Search(
-    private val searchableActivity: Activity,
     private val viewPager: ViewPager,
     private val getRandomWordUseCase: GetRandomWordUseCase,
     private val suggestionsRepository: SuggestionsRepository,
@@ -66,57 +54,6 @@ class Search(
 
     init {
         mPagerAdapter = viewPager.adapter as PagerAdapter
-    }
-
-    fun setSearchView(
-        searchView: SearchView,
-        suggestionsViewModel: SuggestionsViewModel,
-        coroutineScope: CoroutineScope
-    ) {
-        searchView.hint =
-            searchableActivity.getString(R.string.search_hint) // To hopefully prevent some crashes (!!) :(
-        // Step 1: Setup suggestions
-        val suggestionsList: RecyclerView = searchView.findViewById(R.id.search_suggestions_list)
-        val adapter = SuggestionsAdapter()
-        suggestionsList.adapter = adapter
-        // Step 1a: Fetch suggestions from the disk when the user stops typing.
-        searchView.editText.addTextChangedListener(object: BaseTextWatcher() {
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                suggestionsViewModel.setTypedText(searchView.editText.text.toString())
-            }
-        })
-        // Step 2a: When the suggestions list is updated, notify the recycler view adapter.
-        suggestionsViewModel.viewModelScope.launch {
-            suggestionsViewModel.suggestions.collect { value ->
-                Log.d(TAG, "Emitted $value")
-                adapter.suggestions.clear()
-                adapter.suggestions.addAll(value)
-                adapter.notifyDataSetChanged()
-            }
-        }
-
-        // Step 2: Listen for search events:
-        suspend fun searchTermSelected(searchTerm: String) {
-            searchView.hide()
-            if (searchTerm.isNotBlank()) {
-                addSuggestions(searchTerm)
-                search(searchTerm)
-            }
-        }
-
-        // Case 2a: Handle when the user taps enter from the search widget
-        searchView.editText.setOnEditorActionListener { _, _, _ ->
-            coroutineScope.launch {
-                searchTermSelected(searchView.editText.text.toString())
-            }
-            false
-        }
-        // Case 2b: Handle when the user clicked on a search suggestion.
-        adapter.listener = { value ->
-            coroutineScope.launch {
-                searchTermSelected(value)
-            }
-        }
     }
 
     /**
