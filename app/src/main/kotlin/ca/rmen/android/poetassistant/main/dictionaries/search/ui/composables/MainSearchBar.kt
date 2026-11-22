@@ -26,11 +26,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExpandedDockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExpandedFullScreenSearchBar
@@ -168,6 +166,7 @@ fun MainSearchBar(
                             onDismissRequest = { showMenu = false },
                         ) {
                             MenuContent(
+                                isLargeScreen = isLargeScreen,
                                 items = menuItems(),
                                 onItemClick = { id ->
                                     showMenu = false
@@ -220,42 +219,16 @@ fun MainSearchBar(
     }
 }
 
-/**
- * Renders overflow menu [items] inside a [DropdownMenu], recursing into
- * submenus (e.g. the reader tab's "File" menu). Leaf clicks are reported
- * through [onItemClick] with the item id.
- */
 @Composable
-private fun MenuContent(
+fun MenuContent(
     items: List<SearchBarMenuItem>,
+    isLargeScreen: Boolean,
     onItemClick: (Int) -> Unit,
 ) {
-    for (item in items) {
-        if (item.children.isEmpty()) {
-            DropdownMenuItem(
-                text = { Text(item.title) },
-                enabled = item.enabled,
-                onClick = { onItemClick(item.id) },
-            )
-        } else {
-            var showSubMenu by remember(item.id) { mutableStateOf(false) }
-            DropdownMenuItem(
-                text = { Text(item.title) },
-                enabled = item.enabled,
-                trailingIcon = {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
-                    )
-                },
-                onClick = { showSubMenu = true },
-            )
-            DropdownMenu(
-                expanded = showSubMenu,
-                onDismissRequest = { showSubMenu = false },
-            ) {
-                MenuContent(items = item.children, onItemClick = onItemClick)
-            }
-        }
+    if (isLargeScreen) {
+        TabletMenuContent(items, onItemClick)
+    } else {
+        PhoneMenuContent(items, onItemClick)
     }
 }
+
