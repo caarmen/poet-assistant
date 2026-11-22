@@ -94,7 +94,7 @@ class ATtsTest {
 
     @Test
     fun aVoiceSelectionTest() {
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_title)
         // We don't know what voices will be available on the device.  Just select the last one.
         composeTestRule
@@ -112,7 +112,7 @@ class ATtsTest {
 
     @Test
     fun voicePitchTest() {
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_preview_title)
         clickSlider(SETTINGS_VOICE_PITCH_SLIDER_TAG) { centerRight }
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_preview_title)
@@ -122,7 +122,7 @@ class ATtsTest {
 
     @Test
     fun voiceSpeedTest() {
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
 
         val scope = CoroutineScope(SupervisorJob())
 

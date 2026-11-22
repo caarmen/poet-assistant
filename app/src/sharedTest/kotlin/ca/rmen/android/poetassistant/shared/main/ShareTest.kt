@@ -21,19 +21,11 @@ package ca.rmen.android.poetassistant.shared.main
 
 import android.content.Context
 import android.content.Intent
-import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import ca.rmen.android.poetassistant.R
@@ -48,7 +40,6 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.containsString
-import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.`is`
 import org.junit.Rule
 import org.junit.Test
@@ -73,28 +64,29 @@ class ShareTest {
 
     @Test
     fun shareRhymesTest() {
-        search("merge")
+        search(composeTestRule, "merge")
         composeTestRule.waitForIdle()
-        openMenuItem(R.string.share)
+        openMenuItem(composeTestRule, R.string.share)
         composeTestRule.waitForIdle()
         checkShareIntentContains("upsurge")
     }
 
     @Test
     fun shareDictionaryTest() {
-        search("a")
+        search(composeTestRule, "a")
+        composeTestRule.waitForIdle()
         swipeViewPagerLeft(2)
         composeTestRule.waitForIdle()
-        openMenuItem(R.string.share)
+        openMenuItem(composeTestRule, R.string.share)
         composeTestRule.waitForIdle()
         checkShareIntentContains("the blood group whose red cells carry the A antigen")
     }
 
     @Test
     fun sharePatternTest() {
-        search("ho?t")
+        search(composeTestRule, "ho?t")
         composeTestRule.waitForIdle()
-        openMenuItem(R.string.share)
+        openMenuItem(composeTestRule, R.string.share)
         composeTestRule.waitForIdle()
         checkShareIntentContains("host")
     }
@@ -102,7 +94,7 @@ class ShareTest {
     @Test
     fun shareWotdTest() {
         val context: Context = activityTestRule.activity
-        openMenuItem(R.string.action_wotd_history)
+        openMenuItem(composeTestRule, R.string.action_wotd_history)
         // Wait for the history to load, not just for Compose to be idle:
         // the history loads on a background dispatcher, and the share menu
         // must not be tapped while the screen is still in the Idle state.
@@ -110,7 +102,7 @@ class ShareTest {
             composeTestRule.onAllNodesWithTag(WOTD_SCREEN_CONTENT_LIST_TAG)
                 .fetchSemanticsNodes().isNotEmpty()
         }
-        openMenuItem(R.string.share)
+        openMenuItem(composeTestRule, R.string.share)
         composeTestRule.waitForIdle()
         checkShareIntentContains(context.getString(R.string.share_wotd_title))
     }

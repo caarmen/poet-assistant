@@ -64,7 +64,7 @@ class IntegrationTest {
     @Test
     fun copyTest() {
         val context: Context = activityTestRule.activity
-        search("donkey")
+        search(composeTestRule, "donkey")
         val wordToCopy = "swanky"
 
         composeTestRule.onNodeWithText(wordToCopy).assertIsDisplayed().performClick()
@@ -74,7 +74,7 @@ class IntegrationTest {
 
     @Test
     fun saveFilterTest() {
-        search("pugnacious")
+        search(composeTestRule, "pugnacious")
         addFilter(composeTestRule, activityTestRule.activity, Tab.RHYMER, "vulturous", "rapacious")
         openFilter(composeTestRule, "vulturous")
         Espresso.closeSoftKeyboard()

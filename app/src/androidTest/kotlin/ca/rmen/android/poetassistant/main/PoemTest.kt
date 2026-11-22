@@ -110,7 +110,7 @@ class PoemTest {
         val exportDir = File(activityTestRule.activity.filesDir, "export")
         val poemFile = File(exportDir, "poem.wav")
         assertFalse(poemFile.exists())
-        openMenuItem(R.string.share_poem_audio)
+        openMenuItem(composeTestRule, R.string.share_poem_audio)
         assertTrue(poemFile.exists())
         val length1 = poemFile.length()
         val fileDate1 = poemFile.lastModified()
@@ -121,7 +121,7 @@ class PoemTest {
         composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG).performTextClearance()
         SystemClock.sleep(250)
         typeAndSpeakPoem(composeTestRule, "Will export some text which is a bit longer")
-        openMenuItem(R.string.share_poem_audio)
+        openMenuItem(composeTestRule, R.string.share_poem_audio)
         assertTrue(poemFile.exists())
         val length2 = poemFile.length()
         val fileDate2 = poemFile.lastModified()
@@ -160,7 +160,7 @@ class PoemTest {
 
     @Test
     fun testLookupSetting() {
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_selection_lookup_title)
         pressBack()
         swipeViewPagerLeft(3)
@@ -172,7 +172,7 @@ class PoemTest {
         assertPopupMissing("dictionary")
         closeSoftKeyboard()
 
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_selection_lookup_title)
         pressBack()
         assertPopupVisible("rhymer")

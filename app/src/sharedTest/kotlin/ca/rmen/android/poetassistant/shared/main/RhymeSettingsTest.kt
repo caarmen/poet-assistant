@@ -56,60 +56,60 @@ class RhymeSettingsTest {
 
     @Test
     fun testMatchAORAOEnabled() {
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.match_aor_ao_setting_title)
         pressBack()
         composeTestRule.waitForIdle()
-        search("thorny")
+        search(composeTestRule, "thorny")
         checkRhymes(composeTestRule, "barany", "brawny")
         composeTestRule.waitForIdle()
-        search("brawny")
+        search(composeTestRule, "brawny")
         checkRhymes(composeTestRule, "barany", "cornie")
     }
 
     @Test
     fun testMatchAORAODisabled() {
         composeTestRule.waitForIdle()
-        search("thorny")
+        search(composeTestRule, "thorny")
         checkRhymes(composeTestRule, "cornie", "corny")
         composeTestRule.waitForIdle()
-        search("brawny")
+        search(composeTestRule, "brawny")
         checkRhymes(composeTestRule, "barany", "scrawny")
     }
 
     @Test
     fun testMatchAOAAEnabled() {
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.match_ao_aa_setting_title)
         pressBack()
-        search("trauma")
+        search(composeTestRule, "trauma")
         composeTestRule.waitForIdle()
         checkRhymes(composeTestRule, "bahama", "cama")
-        search("across")
+        search(composeTestRule, "across")
         composeTestRule.waitForIdle()
         checkRhymes(composeTestRule, "alsace", "bos")
     }
 
     @Test
     fun testMatchAOAADisabled() {
-        search("trauma")
+        search(composeTestRule, "trauma")
         checkRhymes(composeTestRule, "abasia", "abila")
-        search("across")
+        search(composeTestRule, "across")
         checkRhymes(composeTestRule, "boss", "boss'")
     }
 
     @Test
     fun testRhymesWithDefinitionsOnly() {
-        search("faith")
+        search(composeTestRule, "faith")
         checkRhymes(composeTestRule, "eighth", "interfaith")
     }
 
     @Test
     fun testRhymesWithoutDefinitions() {
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.all_rhymes_setting_title)
         pressBack()
-        search("faith")
+        search(composeTestRule, "faith")
         checkRhymes(composeTestRule, "eighth", "haith")
     }
 }

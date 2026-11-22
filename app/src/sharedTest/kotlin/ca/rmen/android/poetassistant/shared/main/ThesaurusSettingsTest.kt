@@ -68,18 +68,18 @@ class ThesaurusSettingsTest {
 
     @Test
     fun testReverseLookupEnabled() {
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.thesaurus_reverse_lookup_setting_title)
         pressBack()
         swipeViewPagerLeft(1)
-        search("mistake")
+        search(composeTestRule, "mistake")
         checkSynonym(composeTestRule, "blunder")
     }
 
     @Test
     fun testReverseLookupDisabled() {
         swipeViewPagerLeft(1)
-        search("mistake")
+        search(composeTestRule, "mistake")
         // Wait for the results to load, then check that the reverse synonym
         // is not in the list.
         composeTestRule.waitUntil(timeoutMillis = 5_000) {
@@ -91,10 +91,10 @@ class ThesaurusSettingsTest {
     @Test
     fun testFilterWithReverseLookupEnabled() {
         val context: Context = activityTestRule.activity
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.thesaurus_reverse_lookup_setting_title)
         pressBack()
-        search("number")
+        search(composeTestRule, "number")
         addFilter(composeTestRule, context, Tab.RHYMER, "mistake", "bloomer")
         checkRhyme(composeTestRule, "blunder")
     }
@@ -102,7 +102,7 @@ class ThesaurusSettingsTest {
     @Test
     fun testFilterWithReverseLookupDisabled() {
         val context: Context = activityTestRule.activity
-        search("number")
+        search(composeTestRule, "number")
         addFilter(composeTestRule, context, Tab.RHYMER, "mistake", null)
         composeTestRule.waitForIdle()
         composeTestRule

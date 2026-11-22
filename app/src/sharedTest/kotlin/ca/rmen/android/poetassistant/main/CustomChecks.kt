@@ -22,7 +22,6 @@ package ca.rmen.android.poetassistant.main
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.SystemClock
-import android.view.View
 import android.view.WindowManager
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
@@ -31,43 +30,36 @@ import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasAnyDescendant
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onChildAt
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.test.espresso.Espresso
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_ITEM_ROW_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_SCREEN_CONTENT_LIST_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_ITEM_STAR_TAG
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.NoMatchingRootException
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withParent
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.main.CustomViewMatchers.childAtPosition
-import ca.rmen.android.poetassistant.main.CustomViewMatchers.withChildCount
 import org.fest.reflect.core.Reflection
-import org.hamcrest.Matcher
-import org.hamcrest.Matchers.allOf
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DICTIONARY_ITEM_ROW_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.composables.PATTERNS_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.patterns.ui.composables.PATTERNS_SCREEN_CONTENT_LIST_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_ITEM_ROW_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_SCREEN_CONTENT_LIST_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.ui.composables.SEARCH_SUGGESTION_ITEM_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_SCREEN_CONTENT_EMPTY_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_SCREEN_CONTENT_LIST_TAG
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
+import kotlin.collections.forEachIndexed
 
 object CustomChecks {
 
@@ -140,35 +132,29 @@ object CustomChecks {
         }
     }
 
-    fun checkSingleRootView(context: Context) {
+    fun checkRootViewCount(context: Context, expectedCount: Int) {
         SystemClock.sleep(500)
         val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val impl = Reflection.field("mGlobal").ofType(Any::class.java).`in`(windowManager).get()
         val views = Reflection.field("mViews").ofType(List::class.java).`in`(impl).get() as List<*>
-        assertEquals(1, views.size)
+        assertEquals(expectedCount, views.size)
     }
 
-    fun checkSearchSuggestions(vararg suggestions: String) {
+    fun checkSearchSuggestions(composeTestRule: ComposeTestRule, vararg suggestions: String) {
+        // Replaces SystemClock.sleep(1000) + Espresso.onIdle().
+        // Waits for suggestions to load instead of sleeping blindly.
         SystemClock.sleep(1000)
+        //composeTestRule.mainClock.autoAdvance = false
+        composeTestRule.waitForIdle()
         Espresso.onIdle()
-        val searchListMatcher: Matcher<View> = withId(R.id.search_suggestions_list)
-        try {
-            val searchSuggestionsList = onView(searchListMatcher)
-            searchSuggestionsList.check(matches(withChildCount(suggestions.size)))
-            for (i in suggestions.indices) {
-                onView(allOf(withId(android.R.id.text1), withParent(childAtPosition(searchListMatcher, i))))
-                        .check(matches(withText(suggestions[i])))
-            }
-        } catch (e: NoMatchingRootException) {
-            if (suggestions.isEmpty()) {
-                // this is correct
-                return
-            } else {
-                throw e
-            }
-        }
-        if (suggestions.isEmpty()) {
-            fail("Found search suggestions but didn't expect to")
+        composeTestRule.waitUntil(timeoutMillis = 15_000) {
+            val actualSuggestions = composeTestRule.onAllNodesWithTag(SEARCH_SUGGESTION_ITEM_TAG)
+                .fetchSemanticsNodes()
+                .map { node ->
+                    node.config.getOrNull(SemanticsProperties.Text)
+                        ?.joinToString("") { it.text }
+                }
+            actualSuggestions == suggestions.toList()
         }
     }
 

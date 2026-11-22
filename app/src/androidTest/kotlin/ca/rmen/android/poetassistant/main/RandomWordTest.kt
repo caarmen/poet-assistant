@@ -77,7 +77,7 @@ class RandomWordTest {
 
     @Test
     fun openWotdListTest() {
-        openMenuItem(R.string.action_wotd_history)
+        openMenuItem(composeTestRule, R.string.action_wotd_history)
         val context = activityTestRule.activity
         val wotdListMatcher = hasTestTag(WOTD_SCREEN_CONTENT_LIST_TAG)
         val listNode = composeTestRule.onNodeWithTag(WOTD_SCREEN_CONTENT_LIST_TAG)
@@ -112,7 +112,7 @@ class RandomWordTest {
 
     @Test
     fun wotdNotificationTest() {
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             InstrumentationRegistry.getInstrumentation().uiAutomation.grantRuntimePermission(BuildConfig.APPLICATION_ID, Manifest.permission.POST_NOTIFICATIONS)
         }
