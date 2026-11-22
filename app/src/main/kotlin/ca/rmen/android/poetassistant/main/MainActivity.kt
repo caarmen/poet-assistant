@@ -26,21 +26,29 @@ import android.database.DataSetObserver
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.annotation.MainThread
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.ComposeView
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.core.view.updatePadding
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.PagerTitleStrip
 import com.google.android.material.tabs.TabLayout
 import ca.rmen.android.poetassistant.BuildConfig
@@ -56,11 +64,12 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.usecases.GetRa
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search
 import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.data.SuggestionsRepository
 import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.SuggestionsViewModel
+import ca.rmen.android.poetassistant.main.dictionaries.search.ui.composables.MainSearchBar
+import ca.rmen.android.poetassistant.main.dictionaries.search.ui.composables.SearchBarMenuItem
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment
 import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsRepository
 import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.search.SearchView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -73,7 +82,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : MainActivityImpl()
 
-open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener {
+open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClickListener, WarningNoSpaceDialogFragment.WarningNoSpaceDialogListener {
     companion object {
         private val TAG = Constants.TAG + MainActivity::class.java.simpleName
         private const val DIALOG_TAG = "dialog"
@@ -90,11 +99,37 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
     @IODispatcher @Inject lateinit var ioDispatcher: CoroutineDispatcher
 
     private lateinit var appBarLayout: AppBarLayout
-    private lateinit var searchSuggestionsList: RecyclerView
     private lateinit var tabs: TabLayout
-    private lateinit var toolbar: Toolbar
     private lateinit var viewPager: ViewPager
-    private lateinit var searchView: SearchView
+
+    // Always-on provider that owns the base menu. Toolbar.invalidateMenu()
+    // removes provider-supplied items and re-runs onCreateMenu, so item state
+    // mutated by tab providers (e.g. the reader hiding action_share) is reset
+    // automatically whenever they are not registered.
+    private val baseMenuProvider = object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_main, menu)
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem) = false
+    }
+
+    // Unattached toolbar used purely as the MenuHost: fragments register
+    // their MenuProviders on [menuHost], and the compose search bar renders
+    // its menu and dispatches item clicks through it. Initialized lazily
+    // because fragments are restored during super.onCreate(), before
+    // onCreate body runs (rotation crash otherwise). The base provider is
+    // registered here so it always precedes fragment providers.
+    private val menuToolbar: Toolbar by lazy {
+        Toolbar(this).apply {
+            addMenuProvider(baseMenuProvider)
+            setOnMenuItemClickListener { item -> handleMenuItem(item) }
+        }
+    }
+    override val menuHost: MenuHost
+        get() = menuToolbar
+
+    private val suggestionsViewModel: SuggestionsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: savedInstanceState = $savedInstanceState")
@@ -107,13 +142,9 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
 
         val pagerTitleStrip = findViewById<PagerTitleStrip>(R.id.pager_title_strip)
         appBarLayout = findViewById(R.id.app_bar_layout)
-        searchSuggestionsList = findViewById(R.id.search_suggestions_list)
-        searchView = findViewById(R.id.search_view)
         tabs = findViewById(R.id.tabs)
-        toolbar = findViewById(R.id.toolbar)
         viewPager = findViewById(R.id.view_pager)
 
-        setSupportActionBar(toolbar)
         tabs.tabMode = if (resources.getBoolean(R.bool.tab_text)) TabLayout.MODE_SCROLLABLE else TabLayout.MODE_FIXED
         pagerTitleStrip.visibility = if (resources.getBoolean(R.bool.tab_text)) View.GONE else View.VISIBLE
         mPagerAdapter = PagerAdapter(this, supportFragmentManager, intent)
@@ -139,19 +170,14 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
             viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
         }
 
-        mSearch = Search(this, viewPager, getRandomWordUseCase = getRandomWordUseCase, suggestionsRepository = suggestionsRepository)
+        mSearch = Search(viewPager, getRandomWordUseCase = getRandomWordUseCase, suggestionsRepository = suggestionsRepository)
         // Load our dictionaries when the activity starts, so that the first search can already be fast.
         lifecycleScope.launch {
             val dbLoaded = loadDatabase()
             onDatabaseLoadResult(dbLoaded)
         }
         volumeControlStream = AudioManager.STREAM_MUSIC
-        getInsets(toolbar) { view, insets ->
-            view.updatePadding(
-                left = insets.left,
-                right = insets.right,
-            )
-        }
+        val searchBar = findViewById<ComposeView>(R.id.search_bar)
         getInsets(appBarLayout) { view, insets ->
             view.updatePadding(
                 left = insets.left,
@@ -159,14 +185,35 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
                 top = insets.top,
             )
         }
-        getInsets(searchSuggestionsList) { view, insets ->
+        getInsets(searchBar) { view, insets ->
             view.updatePadding(
                 left = insets.left,
                 right = insets.right,
             )
         }
-        val suggestionsViewModel = ViewModelProvider(this).get(SuggestionsViewModel::class.java)
-        mSearch.setSearchView(searchView, suggestionsViewModel, lifecycleScope)
+        searchBar.setContent {
+            val suggestions by suggestionsViewModel.suggestions.collectAsStateWithLifecycle()
+            @OptIn(ExperimentalMaterial3WindowSizeClassApi::class) val isLargeScreen =
+                calculateWindowSizeClass(this).widthSizeClass != WindowWidthSizeClass.Compact
+            MainSearchBar(
+                isLargeScreen = isLargeScreen,
+                suggestions = suggestions,
+                menuItems = { buildMenuItems(menuToolbar.menu) },
+                onMenuItemClick = { id -> menuToolbar.menu.performIdentifierAction(id, 0) },
+                onQueryChange = suggestionsViewModel::setTypedText,
+                onSearch = { term ->
+                    lifecycleScope.launch {
+                        mSearch.addSuggestions(term)
+                    }
+                    mSearch.search(term)
+                },
+                onExpandedChange = { isExpanded ->
+                    if (isExpanded) {
+                        AppBarLayoutHelper.forceExpandAppBarLayout(appBarLayout)
+                    }
+                },
+            )
+        }
     }
 
     override fun onResume() {
@@ -236,13 +283,23 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        Log.d(TAG, "onCreateOptionsMenu, menu=$menu")
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
+    /**
+     * Snapshots the current options menu (including submenus) into plain data
+     * for the compose search bar dropdown. Invisible items are skipped.
+     */
+    private fun buildMenuItems(menu: Menu): List<SearchBarMenuItem> =
+        (0 until menu.size()).mapNotNull { i ->
+            val item = menu.getItem(i)
+            if (!item.isVisible) return@mapNotNull null
+            SearchBarMenuItem(
+                id = item.itemId,
+                title = item.title?.toString().orEmpty(),
+                enabled = item.isEnabled,
+                children = if (item.hasSubMenu()) buildMenuItems(item.subMenu!!) else emptyList(),
+            )
+        }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    private fun handleMenuItem(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_share -> {
                 // Route the share action to the visible tab. With the
@@ -272,7 +329,7 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
                 return true
             }
         }
-        return super.onOptionsItemSelected(item)
+        return false
     }
 
     override fun onWordClick(word: String, tab: Tab) {
