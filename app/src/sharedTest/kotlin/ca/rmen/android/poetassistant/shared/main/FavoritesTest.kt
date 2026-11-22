@@ -61,14 +61,14 @@ class FavoritesTest {
 
     @Test
     fun exportTest() {
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.action_export_favorites)
         checkActivityHidden(SettingsActivity::class.java.name)
     }
 
     @Test
     fun importTest() {
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.action_import_favorites)
         checkActivityHidden(SettingsActivity::class.java.name)
     }

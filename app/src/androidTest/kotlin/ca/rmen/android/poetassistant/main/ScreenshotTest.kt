@@ -110,7 +110,7 @@ class ScreenshotTest {
             "peon",
             "possibleness"
         )
-        TestAppUtils.search("chance")
+        TestAppUtils.search(composeTestRule, "chance")
         takeScreenshot("rhymer")
         TestUiUtils.swipeViewPagerLeft(1)
         takeScreenshot("thesaurus")
@@ -122,13 +122,13 @@ class ScreenshotTest {
         takeScreenshot("composer")
         TestUiUtils.swipeViewPagerLeft(1)
         takeScreenshot("favorites")
-        TestUiUtils.openMenuItem(R.string.action_settings)
+        TestUiUtils.openMenuItem(composeTestRule, R.string.action_settings)
         takeScreenshot("settings")
     }
 
     private fun starWords(vararg words: String) {
         for (word in words) {
-            TestAppUtils.search(word)
+            TestAppUtils.search(composeTestRule, word)
             Espresso.onIdle()
             TestAppUtils.starQueryWord(composeTestRule)
         }

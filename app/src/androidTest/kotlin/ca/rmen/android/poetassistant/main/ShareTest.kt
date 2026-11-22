@@ -72,13 +72,13 @@ class ShareTest {
         swipeViewPagerLeft(3)
         val poemText = "Let us share a poem"
         typeAndSpeakPoem(composeTestRule, poemText)
-        openMenuItem(R.string.share_poem_text)
+        openMenuItem(composeTestRule, R.string.share_poem_text)
         checkShareIntentEquals(poemText)
     }
 
     @Test
     fun shareThesaurusTest() {
-        search("splurge")
+        search(composeTestRule, "splurge")
         swipeViewPagerLeft(1)
         // Wait for the results to load, not just for Compose to be idle:
         // the lookup loads on a background dispatcher, and the share menu
@@ -86,28 +86,28 @@ class ShareTest {
         composeTestRule.waitUntil(timeoutMillis = 5_000) {
             composeTestRule.onAllNodesWithTag(THESAURUS_SCREEN_CONTENT_LIST_TAG).fetchSemanticsNodes().isNotEmpty()
         }
-        openMenuItem(R.string.share)
+        openMenuItem(composeTestRule, R.string.share)
         checkShareIntentContains("flaunt")
     }
 
     @Test
     fun shareFilteredThesaurusTest() {
         val context: Context = activityTestRule.activity
-        search("happy")
+        search(composeTestRule, "happy")
         swipeViewPagerLeft(1)
         addFilter(composeTestRule, context, Tab.THESAURUS, "messed", "blessed")
-        openMenuItem(R.string.share)
+        openMenuItem(composeTestRule, R.string.share)
         val expectedContent = context.getString(R.string.share_thesaurus_title_with_filter, "happy", "messed")
         checkShareIntentContains(expectedContent)
     }
 
     @Test
     fun shareFavoritesTest() {
-        search("happy")
+        search(composeTestRule, "happy")
         composeTestRule.onNodeWithTag("${RHYMER_ITEM_STAR_TAG}snappy").performClick()
         composeTestRule.onNodeWithTag("${RHYMER_ITEM_STAR_TAG}crappy").performClick()
         swipeViewPagerLeft(4)
-        openMenuItem(R.string.share)
+        openMenuItem(composeTestRule, R.string.share)
         checkShareIntentContains("snappy")
     }
 
@@ -115,8 +115,8 @@ class ShareTest {
     @Ignore
     @Test
     fun shareRandomWordTest() {
-        openMenuItem(R.string.action_random_word)
-        openMenuItem(R.string.share)
+        openMenuItem(composeTestRule, R.string.action_random_word)
+        openMenuItem(composeTestRule, R.string.share)
         checkShareIntentContains("Definitions of")
     }
 

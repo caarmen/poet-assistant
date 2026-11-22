@@ -74,14 +74,15 @@ class RandomWordTest {
 
     @Test
     fun randomWordTest() {
-        openMenuItem(R.string.action_random_word)
+        openMenuItem(composeTestRule, R.string.action_random_word)
+        composeTestRule.waitForIdle()
         checkTitleStripOrTab(activityTestRule.activity, R.string.tab_dictionary)
         composeTestRule.onNode(hasTestTag(DICTIONARY_HEADER_TEXT_TAG) and hasNonEmptyText()).assertIsDisplayed()
     }
 
     @Test
     fun wotdNotificationPriorityPresenceTest() {
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         val prioritySettingMatcher: Matcher<View> = withText(R.string.wotd_setting_system_notification_priority_title)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             onView(prioritySettingMatcher).check(doesNotExist())
@@ -100,7 +101,7 @@ class RandomWordTest {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             return // The setting isn't available on O+
         }
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         composeTestRule
             .onNode(hasScrollAction())
             .performScrollToNode(hasTestTag(SETTINGS_WOTD_NOTIFICATION_PRIORITY_ROW_TAG))
@@ -120,7 +121,7 @@ class RandomWordTest {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             return // The setting isn't available on O+
         }
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         // The priority row is disabled while the wotd switch is off:
         // turn wotd on first.
         clickPreference(composeTestRule, activityTestRule.activity, R.string.wotd_setting_title)

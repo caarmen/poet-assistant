@@ -64,7 +64,7 @@ class FavoritesTest {
     @Test
     fun favoritesTest() {
         val context: Context = activityTestRule.activity
-        search("cheesecake")
+        search(composeTestRule, "cheesecake")
         starQueryWord(composeTestRule)
         composeTestRule.onNodeWithTag("${RHYMER_ITEM_STAR_TAG}ache").performClick()
         swipeViewPagerLeft(4)

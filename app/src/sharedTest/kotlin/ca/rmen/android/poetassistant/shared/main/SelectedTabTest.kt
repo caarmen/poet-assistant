@@ -21,6 +21,7 @@ package ca.rmen.android.poetassistant.shared.main
 
 import android.content.Intent
 import androidx.annotation.StringRes
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import ca.rmen.android.poetassistant.R
@@ -51,6 +52,9 @@ class SelectedTabTest {
     val hiltTestRule: HiltAndroidRule = HiltAndroidRule(this)
 
     @get:Rule(order = 1)
+    val composeTestRule = createEmptyComposeRule()
+
+    @get:Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> =
         PoetAssistantActivityTestRule(MainActivity::class.java, false)
 
@@ -66,18 +70,19 @@ class SelectedTabTest {
 
     @Test
     fun openAfterLastWotd() {
-        testSaveTab({ openMenuItem(R.string.action_wotd_history) }, R.string.tab_wotd, R.string.tab_rhymer)
+        testSaveTab({ openMenuItem(composeTestRule, R.string.action_wotd_history) }, R.string.tab_wotd, R.string.tab_rhymer)
     }
 
     @Test
     fun openAfterLastPattern() {
-        testSaveTab({ search("h*llo") }, R.string.tab_pattern, R.string.tab_rhymer)
+        testSaveTab({ search(composeTestRule, "h*llo") }, R.string.tab_pattern, R.string.tab_rhymer)
     }
 
     private fun testSaveTab(openTabAction: () -> Unit, @StringRes expectedTabBeforeStop: Int, @StringRes expectedTabAfterRestart: Int) {
         val intent = Intent()
         activityTestRule.launchActivity(intent)
         openTabAction()
+        composeTestRule.waitForIdle()
         checkTitleStripOrTab(activityTestRule.activity, expectedTabBeforeStop)
         activityTestRule.relaunch()
         checkTitleStripOrTab(activityTestRule.activity, expectedTabAfterRestart)
