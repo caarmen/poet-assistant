@@ -166,7 +166,6 @@ fun MainSearchBar(
                             onDismissRequest = { showMenu = false },
                         ) {
                             MenuContent(
-                                isLargeScreen = isLargeScreen,
                                 items = menuItems(),
                                 onItemClick = { id ->
                                     showMenu = false
@@ -216,19 +215,6 @@ fun MainSearchBar(
                 suggestionsContent()
             }
         }
-    }
-}
-
-@Composable
-fun MenuContent(
-    items: List<SearchBarMenuItem>,
-    isLargeScreen: Boolean,
-    onItemClick: (Int) -> Unit,
-) {
-    if (isLargeScreen) {
-        TabletMenuContent(items, onItemClick)
-    } else {
-        PhoneMenuContent(items, onItemClick)
     }
 }
 
