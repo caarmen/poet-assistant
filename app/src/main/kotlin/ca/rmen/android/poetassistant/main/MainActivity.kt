@@ -244,6 +244,14 @@ open class MainActivityImpl : AppCompatActivity(), OnWordClickListener, WarningN
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_share -> {
+                // Route the share action to the visible tab. With the
+                // ViewPager, several fragments are resumed at once, so we
+                // cannot rely on the fragments consuming the item.
+                val tab = mPagerAdapter.getTabForPosition(viewPager.currentItem)
+                (mPagerAdapter.getFragment(viewPager, tab) as? TabMenuActions)?.onShare()
+                return true
+            }
             R.id.action_about -> {
                 startActivity(Intent(this, AboutActivity::class.java))
                 return true
