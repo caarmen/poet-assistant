@@ -21,7 +21,6 @@ package ca.rmen.android.poetassistant.main.wotd
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +33,7 @@ import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.main.TabMenuActions
 import ca.rmen.android.poetassistant.main.common.usecases.OpenExternalAppUseCase
 import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
@@ -49,7 +49,7 @@ import javax.inject.Inject
  * Opened as the hidden extra tab from the MainActivity menu.
  */
 @AndroidEntryPoint
-class WotdFragment : Fragment() {
+class WotdFragment : Fragment(), TabMenuActions {
 
     @Inject
     lateinit var shareUseCase: ShareUseCase
@@ -59,11 +59,6 @@ class WotdFragment : Fragment() {
 
     private val viewModel: WotdScreenViewModel by viewModels()
     private val isVisibleFlow = MutableStateFlow(false)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
 
     override fun onResume() {
         super.onResume()
@@ -108,11 +103,7 @@ class WotdFragment : Fragment() {
         return view
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_share) {
-            viewModel.onShare()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
+    override fun onShare() {
+        viewModel.onShare()
     }
 }

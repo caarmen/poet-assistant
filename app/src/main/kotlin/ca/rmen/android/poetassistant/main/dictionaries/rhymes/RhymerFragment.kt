@@ -21,7 +21,6 @@ package ca.rmen.android.poetassistant.main.dictionaries.rhymes
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,6 +36,7 @@ import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.main.TabMenuActions
 import ca.rmen.android.poetassistant.main.common.usecases.OpenExternalAppUseCase
 import ca.rmen.android.poetassistant.main.common.usecases.OpenExternalSearchUseCase
 import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
@@ -49,7 +49,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RhymerFragment : Fragment() {
+class RhymerFragment : Fragment(), TabMenuActions {
 
     companion object {
         private const val ARG_INITIAL_QUERY = "initialQuery"
@@ -58,11 +58,6 @@ class RhymerFragment : Fragment() {
                 putString(ARG_INITIAL_QUERY, initialQuery)
             }
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
     }
 
     @Inject
@@ -133,12 +128,8 @@ class RhymerFragment : Fragment() {
         return view
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_share) {
-            viewModel.onShare()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
+    override fun onShare() {
+        viewModel.onShare()
     }
 
     fun query(word: String) {
