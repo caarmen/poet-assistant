@@ -18,7 +18,7 @@ migrates it in three small iterations:
 |---|---|---|
 | **Step 1 (this spec)** | Replace `activity_main.xml` with `setContent` + `Scaffold` + `TabRow` + `MainSearchBar`. The legacy `ViewPager` is hosted via a `content` slot lambda (no new code references legacy types). | `activity_main.xml`, ViewPager/TabLayout/AppBarLayout references in MainActivity |
 | **Step 2** | Replace `PagerAdapter` + `Search` glue with a `MainScreenViewModel` exposing `StateFlow` for current tab, extra tab, and search routing. Host pages via `HorizontalPager`. | `PagerAdapter.kt`, `Search.kt`, `ViewShownScheduler.kt`, the `AndroidView` bridge |
-| **Step 3** | Replace the 8 Fragment wrappers with direct Compose screen calls inside `HorizontalPager`. Migrate XML menus + MenuHost-on-Toolbar to Compose menus. Replace `WarningNoSpaceDialogFragment` with a Compose `AlertDialog`. | All 8 `*Fragment.kt`, `menu_main.xml`, `menu_tts.xml`, `AppBarLayoutHelper.kt`, `MenuHostProvider.kt`, `TabMenuActions.kt`, `WarningNoSpaceDialogFragment.kt` |
+| **Step 3** | Replace the 7 Fragment wrappers with direct Compose screen calls inside `HorizontalPager`. Migrate XML menus + MenuHost-on-Toolbar to Compose menus. Replace `WarningNoSpaceDialogFragment` with a Compose `AlertDialog`. | All 8 `*Fragment.kt` (7 tab wrappers + `WarningNoSpaceDialogFragment.kt`), `menu_main.xml`, `menu_tts.xml`, `AppBarLayoutHelper.kt`, `MenuHostProvider.kt`, `TabMenuActions.kt` |
 
 Step 1 is the keystone: once the shell's app bar is Compose, the fragments
 and glue become dead weight that Steps 2 and 3 remove cleanly.
@@ -46,8 +46,8 @@ and glue become dead weight that Steps 2 and 3 remove cleanly.
   hiding on tab change.
 - Keep the existing XML menus (`menu_main.xml`, `menu_tts.xml`) and the
   `MenuHost`-on-Toolbar mechanism unchanged — menu migration is Step 3.
-- Keep the 8 Fragments and `PagerAdapter` unchanged — they are still driven
-  from `MainActivity`.
+- Keep all 8 Fragments (the 7 tab wrappers + `WarningNoSpaceDialogFragment`)
+  and `PagerAdapter` unchanged — they are still driven from `MainActivity`.
 
 **Out of scope (deferred to Steps 2 and 3):**
 - `PagerAdapter.kt` / `Search.kt` / `ViewShownScheduler.kt` — still used.
@@ -106,16 +106,30 @@ title strip is hidden.
 
 ## 3. Target architecture for Step 1
 
-### 3.1 New file: `main/ui/composables/MainScreen.kt`
+### 3.1 New files: `MainScreen` + `MainScreenContent` split
+
+Following the project convention (`FavoritesScreen`/`FavoritesScreenContent`,
+etc.), the shell is split into two composables even though the ViewModel
+does not exist yet (Step 2):
+
+- **`main/ui/composables/MainScreen.kt`** — stateful shell. In Step 1 it
+  takes plain data + callbacks (no ViewModel yet) and forwards to
+  `MainScreenContent`. In Step 2 it gains a `MainScreenViewModel` parameter,
+  collects `StateFlow`, and passes state down.
+- **`main/ui/composables/MainScreenContent.kt`** — stateless UI. Takes plain
+  data + callbacks + `content` slot. No ViewModel → immediately previewable.
+- **`main/ui/composables/previews/MainScreenContentPreviews.kt`** — `@Preview`
+  functions targeting `MainScreenContent`.
 
 ```kotlin
+// MainScreen.kt (Step 1 — thin forwarder, no VM yet)
 @Composable
 fun MainScreen(
-    tabs: List<Tab>,                          // 5 or 6 entries (extra tab appended)
+    tabs: List<Tab>,
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
-    showTabText: Boolean,                     // from R.bool.tab_text
-    showTabIcons: Boolean,                    // from R.bool.tab_icons
+    showTabText: Boolean,
+    showTabIcons: Boolean,
     isLargeScreen: Boolean,
     suggestions: List<SearchSuggestion>,
     menuItems: () -> List<SearchBarMenuItem>,
@@ -123,9 +137,30 @@ fun MainScreen(
     onQueryChange: (String) -> Unit,
     onSearch: (String) -> Unit,
     onExpandedChange: (Boolean) -> Unit,
-    content: @Composable (PaddingValues) -> Unit,  // provided by caller
+    content: @Composable (PaddingValues) -> Unit,
     modifier: Modifier = Modifier,
-)
+) {
+    MainScreenContent(
+        tabs = tabs,
+        selectedTabIndex = selectedTabIndex,
+        onTabSelected = onTabSelected,
+        showTabText = showTabText,
+        showTabIcons = showTabIcons,
+        isLargeScreen = isLargeScreen,
+        suggestions = suggestions,
+        menuItems = menuItems,
+        onMenuItemClick = onMenuItemClick,
+        onQueryChange = onQueryChange,
+        onSearch = onSearch,
+        onExpandedChange = onExpandedChange,
+        content = content,
+        modifier = modifier,
+    )
+}
+
+// MainScreenContent.kt — the actual Scaffold UI (same params, stateless)
+@Composable
+fun MainScreenContent(/* same params as MainScreen */) { … }
 ```
 
 **Key design decision — the `content` slot:** `MainScreen` does not know
@@ -205,6 +240,15 @@ In Compose, `TabRow` covers both:
 - Keep `PagerAdapter`, `Search`, menu providers, deep-link handling — all
   still work; only the view hierarchy changes.
 - Remove `findViewById` for `appBarLayout`, `tabs`, `pagerTitleStrip`, `searchBar`.
+- Remove the `lateinit var appBarLayout: AppBarLayout` field and the three
+  view-overload call sites `AppBarLayoutHelper.forceExpandAppBarLayout(appBarLayout)`
+  (in the search bar's `onExpandedChange`, in `onResume`, and in
+  `OnPageChangeListener.onPageSelected`). These cannot remain: with
+  `activity_main.xml` gone the field is never initialized, so leaving the
+  call sites in place would crash at **runtime** with
+  `UninitializedPropertyAccessException`, while removing the field
+  declaration would make the call sites **not compile**. Either way they
+  cannot remain (see §3.5).
 - Create `viewPager` programmatically (since XML is gone) or keep a minimal
   container; capture the reference for `Search` and page-change listener.
 - Replace `getInsets()` calls with Compose `WindowInsets` handling inside
@@ -212,8 +256,10 @@ In Compose, `TabRow` covers both:
 
 ### 3.4 Edge-to-edge insets
 
-Legacy: `getInsets(appBarLayout) { … updatePadding(top = insets.top) }` and
-`getInsets(searchBar) { … updatePadding(left, right) }`.
+Legacy: `getInsets(appBarLayout) { … updatePadding(left = insets.left, right = insets.right, top = insets.top) }`
+and `getInsets(searchBar) { … updatePadding(left = insets.left, right = insets.right) }`
+— the app bar gets left, right, **and** top padding; only the search bar gets
+just left/right.
 
 Compose: inside `MainScreen`, the top bar column gets
 `Modifier.windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal))`.
@@ -227,14 +273,35 @@ search bar and tabs inside `AppBarLayout` when the reader tab is selected.
 In Step 1, there is no `AppBarLayout`. The auto-hide behavior (collapsing
 the app bar on scroll in the reader tab) is **temporarily disabled** and
 restored in Step 3 using `TopAppBarScrollBehavior` on the Compose app bar.
-`AppBarLayoutHelper` is retained — its `forceExpandAppBarLayout` calls from
-`MainActivity.onResume` and `ReaderFragment` become harmless no-ops.
+`AppBarLayoutHelper` is retained, but its two overloads behave differently
+without an `AppBarLayout`:
+
+- The **activity overload** `forceExpandAppBarLayout(activity)` — the only
+  overload `ReaderFragment` calls — does `findViewById(R.id.app_bar_layout)`
+  and returns when it is null, so those `ReaderFragment` calls become
+  harmless no-ops.
+- `MainActivity`, however, calls the **view overload**
+  `forceExpandAppBarLayout(appBarLayout)` with its `lateinit var appBarLayout`
+  field (in the search bar's `onExpandedChange`, in `onResume`, and in
+  `OnPageChangeListener.onPageSelected`). Once `activity_main.xml` is deleted
+  and the `findViewById(R.id.app_bar_layout)` is removed, that field is never
+  initialized: leaving the call sites in place would still compile but crash
+  at **runtime** with `UninitializedPropertyAccessException`, and removing the
+  field declaration makes the call sites **not compile**. Either way they
+  cannot remain and cannot become no-ops. Step 1 must remove the
+  `appBarLayout` field and those three call sites from `MainActivity`
+  (see §3.3).
 
 ### 3.6 Tab persistence and deep links
 
 - `SettingsRepository.tab` get/set unchanged.
-- On init: `val initialTab = settingsRepository.tab`, map to page index via
-  `PagerAdapter.getPositionForTab`.
+- On init: `val savedTab = settingsRepository.tab`; if non-null and
+  `savedTab.ordinal < mPagerAdapter.count`, set
+  `viewPager.currentItem = savedTab.ordinal` directly — the saved tab's
+  ordinal is used as the page index, **not** mapped through
+  `PagerAdapter.getPositionForTab` (which would return `POSITION_NONE` for
+  `PATTERN`/`WOTD` when they are not the extra tab). Deep-link/ACTION_SEND
+  selection, by contrast, still maps via `getPositionForTab`.
 - Deep link / ACTION_SEND: `handleNewIntent` and `handleDeepLink` still call
   `viewPager.setCurrentItem(…)` — the `viewPager` reference is held by
   `MainActivity`.
@@ -258,9 +325,11 @@ the keyboard via `InputMethodManager`.
 The agent developer makes **minimum changes so tests compile**. Adapting
 test assertions is done by the product owner.
 
-Tests that reference removed view IDs (`R.id.pager_title_strip`, `R.id.tabs`,
-`R.id.app_bar_layout`, `R.id.search_bar`) in `TestUiUtils.kt` and shared test
-files may need stub replacements or `@Suppress` to compile. Full migration
+Tests that reference removed view IDs (`R.id.pager_title_strip`,
+`R.id.view_pager`, `R.id.tabs`) in `TestUiUtils.kt` and shared test files may
+need stub replacements or `@Suppress` to compile. (`R.id.app_bar_layout` and
+`R.id.search_bar` are referenced only in `MainActivity.kt` and
+`AppBarLayoutHelper.kt`, not in any test.) Full migration
 of `checkTitleStripOrTab`, `swipeViewPagerLeft/Right` to Compose test APIs
 is the product owner's task.
 
@@ -291,11 +360,12 @@ New test tags to add (for the product owner's test migration):
 | File | Action |
 |---|---|
 | `res/layout/activity_main.xml` | **Deleted** |
-| `main/ui/composables/MainScreen.kt` | **New** — pure Compose shell, no legacy imports |
-| `main/ui/composables/previews/MainScreenPreviews.kt` | **New** — `@Preview` functions |
-| `main/MainActivity.kt` | Modified: `setContent` + `enableEdgeToEdge()`, hosts ViewPager via `AndroidView` in the `content` lambda; removes `findViewById` for app bar views |
+| `main/ui/composables/MainScreen.kt` | **New** — stateful shell (thin forwarder in Step 1; gains ViewModel in Step 2), no legacy imports |
+| `main/ui/composables/MainScreenContent.kt` | **New** — stateless UI with Scaffold/TabRow/MainSearchBar, no legacy imports |
+| `main/ui/composables/previews/MainScreenContentPreviews.kt` | **New** — `@Preview` functions targeting `MainScreenContent` |
+| `main/MainActivity.kt` | Modified: `setContent` + `enableEdgeToEdge()`, hosts ViewPager via `AndroidView` in the `content` lambda; removes `findViewById` for app bar views; removes the `appBarLayout` field and its three `forceExpandAppBarLayout(appBarLayout)` view-overload call sites (§3.5) |
 | `sharedTest/.../TestUiUtils.kt` | Minimum changes to compile only |
-| `main/AppBarLayoutHelper.kt` | Unchanged (no-op without AppBarLayout) |
+| `main/AppBarLayoutHelper.kt` | Unchanged (activity overload no-ops without an AppBarLayout; view overload is no longer called from MainActivity) |
 | `main/PagerAdapter.kt` | Unchanged |
 | `main/dictionaries/search/Search.kt` | Unchanged |
 
