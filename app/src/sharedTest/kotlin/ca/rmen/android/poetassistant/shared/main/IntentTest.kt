@@ -19,7 +19,6 @@
 
 package ca.rmen.android.poetassistant.shared.main
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.ui.test.assertIsDisplayed
@@ -70,10 +69,10 @@ class IntentTest {
 
     @Test
     fun onNewIntentViewQueryTest() {
-        val activity: MainActivity = activityTestRule.launchActivity(Intent())
+        activityTestRule.launchActivity(Intent())
         composeTestRule.waitForIdle()
         launchNewIntent(Intent.ACTION_VIEW, "poetassistant://query/muffin")
-        checkTitleStripOrTab(activity, R.string.tab_dictionary)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_dictionary)
         checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
         swipeViewPagerRight(1)
         checkFirstSynonym(composeTestRule, "quick bread")
@@ -106,10 +105,10 @@ class IntentTest {
 
     @Test
     fun onNewIntentSendTest() {
-        val activity: MainActivity = activityTestRule.launchActivity(Intent())
+        activityTestRule.launchActivity(Intent())
         val poemText = "Dare to be honest and fear no labor." // Robert Burns
         launchNewIntent(Intent.ACTION_SEND, Intent.EXTRA_TEXT, poemText)
-        checkTitleStripOrTab(activity, R.string.tab_reader)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_reader)
         composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG).assertIsDisplayed().assertTextEquals(poemText)
     }
 
@@ -118,8 +117,8 @@ class IntentTest {
         val intent = Intent(Intent.ACTION_SEND)
         val poemText = "Dare to be honest and fear no labor." // Robert Burns
         intent.putExtra(Intent.EXTRA_TEXT, poemText)
-        val activity: MainActivity = activityTestRule.launchActivity(intent)
-        checkTitleStripOrTab(activity, R.string.tab_reader)
+        activityTestRule.launchActivity(intent)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_reader)
         composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG).assertIsDisplayed().assertTextEquals(poemText)
     }
 
@@ -127,8 +126,8 @@ class IntentTest {
     fun onCreateViewQueryTest() {
         val intent = Intent(Intent.ACTION_VIEW)
             .setData(Uri.parse("poetassistant://query/muffin"))
-        val activity: MainActivity = activityTestRule.launchActivity(intent)
-        checkTitleStripOrTab(activity, R.string.tab_dictionary)
+        activityTestRule.launchActivity(intent)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_dictionary)
         checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
         swipeViewPagerRight(1)
         checkFirstSynonym(composeTestRule, "quick bread")
@@ -178,8 +177,7 @@ class IntentTest {
     }
 
     private fun checkRhymerOnly(composeTestRule: ComposeTestRule, expectedRhyme1: String, expectedRhyme2: String) {
-        val activity: Activity = activityTestRule.activity
-        checkTitleStripOrTab(activity, R.string.tab_rhymer)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_rhymer)
         checkRhymes(composeTestRule, expectedRhyme1, expectedRhyme2)
         swipeViewPagerLeft(1)
         // Thesaurus
@@ -190,8 +188,7 @@ class IntentTest {
     }
 
     private fun checkThesaurusOnly(composeTestRule: ComposeTestRule, expectedFirstSynonym: String) {
-        val activity: Activity = activityTestRule.activity
-        checkTitleStripOrTab(activity, R.string.tab_thesaurus)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_thesaurus)
         checkFirstSynonym(composeTestRule, expectedFirstSynonym)
         swipeViewPagerLeft(1)
         // Dictionary
@@ -202,8 +199,7 @@ class IntentTest {
     }
 
     private fun checkDictionaryOnly(composeTestRule: ComposeTestRule, expectedFirstDefinition: String) {
-        val activity: Activity = activityTestRule.activity
-        checkTitleStripOrTab(activity, R.string.tab_dictionary)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_dictionary)
         checkFirstDefinition(composeTestRule, expectedFirstDefinition)
         swipeViewPagerRight(1)
         // Thesaurus

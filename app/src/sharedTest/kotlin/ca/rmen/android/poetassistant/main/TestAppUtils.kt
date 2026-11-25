@@ -102,7 +102,7 @@ object TestAppUtils {
     fun openThesaurus(composeTestRule: ComposeTestRule, context: Context, entry: String, expectedFirstSynonym: String) {
         composeTestRule.onNodeWithTag("${ITEM_THESAURUS_TAG}$entry").performClick()
         CustomChecks.checkFirstSynonym(composeTestRule, expectedFirstSynonym)
-        TestUiUtils.checkTitleStripOrTab(context, R.string.tab_thesaurus)
+        TestUiUtils.checkTitleStripOrTab(composeTestRule, R.string.tab_thesaurus)
     }
 
     fun openThesaurusCleanLayout(composeTestRule: ComposeTestRule, context: Context, entry: String, expectedFirstSynonym: String) {
@@ -113,13 +113,13 @@ object TestAppUtils {
         }
         composeTestRule.onNodeWithText(lookupLabel).performClick()
         CustomChecks.checkFirstSynonym(composeTestRule, expectedFirstSynonym)
-        TestUiUtils.checkTitleStripOrTab(context, R.string.tab_thesaurus)
+        TestUiUtils.checkTitleStripOrTab(composeTestRule, R.string.tab_thesaurus)
     }
 
     fun openDictionary(composeTestRule: ComposeTestRule, context: Context, entry: String, expectedFirstDefinition: String) {
         // The entry is in the Compose thesaurus list: click its dictionary icon.
         composeTestRule.onNodeWithTag("${ITEM_DICTIONARY_TAG}$entry").performClick()
-        TestUiUtils.checkTitleStripOrTab(context, R.string.tab_dictionary)
+        TestUiUtils.checkTitleStripOrTab(composeTestRule, R.string.tab_dictionary)
         CustomChecks.checkFirstDefinition(composeTestRule, expectedFirstDefinition)
     }
 
@@ -132,7 +132,7 @@ object TestAppUtils {
             composeTestRule.onAllNodesWithText(lookupLabel).fetchSemanticsNodes().isNotEmpty()
         }
         composeTestRule.onNodeWithText(lookupLabel).performClick()
-        TestUiUtils.checkTitleStripOrTab(context, R.string.tab_dictionary)
+        TestUiUtils.checkTitleStripOrTab(composeTestRule, R.string.tab_dictionary)
         CustomChecks.checkFirstDefinition(composeTestRule, expectedFirstDefinition)
     }
 

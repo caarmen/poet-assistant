@@ -142,7 +142,7 @@ class PoemTest {
 
         // Select the "rhymer" popup
         clickPopupView("rhymer")
-        checkTitleStripOrTab(activityTestRule.activity, R.string.tab_rhymer)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_rhymer)
         composeTestRule.onNode(hasTestTag(RHYMER_HEADER_TEXT_TAG) and hasText(firstWord)).assertIsDisplayed()
 
         // Look up in the thesaurus
@@ -199,7 +199,7 @@ class PoemTest {
             .assertIsDisplayed()
         composeTestRule.onNodeWithText(activityTestRule.activity.getString(android.R.string.ok))
             .performClick()
-        checkTitleStripOrTab(activityTestRule.activity, R.string.tab_reader)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_reader)
 
         clearPoem(composeTestRule)
         SystemClock.sleep(1000)

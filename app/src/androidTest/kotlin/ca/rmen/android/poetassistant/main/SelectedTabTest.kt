@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main
 
 
-import android.app.Activity
 import android.content.Intent
 import android.os.SystemClock
 import androidx.annotation.StringRes
@@ -68,16 +67,15 @@ class SelectedTabTest {
         val deepLinkUrl = "poetassistant://dictionary/muffin"
 
         swipeViewPagerLeft(1)
-        checkTitleStripOrTab(activityTestRule.activity, R.string.tab_thesaurus)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_thesaurus)
 
         // Open a deep link
         getInstrumentation().uiAutomation.executeShellCommand("am start -a android.intent.action.VIEW -d " + deepLinkUrl)
         SystemClock.sleep(500) // :'(
 
         // Check the results
-        val activity: Activity = activityTestRule.activity
         getInstrumentation().waitForIdleSync()
-        checkTitleStripOrTab(activity, R.string.tab_dictionary)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_dictionary)
         checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
     }
 
@@ -88,19 +86,17 @@ class SelectedTabTest {
         val deepLinkUrl = "poetassistant://dictionary/muffin"
 
         swipeViewPagerLeft(2)
-        checkTitleStripOrTab(activityTestRule.activity, R.string.tab_dictionary)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_dictionary)
 
         // Open a deep link
         getInstrumentation().uiAutomation.executeShellCommand("am start -a android.intent.action.VIEW -d " + deepLinkUrl)
         SystemClock.sleep(500) // :'(
 
         // Check the results
-        val activity: Activity = activityTestRule.activity
         getInstrumentation().waitForIdleSync()
-        checkTitleStripOrTab(activity, R.string.tab_dictionary)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_dictionary)
         checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
     }
-
 
     @Test
     fun openAfterLastDictionary() {
@@ -141,8 +137,8 @@ class SelectedTabTest {
         val intent = Intent()
         activityTestRule.launchActivity(intent)
         openTabAction.run()
-        checkTitleStripOrTab(activityTestRule.activity, expectedTabBeforeStop)
+        checkTitleStripOrTab(composeTestRule, expectedTabBeforeStop)
         activityTestRule.relaunch()
-        checkTitleStripOrTab(activityTestRule.activity, expectedTabAfterRestart)
+        checkTitleStripOrTab(composeTestRule, expectedTabAfterRestart)
     }
 }

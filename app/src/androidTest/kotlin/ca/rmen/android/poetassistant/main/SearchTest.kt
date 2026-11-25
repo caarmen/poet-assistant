@@ -146,7 +146,7 @@ class SearchTest {
         composeTestRule.onNodeWithText(context.getString(android.R.string.ok)).performClick()
         onView(withId(android.R.id.content)).perform(swipeDown())
         search(composeTestRule, "hello")
-        checkTitleStripOrTab(context, R.string.tab_rhymer)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_rhymer)
     }
 
     @Test

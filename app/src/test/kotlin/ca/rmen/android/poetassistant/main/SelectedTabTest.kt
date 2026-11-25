@@ -19,11 +19,11 @@
 
 package ca.rmen.android.poetassistant.main
 
-import android.content.Intent
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import ca.rmen.android.poetassistant.R
@@ -100,12 +100,15 @@ class SelectedTabTest {
     }
 
     private fun testSaveTab(openTabAction: () -> Unit, @StringRes expectedTabBeforeStop: Int, @StringRes expectedTabAfterRestart: Int) {
-        val intent = Intent()
-        activityTestRule.launchActivity(intent)
+        var scenario = ActivityScenario.launch(MainActivity::class.java)
         openTabAction()
         composeTestRule.waitForIdle()
-        checkTitleStripOrTab(activityTestRule.activity, expectedTabBeforeStop)
-        activityTestRule.relaunch()
-        checkTitleStripOrTab(activityTestRule.activity, expectedTabAfterRestart)
+        checkTitleStripOrTab(composeTestRule, expectedTabBeforeStop)
+
+        scenario.close()
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        composeTestRule.waitForIdle()
+        checkTitleStripOrTab(composeTestRule, expectedTabAfterRestart)
+        scenario.close()
     }
 }

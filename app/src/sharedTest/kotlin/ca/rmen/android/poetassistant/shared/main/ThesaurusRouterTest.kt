@@ -69,7 +69,7 @@ class ThesaurusRouterTest {
         }
         activityTestRule.launchActivity(intent)
         val activity: Activity = activityTestRule.activity
-        checkTitleStripOrTab(activity, R.string.tab_thesaurus)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_thesaurus)
         composeTestRule.onNodeWithTag(THESAURUS_HEADER_TEXT_TAG).assertTextEquals("almost")
         checkFirstSynonym(composeTestRule, "about")
         swipeViewPagerLeft(1)

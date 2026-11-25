@@ -68,7 +68,7 @@ class DictionaryRouterTest {
         }
         activityTestRule.launchActivity(intent)
         val activity: Activity = activityTestRule.activity
-        checkTitleStripOrTab(activity, R.string.tab_dictionary)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_dictionary)
         composeTestRule.onNode(hasTestTag(DICTIONARY_HEADER_TEXT_TAG) and hasText("polyvalent")).assertIsDisplayed()
         checkFirstDefinition(composeTestRule, "containing several antibodies each capable of counteracting a specific antigen")
         swipeViewPagerRight(1)
