@@ -35,14 +35,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.HtmlCompat
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
+import ca.rmen.android.poetassistant.main.TabMenuActions
 import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
 import ca.rmen.android.poetassistant.main.reader.data.Poem
 import ca.rmen.android.poetassistant.main.reader.ui.composables.ReaderScreen
@@ -65,7 +69,7 @@ import javax.inject.Inject
  * needs a Context.
  */
 @AndroidEntryPoint
-class ReaderFragment : Fragment() {
+class ReaderFragment : Fragment(), TabMenuActions {
 
     companion object {
         private const val ARG_INITIAL_POEM = "initial_poem"
@@ -88,6 +92,68 @@ class ReaderFragment : Fragment() {
 
     private val viewModel: ReaderScreenViewModel by viewModels()
     private val isVisibleFlow = MutableStateFlow(false)
+    private val isMenuVisible = MutableStateFlow(false)
+
+    // Dedicated lifecycle owner for the menu provider registration. Its
+    // registry only reaches RESUMED while the reader tab is the visible
+    // page (driven by setMenuVisibility), so the provider is active on
+    // the reader tab only, not on every tab where this fragment is
+    // RESUMED (offscreenPageLimit = 5).
+    private val menuVisibilityLifecycleOwner = object : LifecycleOwner {
+        private val registry = LifecycleRegistry(this)
+        override val lifecycle: Lifecycle get() = registry
+        fun setState(state: Lifecycle.State) {
+            registry.currentState = state
+        }
+    }
+
+    private val menuProvider = object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_tts, menu)
+            menu.findItem(R.id.action_share)?.isVisible = false
+        }
+
+        override fun onPrepareMenu(menu: Menu) {
+            val hasSavedPoem = viewModel.state.value.poem is Poem.PersistedPoem
+            val hasPoemText = viewModel.state.value.textFieldValue.text.isNotEmpty()
+            menu.findItem(R.id.action_save)?.isEnabled = hasSavedPoem
+            listOf(
+                R.id.action_new,
+                R.id.action_save_as,
+                R.id.action_share,
+                R.id.action_share_poem_text,
+                R.id.action_share_poem_audio,
+                R.id.action_print,
+            ).forEach { menu.findItem(it)?.isEnabled = hasPoemText }
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            when (menuItem.itemId) {
+                R.id.action_new -> {
+                    viewModel.onClearPoemRequestClicked()
+                    // Hack for https://github.com/caarmen/poet-assistant/issues/72
+                    // On some devices, showing the clear poem dialog auto-hides the app bar layout.
+                    // Let's expand it again.
+                    AppBarLayoutHelper.forceExpandAppBarLayout(activity)
+                }
+                R.id.action_open -> openPoemLauncher.launch(arrayOf("text/plain"))
+                R.id.action_save -> viewModel.onSavePoem()
+                R.id.action_save_as -> saveAsPoemLauncher.launch(
+                    getSaveAsFilenameUseCase(viewModel.state.value.textFieldValue.text),
+                )
+                R.id.action_share, R.id.action_share_poem_text -> viewModel.onSharePoem()
+                R.id.action_share_poem_audio -> viewModel.onSharePoemAsAudio()
+                R.id.action_print -> {
+                    val activity = requireActivity()
+                    val poemText = viewModel.state.value.textFieldValue.text
+                    lifecycleScope.launch {
+                        printPoemUseCase(activity, poemText)
+                    }
+                }
+            }
+            return true
+        }
+    }
 
     // A canceled picker yields a null uri: do nothing.
     private val openPoemLauncher =
@@ -102,7 +168,21 @@ class ReaderFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+        requireActivity().addMenuProvider(
+            menuProvider,
+            menuVisibilityLifecycleOwner,
+            Lifecycle.State.RESUMED,
+        )
+        // Drive the visibility-gated lifecycle from the visible-tab signal:
+        // setMenuVisibility is only called with true for the primary page.
+        lifecycleScope.launch {
+            isMenuVisible.collect { menuVisible ->
+                menuVisibilityLifecycleOwner.setState(
+                    if (menuVisible) Lifecycle.State.RESUMED else Lifecycle.State.CREATED,
+                )
+                requireActivity().invalidateMenu()
+            }
+        }
         // Apply the poem shared into the app once per fragment instance,
         // then clear the argument: rotation and process death must not
         // re-apply it over the user's edits.
@@ -113,6 +193,16 @@ class ReaderFragment : Fragment() {
                 viewModel.onInitialPoemLoaded(initialPoem)
             }
         }
+    }
+
+    override fun setMenuVisibility(menuVisible: Boolean) {
+        super.setMenuVisibility(menuVisible)
+        isMenuVisible.value = menuVisible
+    }
+
+    override fun onDestroy() {
+        activity?.removeMenuProvider(menuProvider)
+        super.onDestroy()
     }
 
     override fun onResume() {
@@ -170,7 +260,7 @@ class ReaderFragment : Fragment() {
                     viewModel.state
                         .map { Pair(it.poem is Poem.PersistedPoem, it.textFieldValue.text.isNotEmpty()) }
                         .distinctUntilChanged()
-                        .collect { activity?.invalidateOptionsMenu() }
+                        .collect { activity?.invalidateMenu() }
                 }
                 // The fragment is the single collector of the share
                 // flow: it owns the Context for the chooser.
@@ -186,52 +276,8 @@ class ReaderFragment : Fragment() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_tts, menu)
-        menu.findItem(R.id.action_share).isVisible = false
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-        val hasSavedPoem = viewModel.state.value.poem is Poem.PersistedPoem
-        val hasPoemText = viewModel.state.value.textFieldValue.text.isNotEmpty()
-        menu.findItem(R.id.action_save)?.isEnabled = hasSavedPoem
-        listOf(
-            R.id.action_new,
-            R.id.action_save_as,
-            R.id.action_share,
-            R.id.action_share_poem_text,
-            R.id.action_share_poem_audio,
-            R.id.action_print,
-        ).forEach { menu.findItem(it)?.isEnabled = hasPoemText }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_new -> {
-                viewModel.onClearPoemRequestClicked()
-                // Hack for https://github.com/caarmen/poet-assistant/issues/72
-                // On some devices, showing the clear poem dialog auto-hides the app bar layout.
-                // Let's expand it again.
-                AppBarLayoutHelper.forceExpandAppBarLayout(activity)
-            }
-            R.id.action_open -> openPoemLauncher.launch(arrayOf("text/plain"))
-            R.id.action_save -> viewModel.onSavePoem()
-            R.id.action_save_as -> saveAsPoemLauncher.launch(
-                getSaveAsFilenameUseCase(viewModel.state.value.textFieldValue.text),
-            )
-            R.id.action_share, R.id.action_share_poem_text -> viewModel.onSharePoem()
-            R.id.action_share_poem_audio -> viewModel.onSharePoemAsAudio()
-            R.id.action_print -> {
-                val activity = requireActivity()
-                val poemText = viewModel.state.value.textFieldValue.text
-                lifecycleScope.launch {
-                    printPoemUseCase(activity, poemText)
-                }
-            }
-        }
-        return true
+    override fun onShare() {
+        viewModel.onSharePoem()
     }
 
     /**

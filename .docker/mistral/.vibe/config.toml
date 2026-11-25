@@ -3,7 +3,6 @@ enabled_tools = [
     "read_file",
     "write_file",
     "edit",
-    "task",
 ]
 active_model = "mistral-large-4-0-3"
 theme = "monokai"

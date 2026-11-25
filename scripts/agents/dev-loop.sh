@@ -2,11 +2,11 @@
 # dev-loop.sh — Cameron ↔ Chloe loop for the rhymer-tab feature.
 # Hardcoded for this feature; generalize only after the pattern is proven.
 
-SPEC="plans/settings-screen-spec.md"
-REVIEW="plans/settings-screen-code-review.md"
-REVISIONS="plans/settings-screen-revisions.md"
-SPEC_ISSUES="plans/settings-screen-spec-issues.md"
-BRANCH="feature/settings-screen"
+SPEC="plans/menu-rework-spec.md"
+REVIEW="plans/menu-rework-code-review.md"
+REVISIONS="plans/menu-rework-revisions.md"
+SPEC_ISSUES="plans/menu-rework-spec-issues.md"
+BRANCH="rework-menus"
 BASE_BRANCH="master"
 MAX_ROUNDS=5
 
@@ -15,7 +15,7 @@ set -euo pipefail
 for round in $(seq 1 "$MAX_ROUNDS"); do
   echo "=== Round $round: Cameron reviews ==="
 
-  vibe --agent cameron --prompt "You are reviewing branch $BRANCH against the spec at $SPEC.
+  vibe --agent cameron --auto-approve --trust --prompt "You are reviewing branch $BRANCH against the spec at $SPEC.
 
 First read these files if they exist, in this order:
 - $SPEC_ISSUES — known holes in the spec itself.
@@ -90,7 +90,7 @@ Otherwise end with: VERDICT: CHANGES_REQUESTED"
   echo "=== Round $round: Chloe revises ==="
 
   # Chloe: resumed kickoff session — her mental model accumulates.
-  vibe --agent chloe --resume d2a0b31c --prompt "Cameron's review is at $REVIEW.
+  vibe --agent chloe --auto-approve --trust --resume d2a0b31c --prompt "Cameron's review is at $REVIEW.
 
 For each remark:
 - If you agree: fix it, with a fixup commit, to adjust the commit which originally

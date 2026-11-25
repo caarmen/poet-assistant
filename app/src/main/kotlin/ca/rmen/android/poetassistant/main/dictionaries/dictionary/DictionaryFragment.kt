@@ -2,7 +2,6 @@ package ca.rmen.android.poetassistant.main.dictionaries.dictionary
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +14,7 @@ import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import ca.rmen.android.poetassistant.R
+import ca.rmen.android.poetassistant.main.TabMenuActions
 import ca.rmen.android.poetassistant.main.common.usecases.OpenExternalSearchUseCase
 import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables.DictionaryScreen
@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DictionaryFragment : Fragment() {
+class DictionaryFragment : Fragment(), TabMenuActions {
 
     companion object {
         private const val ARG_INITIAL_QUERY = "initialQuery"
@@ -33,11 +33,6 @@ class DictionaryFragment : Fragment() {
                 putString(ARG_INITIAL_QUERY, initialQuery)
             }
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
     }
 
     @Inject
@@ -95,12 +90,8 @@ class DictionaryFragment : Fragment() {
         return view
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_share) {
-            viewModel.onShare()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
+    override fun onShare() {
+        viewModel.onShare()
     }
 
     fun query(word: String) {
