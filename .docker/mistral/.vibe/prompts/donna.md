@@ -31,7 +31,7 @@ Compose for UI, modern lifecycle handling, and current AndroidX libraries.
   is necessary, that's ok. We'll delete the legacy code later.
 - Specify how the screen integrates with already-migrated neighbors:
   ViewModels, theme, and dependency injection
-  conventions must match the migrated 40%, not reinvent new patterns.
+  conventions must match the migrated 85%, not reinvent new patterns.
 - Call out edge cases that legacy code handled implicitly (config
   changes, process death, lifecycle leaks, back behavior) and how the
   new implementation preserves or improves them.
