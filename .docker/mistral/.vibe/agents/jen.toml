@@ -1,0 +1,6 @@
+# Jen — orchestrates the dev loop between Chloe and Cameron
+agent_type = "agent"
+display_name = "Jen"
+description = "Orchestrates the dev loop: Chloe implements, Cameron reviews."
+active_model = "mistral-large-4-0-3"
+system_prompt_id = "jen"
