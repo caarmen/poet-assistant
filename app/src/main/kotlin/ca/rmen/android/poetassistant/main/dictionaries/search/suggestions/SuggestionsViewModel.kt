@@ -17,17 +17,15 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.search
+package ca.rmen.android.poetassistant.main.dictionaries.search.suggestions
 
-import android.app.Application
 import androidx.annotation.DrawableRes
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.di.IODispatcher
+import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.data.Source
+import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.data.SuggestionsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,10 +38,8 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @HiltViewModel
 class SuggestionsViewModel @Inject constructor(
-    application: Application,
-    private val mSuggestionsRepository: SuggestionsRepository,
-    @IODispatcher val ioDispatcher: CoroutineDispatcher,
-) : AndroidViewModel(application) {
+    private val suggestionsRepository: SuggestionsRepository,
+) : ViewModel() {
 
     data class SearchSuggestion(
         val word: String,
@@ -55,10 +51,10 @@ class SuggestionsViewModel @Inject constructor(
         this.typedText.value = typedText
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    @OptIn(FlowPreview::class)
     val suggestions: StateFlow<List<SearchSuggestion>> = typedText
         .debounce(500.milliseconds).map {
-            mSuggestionsRepository.getSuggestions(it).map { entry ->
+            suggestionsRepository.getSuggestions(it).map { entry ->
                 SearchSuggestion(
                     word = entry.word,
                     iconResource = when (entry.source) {

@@ -109,7 +109,7 @@ class IntegrationTest {
         swipeViewPagerLeft(4)
         checkAllStarredWords(context, composeTestRule)
         swipeViewPagerRight(4)
-        search(data.query)
+        search(composeTestRule, data.query)
         checkRhymes(composeTestRule, data.firstRhyme, data.secondRhyme)
         openThesaurus(composeTestRule, context, data.firstRhyme, data.firstSynonymForFirstRhyme)
         openDictionary(composeTestRule, context, data.secondSynonymForFirstRhyme, data.firstDefinitionForSecondSynonym)
@@ -140,7 +140,7 @@ class IntegrationTest {
         swipeViewPagerLeft(4)
         checkAllStarredWords(context, composeTestRule)
         swipeViewPagerRight(4)
-        search(data.query)
+        search(composeTestRule, data.query)
         checkRhymes(composeTestRule, data.firstRhyme, data.secondRhyme)
         openThesaurusCleanLayout(composeTestRule, context, data.firstRhyme, data.firstSynonymForFirstRhyme)
         openDictionaryCleanLayout(composeTestRule, context, data.secondSynonymForFirstRhyme, data.firstDefinitionForSecondSynonym)
@@ -189,7 +189,7 @@ class IntegrationTest {
     fun copyCleanLayoutTest() {
         val context: Context = activityTestRule.activity
         useCleanLayout()
-        search("donkey")
+        search(composeTestRule, "donkey")
         val wordToCopy = "swanky"
         composeTestRule.onNodeWithText(wordToCopy).assertIsDisplayed().performClick()
         composeTestRule.onNode(hasText(context.getString(R.string.menu_copy), substring = true))
@@ -199,30 +199,30 @@ class IntegrationTest {
 
     @Test
     fun themeTest() {
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_theme_title)
         composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_theme_value_auto)) and isSelectable()).assertIsSelected()
         composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_theme_value_dark)) and isSelectable()).performClick()
         pressBack()
 
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_theme_title)
         composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_theme_value_dark)) and isSelectable()).assertIsSelected()
         composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_theme_value_auto)) and isSelectable()).performClick()
         pressBack()
 
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_theme_title)
         composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_theme_value_auto)) and isSelectable()).assertIsSelected()
         composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_theme_value_light)) and isSelectable()).performClick()
         pressBack()
 
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_theme_title)
     }
 
     private fun useCleanLayout() {
-        openMenuItem(R.string.action_settings)
+        openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_layout_title)
         composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_layout_value_clean)) and isSelectable()).performClick()
         pressBack()

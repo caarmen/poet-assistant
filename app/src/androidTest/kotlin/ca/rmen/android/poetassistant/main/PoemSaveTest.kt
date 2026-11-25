@@ -23,6 +23,8 @@ package ca.rmen.android.poetassistant.main
 import android.content.Context
 import android.net.Uri
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.preference.PreferenceManager
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -38,12 +40,6 @@ import java.io.File
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
-import org.hamcrest.Matchers.allOf
 import ca.rmen.android.poetassistant.main.TestAppUtils.typeAndSpeakPoem
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
@@ -76,8 +72,9 @@ class PoemSaveTest {
         val poemFile = getPoemFile()
         assertFalse(poemFile.exists())
         typeAndSpeakPoem(composeTestRule, "Let's save a file")
-        openMenuItem(R.string.file)
-        onView(allOf(withId(R.id.title), withText(R.string.file_save), isDisplayed())).perform(click())
+        openMenuItem(composeTestRule, R.string.file)
+        composeTestRule.onNodeWithText(activityTestRule.activity.getString(R.string.file_save)).performClick()
+        composeTestRule.waitForIdle()
         assertTrue(poemFile.exists())
     }
 

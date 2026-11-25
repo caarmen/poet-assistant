@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
+import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -46,6 +47,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.HtmlCompat
 import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
+import ca.rmen.android.poetassistant.main.MenuHostProvider
 import ca.rmen.android.poetassistant.main.TabMenuActions
 import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
 import ca.rmen.android.poetassistant.main.reader.data.Poem
@@ -94,6 +96,11 @@ class ReaderFragment : Fragment(), TabMenuActions {
     private val isVisibleFlow = MutableStateFlow(false)
     private val isMenuVisible = MutableStateFlow(false)
 
+    // The host activity exposes an unattached toolbar as the MenuHost,
+    // since there is no action bar anymore.
+    private val menuHost: MenuHost?
+        get() = (activity as? MenuHostProvider)?.menuHost
+
     // Dedicated lifecycle owner for the menu provider registration. Its
     // registry only reaches RESUMED while the reader tab is the visible
     // page (driven by setMenuVisibility), so the provider is active on
@@ -110,10 +117,18 @@ class ReaderFragment : Fragment(), TabMenuActions {
     private val menuProvider = object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             menuInflater.inflate(R.menu.menu_tts, menu)
+            // Hide the main share action on the reader tab. The base menu
+            // provider re-inflates menu_main (share visible) on every
+            // invalidate while this provider is not registered.
             menu.findItem(R.id.action_share)?.isVisible = false
+            setMenuItemsEnabledState(menu)
         }
 
         override fun onPrepareMenu(menu: Menu) {
+            // In practice, onPrepareMenu isn't called.
+            setMenuItemsEnabledState(menu)
+        }
+        private fun setMenuItemsEnabledState(menu: Menu) {
             val hasSavedPoem = viewModel.state.value.poem is Poem.PersistedPoem
             val hasPoemText = viewModel.state.value.textFieldValue.text.isNotEmpty()
             menu.findItem(R.id.action_save)?.isEnabled = hasSavedPoem
@@ -150,6 +165,9 @@ class ReaderFragment : Fragment(), TabMenuActions {
                         printPoemUseCase(activity, poemText)
                     }
                 }
+                // Items from other menus (e.g. menu_main) are not consumed here;
+                // returning false lets the MenuHost dispatch them to its own listener.
+                else -> return false
             }
             return true
         }
@@ -168,7 +186,7 @@ class ReaderFragment : Fragment(), TabMenuActions {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().addMenuProvider(
+        (requireActivity() as? MenuHostProvider)?.menuHost?.addMenuProvider(
             menuProvider,
             menuVisibilityLifecycleOwner,
             Lifecycle.State.RESUMED,
@@ -180,7 +198,7 @@ class ReaderFragment : Fragment(), TabMenuActions {
                 menuVisibilityLifecycleOwner.setState(
                     if (menuVisible) Lifecycle.State.RESUMED else Lifecycle.State.CREATED,
                 )
-                requireActivity().invalidateMenu()
+                (requireActivity() as? MenuHostProvider)?.menuHost?.invalidateMenu()
             }
         }
         // Apply the poem shared into the app once per fragment instance,
@@ -201,7 +219,7 @@ class ReaderFragment : Fragment(), TabMenuActions {
     }
 
     override fun onDestroy() {
-        activity?.removeMenuProvider(menuProvider)
+        menuHost?.removeMenuProvider(menuProvider)
         super.onDestroy()
     }
 
@@ -260,7 +278,7 @@ class ReaderFragment : Fragment(), TabMenuActions {
                     viewModel.state
                         .map { Pair(it.poem is Poem.PersistedPoem, it.textFieldValue.text.isNotEmpty()) }
                         .distinctUntilChanged()
-                        .collect { activity?.invalidateMenu() }
+                        .collect { menuHost?.invalidateMenu() }
                 }
                 // The fragment is the single collector of the share
                 // flow: it owns the Context for the chooser.

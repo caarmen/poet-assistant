@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Carmen Alvarez
+ * Copyright (c) 2025 - current Carmen Alvarez
  *
  * This file is part of Poet Assistant.
  *
@@ -17,21 +17,15 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.search
+package ca.rmen.android.poetassistant.main
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.core.view.MenuHost
 
-@Dao
-interface SuggestionDao {
-    @Query("SELECT * FROM SUGGESTION")
-    suspend fun getSuggestions(): Array<Suggestion>
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAll(suggestion: Suggestion)
-
-    @Query("DELETE FROM SUGGESTION")
-    suspend fun deleteAll()
+/**
+ * Implemented by the activity that hosts the options menu without an action
+ * bar: fragments register their [androidx.core.view.MenuProvider]s on
+ * [menuHost].
+ */
+interface MenuHostProvider {
+    val menuHost: MenuHost
 }

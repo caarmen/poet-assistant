@@ -71,7 +71,7 @@ class AboutScreenTest {
     @Test
     fun openAboutScreenTest() {
         composeTestRule.waitForIdle()
-        TestUiUtils.openMenuItem(R.string.action_about)
+        TestUiUtils.openMenuItem(composeTestRule, R.string.action_about)
         checkLicense(ABOUT_LICENSE_APP_ROW_TAG, R.string.about_license_app, "GNU GENERAL")
         checkLicense(ABOUT_LICENSE_RHYMER_ROW_TAG, R.string.about_license_rhyming_dictionary, "Carnegie Mellon University")
         checkLicense(ABOUT_LICENSE_THESAURUS_ROW_TAG, R.string.about_license_thesaurus, "WordNet Release 2.1")

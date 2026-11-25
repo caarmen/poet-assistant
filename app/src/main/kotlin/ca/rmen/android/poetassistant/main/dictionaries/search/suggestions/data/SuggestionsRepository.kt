@@ -17,7 +17,7 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.search
+package ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.data
 
 import android.text.TextUtils
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
@@ -44,7 +44,7 @@ class SuggestionsRepository(
 
     suspend fun getSuggestions(filter: String?): List<Entry> {
         return withContext(ioDispatcher) {
-            val history = suggestionDao.getSuggestions().map { Entry(Source.HISTORY, it.getWord()) }
+            val history = suggestionDao.getSuggestions().map { Entry(Source.HISTORY, it.word) }
                 .asSequence().filter { TextUtils.isEmpty(filter) || it.word.contains(filter!!) }
                 .distinct()
                 .sortedBy { it.word }

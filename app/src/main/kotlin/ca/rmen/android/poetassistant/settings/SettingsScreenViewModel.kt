@@ -28,7 +28,7 @@ import ca.rmen.android.poetassistant.main.common.usecases.GetFileDisplayNameUseC
 import ca.rmen.android.poetassistant.main.common.usecases.GetTtsStateUseCase
 import ca.rmen.android.poetassistant.main.common.usecases.SpeakTextUseCase
 import ca.rmen.android.poetassistant.main.common.usecases.StopTtsUseCase
-import ca.rmen.android.poetassistant.main.dictionaries.search.SuggestionsRepository
+import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.data.SuggestionsRepository
 import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import ca.rmen.android.poetassistant.main.wotd.usecases.SetWotdEnabledUseCase
 import ca.rmen.android.poetassistant.settings.data.VoiceRepository

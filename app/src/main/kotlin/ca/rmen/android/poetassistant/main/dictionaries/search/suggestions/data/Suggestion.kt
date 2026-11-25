@@ -17,21 +17,17 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.main.dictionaries.search
+package ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import androidx.annotation.NonNull
 
 @Entity(tableName = "SUGGESTION", indices = [Index(value = ["WORD"], unique = true)])
-class Suggestion(word: String) {
+data class Suggestion(
 
     @PrimaryKey
-    @NonNull
     @ColumnInfo(name = "WORD")
-    private val mWord : String = word
-
-    fun getWord() = mWord
-}
+    val word: String,
+)

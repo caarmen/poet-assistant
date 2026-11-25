@@ -22,40 +22,28 @@ package ca.rmen.android.poetassistant.main
 import android.app.Activity
 import android.content.Context
 import android.os.SystemClock
-import android.util.Log
-import android.view.KeyEvent
-import android.view.View
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.NoMatchingViewException
-import androidx.test.espresso.PerformException
-import androidx.test.espresso.UiController
-import androidx.test.espresso.ViewAction
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.pressKey
-import androidx.test.espresso.action.ViewActions.swipeDown
 import androidx.test.espresso.action.ViewActions.swipeLeft
 import androidx.test.espresso.action.ViewActions.swipeRight
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isSelected
-import androidx.test.espresso.matcher.ViewMatchers.withClassName
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.viewpager.widget.ViewPager
-import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.R
-import org.hamcrest.Matcher
+import ca.rmen.android.poetassistant.main.dictionaries.search.ui.composables.MENU_OVERFLOW_TAG
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.endsWith
 import org.hamcrest.Matchers.equalToIgnoringCase
 import org.junit.Assert.assertEquals
 
@@ -64,35 +52,12 @@ import org.junit.Assert.assertEquals
  */
 object TestUiUtils {
 
-    private val TAG = Constants.TAG + TestUiUtils::class.simpleName
-
-    fun withCustomConstraints(action: ViewAction, constraint: Matcher<View>): ViewAction {
-        return object : ViewAction {
-            override fun getConstraints() = constraint
-            override fun getDescription() = action.description
-            override fun perform(uiController: UiController, view: View) {
-                action.perform(uiController, view)
-            }
-        }
-    }
-
-    fun openMenuItem(@StringRes titleRes: Int) {
-        getInstrumentation().waitForIdleSync()
-        swipeDown()
-        try {
-            onView(allOf(isDisplayed(), withClassName(endsWith("OverflowMenuButton")))).perform(click())
-        } catch (e: NoMatchingViewException) {
-            Log.wtf(TAG, "Couldn't press the menu button in the action bar. Resorting to the menu key event. Is this cheating?", e)
-            onView(withId(android.R.id.content)).perform(pressKey(KeyEvent.KEYCODE_MENU))
-            getInstrumentation().waitForIdleSync()
-            SystemClock.sleep(400) // :(
-        } catch (e: PerformException) {
-            Log.wtf(TAG, "Couldn't press the menu button in the action bar. Resorting to the menu key event. Is this cheating?", e)
-            onView(withId(android.R.id.content)).perform(pressKey(KeyEvent.KEYCODE_MENU))
-            getInstrumentation().waitForIdleSync()
-            SystemClock.sleep(400) // :(
-        }
-        onView(allOf(withId(R.id.title), withText(titleRes), isDisplayed())).perform(click())
+    fun openMenuItem(composeTestRule: ComposeTestRule, @StringRes titleRes: Int) {
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithTag(MENU_OVERFLOW_TAG).performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText(getInstrumentation().targetContext.getString(titleRes)).performClick()
+        composeTestRule.waitForIdle()
     }
 
     fun swipeViewPagerRight(count: Int) {

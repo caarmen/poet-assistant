@@ -40,22 +40,14 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.AnnotatedString
 import ca.rmen.android.poetassistant.main.common.ui.composables.ITEM_DICTIONARY_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_HEADER_FILTER_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_ITEM_ROW_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_SCREEN_CONTENT_LIST_TAG
-import androidx.test.espresso.ViewInteraction
-import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.pressImeActionButton
-import androidx.test.espresso.action.ViewActions.typeText
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.common.ui.composables.ITEM_THESAURUS_TAG
@@ -64,12 +56,13 @@ import ca.rmen.android.poetassistant.main.dictionaries.dictionary.ui.composables
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_HEADER_FILTER_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_ITEM_ROW_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_SCREEN_CONTENT_LIST_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.search.ui.composables.SEARCH_ICON_TAG
+import ca.rmen.android.poetassistant.main.dictionaries.search.ui.composables.SEARCH_INPUT_FIELD_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.CONFIRM_DELETE_DIALOG_CONFIRM_BUTTON_TAG
 import ca.rmen.android.poetassistant.main.favorites.ui.composables.FAVORITES_HEADER_DELETE_ALL_TAG
 import ca.rmen.android.poetassistant.main.reader.ui.composables.READER_CLEAR_CONFIRM_BUTTON_TAG
 import ca.rmen.android.poetassistant.main.reader.ui.composables.READER_PLAY_BUTTON_TAG
 import ca.rmen.android.poetassistant.main.reader.ui.composables.READER_POEM_TEXT_FIELD_TAG
-import org.hamcrest.Matchers.allOf
 
 /**
  * Utility functions specific to the functionality of this app.
@@ -78,7 +71,7 @@ object TestAppUtils {
 
     fun clearSearchHistory(composeTestRule: ComposeTestRule, context: Context) {
         // click on the settings menu item
-        TestUiUtils.openMenuItem(R.string.action_settings)
+        TestUiUtils.openMenuItem(composeTestRule, R.string.action_settings)
 
         TestUiUtils.clickPreference(composeTestRule, context, R.string.action_clear_search_history)
 
@@ -89,34 +82,22 @@ object TestAppUtils {
         pressBack()
     }
 
-    fun openSearchView() {
-        // Tap on the search icon in the action bar
-        onView(allOf(withId(R.id.open_search_bar_text_view), isDisplayed())).perform(click())
+    fun openSearchView(composeTestRule: ComposeTestRule) {
+        composeTestRule.onNodeWithTag(SEARCH_ICON_TAG, useUnmergedTree = true).performClick()
     }
 
-    fun typeQuery(query: String): ViewInteraction {
-        // Type the query term and search
-        getInstrumentation().waitForIdleSync()
-        val searchAutoComplete = onView(allOf(withId(R.id.open_search_view_edit_text), isDisplayed()))
-        searchAutoComplete.check(matches(isDisplayed()))
-        searchAutoComplete.perform(typeText(query))
-        getInstrumentation().waitForIdleSync()
-        return searchAutoComplete
+    fun typeQuery(composeTestRule: ComposeTestRule, query: String) {
+        composeTestRule
+            .onNodeWithTag(SEARCH_INPUT_FIELD_TAG)
+            .performTextInput(query)
     }
 
-    fun search(query: String) {
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        SystemClock.sleep(1000)
-        openSearchView()
-
-        // Type the query term and search
-        val vi = typeQuery(query)
-        getInstrumentation().waitForIdleSync()
-        vi.perform(pressImeActionButton())
-        getInstrumentation().waitForIdleSync()
+    fun search(composeTestRule: ComposeTestRule, query: String) {
+        composeTestRule.onNodeWithTag(SEARCH_ICON_TAG, useUnmergedTree = true).performClick()
+        typeQuery(composeTestRule, query)
+        composeTestRule.onNodeWithTag(SEARCH_INPUT_FIELD_TAG).performImeAction()
     }
+
 
     fun openThesaurus(composeTestRule: ComposeTestRule, context: Context, entry: String, expectedFirstSynonym: String) {
         composeTestRule.onNodeWithTag("${ITEM_THESAURUS_TAG}$entry").performClick()
@@ -287,8 +268,8 @@ object TestAppUtils {
     }
 
     fun clearPoem(composeTestRule: ComposeTestRule) {
-        TestUiUtils.openMenuItem(R.string.file)
-        onView(allOf(withId(R.id.title), withText(R.string.file_new), isDisplayed())).perform(click())
+        TestUiUtils.openMenuItem(composeTestRule, R.string.file)
+        composeTestRule.onNodeWithText(getInstrumentation().targetContext.getString(R.string.file_new)).performClick()
         composeTestRule.onNodeWithTag(READER_CLEAR_CONFIRM_BUTTON_TAG).performClick()
         composeTestRule.onNodeWithTag(READER_POEM_TEXT_FIELD_TAG).assertIsDisplayed()
             // Check that the text is empty.

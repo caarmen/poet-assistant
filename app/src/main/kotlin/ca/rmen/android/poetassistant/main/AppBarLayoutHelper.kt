@@ -32,7 +32,7 @@ object AppBarLayoutHelper {
         Log.v(TAG, "enableAutoHide $activity")
         if (activity == null || activity.isFinishing) return
         if (activity.resources.getBoolean(R.bool.toolbar_auto_hide)) {
-            enableAutoHide(activity.findViewById<View>(R.id.toolbar))
+            enableAutoHide(activity.findViewById<View>(R.id.search_bar))
             enableAutoHide(activity.findViewById<View>(R.id.tabs))
         }
     }
@@ -41,7 +41,7 @@ object AppBarLayoutHelper {
         Log.v(TAG, "disableAutoHide $activity")
         if (activity == null || activity.isFinishing) return
         if (activity.resources.getBoolean(R.bool.toolbar_auto_hide)) {
-            disableAutoHide(activity.findViewById<View>(R.id.toolbar))
+            disableAutoHide(activity.findViewById<View>(R.id.search_bar))
             disableAutoHide(activity.findViewById<View>(R.id.tabs))
         }
     }
