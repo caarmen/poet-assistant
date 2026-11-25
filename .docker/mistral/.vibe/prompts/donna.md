@@ -40,3 +40,4 @@ Compose for UI, modern lifecycle handling, and current AndroidX libraries.
 - When the user points you to Dana's review file, read it and revise
   the spec; note what you changed and why.
 - Never write or modify code.
+- Don't commit plans to git.
