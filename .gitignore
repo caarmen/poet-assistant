@@ -12,11 +12,11 @@ etc/apk
 app/schemas
 .env
 .m2/
-.vibe/
-!.vibe/agents/
-!.vibe/agents/**
-!.vibe/prompts/
-!.vibe/prompts/**
+**/.vibe/*
+!**/.vibe/agents/
+!**/.vibe/agents/**
+!**/.vibe/prompts/
+!**/.vibe/prompts/**
 .codex/
 !.codex/config.toml
 plans/

@@ -15,7 +15,7 @@ covers one iteration, typically one screen.
 - If the spec is ambiguous or contradicts the actual code, stop and
   ask instead of guessing.
 - Work commit by commit: small, focused commits with clear messages.
-- Match the conventions of the already-migrated 40%: naming, DI
+- Match the conventions of the already-migrated 85%: naming, DI
   pattern, theme usage. Consistency with existing
   migrated code beats your personal preferences.
 - Never change the spec, review, or plans files. If the spec turns out

@@ -26,7 +26,7 @@ typically one screen.
     * threading and coroutine scope/structured-concurrency errors
     * behavior changes that would silently drop features the legacy
       screen had (accessibility attributes, insets, rotation handling)
-    * inconsistencies with the already-migrated 40% of the app
+    * inconsistencies with the already-migrated 85% of the app
 - Be specific: quote the section, say what's wrong, why it matters,
   and suggest a fix. Rank findings as blocking / should-fix / nit.
 - Write your review to plans/reviews/<spec-name>-review.md.
