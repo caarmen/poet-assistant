@@ -19,10 +19,12 @@
 
 package ca.rmen.android.poetassistant.main
 
-import android.app.Activity
 import android.content.Context
 import android.os.SystemClock
 import androidx.annotation.StringRes
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeTestRule
@@ -33,19 +35,13 @@ import androidx.compose.ui.test.performScrollToNode
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.swipeLeft
 import androidx.test.espresso.action.ViewActions.swipeRight
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.isSelected
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
-import androidx.viewpager.widget.ViewPager
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.dictionaries.search.ui.composables.MENU_OVERFLOW_TAG
+import ca.rmen.android.poetassistant.main.ui.composables.TABS_TITLE_STRIP_LABEL_TAG
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.Matchers.equalToIgnoringCase
-import org.junit.Assert.assertEquals
 
 /**
  * Generic utility functions for Ui operations like opening a menu or swiping the screen.
@@ -74,47 +70,17 @@ object TestUiUtils {
         SystemClock.sleep(200)
     }
 
-    fun checkTitleStripOrTab(context: Context, @StringRes titleRes: Int) {
+    fun checkTitleStripOrTab(composeTestRule: ComposeTestRule, @StringRes titleRes: Int) {
+        val context = getInstrumentation().targetContext
+        val tabTitle = context.getString(titleRes)
         if (context.resources.getBoolean(R.bool.tab_text)) {
-            checkSelectedTab(context, titleRes)
+            composeTestRule.onNodeWithTag("tab_$tabTitle").assertIsSelected()
         } else {
-            checkTitleStripCenterTitle(context, titleRes)
+            composeTestRule.onNodeWithTag(TABS_TITLE_STRIP_LABEL_TAG).assertIsDisplayed()
+                .assertTextEquals(tabTitle)
         }
     }
 
-    private fun checkTitleStripCenterTitle(context: Context, @StringRes titleRes: Int) {
-        // Prefer checking the ViewPager's selected page title when available. Some
-        // test contexts don't include the ViewPager (e.g., isolated router tests),
-        // so fall back to safer view-matchers.
-        onView(withId(R.id.pager_title_strip)).check(matches(isDisplayed()))
-        val expectedTitle = context.getString(titleRes)
-        val activity = context as? Activity
-        try {
-            val viewPager = activity?.findViewById<ViewPager>(R.id.view_pager)
-            if (viewPager != null && viewPager.adapter != null) {
-                val currentTitle = viewPager.adapter?.getPageTitle(viewPager.currentItem)?.toString()
-                assertEquals("Expected selected page title", expectedTitle.lowercase(), currentTitle?.lowercase())
-                return
-            }
-        } catch (t: Throwable) {
-            // Ignore and fall back to view matching below
-        }
-
-        // Fallback: look for the expected title text inside the PagerTitleStrip. If that
-        // fails, assert the title text is displayed anywhere (best-effort).
-        try {
-            onView(allOf(withText(equalToIgnoringCase(expectedTitle)), isDescendantOfA(withId(R.id.pager_title_strip))))
-                .check(matches(isDisplayed()))
-        } catch (e: Throwable) {
-            onView(withText(equalToIgnoringCase(expectedTitle))).check(matches(isDisplayed()))
-        }
-    }
-
-    private fun checkSelectedTab(context: Context, @StringRes titleRes: Int) {
-        onView(allOf(withText(equalToIgnoringCase(context.getString(titleRes))),
-                isDescendantOfA(withId(R.id.tabs))))
-                .check(matches(isSelected()))
-    }
 
     fun clickPreference(composeTestRule: ComposeTestRule, context: Context, @StringRes prefTitleRes: Int) {
         // Scroll to the preference in case it's not visible

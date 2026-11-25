@@ -90,7 +90,7 @@ object CustomChecks {
     }
 
     fun checkPatterns(context: Context, composeTestRule: ComposeTestRule, query: String, vararg patterns: String) {
-        checkTitleStripOrTab(context, R.string.tab_pattern)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_pattern)
         val emptyNode = composeTestRule.onNodeWithTag(PATTERNS_SCREEN_CONTENT_EMPTY_TAG)
         val listNode = composeTestRule.onNodeWithTag(PATTERNS_SCREEN_CONTENT_LIST_TAG)
         if (patterns.isNotEmpty()) {
@@ -113,7 +113,7 @@ object CustomChecks {
     }
 
     fun checkAllStarredWords(context: Context, composeTestRule: ComposeTestRule, vararg expectedStarredWords: String) {
-        checkTitleStripOrTab(context, R.string.tab_favorites)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_favorites)
         val emptyNode = composeTestRule.onNodeWithTag(FAVORITES_SCREEN_CONTENT_EMPTY_TAG)
         val listNode = composeTestRule.onNodeWithTag(FAVORITES_SCREEN_CONTENT_LIST_TAG)
         if (expectedStarredWords.isEmpty()) {
