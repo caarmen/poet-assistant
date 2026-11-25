@@ -29,6 +29,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.ExpandedDockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.Icon
@@ -92,6 +93,7 @@ data class SearchBarMenuItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainSearchBar(
+    isLargeScreen: Boolean,
     suggestions: List<SearchSuggestion>,
     menuItems: () -> List<SearchBarMenuItem>,
     onMenuItemClick: (Int) -> Unit,
@@ -184,12 +186,7 @@ fun MainSearchBar(
                 .padding(start = 16.dp, end = 16.dp, top = 8.dp),
         )
 
-        // Expanded search in its own full-screen window. The input field tag
-        // goes on this instance only, so tests find exactly one node.
-        ExpandedFullScreenSearchBar(
-            state = searchBarState,
-            inputField = { inputField(Modifier.testTag(SEARCH_INPUT_FIELD_TAG)) },
-        ) {
+        val suggestionsContent: @Composable () -> Unit  = {
             LazyColumn {
                 // A word can appear twice (history + dictionary), so the key
                 // must include the source icon, not just the word.
@@ -199,6 +196,23 @@ fun MainSearchBar(
                         onClick = ::searchTermSelected,
                     )
                 }
+            }
+        }
+        // Expanded search in its own full-screen window. The input field tag
+        // goes on this instance only, so tests find exactly one node.
+        if (isLargeScreen) {
+            ExpandedDockedSearchBar(
+                state = searchBarState,
+                inputField = { inputField(Modifier.testTag(SEARCH_INPUT_FIELD_TAG)) },
+            ) {
+                suggestionsContent()
+            }
+        } else {
+            ExpandedFullScreenSearchBar(
+                state = searchBarState,
+                inputField = { inputField(Modifier.testTag(SEARCH_INPUT_FIELD_TAG)) },
+            ) {
+                suggestionsContent()
             }
         }
     }
