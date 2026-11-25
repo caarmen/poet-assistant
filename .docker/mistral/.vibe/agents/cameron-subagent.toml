@@ -1,0 +1,6 @@
+# Cameron — code reviewer, read-only
+agent_type = "subagent"
+display_name = "Cameron"
+description = "Reviews code commit by commit against the spec; writes feedback files."
+active_model = "mistral-large-4-0-3"
+system_prompt_id = "cameron-subagent"
