@@ -6,7 +6,7 @@ script_dir="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
 repo_root="$(realpath "${script_dir}/../..")"
 
 docker build -t poetassistant-agent-base -f "${repo_root}/.docker/agent-base/Dockerfile" "${repo_root}/.docker/agent-base"
-docker build -t poetassistant-mistral -f "${script_dir}/Dockerfile" "${script_dir}"
+docker build -t poetassistant-mistral --no-cache-filter installmistral -f "${script_dir}/Dockerfile" "${script_dir}"
 
 docker run --rm -it \
   -e GM_API_KEY="${GM_API_KEY}" \
