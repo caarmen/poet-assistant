@@ -26,6 +26,8 @@ import android.database.DataSetObserver
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.MainThread
 import androidx.viewpager.widget.ViewPager
@@ -34,42 +36,42 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.ComposeView
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
-import androidx.core.view.updatePadding
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.viewpager.widget.PagerTitleStrip
-import com.google.android.material.tabs.TabLayout
 import ca.rmen.android.poetassistant.BuildConfig
 import ca.rmen.android.poetassistant.Constants
 import ca.rmen.android.poetassistant.main.favorites.data.FavoritesRepository
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.about.AboutActivity
 import ca.rmen.android.poetassistant.di.IODispatcher
-import ca.rmen.android.poetassistant.getInsets
 import ca.rmen.android.poetassistant.main.dictionaries.EmbeddedDb
 import ca.rmen.android.poetassistant.main.dictionaries.rt.OnWordClickListener
 import ca.rmen.android.poetassistant.main.dictionaries.dictionary.usecases.GetRandomWordUseCase
 import ca.rmen.android.poetassistant.main.dictionaries.search.Search
 import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.data.SuggestionsRepository
 import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.SuggestionsViewModel
-import ca.rmen.android.poetassistant.main.dictionaries.search.ui.composables.MainSearchBar
 import ca.rmen.android.poetassistant.main.dictionaries.search.ui.composables.SearchBarMenuItem
 import ca.rmen.android.poetassistant.main.reader.ReaderFragment
+import ca.rmen.android.poetassistant.main.ui.composables.MainScreen
 import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.settings.SettingsRepository
-import com.google.android.material.appbar.AppBarLayout
+import ca.rmen.android.poetassistant.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -98,9 +100,12 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
 
     @IODispatcher @Inject lateinit var ioDispatcher: CoroutineDispatcher
 
-    private lateinit var appBarLayout: AppBarLayout
-    private lateinit var tabs: TabLayout
     private lateinit var viewPager: ViewPager
+
+    // Tab state passed to MainScreen. Updated from the page-change listener
+    // (swipes) and the adapter observer (extra tab added/removed).
+    private val selectedTabIndex = mutableStateOf(0)
+    private val tabs = mutableStateOf<List<Tab>>(emptyList())
 
     // Always-on provider that owns the base menu. Toolbar.invalidateMenu()
     // removes provider-supplied items and re-runs onCreateMenu, so item state
@@ -138,36 +143,36 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
             window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         }
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        enableEdgeToEdge()
 
-        val pagerTitleStrip = findViewById<PagerTitleStrip>(R.id.pager_title_strip)
-        appBarLayout = findViewById(R.id.app_bar_layout)
-        tabs = findViewById(R.id.tabs)
-        viewPager = findViewById(R.id.view_pager)
-
-        tabs.tabMode = if (resources.getBoolean(R.bool.tab_text)) TabLayout.MODE_SCROLLABLE else TabLayout.MODE_FIXED
-        pagerTitleStrip.visibility = if (resources.getBoolean(R.bool.tab_text)) View.GONE else View.VISIBLE
         mPagerAdapter = PagerAdapter(this, supportFragmentManager, intent)
         mPagerAdapter.registerDataSetObserver(mAdapterChangeListener)
 
-        // Set up the ViewPager with the sections adapter.
-        viewPager.adapter = mPagerAdapter
-        viewPager.offscreenPageLimit = 5
-        viewPager.addOnPageChangeListener(mOnPageChangeListener)
+        // Set up the ViewPager with the sections adapter. Created programmatically
+        // (activity_main.xml is gone) with a stable ID: PagerAdapter.getFragment()
+        // builds its fragment tag from viewGroup.id.
+        viewPager = ViewPager(this).apply {
+            id = R.id.view_pager
+            adapter = mPagerAdapter
+            offscreenPageLimit = 5
+            addOnPageChangeListener(mOnPageChangeListener)
+        }
 
-        tabs.setupWithViewPager(viewPager)
         val savedTab = settingsRepository.tab
         if (savedTab != null && savedTab.ordinal < mPagerAdapter.count) {
             viewPager.currentItem = savedTab.ordinal
         }
         mAdapterChangeListener.onChanged()
+        selectedTabIndex.value = viewPager.currentItem
 
         // If the app was launched with a query for the a particular tab, focus on that tab.
         if (intent.data?.host != null) {
             val tab = Tab.parse(intent.data!!.host!!) ?: Tab.DICTIONARY
             viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false)
+            selectedTabIndex.value = viewPager.currentItem
         } else if (Intent.ACTION_SEND == intent.action) {
             viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
+            selectedTabIndex.value = viewPager.currentItem
         }
 
         mSearch = Search(viewPager, getRandomWordUseCase = getRandomWordUseCase, suggestionsRepository = suggestionsRepository)
@@ -177,53 +182,51 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
             onDatabaseLoadResult(dbLoaded)
         }
         volumeControlStream = AudioManager.STREAM_MUSIC
-        val searchBar = findViewById<ComposeView>(R.id.search_bar)
-        getInsets(appBarLayout) { view, insets ->
-            view.updatePadding(
-                left = insets.left,
-                right = insets.right,
-                top = insets.top,
-            )
-        }
-        getInsets(searchBar) { view, insets ->
-            view.updatePadding(
-                left = insets.left,
-                right = insets.right,
-            )
-        }
-        searchBar.setContent {
-            val suggestions by suggestionsViewModel.suggestions.collectAsStateWithLifecycle()
-            @OptIn(ExperimentalMaterial3WindowSizeClassApi::class) val isLargeScreen =
-                calculateWindowSizeClass(this).widthSizeClass != WindowWidthSizeClass.Compact
-            MainSearchBar(
-                isLargeScreen = isLargeScreen,
-                suggestions = suggestions,
-                menuItems = { buildMenuItems(menuToolbar.menu) },
-                onMenuItemClick = { id -> menuToolbar.menu.performIdentifierAction(id, 0) },
-                onQueryChange = suggestionsViewModel::setTypedText,
-                onSearch = { term ->
-                    lifecycleScope.launch {
-                        mSearch.addSuggestions(term)
-                    }
-                    mSearch.search(term)
-                },
-                onExpandedChange = { isExpanded ->
-                    if (isExpanded) {
-                        AppBarLayoutHelper.forceExpandAppBarLayout(appBarLayout)
-                    }
-                },
-            )
+
+        val showTabText = resources.getBoolean(R.bool.tab_text)
+        val showTabIcons = resources.getBoolean(R.bool.tab_icons)
+        setContent {
+            AppTheme {
+                val suggestions by suggestionsViewModel.suggestions.collectAsStateWithLifecycle()
+                val tabsState by tabs
+                val selectedTabIndexState by selectedTabIndex
+                @OptIn(ExperimentalMaterial3WindowSizeClassApi::class) val isLargeScreen =
+                    calculateWindowSizeClass(this).widthSizeClass != WindowWidthSizeClass.Compact
+                MainScreen(
+                    tabs = tabsState,
+                    selectedTabIndex = selectedTabIndexState,
+                    onTabSelected = { index -> viewPager.setCurrentItem(index, true) },
+                    showTabText = showTabText,
+                    showTabIcons = showTabIcons,
+                    isLargeScreen = isLargeScreen,
+                    suggestions = suggestions,
+                    menuItems = { buildMenuItems(menuToolbar.menu) },
+                    onMenuItemClick = { id -> menuToolbar.menu.performIdentifierAction(id, 0) },
+                    onQueryChange = suggestionsViewModel::setTypedText,
+                    onSearch = { term ->
+                        lifecycleScope.launch {
+                            mSearch.addSuggestions(term)
+                        }
+                        mSearch.search(term)
+                    },
+                    onExpandedChange = { /* no AppBarLayout to expand anymore */ },
+                    content = { padding ->
+                        AndroidView(
+                            factory = { viewPager },
+                            modifier = Modifier
+                                .padding(padding)
+                                .fillMaxSize()
+                                .testTag("view_pager"),
+                        )
+                    },
+                )
+            }
         }
     }
 
     override fun onResume() {
         super.onResume()
         Log.v(TAG, "onResume")
-        // Weird bug that I don't understand :(
-        // Open about (or settings) and come back to the main activity:
-        // the AppBarLayout is hidden (even if it wasn't hidden before).
-        // We'll force it to be shown again here.
-        AppBarLayoutHelper.forceExpandAppBarLayout(appBarLayout)
     }
 
     override fun onPause() {
@@ -346,33 +349,20 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
             val tab = mPagerAdapter.getTabForPosition(position)
+            selectedTabIndex.value = position
 
-            if (tab == Tab.READER) {
-                AppBarLayoutHelper.enableAutoHide(this@MainActivityImpl)
-            } else {
+            if (tab != Tab.READER) {
                 // Hide the keyboard when we navigate to any tab other than the reader tab.
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
                 imm?.hideSoftInputFromWindow(viewPager.windowToken, 0)
             }
-            AppBarLayoutHelper.forceExpandAppBarLayout(appBarLayout)
             settingsRepository.tab = tab
         }
     }
 
     private val mAdapterChangeListener = object : DataSetObserver() {
         override fun onChanged() {
-            for (i in 0 until tabs.tabCount) {
-                val icon = mPagerAdapter.getIcon(i)
-                val tab = tabs.getTabAt(i)
-                if (tab != null) {
-                    if (icon != null) {
-                        tab.setIcon(icon)
-                    }
-                    if (!resources.getBoolean(R.bool.tab_text)) {
-                        tab.text = null
-                    }
-                }
-            }
+            tabs.value = (0 until mPagerAdapter.count).map { mPagerAdapter.getTabForPosition(it) }
         }
     }
 }

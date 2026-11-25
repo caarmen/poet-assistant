@@ -44,12 +44,6 @@ class TestUtilityClasses {
 
     @Test
     @Throws(Exception::class)
-    fun testAppBarLayoutHelper() {
-        assertUtilityClassVisibility(AppBarLayoutHelper::class.java)
-    }
-
-    @Test
-    @Throws(Exception::class)
     fun testPatterns() {
         assertUtilityClassVisibility(Patterns::class.java)
     }
