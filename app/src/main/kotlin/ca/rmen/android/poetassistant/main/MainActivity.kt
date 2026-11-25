@@ -52,6 +52,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.core.view.doOnAttach
+import androidx.fragment.app.commitNow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import ca.rmen.android.poetassistant.BuildConfig
@@ -210,7 +212,9 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
                     onExpandedChange = { /* no AppBarLayout to expand anymore */ },
                     content = { padding ->
                         AndroidView(
-                            factory = { viewPager },
+                            factory = {
+                                viewPager
+                            },
                             modifier = Modifier
                                 .padding(padding)
                                 .fillMaxSize()
@@ -218,6 +222,18 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
                         )
                     },
                 )
+            }
+        }
+        // at the end of onCreate, after setContent { ... }
+        if (savedInstanceState != null) {
+            viewPager.doOnAttach {   // androidx.core.view.doOnAttach
+                val fm = supportFragmentManager
+                // Fragments restored before the pager existed: their views have no parent.
+                val stale = fm.fragments.filter {
+                    it.isAdded && it.id == R.id.view_pager && it.view?.parent == null
+                }
+                stale.forEach { f -> fm.commitNow { detach(f) } }   // destroys the orphaned view
+                stale.forEach { f -> fm.commitNow { attach(f) } }   // re-creates it, now finding R.id.view_pager
             }
         }
     }
