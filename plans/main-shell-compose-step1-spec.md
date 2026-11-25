@@ -163,15 +163,6 @@ fun MainScreen(
 fun MainScreenContent(/* same params as MainScreen */) { … }
 ```
 
-**Parameter grouping note:** The flat parameter list in Step 1 is
-temporary. In Step 2, `MainScreenViewModel` exposes
-`StateFlow<MainScreenState>` and `MainScreenContent` collapses to the
-standard project shape: a single `state: MainScreenState` data class for
-all state (tabs, selectedTabIndex, suggestions, isLargeScreen, showTabText,
-showTabIcons), with event callbacks (`onTabSelected`, `onSearch`, …) as
-individual lambdas — matching `WotdScreenContent`, `RhymerScreenContent`,
-etc. No intermediate grouping is needed in Step 1.
-
 **Key design decision — the `content` slot:** `MainScreen` does not know
 or care what is rendered in the content area. It exposes a
 `content: @Composable (PaddingValues) -> Unit` parameter. In Step 1,
