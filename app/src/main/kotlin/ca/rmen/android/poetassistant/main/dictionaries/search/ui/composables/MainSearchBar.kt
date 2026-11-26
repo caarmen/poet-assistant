@@ -19,25 +19,16 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.search.ui.composables
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.ExpandedDockedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.SearchBarValue
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,12 +41,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.SuggestionsViewModel.SearchSuggestion
-import ca.rmen.android.poetassistant.main.dictionaries.search.suggestions.ui.composables.SuggestionItem
 import ca.rmen.android.poetassistant.theme.AppTheme
-import kotlinx.coroutines.launch
 
 const val MENU_OVERFLOW_TAG = "Menu_Overflow_Tag"
 const val SEARCH_ICON_TAG = "Search_Icon_Tag"
@@ -105,7 +93,6 @@ fun MainSearchBar(
     val searchBarState = rememberSearchBarState()
     val textFieldState = rememberTextFieldState()
     var showMenu by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
 
     // Forward the query text to the suggestions view model.
     LaunchedEffect(textFieldState) {
@@ -115,105 +102,28 @@ fun MainSearchBar(
     val expanded = searchBarState.currentValue == SearchBarValue.Expanded
     LaunchedEffect(expanded) { onExpandedChange(expanded) }
 
-    fun searchTermSelected(term: String) {
-        if (term.isNotBlank()) {
-            onSearch(term)
-        }
-        // Clear the query text after a search is performed.
-        textFieldState.edit { replace(0, length, "") }
-        coroutineScope.launch { searchBarState.animateToCollapsed() }
-    }
-
     AppTheme {
-        val inputField: @Composable (Modifier) -> Unit = { fieldModifier ->
-            SearchBarDefaults.InputField(
-                modifier = fieldModifier,
-                textFieldState = textFieldState,
-                searchBarState = searchBarState,
-                onSearch = { searchTermSelected(textFieldState.text.toString()) },
-                placeholder = { Text(stringResource(R.string.search_hint)) },
-                // M3 pattern: back arrow while expanded, search icon when collapsed.
-                leadingIcon = {
-                    if (expanded) {
-                        IconButton(onClick = { coroutineScope.launch { searchBarState.animateToCollapsed() } }) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = stringResource(R.string.content_description_collapse_search),
-                            )
-                        }
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = stringResource(R.string.content_description_search),
-                            modifier = Modifier.testTag(SEARCH_ICON_TAG),
-                        )
-                    }
-                },
-                // The overflow menu is hidden while the search view is expanded.
-                trailingIcon = {
-                    if (!expanded) {
-                        IconButton(
-                            onClick = { showMenu = true },
-                            modifier = Modifier.testTag(MENU_OVERFLOW_TAG),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = stringResource(R.string.content_description_open_menu),
-                            )
-                        }
-                        DropdownMenu(
-                            expanded = showMenu,
-                            onDismissRequest = { showMenu = false },
-                        ) {
-                            MenuContent(
-                                items = menuItems(),
-                                onItemClick = { id ->
-                                    showMenu = false
-                                    onMenuItemClick(id)
-                                },
-                            )
-                        }
-                    }
-                },
+
+        IconButton(
+            onClick = { showMenu = true },
+            modifier = Modifier.testTag(MENU_OVERFLOW_TAG),
+        ) {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = stringResource(R.string.content_description_open_menu),
             )
         }
-        // Collapsed bar in the app bar, with 16dp horizontal margins.
-        SearchBar(
-            state = searchBarState,
-            inputField = {inputField(Modifier)},
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 8.dp),
-        )
-
-        val suggestionsContent: @Composable () -> Unit  = {
-            LazyColumn {
-                // A word can appear twice (history + dictionary), so the key
-                // must include the source icon, not just the word.
-                items(suggestions, key = { "${it.word}-${it.iconResource}" }) { suggestion ->
-                    SuggestionItem(
-                        suggestion = suggestion,
-                        onClick = ::searchTermSelected,
-                    )
-                }
-            }
-        }
-        // Expanded search in its own full-screen window. The input field tag
-        // goes on this instance only, so tests find exactly one node.
-        if (isLargeScreen) {
-            ExpandedDockedSearchBar(
-                state = searchBarState,
-                inputField = { inputField(Modifier.testTag(SEARCH_INPUT_FIELD_TAG)) },
-            ) {
-                suggestionsContent()
-            }
-        } else {
-            ExpandedFullScreenSearchBar(
-                state = searchBarState,
-                inputField = { inputField(Modifier.testTag(SEARCH_INPUT_FIELD_TAG)) },
-            ) {
-                suggestionsContent()
-            }
+        DropdownMenu(
+            expanded = showMenu,
+            onDismissRequest = { showMenu = false },
+        ) {
+            MenuContent(
+                items = menuItems(),
+                onItemClick = { id ->
+                    showMenu = false
+                    onMenuItemClick(id)
+                },
+            )
         }
     }
 }
