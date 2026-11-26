@@ -24,7 +24,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -60,6 +59,30 @@ class ThesaurusFragment : Fragment(), TabMenuActions {
             }
         }
     }
+
+    @Inject
+    lateinit var shareUseCase: ShareUseCase
+
+    @Inject
+    lateinit var openExternalAppUseCase: OpenExternalAppUseCase
+
+    @Inject
+    lateinit var openExternalSearchUseCase: OpenExternalSearchUseCase
+
+    private val viewModel: ThesaurusScreenViewModel by viewModels()
+    private val isVisibleFlow = MutableStateFlow(false)
+
+    override fun onResume() {
+        super.onResume()
+        isVisibleFlow.value = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isVisibleFlow.value = false
+    }
+
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,8 +94,37 @@ class ThesaurusFragment : Fragment(), TabMenuActions {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             setContent {
+                val isVisible by isVisibleFlow.collectAsState()
+                // Large screens (tablets) show alternating row colors in
+                // the result list.
+                val isLargeScreen =
+                    calculateWindowSizeClass(requireActivity()).widthSizeClass != WindowWidthSizeClass.Compact
                 AppTheme {
-                    Text(text="thesaurus")
+                    if (isVisible) {
+                        ThesaurusScreen(
+                            viewModel = viewModel,
+                            shareUseCase = shareUseCase,
+                            openExternalAppUseCase = openExternalAppUseCase,
+                            openExternalSearchUseCase = openExternalSearchUseCase,
+                            isLargeScreen = isLargeScreen,
+                            onSearchInTab = (requireActivity() as OnWordClickListener)::onWordClick,
+                            onSnackbarText = {
+                                Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
+                            },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .nestedScroll(rememberNestedScrollInteropConnection())
+                        )
+                    }
+                }
+            }
+
+            // Set the initial query if one was provided. Idempotent: on a
+            // configuration change this must not reset a later search nor
+            // clear an active filter.
+            if (requireArguments().containsKey(ARG_INITIAL_QUERY)) {
+                requireArguments().getString(ARG_INITIAL_QUERY)?.let {
+                    viewModel.onInitialQuerySearched(it)
                 }
             }
         }
@@ -80,6 +132,10 @@ class ThesaurusFragment : Fragment(), TabMenuActions {
     }
 
     override fun onShare() {
+        viewModel.onShare()
     }
 
+    fun query(word: String) {
+        viewModel.onWordSearched(word)
+    }
 }
