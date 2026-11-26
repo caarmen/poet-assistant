@@ -74,13 +74,6 @@ fun ReaderScreen(
     }
 
     // Expand the app bar when the keyboard closes.
-    val density = LocalDensity.current
-    val isImeVisible = WindowInsets.ime.getBottom(density) > 0
-    var wasImeVisible by remember { mutableStateOf(isImeVisible) }
-    LaunchedEffect(isImeVisible) {
-        if (wasImeVisible && !isImeVisible) onImeClosed()
-        wasImeVisible = isImeVisible
-    }
 
     var showWordCountHelpDialog by remember { mutableStateOf(false) }
 
