@@ -31,24 +31,18 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.MenuHostProvider
 import ca.rmen.android.poetassistant.main.TabMenuActions
 import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
-import ca.rmen.android.poetassistant.main.reader.data.Poem
 import ca.rmen.android.poetassistant.main.reader.usecases.GetSaveAsFilenameUseCase
 import ca.rmen.android.poetassistant.main.reader.usecases.PrintPoemUseCase
 import ca.rmen.android.poetassistant.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -71,16 +65,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
         }
     }
 
-    @Inject
-    lateinit var shareUseCase: ShareUseCase
-
-    @Inject
-    lateinit var getSaveAsFilenameUseCase: GetSaveAsFilenameUseCase
-
-    @Inject
-    lateinit var printPoemUseCase: PrintPoemUseCase
-
-    private val viewModel: ReaderScreenViewModel by viewModels()
     private val isMenuVisible = MutableStateFlow(false)
 
     // The host activity exposes an unattached toolbar as the MenuHost,
@@ -158,22 +142,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val owner = viewLifecycleOwner
-        owner.lifecycleScope.launch {
-            owner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Invalidate the options menu only when the menu
-                // enablement inputs change, not on every keystroke.
-                launch {
-                    viewModel.state
-                        .map { Pair(it.poem is Poem.PersistedPoem, it.textFieldValue.text.isNotEmpty()) }
-                        .distinctUntilChanged()
-                        .collect { menuHost?.invalidateMenu() }
-                }
-            }
-        }
-    }
 
     override fun onShare() {
     }
