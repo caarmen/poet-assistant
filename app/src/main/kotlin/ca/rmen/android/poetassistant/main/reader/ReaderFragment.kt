@@ -104,35 +104,12 @@ class ReaderFragment : Fragment(), TabMenuActions {
 
     private val menuProvider = object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            menuInflater.inflate(R.menu.menu_tts, menu)
-            // Hide the main share action on the reader tab. The base menu
-            // provider re-inflates menu_main (share visible) on every
-            // invalidate while this provider is not registered.
-            menu.findItem(R.id.action_share)?.isVisible = false
-            setMenuItemsEnabledState(menu)
-        }
-
-        override fun onPrepareMenu(menu: Menu) {
-            // In practice, onPrepareMenu isn't called.
-            setMenuItemsEnabledState(menu)
-        }
-        private fun setMenuItemsEnabledState(menu: Menu) {
-            val hasSavedPoem = viewModel.state.value.poem is Poem.PersistedPoem
-            val hasPoemText = viewModel.state.value.textFieldValue.text.isNotEmpty()
-            menu.findItem(R.id.action_save)?.isEnabled = hasSavedPoem
-            listOf(
-                R.id.action_new,
-                R.id.action_save_as,
-                R.id.action_share,
-                R.id.action_share_poem_text,
-                R.id.action_share_poem_audio,
-                R.id.action_print,
-            ).forEach { menu.findItem(it)?.isEnabled = hasPoemText }
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-            return true
+            TODO("Not yet implemented")
         }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
