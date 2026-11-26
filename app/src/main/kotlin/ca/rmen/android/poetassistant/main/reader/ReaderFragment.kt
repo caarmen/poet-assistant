@@ -23,17 +23,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Text
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import ca.rmen.android.poetassistant.main.TabMenuActions
-import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
-import ca.rmen.android.poetassistant.main.reader.usecases.GetSaveAsFilenameUseCase
-import ca.rmen.android.poetassistant.main.reader.usecases.PrintPoemUseCase
 import ca.rmen.android.poetassistant.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 /**
  * The reader tab: a Compose screen for writing and playing a poem.
@@ -54,20 +49,10 @@ class ReaderFragment : Fragment(), TabMenuActions {
         }
     }
 
-    @Inject
-    lateinit var shareUseCase: ShareUseCase
-
-    @Inject
-    lateinit var getSaveAsFilenameUseCase: GetSaveAsFilenameUseCase
-
-    @Inject
-    lateinit var printPoemUseCase: PrintPoemUseCase
-
     fun onMenuNew() {
     }
 
     fun onMenuOpen() {
-        openPoemLauncher.launch(arrayOf("text/plain"))
     }
 
     fun onMenuSave() {
@@ -80,22 +65,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
     }
 
     fun onMenuPrint() {
-    }
-
-    // A canceled picker yields a null uri: do nothing.
-    private val openPoemLauncher =
-        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // Apply the poem shared into the app once per fragment instance,
-        // then clear the argument: rotation and process death must not
-        // re-apply it over the user's edits.
-        if (requireArguments().containsKey(ARG_INITIAL_POEM)) {
-            val initialPoem = requireArguments().getString(ARG_INITIAL_POEM)
-            requireArguments().remove(ARG_INITIAL_POEM)
-        }
     }
 
 

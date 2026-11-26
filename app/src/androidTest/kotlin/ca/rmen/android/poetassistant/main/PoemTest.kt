@@ -160,7 +160,7 @@ class PoemTest {
 
     @Test
     fun testFoo() {
-        for (i in 0..10) {
+        for (i in 0..30) {
             openMenuItem(composeTestRule, R.string.action_settings)
             clickPreference(
                 composeTestRule,
