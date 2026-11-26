@@ -53,22 +53,7 @@ fun ReaderScreenContent(
             // stays reachable with the keyboard open.
             .padding(16.dp),
     ) {
-        IconButton(
-            onClick = onPlayClicked,
-            enabled = state.playButtonState != PlayButtonState.PLAY_DISABLED,
-            colors = IconButtonDefaults.iconButtonColors(
-                contentColor = MaterialTheme.colorScheme.primary
-            ),
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .testTag(READER_PLAY_BUTTON_TAG),
-        ) {
-            Icon(
-                painter = painterResource(playIcon(state.playButtonState)),
-                contentDescription = stringResource(R.string.tts_play),
-                modifier = Modifier.size(48.dp),
-            )
-        }
+        Text("hello")
     }
 }
 
