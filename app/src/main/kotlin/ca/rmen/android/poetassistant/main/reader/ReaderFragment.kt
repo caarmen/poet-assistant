@@ -19,32 +19,37 @@
 
 package ca.rmen.android.poetassistant.main.reader
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.material3.Text
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.compat.HtmlCompat
+import ca.rmen.android.poetassistant.main.MenuHostProvider
 import ca.rmen.android.poetassistant.main.TabMenuActions
 import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
-import ca.rmen.android.poetassistant.main.reader.ui.composables.ReaderScreen
+import ca.rmen.android.poetassistant.main.reader.data.Poem
 import ca.rmen.android.poetassistant.main.reader.usecases.GetSaveAsFilenameUseCase
 import ca.rmen.android.poetassistant.main.reader.usecases.PrintPoemUseCase
-import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.theme.AppTheme
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -79,19 +84,72 @@ class ReaderFragment : Fragment(), TabMenuActions {
     private val isVisibleFlow = MutableStateFlow(false)
     private val isMenuVisible = MutableStateFlow(false)
 
+    // The host activity exposes an unattached toolbar as the MenuHost,
+    // since there is no action bar anymore.
+    private val menuHost: MenuHost?
+        get() = (activity as? MenuHostProvider)?.menuHost
+
+    // Dedicated lifecycle owner for the menu provider registration. Its
+    // registry only reaches RESUMED while the reader tab is the visible
+    // page (driven by setMenuVisibility), so the provider is active on
+    // the reader tab only, not on every tab where this fragment is
+    // RESUMED (offscreenPageLimit = 5).
+    private val menuVisibilityLifecycleOwner = object : LifecycleOwner {
+        private val registry = LifecycleRegistry(this)
+        override val lifecycle: Lifecycle get() = registry
+        fun setState(state: Lifecycle.State) {
+            registry.currentState = state
+        }
+    }
+
+    private val menuProvider = object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_tts, menu)
+            // Hide the main share action on the reader tab. The base menu
+            // provider re-inflates menu_main (share visible) on every
+            // invalidate while this provider is not registered.
+            menu.findItem(R.id.action_share)?.isVisible = false
+            setMenuItemsEnabledState(menu)
+        }
+
+        override fun onPrepareMenu(menu: Menu) {
+            // In practice, onPrepareMenu isn't called.
+            setMenuItemsEnabledState(menu)
+        }
+        private fun setMenuItemsEnabledState(menu: Menu) {
+            val hasSavedPoem = viewModel.state.value.poem is Poem.PersistedPoem
+            val hasPoemText = viewModel.state.value.textFieldValue.text.isNotEmpty()
+            menu.findItem(R.id.action_save)?.isEnabled = hasSavedPoem
+            listOf(
+                R.id.action_new,
+                R.id.action_save_as,
+                R.id.action_share,
+                R.id.action_share_poem_text,
+                R.id.action_share_poem_audio,
+                R.id.action_print,
+            ).forEach { menu.findItem(it)?.isEnabled = hasPoemText }
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            return true
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        (requireActivity() as? MenuHostProvider)?.menuHost?.addMenuProvider(
+            menuProvider,
+            menuVisibilityLifecycleOwner,
+            Lifecycle.State.RESUMED,
+        )
         // Drive the visibility-gated lifecycle from the visible-tab signal:
         // setMenuVisibility is only called with true for the primary page.
-        // Apply the poem shared into the app once per fragment instance,
-        // then clear the argument: rotation and process death must not
-        // re-apply it over the user's edits.
-        if (requireArguments().containsKey(ARG_INITIAL_POEM)) {
-            val initialPoem = requireArguments().getString(ARG_INITIAL_POEM)
-            requireArguments().remove(ARG_INITIAL_POEM)
-            if (!initialPoem.isNullOrEmpty()) {
-                viewModel.onInitialPoemLoaded(initialPoem)
+        lifecycleScope.launch {
+            isMenuVisible.collect { menuVisible ->
+                menuVisibilityLifecycleOwner.setState(
+                    if (menuVisible) Lifecycle.State.RESUMED else Lifecycle.State.CREATED,
+                )
+                (requireActivity() as? MenuHostProvider)?.menuHost?.invalidateMenu()
             }
         }
     }
@@ -101,6 +159,10 @@ class ReaderFragment : Fragment(), TabMenuActions {
         isMenuVisible.value = menuVisible
     }
 
+    override fun onDestroy() {
+        menuHost?.removeMenuProvider(menuProvider)
+        super.onDestroy()
+    }
 
     override fun onResume() {
         super.onResume()
@@ -110,7 +172,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
     override fun onPause() {
         // Persist the poem on pause: a tab swipe pauses the reader
         // fragment.
-        viewModel.onPersistPoem()
         isVisibleFlow.value = false
         super.onPause()
     }
@@ -126,31 +187,32 @@ class ReaderFragment : Fragment(), TabMenuActions {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             setContent {
-                val isVisible by isVisibleFlow.collectAsState()
                 AppTheme {
-                    if (isVisible) {
-                        ReaderScreen(
-                            viewModel = viewModel,
-                            onEvent = ::onEvent,
-                            onImeClosed = {
-                                // TODO(Step 3): replace with an onRequestAppBarExpand callback;
-                                // MainScreen will reset the TopAppBarScrollBehavior state to
-                                // force the app bar expanded.
-                            },
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .nestedScroll(rememberNestedScrollInteropConnection()),
-                        )
-                    }
+                    Text(text="reader")
                 }
             }
         }
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val owner = viewLifecycleOwner
+        owner.lifecycleScope.launch {
+            owner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Invalidate the options menu only when the menu
+                // enablement inputs change, not on every keystroke.
+                launch {
+                    viewModel.state
+                        .map { Pair(it.poem is Poem.PersistedPoem, it.textFieldValue.text.isNotEmpty()) }
+                        .distinctUntilChanged()
+                        .collect { menuHost?.invalidateMenu() }
+                }
+            }
+        }
+    }
 
     override fun onShare() {
-        viewModel.onSharePoem()
     }
 
     /**
@@ -160,30 +222,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
      * @param text The shared text.
      */
     fun setPoem(text: String?) {
-        text?.let { viewModel.onInitialPoemLoaded(it) }
     }
 
-    private fun onEvent(event: ReaderScreenViewModel.ReaderEvent) {
-        val root = view ?: return
-        val message: CharSequence = when (event) {
-            is ReaderScreenViewModel.ReaderEvent.TtsError -> HtmlCompat.fromHtml(getString(R.string.tts_error))
-            is ReaderScreenViewModel.ReaderEvent.PoemOpened -> getString(R.string.file_opened, event.fileName ?: "")
-            is ReaderScreenViewModel.ReaderEvent.PoemSaved -> getString(R.string.file_saved, event.fileName ?: "")
-            is ReaderScreenViewModel.ReaderEvent.PoemOpenError -> getString(R.string.file_opened_error)
-            is ReaderScreenViewModel.ReaderEvent.PoemSaveError -> getString(R.string.file_saved_error)
-            is ReaderScreenViewModel.ReaderEvent.PoemSharedAsAudio -> getString(R.string.share_poem_audio_snackbar)
-        }
-        val snackbar = Snackbar.make(root, message, Snackbar.LENGTH_LONG)
-        if (event is ReaderScreenViewModel.ReaderEvent.TtsError) {
-            val intent = Intent("com.android.settings.TTS_SETTINGS")
-            if (intent.resolveActivity(root.context.packageManager) != null) {
-                snackbar.setAction(R.string.tts_error_open_system_settings) { startActivity(intent) }
-            } else {
-                snackbar.setAction(R.string.tts_error_open_app_settings) {
-                    startActivity(Intent(requireContext(), SettingsActivity::class.java))
-                }
-            }
-        }
-        snackbar.show()
-    }
 }
