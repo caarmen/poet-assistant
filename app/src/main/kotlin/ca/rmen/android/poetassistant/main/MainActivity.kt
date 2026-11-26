@@ -156,7 +156,7 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
         viewPager = ViewPager(this).apply {
             id = R.id.view_pager
             adapter = mPagerAdapter
-            offscreenPageLimit = 5
+            offscreenPageLimit = 1
             addOnPageChangeListener(mOnPageChangeListener)
         }
 
