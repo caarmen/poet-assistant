@@ -69,11 +69,6 @@ fun ReaderScreenContent(
                 modifier = Modifier.size(48.dp),
             )
         }
-        ReaderWordCount(
-            wordCount = state.wordCount,
-            onClick = onWordCountClicked,
-            modifier = Modifier.align(Alignment.Start),
-        )
     }
 }
 
