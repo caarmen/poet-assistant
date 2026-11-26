@@ -108,25 +108,7 @@ class ReaderScreenViewModel @Inject constructor(
     /**
      * Current UI state for the reader screen.
      */
-    val state: StateFlow<ReaderScreenState> = combine(
-        textFieldValue,
-        dialogState,
-        getTtsStateUseCase(),
-        wordCount,
-        poemRepository.poem,
-    ) { textFieldValue, dialogState, ttsState, wordCount, poem ->
-        ReaderScreenState(
-            textFieldValue = textFieldValue,
-            dialogState = dialogState,
-            playButtonState = toPlayButtonState(ttsState, textFieldValue.text),
-            wordCount = wordCount,
-            poem = poem,
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = initialState(),
-    )
+    val state: StateFlow<ReaderScreenState> = MutableStateFlow(initialState())
 
     /**
      * One-time event to show as a snackbar. Null means no event.
