@@ -81,7 +81,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
     lateinit var printPoemUseCase: PrintPoemUseCase
 
     private val viewModel: ReaderScreenViewModel by viewModels()
-    private val isVisibleFlow = MutableStateFlow(false)
     private val isMenuVisible = MutableStateFlow(false)
 
     // The host activity exposes an unattached toolbar as the MenuHost,
@@ -138,18 +137,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
     override fun onDestroy() {
         menuHost?.removeMenuProvider(menuProvider)
         super.onDestroy()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        isVisibleFlow.value = true
-    }
-
-    override fun onPause() {
-        // Persist the poem on pause: a tab swipe pauses the reader
-        // fragment.
-        isVisibleFlow.value = false
-        super.onPause()
     }
 
     override fun onCreateView(
