@@ -157,11 +157,8 @@ class ReaderFragment : Fragment(), TabMenuActions {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             setContent {
-                val isVisible by isVisibleFlow.collectAsState()
                 AppTheme {
-                    if (isVisible) {
                         Text("hello")
-                    }
                 }
             }
         }
