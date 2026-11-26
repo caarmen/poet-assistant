@@ -49,14 +49,7 @@ fun ReaderScreenContent(
     onPlayClicked: () -> Unit,
     onWordCountClicked: () -> Unit,
 ) {
-    Column(
-        modifier = modifier
-            // The whole screen scrolls, so the end of a long poem
-            // stays reachable with the keyboard open.
-            .padding(16.dp).width(50.dp).height(50.dp),
-    ) {
         Text("hello")
-    }
 }
 
 private fun playIcon(playButtonState: PlayButtonState) = when (playButtonState) {
