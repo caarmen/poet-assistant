@@ -237,14 +237,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
         val owner = viewLifecycleOwner
         owner.lifecycleScope.launch {
             owner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Invalidate the options menu only when the menu
-                // enablement inputs change, not on every keystroke.
-                launch {
-                    viewModel.state
-                        .map { Pair(it.poem is Poem.PersistedPoem, it.textFieldValue.text.isNotEmpty()) }
-                        .distinctUntilChanged()
-                        .collect { menuHost?.invalidateMenu() }
-                }
                 // The fragment is the single collector of the share
                 // flow: it owns the Context for the chooser.
                 launch {
