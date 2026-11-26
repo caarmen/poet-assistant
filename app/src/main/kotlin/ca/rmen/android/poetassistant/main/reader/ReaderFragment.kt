@@ -19,33 +19,25 @@
 
 package ca.rmen.android.poetassistant.main.reader
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.compat.HtmlCompat
 import ca.rmen.android.poetassistant.main.TabMenuActions
 import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
-import ca.rmen.android.poetassistant.main.reader.ui.composables.ReaderScreen
 import ca.rmen.android.poetassistant.main.reader.usecases.GetSaveAsFilenameUseCase
 import ca.rmen.android.poetassistant.main.reader.usecases.PrintPoemUseCase
-import ca.rmen.android.poetassistant.settings.SettingsActivity
 import ca.rmen.android.poetassistant.theme.AppTheme
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -209,27 +201,4 @@ class ReaderFragment : Fragment(), TabMenuActions {
         text?.let { viewModel.onInitialPoemLoaded(it) }
     }
 
-    private fun onEvent(event: ReaderScreenViewModel.ReaderEvent) {
-        val root = view ?: return
-        val message: CharSequence = when (event) {
-            is ReaderScreenViewModel.ReaderEvent.TtsError -> HtmlCompat.fromHtml(getString(R.string.tts_error))
-            is ReaderScreenViewModel.ReaderEvent.PoemOpened -> getString(R.string.file_opened, event.fileName ?: "")
-            is ReaderScreenViewModel.ReaderEvent.PoemSaved -> getString(R.string.file_saved, event.fileName ?: "")
-            is ReaderScreenViewModel.ReaderEvent.PoemOpenError -> getString(R.string.file_opened_error)
-            is ReaderScreenViewModel.ReaderEvent.PoemSaveError -> getString(R.string.file_saved_error)
-            is ReaderScreenViewModel.ReaderEvent.PoemSharedAsAudio -> getString(R.string.share_poem_audio_snackbar)
-        }
-        val snackbar = Snackbar.make(root, message, Snackbar.LENGTH_LONG)
-        if (event is ReaderScreenViewModel.ReaderEvent.TtsError) {
-            val intent = Intent("com.android.settings.TTS_SETTINGS")
-            if (intent.resolveActivity(root.context.packageManager) != null) {
-                snackbar.setAction(R.string.tts_error_open_system_settings) { startActivity(intent) }
-            } else {
-                snackbar.setAction(R.string.tts_error_open_app_settings) {
-                    startActivity(Intent(requireContext(), SettingsActivity::class.java))
-                }
-            }
-        }
-        snackbar.show()
-    }
 }
