@@ -49,11 +49,8 @@ fun ReaderScreenContent(
 ) {
     Column(
         modifier = modifier
-            .fillMaxSize()
             // The whole screen scrolls, so the end of a long poem
             // stays reachable with the keyboard open.
-            .verticalScroll(rememberScrollState())
-            .imePadding()
             .padding(16.dp),
     ) {
         IconButton(
@@ -72,20 +69,6 @@ fun ReaderScreenContent(
                 modifier = Modifier.size(48.dp),
             )
         }
-        TextField(
-            value = state.textFieldValue,
-            onValueChange = onPoemEdited,
-            placeholder = { Text(stringResource(R.string.tts_hint)) },
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Sentences,
-                autoCorrect = true,
-            ),
-            // Multi-line: the text field grows with the poem.
-            maxLines = Int.MAX_VALUE,
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(READER_POEM_TEXT_FIELD_TAG),
-        )
         ReaderWordCount(
             wordCount = state.wordCount,
             onClick = onWordCountClicked,
