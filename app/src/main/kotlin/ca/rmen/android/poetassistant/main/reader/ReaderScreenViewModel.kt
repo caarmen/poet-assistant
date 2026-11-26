@@ -64,7 +64,6 @@ import kotlin.time.Duration.Companion.milliseconds
 class ReaderScreenViewModel @Inject constructor(
     private val poemRepository: PoemRepository,
     private val poemFileRepository: PoemFileRepository,
-    private val getTtsStateUseCase: GetTtsStateUseCase,
     private val toggleReaderSpeechUseCase: ToggleReaderSpeechUseCase,
     private val speakPoemToFileUseCase: SpeakPoemToFileUseCase,
     private val getWordCountUseCase: GetWordCountUseCase,
