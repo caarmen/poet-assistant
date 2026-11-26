@@ -72,7 +72,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
     lateinit var printPoemUseCase: PrintPoemUseCase
 
     private val viewModel: ReaderScreenViewModel by viewModels()
-    private val isVisibleFlow = MutableStateFlow(false)
 
     fun onMenuNew() {
         viewModel.onClearPoemRequestClicked()
@@ -131,11 +130,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
                 viewModel.onInitialPoemLoaded(initialPoem)
             }
         }
-    }
-
-    override fun setMenuVisibility(menuVisible: Boolean) {
-        super.setMenuVisibility(menuVisible)
-        isVisibleFlow.value = menuVisible
     }
 
 
