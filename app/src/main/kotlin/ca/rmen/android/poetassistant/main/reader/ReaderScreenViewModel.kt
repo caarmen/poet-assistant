@@ -294,9 +294,9 @@ class ReaderScreenViewModel @Inject constructor(
     private fun initialState() = ReaderScreenState(
         textFieldValue = textFieldValue.value,
         dialogState = null,
-        playButtonState = toPlayButtonState(getTtsStateUseCase.current, textFieldValue.value.text),
-        wordCount = wordCount.value,
-        poem = poemRepository.poem.value,
+        playButtonState = PlayButtonState.PLAY_ENABLED,
+        wordCount = WordCount(2, 3),
+        poem = Poem.TempPoem("hello")
     )
 
     /**
