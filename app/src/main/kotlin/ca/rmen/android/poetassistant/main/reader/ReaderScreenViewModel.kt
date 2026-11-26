@@ -22,10 +22,7 @@ package ca.rmen.android.poetassistant.main.reader
 import android.net.Uri
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import ca.rmen.android.poetassistant.TtsState
 import ca.rmen.android.poetassistant.main.common.models.Share
-import ca.rmen.android.poetassistant.main.common.usecases.GetTtsStateUseCase
 import ca.rmen.android.poetassistant.main.reader.data.Poem
 import ca.rmen.android.poetassistant.main.reader.data.PoemFileRepository
 import ca.rmen.android.poetassistant.main.reader.data.PoemRepository
@@ -34,18 +31,9 @@ import ca.rmen.android.poetassistant.main.reader.usecases.GetWordCountUseCase
 import ca.rmen.android.poetassistant.main.reader.usecases.SpeakPoemToFileUseCase
 import ca.rmen.android.poetassistant.main.reader.usecases.ToggleReaderSpeechUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * ViewModel for the reader screen.
@@ -62,12 +50,6 @@ import kotlin.time.Duration.Companion.milliseconds
  */
 @HiltViewModel
 class ReaderScreenViewModel @Inject constructor(
-    private val poemRepository: PoemRepository,
-    private val poemFileRepository: PoemFileRepository,
-    private val toggleReaderSpeechUseCase: ToggleReaderSpeechUseCase,
-    private val speakPoemToFileUseCase: SpeakPoemToFileUseCase,
-    private val getWordCountUseCase: GetWordCountUseCase,
-    private val createPoemShareUseCase: CreatePoemShareUseCase,
 ) : ViewModel() {
 
     /**
@@ -83,26 +65,7 @@ class ReaderScreenViewModel @Inject constructor(
         object PoemSharedAsAudio : ReaderEvent()
     }
 
-    private val textFieldValue = MutableStateFlow(TextFieldValue(initialText()))
-    private val dialogState = MutableStateFlow<DialogState?>(null)
-
-    /**
-     * The last word count. Fed eagerly by a VM-scoped debounced
-     * collector, so the count survives unsubscribes and shows at once
-     * when the reader tab regains focus.
-     */
-    private val wordCount = MutableStateFlow<WordCount?>(null)
-
-    init {
-        viewModelScope.launch {
-            @OptIn(FlowPreview::class)
-            textFieldValue
-                .map { it.text }
-                .distinctUntilChanged()
-                .debounce(500.milliseconds)
-                .collect { wordCount.value = getWordCountUseCase(it) }
-        }
-    }
+    private val textFieldValue = MutableStateFlow(TextFieldValue("hello"))
 
     /**
      * Current UI state for the reader screen.
@@ -119,7 +82,6 @@ class ReaderScreenViewModel @Inject constructor(
      * Resets the pending event after the UI showed it.
      */
     fun onEventHandled() {
-        event.value = null
     }
 
     /**
@@ -134,20 +96,12 @@ class ReaderScreenViewModel @Inject constructor(
      * @param textFieldValue The new text and selection.
      */
     fun onPoemEdited(textFieldValue: TextFieldValue) {
-        this.textFieldValue.value = textFieldValue
     }
 
     /**
      * Toggles the speech playback of the poem.
      */
     fun onPlayClicked() {
-        val result = toggleReaderSpeechUseCase(
-            textFieldValue.value.text,
-            textFieldValue.value.selection,
-        )
-        if (result == ToggleReaderSpeechUseCase.Result.TtsError) {
-            event.value = ReaderEvent.TtsError
-        }
     }
 
     /**
@@ -158,10 +112,6 @@ class ReaderScreenViewModel @Inject constructor(
      * @param text The shared text.
      */
     fun onInitialPoemLoaded(text: String) {
-        val currentText = textFieldValue.value.text
-        val newText = if (currentText.isBlank()) text else "$currentText\n$text"
-        poemRepository.updatePoemText(newText)
-        textFieldValue.value = TextFieldValue(newText)
     }
 
     /**
@@ -169,20 +119,15 @@ class ReaderScreenViewModel @Inject constructor(
      * We must ask for confirmation before actually clearing it.
      */
     fun onClearPoemRequestClicked() {
-        dialogState.value = DialogState.CLEAR_POEM
     }
 
     fun onClearPoemRequestDismissed() {
-        dialogState.value = null
     }
 
     /**
      * Clears the poem.
      */
     fun onClearPoemConfirmClicked() {
-        poemRepository.clear()
-        textFieldValue.value = TextFieldValue("")
-        dialogState.value = null
     }
 
     /**
@@ -193,16 +138,6 @@ class ReaderScreenViewModel @Inject constructor(
      * @param uri The uri of the poem file to open.
      */
     fun onOpenPoem(uri: Uri) {
-        viewModelScope.launch {
-            val loadedPoem = poemFileRepository.read(uri)
-            if (loadedPoem == null) {
-                event.value = ReaderEvent.PoemOpenError
-            } else {
-                poemRepository.setPoem(loadedPoem)
-                textFieldValue.value = TextFieldValue(loadedPoem.text)
-                event.value = ReaderEvent.PoemOpened(loadedPoem.name)
-            }
-        }
     }
 
     /**
@@ -211,10 +146,6 @@ class ReaderScreenViewModel @Inject constructor(
      * @param uri The uri of the poem file to write to.
      */
     fun onSavePoemAs(uri: Uri) {
-        viewModelScope.launch {
-            val savedPoem = poemFileRepository.save(uri, textFieldValue.value.text)
-            onPoemSaved(savedPoem)
-        }
     }
 
     /**
@@ -223,13 +154,6 @@ class ReaderScreenViewModel @Inject constructor(
      * correct).
      */
     fun onSavePoem() {
-        val savedPoemUri = (poemRepository.poem.value as? Poem.PersistedPoem)?.uri
-        if (savedPoemUri != null) {
-            viewModelScope.launch {
-                val savedPoem = poemFileRepository.save(savedPoemUri, textFieldValue.value.text)
-                onPoemSaved(savedPoem)
-            }
-        }
     }
 
     /**
@@ -237,14 +161,12 @@ class ReaderScreenViewModel @Inject constructor(
      * [share], launches the chooser, then calls [onShareSent].
      */
     fun onSharePoem() {
-        share.value = createPoemShareUseCase(textFieldValue.value.text)
     }
 
     /**
      * Resets the pending share after the chooser was launched.
      */
     fun onShareSent() {
-        share.value = null
     }
 
     /**
@@ -253,8 +175,6 @@ class ReaderScreenViewModel @Inject constructor(
      * written.
      */
     fun onSharePoemAsAudio() {
-        speakPoemToFileUseCase(textFieldValue.value.text)
-        event.value = ReaderEvent.PoemSharedAsAudio
     }
 
     /**
@@ -262,29 +182,7 @@ class ReaderScreenViewModel @Inject constructor(
      * any). Called by the fragment on pause.
      */
     fun onPersistPoem() {
-        poemRepository.updatePoemText(textFieldValue.value.text)
     }
-
-    /**
-     * Handles the result of saving the poem to a file: persists the
-     * saved poem and emits a saved or error event.
-     *
-     * @param savedPoem The saved poem, or null on failure.
-     */
-    private fun onPoemSaved(savedPoem: Poem.PersistedPoem?) {
-        if (savedPoem == null) {
-            event.value = ReaderEvent.PoemSaveError
-        } else {
-            poemRepository.setPoem(savedPoem)
-            event.value = ReaderEvent.PoemSaved(savedPoem.name)
-        }
-    }
-
-    /**
-     * The initial poem text: the stored poem's text, empty when no
-     * poem is stored.
-     */
-    private fun initialText(): String = poemRepository.poem.value?.text.orEmpty()
 
     /**
      * The initial state, shown before the state flow starts emitting.
@@ -298,17 +196,4 @@ class ReaderScreenViewModel @Inject constructor(
         poem = Poem.TempPoem("hello")
     )
 
-    /**
-     * The play button rules: TTS initialized + non-empty text →
-     * play; TTS speaking → stop; anything else → disabled.
-     */
-    private fun toPlayButtonState(ttsState: TtsState?, poemText: String): PlayButtonState {
-        return if (ttsState?.currentStatus == TtsState.TtsStatus.INITIALIZED) {
-            if (poemText.isEmpty()) PlayButtonState.PLAY_DISABLED else PlayButtonState.PLAY_ENABLED
-        } else if (ttsState?.currentStatus == TtsState.TtsStatus.SPEAKING) {
-            PlayButtonState.STOP
-        } else {
-            PlayButtonState.PLAY_DISABLED
-        }
-    }
 }
