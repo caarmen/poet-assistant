@@ -113,6 +113,64 @@ class ReaderFragment : Fragment(), TabMenuActions {
         }
     }
 
+    private val menuProvider = object : MenuProvider {
+        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+            menuInflater.inflate(R.menu.menu_tts, menu)
+            // Hide the main share action on the reader tab. The base menu
+            // provider re-inflates menu_main (share visible) on every
+            // invalidate while this provider is not registered.
+            menu.findItem(R.id.action_share)?.isVisible = false
+            setMenuItemsEnabledState(menu)
+        }
+
+        override fun onPrepareMenu(menu: Menu) {
+            // In practice, onPrepareMenu isn't called.
+            setMenuItemsEnabledState(menu)
+        }
+        private fun setMenuItemsEnabledState(menu: Menu) {
+            val hasSavedPoem = viewModel.state.value.poem is Poem.PersistedPoem
+            val hasPoemText = viewModel.state.value.textFieldValue.text.isNotEmpty()
+            menu.findItem(R.id.action_save)?.isEnabled = hasSavedPoem
+            listOf(
+                R.id.action_new,
+                R.id.action_save_as,
+                R.id.action_share,
+                R.id.action_share_poem_text,
+                R.id.action_share_poem_audio,
+                R.id.action_print,
+            ).forEach { menu.findItem(it)?.isEnabled = hasPoemText }
+        }
+
+        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+            when (menuItem.itemId) {
+                R.id.action_new -> {
+                    viewModel.onClearPoemRequestClicked()
+                    // Hack for https://github.com/caarmen/poet-assistant/issues/72
+                    // On some devices, showing the clear poem dialog auto-hides the app bar layout.
+                    // TODO(Step 3): replace with an onRequestAppBarExpand callback; MainScreen
+                    // will reset the TopAppBarScrollBehavior state to force the app bar expanded.
+                }
+                R.id.action_open -> openPoemLauncher.launch(arrayOf("text/plain"))
+                R.id.action_save -> viewModel.onSavePoem()
+                R.id.action_save_as -> saveAsPoemLauncher.launch(
+                    getSaveAsFilenameUseCase(viewModel.state.value.textFieldValue.text),
+                )
+                R.id.action_share, R.id.action_share_poem_text -> viewModel.onSharePoem()
+                R.id.action_share_poem_audio -> viewModel.onSharePoemAsAudio()
+                R.id.action_print -> {
+                    val activity = requireActivity()
+                    val poemText = viewModel.state.value.textFieldValue.text
+                    lifecycleScope.launch {
+                        printPoemUseCase(activity, poemText)
+                    }
+                }
+                // Items from other menus (e.g. menu_main) are not consumed here;
+                // returning false lets the MenuHost dispatch them to its own listener.
+                else -> return false
+            }
+            return true
+        }
+    }
 
     // A canceled picker yields a null uri: do nothing.
     private val openPoemLauncher =
@@ -127,6 +185,21 @@ class ReaderFragment : Fragment(), TabMenuActions {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        (requireActivity() as? MenuHostProvider)?.menuHost?.addMenuProvider(
+            menuProvider,
+            menuVisibilityLifecycleOwner,
+            Lifecycle.State.RESUMED,
+        )
+        // Drive the visibility-gated lifecycle from the visible-tab signal:
+        // setMenuVisibility is only called with true for the primary page.
+        lifecycleScope.launch {
+            isMenuVisible.collect { menuVisible ->
+                menuVisibilityLifecycleOwner.setState(
+                    if (menuVisible) Lifecycle.State.RESUMED else Lifecycle.State.CREATED,
+                )
+                (requireActivity() as? MenuHostProvider)?.menuHost?.invalidateMenu()
+            }
+        }
         // Apply the poem shared into the app once per fragment instance,
         // then clear the argument: rotation and process death must not
         // re-apply it over the user's edits.
@@ -142,6 +215,11 @@ class ReaderFragment : Fragment(), TabMenuActions {
     override fun setMenuVisibility(menuVisible: Boolean) {
         super.setMenuVisibility(menuVisible)
         isMenuVisible.value = menuVisible
+    }
+
+    override fun onDestroy() {
+        menuHost?.removeMenuProvider(menuProvider)
+        super.onDestroy()
     }
 
     override fun onResume() {
