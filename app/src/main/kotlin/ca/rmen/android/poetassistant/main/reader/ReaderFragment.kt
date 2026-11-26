@@ -22,21 +22,12 @@ package ca.rmen.android.poetassistant.main.reader
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -44,10 +35,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.HtmlCompat
-import ca.rmen.android.poetassistant.main.MenuHostProvider
 import ca.rmen.android.poetassistant.main.TabMenuActions
 import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
-import ca.rmen.android.poetassistant.main.reader.data.Poem
 import ca.rmen.android.poetassistant.main.reader.ui.composables.ReaderScreen
 import ca.rmen.android.poetassistant.main.reader.usecases.GetSaveAsFilenameUseCase
 import ca.rmen.android.poetassistant.main.reader.usecases.PrintPoemUseCase
@@ -56,8 +45,6 @@ import ca.rmen.android.poetassistant.theme.AppTheme
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -92,67 +79,37 @@ class ReaderFragment : Fragment(), TabMenuActions {
     private val viewModel: ReaderScreenViewModel by viewModels()
     private val isVisibleFlow = MutableStateFlow(false)
 
-    // The host activity exposes an unattached toolbar as the MenuHost,
-    // since there is no action bar anymore.
-    private val menuHost: MenuHost?
-        get() = (activity as? MenuHostProvider)?.menuHost
+    fun onMenuNew() {
+        viewModel.onClearPoemRequestClicked()
+        // Hack for https://github.com/caarmen/poet-assistant/issues/72
+        // On some devices, showing the clear poem dialog auto-hides the app bar layout.
+        // TODO(Step 3): replace with an onRequestAppBarExpand callback; MainScreen
+        // will reset the TopAppBarScrollBehavior state to force the app bar expanded.
+    }
 
-    private val menuProvider = object : MenuProvider {
-        override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-            menuInflater.inflate(R.menu.menu_tts, menu)
-            // Hide the main share action on the reader tab. The base menu
-            // provider re-inflates menu_main (share visible) on every
-            // invalidate while this provider is not registered.
-            menu.findItem(R.id.action_share)?.isVisible = false
-            setMenuItemsEnabledState(menu)
-        }
+    fun onMenuOpen() {
+        openPoemLauncher.launch(arrayOf("text/plain"))
+    }
 
-        override fun onPrepareMenu(menu: Menu) {
-            // In practice, onPrepareMenu isn't called.
-            setMenuItemsEnabledState(menu)
-        }
-        private fun setMenuItemsEnabledState(menu: Menu) {
-            val hasSavedPoem = viewModel.state.value.poem is Poem.PersistedPoem
-            val hasPoemText = viewModel.state.value.textFieldValue.text.isNotEmpty()
-            menu.findItem(R.id.action_save)?.isEnabled = hasSavedPoem
-            listOf(
-                R.id.action_new,
-                R.id.action_save_as,
-                R.id.action_share,
-                R.id.action_share_poem_text,
-                R.id.action_share_poem_audio,
-                R.id.action_print,
-            ).forEach { menu.findItem(it)?.isEnabled = hasPoemText }
-        }
+    fun onMenuSave() {
+       viewModel.onSavePoem()
+    }
 
-        override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-            when (menuItem.itemId) {
-                R.id.action_new -> {
-                    viewModel.onClearPoemRequestClicked()
-                    // Hack for https://github.com/caarmen/poet-assistant/issues/72
-                    // On some devices, showing the clear poem dialog auto-hides the app bar layout.
-                    // TODO(Step 3): replace with an onRequestAppBarExpand callback; MainScreen
-                    // will reset the TopAppBarScrollBehavior state to force the app bar expanded.
-                }
-                R.id.action_open -> openPoemLauncher.launch(arrayOf("text/plain"))
-                R.id.action_save -> viewModel.onSavePoem()
-                R.id.action_save_as -> saveAsPoemLauncher.launch(
-                    getSaveAsFilenameUseCase(viewModel.state.value.textFieldValue.text),
-                )
-                R.id.action_share, R.id.action_share_poem_text -> viewModel.onSharePoem()
-                R.id.action_share_poem_audio -> viewModel.onSharePoemAsAudio()
-                R.id.action_print -> {
-                    val activity = requireActivity()
-                    val poemText = viewModel.state.value.textFieldValue.text
-                    lifecycleScope.launch {
-                        printPoemUseCase(activity, poemText)
-                    }
-                }
-                // Items from other menus (e.g. menu_main) are not consumed here;
-                // returning false lets the MenuHost dispatch them to its own listener.
-                else -> return false
-            }
-            return true
+    fun onMenuSaveAs() {
+        saveAsPoemLauncher.launch(
+            getSaveAsFilenameUseCase(viewModel.state.value.textFieldValue.text),
+        )
+    }
+
+    fun onMenuShareAudio() {
+        viewModel.onSharePoemAsAudio()
+    }
+
+    fun onMenuPrint() {
+        val activity = requireActivity()
+        val poemText = viewModel.state.value.textFieldValue.text
+        lifecycleScope.launch {
+            printPoemUseCase(activity, poemText)
         }
     }
 
@@ -179,10 +136,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
                 viewModel.onInitialPoemLoaded(initialPoem)
             }
         }
-    }
-
-    override fun setMenuVisibility(menuVisible: Boolean) {
-        super.setMenuVisibility(menuVisible)
     }
 
     override fun onResume() {

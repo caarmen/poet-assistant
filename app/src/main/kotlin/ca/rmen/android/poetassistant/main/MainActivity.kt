@@ -120,6 +120,7 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
     private val baseMenuProvider = object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             menuInflater.inflate(R.menu.menu_main, menu)
+            menuInflater.inflate(R.menu.menu_tts, menu)
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem) = false
@@ -328,13 +329,14 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
         }
 
     private fun handleMenuItem(item: MenuItem): Boolean {
+        val tab = mPagerAdapter.getTabForPosition(viewPager.currentItem)
+        val currentFragment = mPagerAdapter.getFragment(viewPager, tab)
         when (item.itemId) {
             R.id.action_share -> {
                 // Route the share action to the visible tab. With the
                 // ViewPager, several fragments are resumed at once, so we
                 // cannot rely on the fragments consuming the item.
-                val tab = mPagerAdapter.getTabForPosition(viewPager.currentItem)
-                (mPagerAdapter.getFragment(viewPager, tab) as? TabMenuActions)?.onShare()
+                (currentFragment as? TabMenuActions)?.onShare()
                 return true
             }
             R.id.action_about -> {
@@ -356,6 +358,13 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
                 viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.WOTD), false)
                 return true
             }
+            R.id.action_new -> (currentFragment as? ReaderFragment)?.onMenuNew()
+            R.id.action_open -> (currentFragment as? ReaderFragment?)?.onMenuOpen()
+            R.id.action_save -> (currentFragment as? ReaderFragment?)?.onMenuSave()
+            R.id.action_save_as -> (currentFragment as? ReaderFragment?)?.onMenuSaveAs()
+            R.id.action_share_poem_text -> (currentFragment as? ReaderFragment)?.onShare()
+            R.id.action_share_poem_audio -> (currentFragment as? ReaderFragment?)?.onMenuShareAudio()
+            R.id.action_print -> (currentFragment as? ReaderFragment?)?.onMenuPrint()
         }
         return false
     }
