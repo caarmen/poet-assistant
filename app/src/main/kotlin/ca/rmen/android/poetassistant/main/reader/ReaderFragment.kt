@@ -25,22 +25,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Text
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import ca.rmen.android.poetassistant.main.TabMenuActions
 import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
 import ca.rmen.android.poetassistant.main.reader.usecases.GetSaveAsFilenameUseCase
 import ca.rmen.android.poetassistant.main.reader.usecases.PrintPoemUseCase
 import ca.rmen.android.poetassistant.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -71,14 +63,7 @@ class ReaderFragment : Fragment(), TabMenuActions {
     @Inject
     lateinit var printPoemUseCase: PrintPoemUseCase
 
-    private val viewModel: ReaderScreenViewModel by viewModels()
-
     fun onMenuNew() {
-        viewModel.onClearPoemRequestClicked()
-        // Hack for https://github.com/caarmen/poet-assistant/issues/72
-        // On some devices, showing the clear poem dialog auto-hides the app bar layout.
-        // TODO(Step 3): replace with an onRequestAppBarExpand callback; MainScreen
-        // will reset the TopAppBarScrollBehavior state to force the app bar expanded.
     }
 
     fun onMenuOpen() {
@@ -86,36 +71,20 @@ class ReaderFragment : Fragment(), TabMenuActions {
     }
 
     fun onMenuSave() {
-       viewModel.onSavePoem()
     }
 
     fun onMenuSaveAs() {
-        saveAsPoemLauncher.launch(
-            getSaveAsFilenameUseCase(viewModel.state.value.textFieldValue.text),
-        )
     }
 
     fun onMenuShareAudio() {
-        viewModel.onSharePoemAsAudio()
     }
 
     fun onMenuPrint() {
-        val activity = requireActivity()
-        val poemText = viewModel.state.value.textFieldValue.text
-        lifecycleScope.launch {
-            printPoemUseCase(activity, poemText)
-        }
     }
 
     // A canceled picker yields a null uri: do nothing.
     private val openPoemLauncher =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-            uri?.let(viewModel::onOpenPoem)
-        }
-
-    private val saveAsPoemLauncher =
-        registerForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) { uri ->
-            uri?.let(viewModel::onSavePoemAs)
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,19 +95,10 @@ class ReaderFragment : Fragment(), TabMenuActions {
         if (requireArguments().containsKey(ARG_INITIAL_POEM)) {
             val initialPoem = requireArguments().getString(ARG_INITIAL_POEM)
             requireArguments().remove(ARG_INITIAL_POEM)
-            if (!initialPoem.isNullOrEmpty()) {
-                viewModel.onInitialPoemLoaded(initialPoem)
-            }
         }
     }
 
 
-    override fun onPause() {
-        // Persist the poem on pause: a tab swipe pauses the reader
-        // fragment.
-        viewModel.onPersistPoem()
-        super.onPause()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -161,7 +121,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
 
 
     override fun onShare() {
-        viewModel.onSharePoem()
     }
 
     /**
@@ -171,7 +130,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
      * @param text The shared text.
      */
     fun setPoem(text: String?) {
-        text?.let { viewModel.onInitialPoemLoaded(it) }
     }
 
 }
