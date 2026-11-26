@@ -26,7 +26,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -167,7 +166,19 @@ class ReaderFragment : Fragment(), TabMenuActions {
             setContent {
                 val isVisible by isVisibleFlow.collectAsState()
                 AppTheme {
-                    Text("hello")
+                    if (isVisible) {
+                        ReaderScreen(
+                            viewModel = viewModel,
+                            onEvent = ::onEvent,
+                            onImeClosed = {
+                                // TODO(Step 3): replace with an onRequestAppBarExpand callback;
+                                // MainScreen will reset the TopAppBarScrollBehavior state to
+                                // force the app bar expanded.
+                            },
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+                    }
                 }
             }
         }
