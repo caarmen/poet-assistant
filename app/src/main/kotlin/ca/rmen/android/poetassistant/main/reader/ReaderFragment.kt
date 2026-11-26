@@ -183,7 +183,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
 
     override fun setMenuVisibility(menuVisible: Boolean) {
         super.setMenuVisibility(menuVisible)
-        if (menuVisible) menuHost?.addMenuProvider(menuProvider) else menuHost?.removeMenuProvider(menuProvider)
     }
 
     override fun onResume() {
