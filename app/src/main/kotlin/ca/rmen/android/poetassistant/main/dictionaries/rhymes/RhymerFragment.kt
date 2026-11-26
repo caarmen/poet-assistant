@@ -24,6 +24,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -60,33 +61,10 @@ class RhymerFragment : Fragment(), TabMenuActions {
         }
     }
 
-    @Inject
-    lateinit var shareUseCase: ShareUseCase
-
-    @Inject
-    lateinit var openExternalAppUseCase: OpenExternalAppUseCase
-
-    @Inject
-    lateinit var openExternalSearchUseCase: OpenExternalSearchUseCase
-
-    private val viewModel: RhymerScreenViewModel by viewModels()
-    private val isVisibleFlow = MutableStateFlow(false)
-
-    override fun onResume() {
-        super.onResume()
-        isVisibleFlow.value = true
-    }
-
-    override fun onPause() {
-        super.onPause()
-        isVisibleFlow.value = false
-    }
-
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         val view = ComposeView(requireContext()).apply {
             layoutParams = ViewGroup.LayoutParams(
@@ -94,34 +72,8 @@ class RhymerFragment : Fragment(), TabMenuActions {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             setContent {
-                val isVisible by isVisibleFlow.collectAsState()
-                // Large screens show alternating row colors in result lists.
-                val isLargeScreen =
-                    calculateWindowSizeClass(requireActivity()).widthSizeClass != WindowWidthSizeClass.Compact
                 AppTheme {
-                    if (isVisible) {
-                        RhymerScreen(
-                            viewModel = viewModel,
-                            shareUseCase = shareUseCase,
-                            openExternalAppUseCase = openExternalAppUseCase,
-                            openExternalSearchUseCase = openExternalSearchUseCase,
-                            onSearchInTab = (requireActivity() as OnWordClickListener)::onWordClick,
-                            onSnackbarText = {
-                                Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
-                            },
-                            isLargeScreen = isLargeScreen,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .nestedScroll(rememberNestedScrollInteropConnection())
-                        )
-                    }
-                }
-            }
-
-            // Set the initial query if one was provided
-            if (requireArguments().containsKey(ARG_INITIAL_QUERY)) {
-                requireArguments().getString(ARG_INITIAL_QUERY)?.let {
-                    viewModel.onInitialQuerySearched(it)
+                    Text(text="rhymer")
                 }
             }
         }
@@ -129,10 +81,5 @@ class RhymerFragment : Fragment(), TabMenuActions {
     }
 
     override fun onShare() {
-        viewModel.onShare()
-    }
-
-    fun query(word: String) {
-        viewModel.onWordSearched(word)
     }
 }

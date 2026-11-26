@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -39,34 +40,6 @@ class PatternFragment : Fragment(), TabMenuActions {
             }
         }
     }
-
-    @Inject
-    lateinit var shareUseCase: ShareUseCase
-
-    @Inject
-    lateinit var openExternalAppUseCase: OpenExternalAppUseCase
-
-    private val viewModel: PatternScreenViewModel by viewModels()
-    private val isVisibleFlow = MutableStateFlow(false)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // If we have an initial query, perform the search
-        arguments?.getString(ARG_INITIAL_QUERY)?.let { query ->
-            viewModel.onPatternSearched(query)
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        isVisibleFlow.value = true
-    }
-
-    override fun onPause() {
-        super.onPause()
-        isVisibleFlow.value = false
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -78,25 +51,8 @@ class PatternFragment : Fragment(), TabMenuActions {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             setContent {
-                val isVisible by isVisibleFlow.collectAsState()
                 AppTheme {
-                    if (isVisible) {
-                        PatternScreen(
-                            viewModel = viewModel,
-                            shareUseCase = shareUseCase,
-                            openExternalAppUseCase = openExternalAppUseCase,
-                            onSearchInTab = (requireActivity() as OnWordClickListener)::onWordClick,
-                            onShare = {
-                                viewModel.onShare()
-                            },
-                            onSnackbarText = {
-                                Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
-                            },
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .nestedScroll(rememberNestedScrollInteropConnection())
-                        )
-                    }
+                    Text(text="pattern")
                 }
             }
         }
@@ -104,10 +60,6 @@ class PatternFragment : Fragment(), TabMenuActions {
     }
 
     override fun onShare() {
-        viewModel.onShare()
     }
 
-    fun query(word: String) {
-        viewModel.onPatternSearched(word)
-    }
 }

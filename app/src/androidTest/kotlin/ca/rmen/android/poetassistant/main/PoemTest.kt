@@ -159,6 +159,16 @@ class PoemTest {
     }
 
     @Test
+    fun testFoo() {
+        openMenuItem(composeTestRule, R.string.action_settings)
+        clickPreference(
+            composeTestRule,
+            activityTestRule.activity,
+            R.string.pref_selection_lookup_title
+        )
+        pressBack()
+    }
+    @Test
     fun testLookupSetting() {
         openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_selection_lookup_title)

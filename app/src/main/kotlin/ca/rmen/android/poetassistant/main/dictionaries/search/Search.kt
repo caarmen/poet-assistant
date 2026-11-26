@@ -63,6 +63,7 @@ class Search(
     fun search(word: String, tab: Tab) {
         Log.d(TAG, "search in $tab for $ word")
         viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false)
+        /*
         ViewShownScheduler.runWhenShown(viewPager) {
             if (tab == Tab.DICTIONARY) {
                 (mPagerAdapter.getFragment(viewPager, Tab.DICTIONARY) as DictionaryFragment?)?.query(word.trim())
@@ -78,6 +79,8 @@ class Search(
                 )
             }
         }
+
+         */
     }
 
     /**
@@ -88,6 +91,7 @@ class Search(
         val wordTrimmed = word.trim().lowercase(Locale.US)
 
         selectTabForSearch(wordTrimmed)
+        /*
         ViewShownScheduler.runWhenShown(viewPager) {
             if (Patterns.isPattern(wordTrimmed)) {
                 (mPagerAdapter.getFragment(viewPager, Tab.PATTERN) as PatternFragment?)?.query(wordTrimmed)
@@ -97,6 +101,8 @@ class Search(
                 (mPagerAdapter.getFragment(viewPager, Tab.DICTIONARY) as DictionaryFragment?)?.query(wordTrimmed)
             }
         }
+        
+         */
     }
 
     /**

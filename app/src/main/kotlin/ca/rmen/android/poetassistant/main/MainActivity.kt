@@ -36,12 +36,15 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.Toolbar
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -49,6 +52,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -158,6 +162,10 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
             adapter = mPagerAdapter
             offscreenPageLimit = 5
             addOnPageChangeListener(mOnPageChangeListener)
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
         }
 
         val savedTab = settingsRepository.tab
@@ -219,7 +227,8 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
                             },
                             modifier = Modifier
                                 .padding(padding)
-                                .fillMaxSize()
+                                .heightIn(min = 50.dp, max = 500.dp)
+                                .widthIn(min = 50.dp, max = 500.dp)
                                 .testTag("view_pager"),
                         )
                     },
@@ -284,7 +293,7 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
                 viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
                 val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
                 val readerFragment = mPagerAdapter.getFragment(viewPager, Tab.READER) as ReaderFragment
-                readerFragment.setPoem(sharedText)
+                //readerFragment.setPoem(sharedText)
             }
         }
     }

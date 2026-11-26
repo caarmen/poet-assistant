@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -34,26 +35,6 @@ class DictionaryFragment : Fragment(), TabMenuActions {
             }
         }
     }
-
-    @Inject
-    lateinit var shareUseCase: ShareUseCase
-
-    @Inject
-    lateinit var openExternalSearchUseCase: OpenExternalSearchUseCase
-
-    private val viewModel: DictionaryScreenViewModel by viewModels()
-    private val isVisibleFlow = MutableStateFlow(false)
-
-    override fun onResume() {
-        super.onResume()
-        isVisibleFlow.value = true
-    }
-
-    override fun onPause() {
-        super.onPause()
-        isVisibleFlow.value = false
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -65,25 +46,8 @@ class DictionaryFragment : Fragment(), TabMenuActions {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             setContent {
-                val isVisible by isVisibleFlow.collectAsState()
                 AppTheme {
-                    if (isVisible) {
-                        DictionaryScreen(
-                            viewModel = viewModel,
-                            shareUseCase = shareUseCase,
-                            openExternalSearchUseCase = openExternalSearchUseCase,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .nestedScroll(rememberNestedScrollInteropConnection())
-                        )
-                    }
-                }
-            }
-
-            // Set the initial query if one was provided
-            if (requireArguments().containsKey(ARG_INITIAL_QUERY)) {
-                requireArguments().getString(ARG_INITIAL_QUERY)?.let {
-                    viewModel.onWordSearched(it)
+                    Text(text="dictionary")
                 }
             }
         }
@@ -91,11 +55,7 @@ class DictionaryFragment : Fragment(), TabMenuActions {
     }
 
     override fun onShare() {
-        viewModel.onShare()
     }
 
-    fun query(word: String) {
-        viewModel.onWordSearched(word)
-    }
 
 }
