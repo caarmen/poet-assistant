@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -29,6 +28,26 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class FavoritesFragment : Fragment(), TabMenuActions {
 
+
+    @Inject
+    lateinit var shareUseCase: ShareUseCase
+
+    @Inject
+    lateinit var openExternalAppUseCase: OpenExternalAppUseCase
+
+    private val viewModel: FavoritesScreenViewModel by viewModels()
+    private val isVisibleFlow = MutableStateFlow(false)
+
+    override fun onResume() {
+        super.onResume()
+        isVisibleFlow.value = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isVisibleFlow.value = false
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,8 +59,22 @@ class FavoritesFragment : Fragment(), TabMenuActions {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             setContent {
+                val isVisible by isVisibleFlow.collectAsState()
                 AppTheme {
-                    Text(text="favorites")
+                    if (isVisible) {
+                        FavoritesScreen(
+                            viewModel = viewModel,
+                            shareUseCase = shareUseCase,
+                            openExternalAppUseCase = openExternalAppUseCase,
+                            onSearchInTab = (requireActivity() as OnWordClickListener)::onWordClick,
+                            onSnackbarText = {
+                                Snackbar.make(requireView(), it, Snackbar.LENGTH_LONG).show()
+                            },
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .nestedScroll(rememberNestedScrollInteropConnection())
+                        )
+                    }
                 }
             }
         }
@@ -49,6 +82,7 @@ class FavoritesFragment : Fragment(), TabMenuActions {
     }
 
     override fun onShare() {
+        viewModel.onShare()
     }
 
 }
