@@ -19,7 +19,6 @@
 
 package ca.rmen.android.poetassistant.main.dictionaries.search.ui.composables
 
-import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
@@ -28,16 +27,11 @@ import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SearchBar
-import androidx.compose.material3.SearchBarValue
-import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -78,10 +72,8 @@ data class SearchBarMenuItem(
  * @param onExpandedChange Callback invoked when the expanded state changes.
  * @param modifier The modifier for this composable.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainSearchBar(
-    isLargeScreen: Boolean,
     suggestions: List<SearchSuggestion>,
     menuItems: () -> List<SearchBarMenuItem>,
     onMenuItemClick: (Int) -> Unit,
@@ -90,17 +82,7 @@ fun MainSearchBar(
     onExpandedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val searchBarState = rememberSearchBarState()
-    val textFieldState = rememberTextFieldState()
     var showMenu by remember { mutableStateOf(false) }
-
-    // Forward the query text to the suggestions view model.
-    LaunchedEffect(textFieldState) {
-        snapshotFlow { textFieldState.text.toString() }.collect(onQueryChange)
-    }
-
-    val expanded = searchBarState.currentValue == SearchBarValue.Expanded
-    LaunchedEffect(expanded) { onExpandedChange(expanded) }
 
     AppTheme {
 

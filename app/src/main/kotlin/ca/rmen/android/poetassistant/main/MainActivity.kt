@@ -120,7 +120,6 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
     private val baseMenuProvider = object : MenuProvider {
         override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
             menuInflater.inflate(R.menu.menu_main, menu)
-            menuInflater.inflate(R.menu.menu_tts, menu)
         }
 
         override fun onMenuItemSelected(menuItem: MenuItem) = false

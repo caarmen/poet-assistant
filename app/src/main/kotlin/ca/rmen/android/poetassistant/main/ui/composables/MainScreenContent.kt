@@ -80,7 +80,6 @@ fun MainScreenContent(
                 )
             ) {
                 MainSearchBar(
-                    isLargeScreen = isLargeScreen,
                     suggestions = suggestions,
                     menuItems = menuItems,
                     onMenuItemClick = onMenuItemClick,
