@@ -102,15 +102,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
             menuVisibilityLifecycleOwner,
             Lifecycle.State.RESUMED,
         )
-        // Drive the visibility-gated lifecycle from the visible-tab signal:
-        // setMenuVisibility is only called with true for the primary page.
-        lifecycleScope.launch {
-            isMenuVisible.collect { menuVisible ->
-                menuVisibilityLifecycleOwner.setState(
-                    if (menuVisible) Lifecycle.State.RESUMED else Lifecycle.State.CREATED,
-                )
-            }
-        }
     }
 
     override fun setMenuVisibility(menuVisible: Boolean) {
