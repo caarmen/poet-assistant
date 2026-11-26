@@ -40,7 +40,12 @@ import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -106,7 +111,7 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
 
     @IODispatcher @Inject lateinit var ioDispatcher: CoroutineDispatcher
 
-    private lateinit var viewPager: ViewPager
+    private var viewPager: ViewPager? = null
 
     // Tab state passed to MainScreen. Updated from the page-change listener
     // (swipes) and the adapter observer (extra tab added/removed).
@@ -153,11 +158,7 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
 
         mPagerAdapter = PagerAdapter(this, supportFragmentManager, intent)
         mPagerAdapter.registerDataSetObserver(mAdapterChangeListener)
-
-        // Set up the ViewPager with the sections adapter. Created programmatically
-        // (activity_main.xml is gone) with a stable ID: PagerAdapter.getFragment()
-        // builds its fragment tag from viewGroup.id.
-        viewPager = ViewPager(this).apply {
+        val result = ViewPager(this).apply {
             id = R.id.view_pager
             adapter = mPagerAdapter
             offscreenPageLimit = 5
@@ -166,26 +167,31 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
+            selectedTabIndex.value = currentItem
+
+            // If the app was launched with a query for the a particular tab, focus on that tab.
+            if (intent.data?.host != null) {
+                val tab = Tab.parse(intent.data!!.host!!) ?: Tab.DICTIONARY
+                viewPager?.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false)
+                selectedTabIndex.value = currentItem
+            } else if (Intent.ACTION_SEND == intent.action) {
+                viewPager?.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
+                selectedTabIndex.value = currentItem
+            }
+
+            mSearch = Search(this, getRandomWordUseCase = getRandomWordUseCase, suggestionsRepository = suggestionsRepository)
         }
+        viewPager = result
+
+        // Set up the ViewPager with the sections adapter. Created programmatically
+        // (activity_main.xml is gone) with a stable ID: PagerAdapter.getFragment()
+        // builds its fragment tag from viewGroup.id.
 
         val savedTab = settingsRepository.tab
         if (savedTab != null && savedTab.ordinal < mPagerAdapter.count) {
-            viewPager.currentItem = savedTab.ordinal
+            viewPager?.currentItem = savedTab.ordinal
         }
         mAdapterChangeListener.onChanged()
-        selectedTabIndex.value = viewPager.currentItem
-
-        // If the app was launched with a query for the a particular tab, focus on that tab.
-        if (intent.data?.host != null) {
-            val tab = Tab.parse(intent.data!!.host!!) ?: Tab.DICTIONARY
-            viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(tab), false)
-            selectedTabIndex.value = viewPager.currentItem
-        } else if (Intent.ACTION_SEND == intent.action) {
-            viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
-            selectedTabIndex.value = viewPager.currentItem
-        }
-
-        mSearch = Search(viewPager, getRandomWordUseCase = getRandomWordUseCase, suggestionsRepository = suggestionsRepository)
         // Load our dictionaries when the activity starts, so that the first search can already be fast.
         lifecycleScope.launch {
             val dbLoaded = loadDatabase()
@@ -205,7 +211,7 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
                 MainScreen(
                     tabs = tabsState,
                     selectedTabIndex = selectedTabIndexState,
-                    onTabSelected = { index -> viewPager.setCurrentItem(index, true) },
+                    onTabSelected = { index -> viewPager?.setCurrentItem(index, true) },
                     showTabText = showTabText,
                     showTabIcons = showTabIcons,
                     isLargeScreen = isLargeScreen,
@@ -220,13 +226,42 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
                         mSearch.search(term)
                     },
                     onExpandedChange = { /* no AppBarLayout to expand anymore */ },
-                    content = { }
+                    content = { padding ->
+                        Box(
+                            Modifier.fillMaxSize()
+                                .scrollable(
+                                    rememberScrollableState {
+                                        // view world deltas should be reflected in compose world
+                                        // components that participate in nested scrolling
+                                        it
+                                    },
+                                    Orientation.Vertical,
+                                )
+                        ) {
+                            AndroidView({ context ->
+
+                                val result = ViewPager(context).apply {
+                                    id = R.id.view_pager
+                                    adapter = mPagerAdapter
+                                    offscreenPageLimit = 1
+                                    layoutParams = ViewGroup.LayoutParams(
+                                        ViewGroup.LayoutParams.MATCH_PARENT,
+                                        ViewGroup.LayoutParams.MATCH_PARENT
+                                    )
+
+                                    mSearch = Search(this, getRandomWordUseCase = getRandomWordUseCase, suggestionsRepository = suggestionsRepository)
+                                }
+                                result
+                                },
+                            )
+                        }
+                    },
                 )
             }
         }
         // at the end of onCreate, after setContent { ... }
         if (savedInstanceState != null) {
-            viewPager.doOnAttach {   // androidx.core.view.doOnAttach
+            viewPager?.doOnAttach {   // androidx.core.view.doOnAttach
                 val fm = supportFragmentManager
                 // Fragments restored before the pager existed: their views have no parent.
                 val stale = fm.fragments.filter {
@@ -279,9 +314,9 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
             }
             // Load some shared text into the reader tab
             Intent.ACTION_SEND -> {
-                viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
+                viewPager?.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.READER), false)
                 val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
-                val readerFragment = mPagerAdapter.getFragment(viewPager, Tab.READER) as ReaderFragment
+                //val readerFragment = mPagerAdapter.getFragment(viewPager, Tab.READER) as ReaderFragment
                 //readerFragment.setPoem(sharedText)
             }
         }
@@ -292,7 +327,7 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
         if (uri == null) return
         val word = uri.lastPathSegment
         if (Constants.DEEP_LINK_QUERY == uri.host) {
-            viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false)
+            viewPager?.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.DICTIONARY), false)
             word?.let { mSearch.search(it)}
         } else if (uri.host != null && word != null) {
             val tab = Tab.parse(uri.host!!)
@@ -317,8 +352,10 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
         }
 
     private fun handleMenuItem(item: MenuItem): Boolean {
-        val tab = mPagerAdapter.getTabForPosition(viewPager.currentItem)
-        val currentFragment = mPagerAdapter.getFragment(viewPager, tab)
+        viewPager?.let {
+
+        val tab = mPagerAdapter.getTabForPosition(it.currentItem)
+        val currentFragment = mPagerAdapter.getFragment(it, tab)
         when (item.itemId) {
             R.id.action_share -> {
                 // Route the share action to the visible tab. With the
@@ -343,7 +380,7 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
             }
             R.id.action_wotd_history -> {
                 mPagerAdapter.setExtraTab(Tab.WOTD)
-                viewPager.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.WOTD), false)
+                viewPager?.setCurrentItem(mPagerAdapter.getPositionForTab(Tab.WOTD), false)
                 return true
             }
             R.id.action_new -> (currentFragment as? ReaderFragment)?.onMenuNew()
@@ -353,6 +390,7 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
             R.id.action_share_poem_text -> (currentFragment as? ReaderFragment)?.onShare()
             R.id.action_share_poem_audio -> (currentFragment as? ReaderFragment?)?.onMenuShareAudio()
             R.id.action_print -> (currentFragment as? ReaderFragment?)?.onMenuPrint()
+        }
         }
         return false
     }
@@ -376,7 +414,7 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
             if (tab != Tab.READER) {
                 // Hide the keyboard when we navigate to any tab other than the reader tab.
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-                imm?.hideSoftInputFromWindow(viewPager.windowToken, 0)
+                imm?.hideSoftInputFromWindow(viewPager?.windowToken, 0)
             }
             settingsRepository.tab = tab
         }
