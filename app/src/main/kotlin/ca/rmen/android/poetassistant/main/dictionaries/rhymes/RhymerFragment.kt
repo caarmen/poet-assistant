@@ -64,6 +64,9 @@ class RhymerFragment : Fragment(), TabMenuActions {
     @Inject
     lateinit var shareUseCase: ShareUseCase
 
+    @Inject
+    lateinit var openExternalAppUseCase: OpenExternalAppUseCase
+
     private val viewModel: RhymerScreenViewModel by viewModels()
     private val isVisibleFlow = MutableStateFlow(false)
 
