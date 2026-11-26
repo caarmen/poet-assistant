@@ -168,24 +168,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val owner = viewLifecycleOwner
-        owner.lifecycleScope.launch {
-            owner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // The fragment is the single collector of the share
-                // flow: it owns the Context for the chooser.
-                launch {
-                    viewModel.share.collect { share ->
-                        share?.let {
-                            shareUseCase(it, requireContext())
-                            viewModel.onShareSent()
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     override fun onShare() {
         viewModel.onSharePoem()
