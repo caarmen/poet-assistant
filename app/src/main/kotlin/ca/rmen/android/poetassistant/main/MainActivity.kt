@@ -220,18 +220,7 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
                         mSearch.search(term)
                     },
                     onExpandedChange = { /* no AppBarLayout to expand anymore */ },
-                    content = { padding ->
-                        AndroidView(
-                            factory = {
-                                viewPager
-                            },
-                            modifier = Modifier
-                                .padding(padding)
-                                .heightIn(min = 50.dp, max = 500.dp)
-                                .widthIn(min = 50.dp, max = 500.dp)
-                                .testTag("view_pager"),
-                        )
-                    },
+                    content = { }
                 )
             }
         }
