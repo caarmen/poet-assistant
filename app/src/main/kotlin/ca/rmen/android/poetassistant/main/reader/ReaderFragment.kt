@@ -34,17 +34,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.lifecycleScope
 import ca.rmen.android.poetassistant.main.MenuHostProvider
 import ca.rmen.android.poetassistant.main.TabMenuActions
-import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
-import ca.rmen.android.poetassistant.main.reader.usecases.GetSaveAsFilenameUseCase
-import ca.rmen.android.poetassistant.main.reader.usecases.PrintPoemUseCase
 import ca.rmen.android.poetassistant.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * The reader tab: a Compose screen for writing and playing a poem.
@@ -65,8 +59,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
         }
     }
 
-    private val isMenuVisible = MutableStateFlow(false)
-
     // The host activity exposes an unattached toolbar as the MenuHost,
     // since there is no action bar anymore.
     private val menuHost: MenuHost?
@@ -80,9 +72,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
     private val menuVisibilityLifecycleOwner = object : LifecycleOwner {
         private val registry = LifecycleRegistry(this)
         override val lifecycle: Lifecycle get() = registry
-        fun setState(state: Lifecycle.State) {
-            registry.currentState = state
-        }
     }
 
     private val menuProvider = object : MenuProvider {
@@ -102,11 +91,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
             menuVisibilityLifecycleOwner,
             Lifecycle.State.RESUMED,
         )
-    }
-
-    override fun setMenuVisibility(menuVisible: Boolean) {
-        super.setMenuVisibility(menuVisible)
-        isMenuVisible.value = menuVisible
     }
 
     override fun onDestroy() {
