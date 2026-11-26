@@ -223,7 +223,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
                             },
                             modifier = Modifier
                                 .fillMaxSize()
-                                .nestedScroll(rememberNestedScrollInteropConnection()),
                         )
                     }
                 }
