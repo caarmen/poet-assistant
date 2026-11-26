@@ -209,21 +209,18 @@ class ReaderFragment : Fragment(), TabMenuActions {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
             setContent {
-                val isVisible by isVisibleFlow.collectAsState()
                 AppTheme {
-                    if (isVisible) {
-                        ReaderScreen(
-                            viewModel = viewModel,
-                            onEvent = ::onEvent,
-                            onImeClosed = {
-                                // TODO(Step 3): replace with an onRequestAppBarExpand callback;
-                                // MainScreen will reset the TopAppBarScrollBehavior state to
-                                // force the app bar expanded.
-                            },
-                            modifier = Modifier
-                                .fillMaxSize()
-                        )
-                    }
+                    ReaderScreen(
+                        viewModel = viewModel,
+                        onEvent = ::onEvent,
+                        onImeClosed = {
+                            // TODO(Step 3): replace with an onRequestAppBarExpand callback;
+                            // MainScreen will reset the TopAppBarScrollBehavior state to
+                            // force the app bar expanded.
+                        },
+                        modifier = Modifier
+                            .fillMaxSize()
+                    )
                 }
             }
         }
