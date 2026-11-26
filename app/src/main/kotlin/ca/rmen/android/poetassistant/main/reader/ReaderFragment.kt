@@ -126,7 +126,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
                 menuVisibilityLifecycleOwner.setState(
                     if (menuVisible) Lifecycle.State.RESUMED else Lifecycle.State.CREATED,
                 )
-                (requireActivity() as? MenuHostProvider)?.menuHost?.invalidateMenu()
             }
         }
     }
