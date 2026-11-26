@@ -127,16 +127,6 @@ class ReaderFragment : Fragment(), TabMenuActions {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Drive the visibility-gated lifecycle from the visible-tab signal:
-        // setMenuVisibility is only called with true for the primary page.
-        lifecycleScope.launch {
-            isMenuVisible.collect { menuVisible ->
-                menuVisibilityLifecycleOwner.setState(
-                    if (menuVisible) Lifecycle.State.RESUMED else Lifecycle.State.CREATED,
-                )
-                (requireActivity() as? MenuHostProvider)?.menuHost?.invalidateMenu()
-            }
-        }
         // Apply the poem shared into the app once per fragment instance,
         // then clear the argument: rotation and process death must not
         // re-apply it over the user's edits.
