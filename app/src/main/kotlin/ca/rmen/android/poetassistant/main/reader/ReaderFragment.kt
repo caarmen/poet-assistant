@@ -140,16 +140,16 @@ class ReaderFragment : Fragment(), TabMenuActions {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        isVisibleFlow.value = true
+    override fun setMenuVisibility(menuVisible: Boolean) {
+        super.setMenuVisibility(menuVisible)
+        isVisibleFlow.value = menuVisible
     }
+
 
     override fun onPause() {
         // Persist the poem on pause: a tab swipe pauses the reader
         // fragment.
         viewModel.onPersistPoem()
-        isVisibleFlow.value = false
         super.onPause()
     }
 
