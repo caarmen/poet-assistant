@@ -27,6 +27,7 @@ import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.TestAppUtils.search
+import ca.rmen.android.poetassistant.main.TestUiUtils
 import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
@@ -58,7 +59,7 @@ class RhymeSettingsTest {
     fun testMatchAORAOEnabled() {
         openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.match_aor_ao_setting_title)
-        pressBack()
+        TestUiUtils.pressBack()
         composeTestRule.waitForIdle()
         search(composeTestRule, "thorny")
         checkRhymes(composeTestRule, "barany", "brawny")
@@ -108,7 +109,8 @@ class RhymeSettingsTest {
     fun testRhymesWithoutDefinitions() {
         openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.all_rhymes_setting_title)
-        pressBack()
+        TestUiUtils.pressBack()
+        composeTestRule.waitForIdle()
         search(composeTestRule, "faith")
         checkRhymes(composeTestRule, "eighth", "haith")
     }

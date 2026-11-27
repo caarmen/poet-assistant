@@ -103,8 +103,11 @@ class ATtsTest {
             .onLast()
             .performScrollTo()
             .performClick()
+        composeTestRule.waitForIdle()
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_preview_title)
+        composeTestRule.waitForIdle()
         pressBack()
+        composeTestRule.waitForIdle()
         swipeViewPagerLeft(3)
         typeAndSpeakPoem(composeTestRule, "Do I have an accent?")
     }

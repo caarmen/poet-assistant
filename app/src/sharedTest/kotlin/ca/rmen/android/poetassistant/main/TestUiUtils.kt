@@ -20,7 +20,10 @@
 package ca.rmen.android.poetassistant.main
 
 import android.content.Context
+import android.os.Build
+import android.os.Looper
 import android.os.SystemClock
+import android.view.KeyEvent
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
@@ -32,6 +35,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.swipeLeft
 import androidx.test.espresso.action.ViewActions.swipeRight
@@ -47,6 +51,27 @@ import org.hamcrest.Matchers.allOf
  * Generic utility functions for Ui operations like opening a menu or swiping the screen.
  */
 object TestUiUtils {
+
+
+    fun pressBack() {
+        // During the migration to compose, with:
+        // - The tabs still in ViewPager
+        // - The MainActivity using the scaffold in compose
+        // some tests started to hangn when calling Espresso.pressBack.
+        // It may be related to this combination of compose + views:
+        // Compose shell -> AndroidView ViewPager -> Fragments -> ComposeViews
+        // For now, sending a key code for back seems to work.
+        // However, this breaks tests when run on robolectric: complaining that
+        // this key sync api shouldn't be sent from the main thread, but from
+        // a testing thread..
+        if (Build.FINGERPRINT == "robolectric") {
+            Espresso.pressBack()
+        } else {
+            val instr = getInstrumentation()
+            instr.sendKeySync(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK))
+            instr.sendKeySync(KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK))
+        }
+    }
 
     fun openMenuItem(composeTestRule: ComposeTestRule, @StringRes titleRes: Int) {
         composeTestRule.waitForIdle()

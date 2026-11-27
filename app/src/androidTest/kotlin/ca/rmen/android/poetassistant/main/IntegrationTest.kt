@@ -54,11 +54,15 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
+import ca.rmen.android.poetassistant.settings.Layout
+import ca.rmen.android.poetassistant.settings.SettingsRepository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import javax.inject.Inject
 
 @LargeTest
 @HiltAndroidTest
@@ -77,6 +81,8 @@ class IntegrationTest {
     @Rule(order = 2)
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> = PoetAssistantActivityTestRule(MainActivity::class.java, true)
 
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
 
     private data class IntegrationTestScenario(
         val query: String,
@@ -165,6 +171,11 @@ class IntegrationTest {
         checkAllStarredWords(context, composeTestRule)
     }
 
+    @Before
+    fun setUp() {
+        hiltTestRule.inject()
+    }
+
     @Test
     fun integrationTest1() {
         runIntegrationTest(scenario1)
@@ -222,9 +233,8 @@ class IntegrationTest {
     }
 
     private fun useCleanLayout() {
-        openMenuItem(composeTestRule, R.string.action_settings)
-        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_layout_title)
-        composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_layout_value_clean)) and isSelectable()).performClick()
-        pressBack()
+        getInstrumentation().runOnMainSync {
+            settingsRepository.setLayout(Layout.CLEAN)
+        }
     }
 }

@@ -23,7 +23,6 @@ import android.content.Context
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.test.espresso.Espresso.pressBack
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import ca.rmen.android.poetassistant.R
@@ -33,6 +32,7 @@ import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.TestAppUtils.addFilter
 import ca.rmen.android.poetassistant.main.TestAppUtils.search
+import ca.rmen.android.poetassistant.main.TestUiUtils
 import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
@@ -70,7 +70,8 @@ class ThesaurusSettingsTest {
     fun testReverseLookupEnabled() {
         openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.thesaurus_reverse_lookup_setting_title)
-        pressBack()
+        TestUiUtils.pressBack()
+        composeTestRule.waitForIdle()
         swipeViewPagerLeft(1)
         search(composeTestRule, "mistake")
         checkSynonym(composeTestRule, "blunder")
@@ -93,7 +94,8 @@ class ThesaurusSettingsTest {
         val context: Context = activityTestRule.activity
         openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.thesaurus_reverse_lookup_setting_title)
-        pressBack()
+        TestUiUtils.pressBack()
+        composeTestRule.waitForIdle()
         search(composeTestRule, "number")
         addFilter(composeTestRule, context, Tab.RHYMER, "mistake", "bloomer")
         checkRhyme(composeTestRule, "blunder")
