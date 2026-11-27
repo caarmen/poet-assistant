@@ -20,24 +20,23 @@
 package ca.rmen.android.poetassistant.shared.main
 
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
-import androidx.test.espresso.Espresso.pressBack
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.CustomChecks.checkRhymes
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.TestAppUtils.search
-import ca.rmen.android.poetassistant.main.TestUiUtils
-import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
-import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
+import ca.rmen.android.poetassistant.settings.SettingsRepository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import javax.inject.Inject
 
 @LargeTest
 @HiltAndroidTest
@@ -55,11 +54,19 @@ class RhymeSettingsTest {
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> =
         PoetAssistantActivityTestRule(MainActivity::class.java, true)
 
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
+
+    @Before
+    fun setUp() {
+        hiltTestRule.inject()
+    }
+
     @Test
     fun testMatchAORAOEnabled() {
-        openMenuItem(composeTestRule, R.string.action_settings)
-        clickPreference(composeTestRule, activityTestRule.activity, R.string.match_aor_ao_setting_title)
-        TestUiUtils.pressBack()
+        runBlocking {
+            settingsRepository.setAORAOMatchEnabled(true)
+        }
         composeTestRule.waitForIdle()
         search(composeTestRule, "thorny")
         checkRhymes(composeTestRule, "barany", "brawny")
@@ -80,9 +87,9 @@ class RhymeSettingsTest {
 
     @Test
     fun testMatchAOAAEnabled() {
-        openMenuItem(composeTestRule, R.string.action_settings)
-        clickPreference(composeTestRule, activityTestRule.activity, R.string.match_ao_aa_setting_title)
-        pressBack()
+        runBlocking {
+            settingsRepository.setAOAAMatchEnabled(true)
+        }
         search(composeTestRule, "trauma")
         composeTestRule.waitForIdle()
         checkRhymes(composeTestRule, "bahama", "cama")
@@ -107,9 +114,9 @@ class RhymeSettingsTest {
 
     @Test
     fun testRhymesWithoutDefinitions() {
-        openMenuItem(composeTestRule, R.string.action_settings)
-        clickPreference(composeTestRule, activityTestRule.activity, R.string.all_rhymes_setting_title)
-        TestUiUtils.pressBack()
+        runBlocking {
+            settingsRepository.setAllRhymesEnabled(true)
+        }
         composeTestRule.waitForIdle()
         search(composeTestRule, "faith")
         checkRhymes(composeTestRule, "eighth", "haith")

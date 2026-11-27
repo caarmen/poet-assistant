@@ -25,28 +25,28 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.main.CustomChecks.checkRhyme
 import ca.rmen.android.poetassistant.main.CustomChecks.checkSynonym
 import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.Tab
 import ca.rmen.android.poetassistant.main.TestAppUtils.addFilter
 import ca.rmen.android.poetassistant.main.TestAppUtils.search
-import ca.rmen.android.poetassistant.main.TestUiUtils
-import ca.rmen.android.poetassistant.main.TestUiUtils.clickPreference
-import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHYMER_ITEM_ROW_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_ITEM_ROW_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_SCREEN_CONTENT_LIST_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
+import ca.rmen.android.poetassistant.settings.SettingsRepository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import javax.inject.Inject
 
 @LargeTest
 @HiltAndroidTest
@@ -64,13 +64,19 @@ class ThesaurusSettingsTest {
     val activityTestRule: PoetAssistantActivityTestRule<MainActivity> =
         PoetAssistantActivityTestRule(MainActivity::class.java, true)
 
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
 
+    @Before
+    fun setUp() {
+        hiltTestRule.inject()
+    }
 
     @Test
     fun testReverseLookupEnabled() {
-        openMenuItem(composeTestRule, R.string.action_settings)
-        clickPreference(composeTestRule, activityTestRule.activity, R.string.thesaurus_reverse_lookup_setting_title)
-        TestUiUtils.pressBack()
+        runBlocking {
+            settingsRepository.setThesaurusReverseLookupEnabled(true)
+        }
         composeTestRule.waitForIdle()
         swipeViewPagerLeft(1)
         search(composeTestRule, "mistake")
@@ -92,9 +98,9 @@ class ThesaurusSettingsTest {
     @Test
     fun testFilterWithReverseLookupEnabled() {
         val context: Context = activityTestRule.activity
-        openMenuItem(composeTestRule, R.string.action_settings)
-        clickPreference(composeTestRule, activityTestRule.activity, R.string.thesaurus_reverse_lookup_setting_title)
-        TestUiUtils.pressBack()
+        runBlocking {
+            settingsRepository.setThesaurusReverseLookupEnabled(true)
+        }
         composeTestRule.waitForIdle()
         search(composeTestRule, "number")
         addFilter(composeTestRule, context, Tab.RHYMER, "mistake", "bloomer")
