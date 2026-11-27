@@ -163,6 +163,7 @@ class PoemTest {
         openMenuItem(composeTestRule, R.string.action_settings)
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_selection_lookup_title)
         TestUiUtils.pressBack()
+        composeTestRule.waitForIdle()
         swipeViewPagerLeft(3)
         val poemText = "Here is a poem with lookup disabled"
         typePoem(composeTestRule, poemText)

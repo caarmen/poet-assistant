@@ -106,7 +106,7 @@ class ATtsTest {
         composeTestRule.waitForIdle()
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_preview_title)
         composeTestRule.waitForIdle()
-        pressBack()
+        TestUiUtils.pressBack()
         composeTestRule.waitForIdle()
         swipeViewPagerLeft(3)
         typeAndSpeakPoem(composeTestRule, "Do I have an accent?")
