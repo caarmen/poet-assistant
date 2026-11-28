@@ -17,15 +17,16 @@
  * along with Poet Assistant.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ca.rmen.android.poetassistant.shared.main
+package ca.rmen.android.poetassistant.main
 
-import android.content.Intent
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import ca.rmen.android.poetassistant.R
-import ca.rmen.android.poetassistant.main.MainActivity
 import ca.rmen.android.poetassistant.main.TestAppUtils.search
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
 import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
@@ -59,6 +60,26 @@ class SelectedTabTest {
         PoetAssistantActivityTestRule(MainActivity::class.java, false)
 
     @Test
+    fun openAfterLastDictionary() {
+        testSaveTab({ swipeViewPagerLeft(2) }, R.string.tab_dictionary, R.string.tab_dictionary)
+    }
+
+    @Test
+    fun openAfterLastReader() {
+        testSaveTab({ swipeViewPagerLeft(3) }, R.string.tab_reader, R.string.tab_reader)
+    }
+
+    @Test
+    fun openAfterLastFavorites() {
+        // For some reason, swiping left 4 times only lands us in the composer tab, on
+        // robolectric. Works on an instrumented test on an emulator. :shrug:
+        // Just click on the tab, good enough for this test.
+        testSaveTab({
+            composeTestRule.onNodeWithTag("tab_Favorites").performClick()
+        }, R.string.tab_favorites, R.string.tab_favorites)
+    }
+
+    @Test
     fun openAfterLastRhymer() {
         testSaveTab({}, R.string.tab_rhymer, R.string.tab_rhymer)
     }
@@ -79,12 +100,15 @@ class SelectedTabTest {
     }
 
     private fun testSaveTab(openTabAction: () -> Unit, @StringRes expectedTabBeforeStop: Int, @StringRes expectedTabAfterRestart: Int) {
-        val intent = Intent()
-        activityTestRule.launchActivity(intent)
+        var scenario = ActivityScenario.launch(MainActivity::class.java)
         openTabAction()
         composeTestRule.waitForIdle()
-        checkTitleStripOrTab(activityTestRule.activity, expectedTabBeforeStop)
-        activityTestRule.relaunch()
-        checkTitleStripOrTab(activityTestRule.activity, expectedTabAfterRestart)
+        checkTitleStripOrTab(composeTestRule, expectedTabBeforeStop)
+
+        scenario.close()
+        scenario = ActivityScenario.launch(MainActivity::class.java)
+        composeTestRule.waitForIdle()
+        checkTitleStripOrTab(composeTestRule, expectedTabAfterRestart)
+        scenario.close()
     }
 }

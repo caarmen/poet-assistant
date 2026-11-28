@@ -46,7 +46,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import ca.rmen.android.poetassistant.R
 import ca.rmen.android.poetassistant.compat.HtmlCompat
-import ca.rmen.android.poetassistant.main.AppBarLayoutHelper
 import ca.rmen.android.poetassistant.main.MenuHostProvider
 import ca.rmen.android.poetassistant.main.TabMenuActions
 import ca.rmen.android.poetassistant.main.common.usecases.ShareUseCase
@@ -148,8 +147,8 @@ class ReaderFragment : Fragment(), TabMenuActions {
                     viewModel.onClearPoemRequestClicked()
                     // Hack for https://github.com/caarmen/poet-assistant/issues/72
                     // On some devices, showing the clear poem dialog auto-hides the app bar layout.
-                    // Let's expand it again.
-                    AppBarLayoutHelper.forceExpandAppBarLayout(activity)
+                    // TODO(Step 3): replace with an onRequestAppBarExpand callback; MainScreen
+                    // will reset the TopAppBarScrollBehavior state to force the app bar expanded.
                 }
                 R.id.action_open -> openPoemLauncher.launch(arrayOf("text/plain"))
                 R.id.action_save -> viewModel.onSavePoem()
@@ -254,7 +253,9 @@ class ReaderFragment : Fragment(), TabMenuActions {
                             viewModel = viewModel,
                             onEvent = ::onEvent,
                             onImeClosed = {
-                                AppBarLayoutHelper.forceExpandAppBarLayout(activity)
+                                // TODO(Step 3): replace with an onRequestAppBarExpand callback;
+                                // MainScreen will reset the TopAppBarScrollBehavior state to
+                                // force the app bar expanded.
                             },
                             modifier = Modifier
                                 .fillMaxSize()

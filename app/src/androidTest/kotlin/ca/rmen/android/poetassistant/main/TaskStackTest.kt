@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main
 
 
-import android.app.Activity
 import android.content.Intent
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasText
@@ -103,8 +102,7 @@ class TaskStackTest {
         IdlingRegistry.getInstance().register(waitForMainActivity)
 
         // Check the results
-        val activity: Activity = activityTestRule.activity
-        checkTitleStripOrTab(activity, R.string.tab_dictionary)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_dictionary)
         checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
         IdlingRegistry.getInstance().unregister(waitForMainActivity)
     }

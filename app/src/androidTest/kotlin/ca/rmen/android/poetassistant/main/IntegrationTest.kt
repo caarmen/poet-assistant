@@ -28,6 +28,7 @@ import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -54,6 +55,8 @@ import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerRight
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
+import ca.rmen.android.poetassistant.settings.Layout
+import ca.rmen.android.poetassistant.settings.SettingsScreenViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Rule
@@ -222,9 +225,15 @@ class IntegrationTest {
     }
 
     private fun useCleanLayout() {
-        openMenuItem(composeTestRule, R.string.action_settings)
-        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_layout_title)
-        composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_layout_value_clean)) and isSelectable()).performClick()
-        pressBack()
+        // TODO only use the first branch after migrating the ViewPager to HorizontalPager
+        if (false) {
+            openMenuItem(composeTestRule, R.string.action_settings)
+            clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_layout_title)
+            composeTestRule.onNode(hasText(activityTestRule.activity.getString(R.string.pref_layout_value_clean)) and isSelectable()).performClick()
+            pressBack()
+        } else {
+            val settingsScreenViewModel = ViewModelProvider(activityTestRule.activity)[SettingsScreenViewModel::class.java]
+            settingsScreenViewModel.onLayoutSelected(Layout.CLEAN)
+        }
     }
 }

@@ -76,7 +76,7 @@ class RandomWordTest {
     fun randomWordTest() {
         openMenuItem(composeTestRule, R.string.action_random_word)
         composeTestRule.waitForIdle()
-        checkTitleStripOrTab(activityTestRule.activity, R.string.tab_dictionary)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_dictionary)
         composeTestRule.onNode(hasTestTag(DICTIONARY_HEADER_TEXT_TAG) and hasNonEmptyText()).assertIsDisplayed()
     }
 

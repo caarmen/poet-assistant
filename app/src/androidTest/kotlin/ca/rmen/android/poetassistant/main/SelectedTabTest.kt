@@ -20,7 +20,6 @@
 package ca.rmen.android.poetassistant.main
 
 
-import android.app.Activity
 import android.content.Intent
 import android.os.SystemClock
 import androidx.annotation.StringRes
@@ -39,7 +38,9 @@ import org.junit.runner.RunWith
 import org.junit.runners.MethodSorters
 
 import ca.rmen.android.poetassistant.main.CustomChecks.checkFirstDefinition
+import ca.rmen.android.poetassistant.main.TestAppUtils.search
 import ca.rmen.android.poetassistant.main.TestUiUtils.checkTitleStripOrTab
+import ca.rmen.android.poetassistant.main.TestUiUtils.openMenuItem
 import ca.rmen.android.poetassistant.main.TestUiUtils.swipeViewPagerLeft
 
 @LargeTest
@@ -66,16 +67,15 @@ class SelectedTabTest {
         val deepLinkUrl = "poetassistant://dictionary/muffin"
 
         swipeViewPagerLeft(1)
-        checkTitleStripOrTab(activityTestRule.activity, R.string.tab_thesaurus)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_thesaurus)
 
         // Open a deep link
         getInstrumentation().uiAutomation.executeShellCommand("am start -a android.intent.action.VIEW -d " + deepLinkUrl)
         SystemClock.sleep(500) // :'(
 
         // Check the results
-        val activity: Activity = activityTestRule.activity
         getInstrumentation().waitForIdleSync()
-        checkTitleStripOrTab(activity, R.string.tab_dictionary)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_dictionary)
         checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
     }
 
@@ -86,19 +86,17 @@ class SelectedTabTest {
         val deepLinkUrl = "poetassistant://dictionary/muffin"
 
         swipeViewPagerLeft(2)
-        checkTitleStripOrTab(activityTestRule.activity, R.string.tab_dictionary)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_dictionary)
 
         // Open a deep link
         getInstrumentation().uiAutomation.executeShellCommand("am start -a android.intent.action.VIEW -d " + deepLinkUrl)
         SystemClock.sleep(500) // :'(
 
         // Check the results
-        val activity: Activity = activityTestRule.activity
         getInstrumentation().waitForIdleSync()
-        checkTitleStripOrTab(activity, R.string.tab_dictionary)
+        checkTitleStripOrTab(composeTestRule, R.string.tab_dictionary)
         checkFirstDefinition(composeTestRule, "a sweet quick bread baked in a cup-shaped pan")
     }
-
 
     @Test
     fun openAfterLastDictionary() {
@@ -115,12 +113,32 @@ class SelectedTabTest {
         testSaveTab({ swipeViewPagerLeft(4) }, R.string.tab_favorites, R.string.tab_favorites)
     }
 
+    @Test
+    fun openAfterLastRhymer() {
+        testSaveTab({}, R.string.tab_rhymer, R.string.tab_rhymer)
+    }
+
+    @Test
+    fun openAfterLastThesaurus() {
+        testSaveTab({ swipeViewPagerLeft(1) }, R.string.tab_thesaurus, R.string.tab_thesaurus)
+    }
+
+    @Test
+    fun openAfterLastWotd() {
+        testSaveTab({ openMenuItem(composeTestRule, R.string.action_wotd_history) }, R.string.tab_wotd, R.string.tab_rhymer)
+    }
+
+    @Test
+    fun openAfterLastPattern() {
+        testSaveTab({ search(composeTestRule, "h*llo") }, R.string.tab_pattern, R.string.tab_rhymer)
+    }
+
     private fun testSaveTab(openTabAction: Runnable, @StringRes expectedTabBeforeStop: Int, @StringRes expectedTabAfterRestart: Int) {
         val intent = Intent()
         activityTestRule.launchActivity(intent)
         openTabAction.run()
-        checkTitleStripOrTab(activityTestRule.activity, expectedTabBeforeStop)
+        checkTitleStripOrTab(composeTestRule, expectedTabBeforeStop)
         activityTestRule.relaunch()
-        checkTitleStripOrTab(activityTestRule.activity, expectedTabAfterRestart)
+        checkTitleStripOrTab(composeTestRule, expectedTabAfterRestart)
     }
 }
