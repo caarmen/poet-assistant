@@ -232,8 +232,8 @@ open class MainActivityImpl : AppCompatActivity(), MenuHostProvider, OnWordClick
                 val stale = fm.fragments.filter {
                     it.isAdded && it.id == R.id.view_pager && it.view?.parent == null
                 }
-                stale.forEach { f -> fm.commitNow { detach(f) } }   // destroys the orphaned view
-                stale.forEach { f -> fm.commitNow { attach(f) } }   // re-creates it, now finding R.id.view_pager
+                stale.forEach { f -> fm.commitNow(allowStateLoss = true) { detach(f) } }   // destroys the orphaned view
+                stale.forEach { f -> fm.commitNow(allowStateLoss = true) { attach(f) } }   // re-creates it, now finding R.id.view_pager
             }
         }
     }
