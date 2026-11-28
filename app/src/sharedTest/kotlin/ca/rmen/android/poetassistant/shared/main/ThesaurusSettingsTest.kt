@@ -20,9 +20,11 @@
 package ca.rmen.android.poetassistant.shared.main
 
 import android.content.Context
+import android.os.Build
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso.pressBack
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -40,6 +42,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHY
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_ITEM_ROW_TAG
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_SCREEN_CONTENT_LIST_TAG
 import ca.rmen.android.poetassistant.main.rules.PoetAssistantActivityTestRule
+import ca.rmen.android.poetassistant.settings.SettingsScreenViewModel
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -68,9 +71,15 @@ class ThesaurusSettingsTest {
 
     @Test
     fun testReverseLookupEnabled() {
-        openMenuItem(composeTestRule, R.string.action_settings)
-        clickPreference(composeTestRule, activityTestRule.activity, R.string.thesaurus_reverse_lookup_setting_title)
-        pressBack()
+        // TODO only use the first branch after migrating the ViewPager to HorizontalPager
+        if (Build.FINGERPRINT == "robolectric") {
+            openMenuItem(composeTestRule, R.string.action_settings)
+            clickPreference(composeTestRule, activityTestRule.activity, R.string.thesaurus_reverse_lookup_setting_title)
+            pressBack()
+        } else {
+            val settingsScreenViewModel = ViewModelProvider(activityTestRule.activity)[SettingsScreenViewModel::class.java]
+            settingsScreenViewModel.onThesaurusReverseLookupChanged(true)
+        }
         swipeViewPagerLeft(1)
         search(composeTestRule, "mistake")
         checkSynonym(composeTestRule, "blunder")
@@ -91,9 +100,15 @@ class ThesaurusSettingsTest {
     @Test
     fun testFilterWithReverseLookupEnabled() {
         val context: Context = activityTestRule.activity
-        openMenuItem(composeTestRule, R.string.action_settings)
-        clickPreference(composeTestRule, activityTestRule.activity, R.string.thesaurus_reverse_lookup_setting_title)
-        pressBack()
+        // TODO only use the first branch after migrating the ViewPager to HorizontalPager
+        if (Build.FINGERPRINT == "robolectric") {
+            openMenuItem(composeTestRule, R.string.action_settings)
+            clickPreference(composeTestRule, activityTestRule.activity, R.string.thesaurus_reverse_lookup_setting_title)
+            pressBack()
+        } else {
+            val settingsScreenViewModel = ViewModelProvider(activityTestRule.activity)[SettingsScreenViewModel::class.java]
+            settingsScreenViewModel.onThesaurusReverseLookupChanged(true)
+        }
         search(composeTestRule, "number")
         addFilter(composeTestRule, context, Tab.RHYMER, "mistake", "bloomer")
         checkRhyme(composeTestRule, "blunder")

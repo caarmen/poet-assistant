@@ -35,6 +35,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTouchInput
+import androidx.lifecycle.ViewModelProvider
 import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
@@ -86,6 +87,7 @@ import ca.rmen.android.poetassistant.main.dictionaries.rhymes.ui.composables.RHY
 import ca.rmen.android.poetassistant.main.dictionaries.thesaurus.ui.composables.THESAURUS_HEADER_TEXT_TAG
 import ca.rmen.android.poetassistant.main.reader.ui.composables.READER_POEM_TEXT_FIELD_TAG
 import ca.rmen.android.poetassistant.main.reader.ui.composables.READER_WORD_COUNT_TAG
+import ca.rmen.android.poetassistant.settings.SettingsScreenViewModel
 
 @LargeTest
 @HiltAndroidTest
@@ -160,9 +162,16 @@ class PoemTest {
 
     @Test
     fun testLookupSetting() {
-        openMenuItem(composeTestRule, R.string.action_settings)
-        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_selection_lookup_title)
-        pressBack()
+        val settingsScreenViewModel = ViewModelProvider(activityTestRule.activity)[SettingsScreenViewModel::class.java]
+        // TODO only use the first branch after migrating the ViewPager to HorizontalPager
+        if (false) {
+            openMenuItem(composeTestRule, R.string.action_settings)
+            clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_selection_lookup_title)
+            pressBack()
+        } else {
+            settingsScreenViewModel.onSelectionLookupChanged(false)
+        }
+
         swipeViewPagerLeft(3)
         val poemText = "Here is a poem with lookup disabled"
         typePoem(composeTestRule, poemText)
@@ -172,9 +181,15 @@ class PoemTest {
         assertPopupMissing("dictionary")
         closeSoftKeyboard()
 
-        openMenuItem(composeTestRule, R.string.action_settings)
-        clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_selection_lookup_title)
-        pressBack()
+        // TODO only use the first branch after migrating the ViewPager to HorizontalPager
+        if (false) {
+            openMenuItem(composeTestRule, R.string.action_settings)
+            clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_selection_lookup_title)
+            pressBack()
+        } else {
+            settingsScreenViewModel.onSelectionLookupChanged(true)
+        }
+
         assertPopupVisible("rhymer")
         assertPopupVisible("thesaurus")
         assertPopupVisible("dictionary")

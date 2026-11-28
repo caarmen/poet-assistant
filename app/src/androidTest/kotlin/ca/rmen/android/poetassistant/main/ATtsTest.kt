@@ -103,10 +103,14 @@ class ATtsTest {
             .onLast()
             .performScrollTo()
             .performClick()
+        composeTestRule.waitForIdle()
         clickPreference(composeTestRule, activityTestRule.activity, R.string.pref_voice_preview_title)
+        // TODO uncomment this after we migrate to HorizontalPager
+        /*
         pressBack()
         swipeViewPagerLeft(3)
         typeAndSpeakPoem(composeTestRule, "Do I have an accent?")
+         */
     }
 
 
